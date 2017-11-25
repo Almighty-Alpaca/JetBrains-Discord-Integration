@@ -21,9 +21,16 @@ plugins {
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
+patchPluginXml {
+    sinceBuild = "171.*"
+    untilBuild = "*.*"
+}
+
 intellij {
     version '2017.2.6'
     pluginName 'Discord Integration'
+
+    updateSinceUntilBuild = true
 
     downloadSources = true
 }
