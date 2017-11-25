@@ -21,6 +21,7 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import com.almightyalpaca.intellij.plugins.discord.notifications.DiscordIntegrationErrorNotification;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public class DiscordIntegrationApplicationService
         DiscordEventHandlers handlers = new DiscordEventHandlers();
         handlers.ready = this::ready;
         handlers.errored = this::error;
+        handlers.disconnected = this::disconnected;
 
         DiscordRPC.INSTANCE.Discord_Initialize(CLIENT_ID, handlers, true, null);
 
@@ -71,11 +73,18 @@ public class DiscordIntegrationApplicationService
             callbackRunner.interrupt();
     }
 
-    private void error(int code, String text)
+    private void error(int code, @Nullable String text)
     {
         LOGGER.warn("ERROR: " + code + "/" + text);
 
-        Notifications.Bus.notify(new DiscordIntegrationErrorNotification(code, text));
+        Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
+    }
+
+    private void disconnected(int code, @Nullable String text)
+    {
+        LOGGER.warn("DISCONNECTED: " + code + "/" + text);
+
+        Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
     }
 
     private void ready()
@@ -83,7 +92,7 @@ public class DiscordIntegrationApplicationService
         LOGGER.debug("READY");
     }
 
-    public void updateProject(Project project)
+    public void updateProject(@Nullable Project project)
     {
         DiscordRichPresence presence = new DiscordRichPresence();
         presence.largeImageKey = "intellij-logo-large";

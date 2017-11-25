@@ -16,6 +16,7 @@
 package com.almightyalpaca.intellij.plugins.discord.notifications;
 
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,16 @@ public class DiscordIntegrationNotification extends Notification
                                           @Nullable String content,
                                           @NotNull NotificationType type)
     {
-        super(groupDisplayId, ICON, title, subtitle, content, type, null);
+        this(groupDisplayId, title, subtitle, content, type, null);
+    }
+
+    public DiscordIntegrationNotification(@NotNull String groupDisplayId,
+                                          @Nullable String title,
+                                          @Nullable String subtitle,
+                                          @Nullable String content,
+                                          @NotNull NotificationType type,
+                                          @Nullable NotificationListener listener)
+    {
+        super(groupDisplayId, ICON, title, subtitle, content, type, listener);
     }
 }
-

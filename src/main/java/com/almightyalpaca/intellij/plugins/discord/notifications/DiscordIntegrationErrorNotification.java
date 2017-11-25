@@ -19,6 +19,8 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -28,8 +30,8 @@ public class DiscordIntegrationErrorNotification extends DiscordIntegrationNotif
     public static final String TITLE = "Plugins received an unexpected RPC error";
     public static final NotificationType TYPE = NotificationType.ERROR;
 
-    public DiscordIntegrationErrorNotification(int code, String text)
+    public DiscordIntegrationErrorNotification(@NotNull String content)
     {
-        super(GROUP_DISPLAY_ID, TITLE, null, "The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text, TYPE);
+        super(GROUP_DISPLAY_ID, TITLE, null, content, TYPE);
     }
 }
