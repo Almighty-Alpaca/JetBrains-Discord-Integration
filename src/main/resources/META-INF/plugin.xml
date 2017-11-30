@@ -17,9 +17,11 @@
     <id>com.almightyalpaca.intellij.plugins.discord</id>
     <name>Discord Integration</name>
     <version>@VERSION@</version>
-    <vendor url="https://github.com/Almighty-Alpaca/Intellij-Discord-Integration">Almighty Alpaca</vendor>
+    <vendor url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
     <description><![CDATA[
+        Publishes rich presence information about your current project to discord.
+         For bugs or feature requests visit <a href="https://github.com/Almighty-Alpaca/Intellij-Discord-Integration">the official github</a>.
     ]]></description>
 
     <change-notes><![CDATA[
@@ -34,14 +36,18 @@
     </extensions>
 
     <application-components>
-        <component >
-            <implementation-class>com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationApplicationComponent</implementation-class>
+        <component>
+            <implementation-class>
+                com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationApplicationComponent
+            </implementation-class>
         </component>
     </application-components>
 
     <project-components>
         <component>
-            <implementation-class>com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationProjectComponent</implementation-class>
+            <implementation-class>
+                com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationProjectComponent
+            </implementation-class>
         </component>
     </project-components>
 

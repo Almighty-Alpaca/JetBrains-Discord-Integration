@@ -22,11 +22,10 @@ plugins {
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group 'com.almightyalpaca.intellij.plugins.discord'
-version '0.1'
+version '0.1.0'
 
 patchPluginXml {
     sinceBuild = "171.*"
-    untilBuild = "*.*"
 }
 
 intellij {
@@ -35,24 +34,30 @@ intellij {
 
     updateSinceUntilBuild = true
     downloadSources = true
+
+    instrumentCode = false
 }
 
 repositories {
     jcenter()
     maven {
         name 'jitpack'
-        url  'https://jitpack.io/'
+        url 'https://jitpack.io/'
     }
 }
 
 dependencies {
-    compile 'com.github.MinnDevelopment:Java-DiscordRPC:v1.1'
+    compile group: 'com.github.MinnDevelopment', name: 'Java-DiscordRPC', version: 'v1.2'
+
+    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.8.Final'
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-    filter ReplaceTokens, tokens: [
-            "VERSION": project.version
-    ]
+    filesMatching('META-INF/plugin.xml') {
+        filter ReplaceTokens, tokens: [
+                "VERSION": project.version
+        ]
+    }
 }

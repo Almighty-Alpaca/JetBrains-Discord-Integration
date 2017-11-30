@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.intellij.plugins.discord.components;
+package com.almightyalpaca.intellij.plugins.discord.utils;
 
-import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.application.ApplicationInfo;
 
-public class DiscordIntegrationApplicationComponent implements ApplicationComponent
+public class IntelliJUtil
 {
-    private final DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
-
-    @Override
-    public void initComponent()
+    public static String getDistribution()
     {
-        this.service.init();
-    }
-
-    @Override
-    public void disposeComponent()
-    {
-        this.service.dispose();
+        return ApplicationInfo.getInstance().getBuild().getProductCode();
     }
 }

@@ -15,14 +15,8 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.notifications;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class DiscordIntegrationErrorNotification extends DiscordIntegrationNotification
 {

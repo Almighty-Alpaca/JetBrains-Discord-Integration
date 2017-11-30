@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.intellij.plugins.discord.components;
+package com.almightyalpaca.intellij.plugins.discord.utils;
 
-import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
-import com.intellij.openapi.components.ApplicationComponent;
+import org.jgroups.JChannel;
+import org.jgroups.View;
 
-public class DiscordIntegrationApplicationComponent implements ApplicationComponent
+public class JGroupsUtil
 {
-    private final DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
-
-    @Override
-    public void initComponent()
+    public static boolean isLeader(JChannel channel)
     {
-        this.service.init();
+        return isLeader(channel, channel.getView());
     }
 
-    @Override
-    public void disposeComponent()
+    public static boolean isLeader(JChannel channel, View view)
     {
-        this.service.dispose();
+        return view.getCoord().equals(channel.getAddress());
     }
 }

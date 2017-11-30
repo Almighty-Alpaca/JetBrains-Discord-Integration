@@ -26,23 +26,14 @@ import javax.swing.*;
 
 public class DiscordIntegrationNotification extends Notification
 {
-    public static final Icon ICON = IconLoader.getIcon("/icons/discord/logo/blurple.png");
+    public static final Icon ICON = IconLoader.getIcon("/icons/discord/logos/blurple.png");
 
-    public DiscordIntegrationNotification(@NotNull String groupDisplayId,
-                                          @Nullable String title,
-                                          @Nullable String subtitle,
-                                          @Nullable String content,
-                                          @NotNull NotificationType type)
+    public DiscordIntegrationNotification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type)
     {
         this(groupDisplayId, title, subtitle, content, type, null);
     }
 
-    public DiscordIntegrationNotification(@NotNull String groupDisplayId,
-                                          @Nullable String title,
-                                          @Nullable String subtitle,
-                                          @Nullable String content,
-                                          @NotNull NotificationType type,
-                                          @Nullable NotificationListener listener)
+    public DiscordIntegrationNotification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type, @Nullable NotificationListener listener)
     {
         super(groupDisplayId, ICON, title, subtitle, content, type, listener);
     }
