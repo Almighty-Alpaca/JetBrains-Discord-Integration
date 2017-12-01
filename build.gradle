@@ -26,10 +26,11 @@ version '0.1.0'
 
 patchPluginXml {
     sinceBuild = "171.*"
+    untilBuild = "173.*"
 }
 
 intellij {
-    version '2017.2.6'
+    version '2017.3'
     pluginName 'Discord Integration'
 
     updateSinceUntilBuild = true
