@@ -28,18 +28,14 @@ public class InstanceInfo implements Serializable, Cloneable
 {
     @NotNull
     final UniqueDeque<ProjectInfo> projects;
+    @NotNull
+    private final DistributionInfo distribution;
     private final int id;
 
-    @Override
-    public String toString()
+    public InstanceInfo(int id, @NotNull DistributionInfo distribution)
     {
-        return "InstanceInfo{" + "projects=" + projects + ", id=" + id + ", distributionCode='" + distributionCode + '\'' + ", distributionVersion='" + distributionVersion + '\'' + '}';
+        this(id, distribution, new UniqueLinkedDeque<>());
     }
-
-    @NotNull
-    private final String distributionCode;
-    @NotNull
-    private final String distributionVersion;
 
     public InstanceInfo(int id, @NotNull String distributionCode, @NotNull String distributionVersion)
     {
@@ -48,9 +44,13 @@ public class InstanceInfo implements Serializable, Cloneable
 
     public InstanceInfo(int id, @NotNull String distributionCode, @NotNull String distributionVersion, @NotNull UniqueDeque<ProjectInfo> projects)
     {
+        this(id, new DistributionInfo(distributionCode, distributionVersion), projects);
+    }
+
+    public InstanceInfo(int id, @NotNull DistributionInfo distribution, @NotNull UniqueDeque<ProjectInfo> projects)
+    {
         this.id = id;
-        this.distributionCode = distributionCode;
-        this.distributionVersion = distributionVersion;
+        this.distribution = distribution;
         this.projects = projects;
     }
 
@@ -64,21 +64,21 @@ public class InstanceInfo implements Serializable, Cloneable
         this(id, info.getBuild().getProductCode(), info.getFullVersion(), projects);
     }
 
+    @Override
+    public String toString()
+    {
+        return "InstanceInfo{" + "distribution=" + distribution + ", projects=" + projects + ", id=" + id + '}';
+    }
+
     public int getId()
     {
         return id;
     }
 
     @NotNull
-    public String getDistributionCode()
+    public DistributionInfo getDistribution()
     {
-        return distributionCode;
-    }
-
-    @NotNull
-    public String getDistributionVersion()
-    {
-        return distributionVersion;
+        return distribution;
     }
 
     @NotNull
@@ -97,6 +97,6 @@ public class InstanceInfo implements Serializable, Cloneable
     @Override
     protected InstanceInfo clone()
     {
-        return new InstanceInfo(id, distributionCode, distributionVersion, projects.stream().map(ProjectInfo::clone).collect(Collectors.toCollection(UniqueLinkedDeque::new)));
+        return new InstanceInfo(id, distribution, projects.stream().map(ProjectInfo::clone).collect(Collectors.toCollection(UniqueLinkedDeque::new)));
     }
 }

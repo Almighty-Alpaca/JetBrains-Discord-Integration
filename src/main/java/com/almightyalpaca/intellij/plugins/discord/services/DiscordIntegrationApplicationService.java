@@ -17,10 +17,7 @@ package com.almightyalpaca.intellij.plugins.discord.services;
 
 import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRichPresence;
-import com.almightyalpaca.intellij.plugins.discord.data.FileInfo;
-import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
-import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
-import com.almightyalpaca.intellij.plugins.discord.data.ReplicatedData;
+import com.almightyalpaca.intellij.plugins.discord.data.*;
 import com.almightyalpaca.intellij.plugins.discord.notifications.DiscordIntegrationErrorNotification;
 import com.almightyalpaca.intellij.plugins.discord.rpc.RPC;
 import com.almightyalpaca.intellij.plugins.discord.utils.JGroupsUtil;
@@ -50,7 +47,6 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
     public synchronized void init()
     {
-
         try
         {
             String props = "udp.xml";
@@ -82,12 +78,10 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
             RPC.dispose();
         }
-
     }
 
     public synchronized void dispose()
     {
-
         RPC.dispose();
 
         channel.close();
@@ -96,24 +90,18 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
     private void rpcError(int code, @Nullable String text)
     {
-
         Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
     }
 
     private void rpcDisconnected(int code, @Nullable String text)
     {
-
         Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
     }
 
-    private void rpcReady()
-    {
-    }
+    private void rpcReady() {}
 
     @Override
-    public void receive(Message msg)
-    {
-    }
+    public void receive(Message msg) {}
 
     @Override
     public void viewAccepted(View new_view)
@@ -133,13 +121,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     @Override
     public void dataUpdated()
     {
-
-        DiscordRichPresence presence = RPC.getRichPresence();
-
-        presence.largeImageKey = "intellij-logo-large";
-        presence.largeImageText = "Intellij";
-        presence.smallImageKey = "intellij-logo-small";
-        presence.smallImageText = "Intellij";
+        DiscordRichPresence presence = new DiscordRichPresence();
 
         Deque<InstanceInfo> instances = this.data.getInstances();
 
@@ -147,6 +129,8 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
         if (instance != null)
         {
+            DistributionInfo distribution = instance.getDistribution();
+
             Deque<ProjectInfo> projects = instance.getProjects();
             ProjectInfo project = projects.pollFirst();
 
@@ -161,9 +145,20 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 if (file != null)
                 {
                     presence.state = "Editing " + file.getNameWithExtension();
+
+                    presence.largeImageKey = file.getAssetName() + "-large";
+                    presence.largeImageText = file.getLanguageName();
+
+                    presence.smallImageKey = distribution.getAssetName() + "-small";
+                    presence.smallImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
                 }
             }
 
+            if (presence.largeImageKey == null)
+            {
+                presence.largeImageKey = distribution.getAssetName() + "-large";
+                presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
+            }
         }
 
         RPC.setRichPresence(presence);
