@@ -72,7 +72,10 @@ public class FileInfo implements Serializable, Cloneable
     @NotNull
     public String getNameWithExtension()
     {
-        return name + '.' + extension;
+        if (extension == null)
+            return name;
+        else
+            return name + '.' + extension;
     }
 
     @NotNull
@@ -115,7 +118,13 @@ public class FileInfo implements Serializable, Cloneable
 
     public String getLanguageName()
     {
-        return this.language == FileInfo.Language.UNKNOWN ? this.language.getName() + " (" + extension + ")" : this.language.getName();
+        if (this.language == FileInfo.Language.UNKNOWN)
+            if (extension == null)
+                return this.language.getName();
+            else
+                return this.language.getName() + " ." + extension + "";
+        else
+            return this.language.getName();
     }
 
     public enum Language
@@ -142,7 +151,7 @@ public class FileInfo implements Serializable, Cloneable
         SWIFT("Swift", "swift", "swift"),
         XML("XML", "xml", "xml"),
 
-        UNKNOWN("Unknown language", "unknown");
+        UNKNOWN("Unknown file type", "unknown");
 
         @NotNull
         private static final Map<String, Language> MAP;
