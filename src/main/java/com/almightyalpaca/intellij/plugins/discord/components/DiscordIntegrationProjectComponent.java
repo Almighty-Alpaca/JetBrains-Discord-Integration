@@ -35,7 +35,7 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
 {
     private final DiscordIntegrationApplicationService service = ServiceManager.getService(DiscordIntegrationApplicationService.class);
     private final Project project;
-    private final ProjectInfo projectInfo;
+    private ProjectInfo projectInfo;
     private final Map<VirtualFile, FileInfo> files;
 
     private MessageBusConnection bus;
@@ -45,7 +45,6 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     {
         this.project = project;
 
-        this.projectInfo = new ProjectInfo(this.project, this.time);
         this.files = new HashMap<>();
     }
 
@@ -54,15 +53,18 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     {
         this.bus.disconnect();
         this.bus = null;
-        this.time = 0;
 
         this.service.getData().removeProject(this.service.getInstanceInfo(), this.projectInfo);
+
+        this.time = 0;
+        this.projectInfo = null;
     }
 
     @Override
     public void projectOpened()
     {
         this.time = System.currentTimeMillis();
+        this.projectInfo = new ProjectInfo(this.project, this.time);
 
         this.bus = project.getMessageBus().connect();
         this.bus.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
