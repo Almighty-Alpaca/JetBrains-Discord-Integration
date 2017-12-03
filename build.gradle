@@ -25,7 +25,7 @@ group 'com.almightyalpaca.intellij.plugins.discord'
 version '0.3.0'
 
 patchPluginXml {
-    sinceBuild = "171.*"
+    sinceBuild = "161.*"
     untilBuild = "173.*"
 }
 

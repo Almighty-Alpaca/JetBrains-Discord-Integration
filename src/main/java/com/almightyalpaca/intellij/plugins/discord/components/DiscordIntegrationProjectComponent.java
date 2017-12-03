@@ -95,4 +95,17 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
         if (file != null)
             this.service.getData().addFile(service.getInstanceInfo(), projectInfo, this.files.get(file));
     }
+
+    @Override
+    public void initComponent() {}
+
+    @Override
+    public void disposeComponent() {}
+
+    @NotNull
+    @Override
+    public String getComponentName()
+    {
+        return DiscordIntegrationApplicationComponent.class.getSimpleName();
+    }
 }

@@ -17,6 +17,7 @@ package com.almightyalpaca.intellij.plugins.discord.components;
 
 import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
 import com.intellij.openapi.components.ApplicationComponent;
+import org.jetbrains.annotations.NotNull;
 
 public class DiscordIntegrationApplicationComponent implements ApplicationComponent
 {
@@ -33,4 +34,11 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     {
         this.service.dispose();
     }
-} 
+
+    @NotNull
+    @Override
+    public String getComponentName()
+    {
+        return DiscordIntegrationApplicationComponent.class.getSimpleName();
+    }
+}

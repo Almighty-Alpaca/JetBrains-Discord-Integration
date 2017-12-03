@@ -18,7 +18,6 @@ package com.almightyalpaca.intellij.plugins.discord.data;
 import com.intellij.openapi.application.ApplicationInfo;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,7 +25,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Immutable
 public class DistributionInfo implements Serializable, Cloneable
 {
     @NotNull
