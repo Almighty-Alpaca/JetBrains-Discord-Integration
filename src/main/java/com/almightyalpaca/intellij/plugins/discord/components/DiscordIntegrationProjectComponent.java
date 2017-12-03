@@ -52,7 +52,6 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void projectClosed()
     {
-
         this.bus.disconnect();
         this.bus = null;
         this.time = 0;
@@ -63,7 +62,6 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void projectOpened()
     {
-
         this.time = System.currentTimeMillis();
 
         this.bus = project.getMessageBus().connect();
@@ -75,7 +73,6 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-
         FileInfo fileInfo = new FileInfo(file);
 
         this.files.put(file, fileInfo);
@@ -86,14 +83,12 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-
         this.service.getData().removeFile(service.getInstanceInfo(), projectInfo, this.files.remove(file));
     }
 
     @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event)
     {
-
         VirtualFile file = event.getNewFile();
 
         if (file != null)

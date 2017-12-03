@@ -38,54 +38,65 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
     private volatile JChannel channel;
     private volatile ReplicatedData data;
-    private InstanceInfo instanceInfo;
+    private volatile InstanceInfo instanceInfo;
+    private volatile boolean initialized = false;
 
     public static DiscordIntegrationApplicationService getInstance()
     {
         return ServiceManager.getService(DiscordIntegrationApplicationService.class);
     }
 
-    public synchronized void init()
+    public synchronized void init() throws Exception
     {
-        try
+        if (!this.initialized)
         {
-            String props = "udp.xml";
-
-            this.channel = new JChannel(props);
-            this.channel.setReceiver(this);
-            this.channel.connect("IntelliJDiscordIntegration");
-
-            this.instanceInfo = new InstanceInfo(channel.getAddress().hashCode(), ApplicationInfo.getInstance());
-
-            this.data = new ReplicatedData(channel, this);
-            this.data.addInstance(this.instanceInfo);
-        }
-        catch (Exception e)
-        {
-            Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has thrown an unexpected exception: " + e));
-
-            if (this.channel != null)
+            try
             {
-                this.channel.close();
-                this.channel = null;
-            }
+                String props = "udp.xml";
 
-            if (this.data != null)
+                this.channel = new JChannel(props);
+                this.channel.setReceiver(this);
+                this.channel.connect("IntelliJDiscordIntegration");
+
+                this.instanceInfo = new InstanceInfo(channel.getAddress().hashCode(), ApplicationInfo.getInstance());
+
+                this.data = new ReplicatedData(channel, this);
+                this.data.addInstance(this.instanceInfo);
+
+                this.initialized = true;
+            }
+            catch (Exception e)
             {
-                this.data.close();
-                this.data = null;
-            }
+                if (this.channel != null)
+                {
+                    this.channel.close();
+                    this.channel = null;
+                }
 
-            RPC.dispose();
+                if (this.data != null)
+                {
+                    this.data.close();
+                    this.data = null;
+                }
+
+                RPC.dispose();
+
+                throw e;
+            }
         }
     }
 
     public synchronized void dispose()
     {
-        RPC.dispose();
+        if (this.initialized)
+        {
+            this.initialized = false;
 
-        channel.close();
-        channel = null;
+            RPC.dispose();
+
+            channel.close();
+            channel = null;
+        }
     }
 
     private void rpcError(int code, @Nullable String text)
@@ -119,8 +130,10 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     }
 
     @Override
-    public void dataUpdated()
+    public synchronized void dataUpdated()
     {
+        checkInitialized();
+
         DiscordRichPresence presence = new DiscordRichPresence();
 
         Deque<InstanceInfo> instances = this.data.getInstances();
@@ -164,13 +177,34 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
         RPC.setRichPresence(presence);
     }
 
-    public ReplicatedData getData()
+    public synchronized ReplicatedData getData() throws IllegalStateException
     {
+        checkInitialized();
+
         return data;
     }
 
-    public InstanceInfo getInstanceInfo()
+    public synchronized InstanceInfo getInstanceInfo() throws IllegalStateException
     {
+        checkInitialized();
+
         return instanceInfo;
+    }
+
+    public void checkInitialized()
+    {
+        if (!this.initialized)
+        {
+            try
+            {
+                this.init();
+            }
+            catch (Exception e)
+            {
+                Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has thrown an unexpected exception: " + e));
+
+                throw new IllegalStateException("DiscordIntegrationApplicationService could not be initialized", e);
+            }
+        }
     }
 }

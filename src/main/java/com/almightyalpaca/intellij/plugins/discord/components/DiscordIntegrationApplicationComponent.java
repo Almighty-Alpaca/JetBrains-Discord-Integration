@@ -25,7 +25,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     @Override
     public void initComponent()
     {
-        this.service.init();
+        this.service.checkInitialized();
     }
 
     @Override
@@ -33,4 +33,4 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     {
         this.service.dispose();
     }
-}
+} 

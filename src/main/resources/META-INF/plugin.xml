@@ -20,7 +20,7 @@
     <vendor url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
     <description><![CDATA[
-        Publishes rich presence information about your current project to discord.
+        Publishes rich presence information about your current project to Discord.
         For bugs or feature requests visit <a href="https://github.com/Almighty-Alpaca/Intellij-Discord-Integration">the official github</a>.
     ]]></description>
 
