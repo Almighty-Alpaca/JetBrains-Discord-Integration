@@ -2,6 +2,7 @@ package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.collections.UniqueDeque;
 import com.almightyalpaca.intellij.plugins.discord.collections.UniqueLinkedDeque;
+import com.almightyalpaca.intellij.plugins.discord.rpc.RPC;
 import org.jetbrains.annotations.NotNull;
 import org.jgroups.*;
 import org.jgroups.blocks.MethodCall;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ReplicatedData implements MembershipListener, StateListener, Closeable
@@ -222,6 +224,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected InstanceInfo _addInstance(InstanceInfo instance)
     {
+        RPC.setPresenceDelay(10, TimeUnit.SECONDS);
+
         this.instances.addFirst(instance);
 
         for (ReplicatedData.Notifier notifier : notifiers)
@@ -242,6 +246,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected ProjectInfo _addProject(InstanceInfo instance, ProjectInfo project)
     {
+        RPC.setPresenceDelay(5, TimeUnit.SECONDS);
+
         getLocalObject(instance).projects.addFirst(project);
 
         for (ReplicatedData.Notifier notifier : notifiers)
@@ -262,6 +268,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected FileInfo _addFile(InstanceInfo instance, ProjectInfo project, FileInfo file)
     {
+        RPC.setPresenceDelay(2, TimeUnit.SECONDS);
+
         getLocalObject(instance, project).files.addFirst(file);
 
         for (ReplicatedData.Notifier notifier : notifiers)

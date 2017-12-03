@@ -32,7 +32,7 @@ public class RPC
     @Nullable
     private static volatile Thread delayedPresenceRunner;
     private static volatile long nextPresenceUpdate = Long.MAX_VALUE;
-    private static volatile long presenceDelay = TimeUnit.SECONDS.toNanos(1);
+    private static volatile long presenceDelay = 0;
 
     @Nullable
     private static volatile DiscordRichPresence presence;
