@@ -111,22 +111,22 @@ public class DistributionInfo implements Serializable, Cloneable
 
     public enum Type
     {
-        ANDROID_STUDIO("AI", "Android Studio", "android-studio"),
-        APPCODE("OC", "AppCode", "appcode"),
-        CLION("CL", "CLion", "clion"),
-        DATAGRIP("DB", "DataGrip", "datagrip"),
-        GOLAND("GO", "GoLand", "goland"),
-        INTELLIJ_IDEA_COMMUNITY("IC", "IntelliJ IDEA Community", "intellij-idea"),
-        INTELLIJ_IDEA_ULTIMATE("IU", "IntelliJ IDEA Ultimate", "intellij-idea"),
-        PHPSTORM("PS", "PhpStorm", "phpstorm"),
-        PYCHARM_COMMUNITY("PC", "PyCharm Community", "pycharm"),
-        PYCHARM_EDU("PE", "PyCharm Edu", "pycharm-edu"),
-        PYCHARM_PROFESSIONAL("PY", "PyCharm Professional", "pycharm"),
-        RIDER("RD", "Rider", "rider"),
-        RUBYMINE("RM", "RubyMine", "rubymine"),
-        WEBSTORM("WS", "WebStorm", "webstorm"),
+        ANDROID_STUDIO("Android Studio", "android-studio", "AI"),
+        APPCODE("AppCode", "appcode", "OC"),
+        CLION("CLion", "clion", "CL"),
+        DATAGRIP("DataGrip", "datagrip", "DB"),
+        GOLAND("GoLand", "goland", "GO"),
+        INTELLIJ_IDEA_COMMUNITY("IntelliJ IDEA Community", "intellij-idea", "IC"),
+        INTELLIJ_IDEA_ULTIMATE("IntelliJ IDEA Ultimate", "intellij-idea", "IU"),
+        PHPSTORM("PhpStorm", "phpstorm", "PS"),
+        PYCHARM_COMMUNITY("PyCharm Community", "pycharm", "PC"),
+        PYCHARM_EDU("PyCharm Edu", "pycharm-edu", "PE"),
+        PYCHARM_PROFESSIONAL("PyCharm Professional", "pycharm", "PY"),
+        RIDER("Rider", "rider", "RD"),
+        RUBYMINE("RubyMine", "rubymine", "RM"),
+        WEBSTORM("WebStorm", "webstorm", "WS"),
 
-        UNKNOWN("", "Unknown Distribution", "unknown");
+        UNKNOWN("Unknown Distribution", "unknown", "");
 
         @NotNull
         private static final Map<String, DistributionInfo.Type> MAP;
@@ -136,22 +136,23 @@ public class DistributionInfo implements Serializable, Cloneable
             MAP = new HashMap<>();
 
             for (DistributionInfo.Type distribution : DistributionInfo.Type.values())
-                if (MAP.put(distribution.code, distribution) != null)
+                for (String code : distribution.getCodes())
+                if (MAP.put(code, distribution) != null)
                     throw new ExceptionInInitializerError("Two distributions cannot have the same code");
         }
 
         @NotNull
-        private final String code;
-        @NotNull
         private final String name;
         @NotNull
         private final String assetName;
+        @NotNull
+        private final String[] codes;
 
-        Type(@NotNull String code, @NotNull String name, @NotNull String assetName)
+        Type(@NotNull String name, @NotNull String assetName, @NotNull String... codes)
         {
-            this.code = code;
             this.name = name;
             this.assetName = assetName;
+            this.codes = codes;
         }
 
         public static DistributionInfo.Type get(@NotNull String code)
@@ -166,9 +167,9 @@ public class DistributionInfo implements Serializable, Cloneable
         }
 
         @NotNull
-        public String getCode()
+        public String[] getCodes()
         {
-            return code;
+            return codes;
         }
 
         @NotNull
