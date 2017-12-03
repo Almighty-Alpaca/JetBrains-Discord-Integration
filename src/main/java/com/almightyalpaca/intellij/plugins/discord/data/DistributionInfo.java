@@ -118,6 +118,7 @@ public class DistributionInfo implements Serializable, Cloneable
         GOLAND("GoLand", "goland", "GO"),
         INTELLIJ_IDEA_COMMUNITY("IntelliJ IDEA Community", "intellij-idea", "IC"),
         INTELLIJ_IDEA_ULTIMATE("IntelliJ IDEA Ultimate", "intellij-idea", "IU"),
+        MPS("MPS", "mps", "MPS"),
         PHPSTORM("PhpStorm", "phpstorm", "PS"),
         PYCHARM_COMMUNITY("PyCharm Community", "pycharm", "PC"),
         PYCHARM_EDU("PyCharm Edu", "pycharm-edu", "PE"),
