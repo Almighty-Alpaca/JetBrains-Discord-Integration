@@ -130,9 +130,9 @@ public class FileInfo implements Serializable, Cloneable
     public enum Language
     {
         C("C", "c", "c", "h"),
-        CPP("C++", "c++", "cpp", "hpp"),
+        CPP("C++", "cpp", "cpp", "hpp"),
         CSS("CSS", "css", "css"),
-        C_SHARP("C#", "c#", "cs"),
+        C_SHARP("C#", "csharp", "cs"),
         GO("Go", "go", "go"),
         GRADLE("Gradle", "gradle", "gradle", "gradle.kts"),
         GROOVY("Groovy", "groovy", "groovy"),
