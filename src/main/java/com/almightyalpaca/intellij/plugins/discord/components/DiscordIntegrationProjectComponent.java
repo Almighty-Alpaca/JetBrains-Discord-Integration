@@ -35,9 +35,8 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
 {
     private final DiscordIntegrationApplicationService service = ServiceManager.getService(DiscordIntegrationApplicationService.class);
     private final Project project;
-    private ProjectInfo projectInfo;
     private final Map<VirtualFile, FileInfo> files;
-
+    private ProjectInfo projectInfo;
     private MessageBusConnection bus;
     private long time = 0;
 

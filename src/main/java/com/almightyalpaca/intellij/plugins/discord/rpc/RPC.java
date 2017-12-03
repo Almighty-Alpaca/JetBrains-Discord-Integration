@@ -21,11 +21,19 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+
 @SuppressWarnings("ConstantConditions")
 public class RPC
 {
     @Nullable
     private static volatile Thread callbackRunner;
+    @Nullable
+    private static volatile Thread delayedPresenceRunner;
+    private static volatile long nextPresenceUpdate = Long.MAX_VALUE;
+    private static volatile long presenceDelay = TimeUnit.SECONDS.toNanos(1);
+
     @Nullable
     private static volatile DiscordRichPresence presence;
     private static volatile boolean initialized = false;
@@ -60,39 +68,74 @@ public class RPC
             }, "RPC-Callback-Handler");
 
             callbackRunner.start();
+
+            delayedPresenceRunner = new Thread(() -> {
+                while (!Thread.currentThread().isInterrupted())
+                {
+                    try
+                    {
+                        long nextPresenceUpdate = RPC.nextPresenceUpdate;
+                        long timeout = nextPresenceUpdate - System.nanoTime();
+
+                        if (timeout > 0)
+                        {
+                            LockSupport.parkNanos(timeout);
+                        }
+                        else
+                        {
+                            DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
+
+                            LockSupport.park();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }, "RPC-Delayed-Presence-Handler");
+
+            delayedPresenceRunner.start();
         }
     }
 
     public static synchronized void dispose()
     {
-
         if (RPC.initialized)
         {
             initialized = false;
 
+            delayedPresenceRunner.interrupt();
+            delayedPresenceRunner = null;
+
             DiscordRPC.INSTANCE.Discord_Shutdown();
+
             callbackRunner.interrupt();
             callbackRunner = null;
         }
     }
 
-    @NotNull
-    public static DiscordRichPresence getRichPresence()
-    {
-
-        DiscordRichPresence presence = RPC.presence;
-
-        return presence == null ? new DiscordRichPresence() : presence;
-    }
-
     public static synchronized void setRichPresence(@NotNull DiscordRichPresence presence)
     {
-
-        if (RPC.initialized)
-        {
-
-            DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
-        }
         RPC.presence = presence;
+
+        updatePresence();
+    }
+
+    private static synchronized void updatePresence()
+    {
+        nextPresenceUpdate = System.nanoTime() + presenceDelay;
+
+        LockSupport.unpark(delayedPresenceRunner);
+    }
+
+    public static long getPresenceDelay(TimeUnit unit)
+    {
+        return TimeUnit.NANOSECONDS.convert(presenceDelay, unit);
+    }
+
+    public static void setPresenceDelay(long presenceDelay, TimeUnit unit)
+    {
+        RPC.presenceDelay = unit.toNanos(presenceDelay);
     }
 }
