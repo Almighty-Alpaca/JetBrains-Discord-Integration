@@ -148,6 +148,7 @@ public class FileInfo implements Serializable, Cloneable
         SCALA("Scala", "scala", "scala", "sc"),
         SQL("SQL", "sql", "sql"),
         SWIFT("Swift", "swift", "swift"),
+        TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
         XML("XML", "xml", "xml"),
 
         UNKNOWN("Unknown file type", "unknown");
