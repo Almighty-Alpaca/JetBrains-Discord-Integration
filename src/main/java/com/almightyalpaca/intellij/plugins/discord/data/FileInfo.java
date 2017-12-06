@@ -140,6 +140,7 @@ public class FileInfo implements Serializable, Cloneable
         JAVASCRIPT("JavaScript", "javascript", "js"),
         JSON("JSON", "json", "json"),
         KOTLIN("Kotlin", "kotlin", "kt", "kts"),
+        LUA("Lua", "lua", "lua"),
         MARKDOWN("Markdown", "markdown", "md", "markdown"),
         PHP("PHP", "php", "php"),
         PYTHON("Python", "python", "py"),
