@@ -150,6 +150,7 @@ public class FileInfo implements Serializable, Cloneable
         SQL("SQL", "sql", "sql"),
         SWIFT("Swift", "swift", "swift"),
         TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
+        VUE("Vue.js", "vue", "vue"),
         XML("XML", "xml", "xml"),
 
         UNKNOWN("Unknown file type", "unknown");
