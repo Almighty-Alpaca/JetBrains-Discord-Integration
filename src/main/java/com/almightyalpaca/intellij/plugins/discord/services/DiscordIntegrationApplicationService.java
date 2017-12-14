@@ -24,15 +24,16 @@ import com.almightyalpaca.intellij.plugins.discord.utils.JGroupsUtil;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ServiceManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
 import org.jgroups.View;
 
-import java.util.Deque;
+import java.util.concurrent.TimeUnit;
 
-public class DiscordIntegrationApplicationService implements Receiver, ReplicatedData.UpdateNotifier
+public class DiscordIntegrationApplicationService implements Receiver, ReplicatedData.Notifier
 {
     public static final String CLIENT_ID = "382629176030658561";
 
@@ -61,7 +62,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 this.instanceInfo = new InstanceInfo(channel.getAddress().hashCode(), ApplicationInfo.getInstance());
 
                 this.data = new ReplicatedData(channel, this);
-                this.data.addInstance(this.instanceInfo);
+                this.data.instanceAdd(this.instanceInfo);
 
                 this.initialized = true;
             }
@@ -130,46 +131,58 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     }
 
     @Override
-    public synchronized void dataUpdated()
+    public synchronized void dataUpdated(@NotNull Level level)
     {
         checkInitialized();
 
+        final long timeout;
+        switch (level)
+        {
+            case INSTANCE:
+                timeout = 10;
+                break;
+            case PROJECT:
+                timeout = 5;
+                break;
+            case FILE:
+            default:
+                timeout = 2;
+                break;
+        }
+        RPC.setPresenceDelay(timeout, TimeUnit.SECONDS);
+
+        RenderContext context = new RenderContext(data);
+
+        InstanceInfo instance = context.getInstance();
+        ProjectInfo project = context.getProject();
+        FileInfo file = context.getFile();
+
         DiscordRichPresence presence = new DiscordRichPresence();
-
-        Deque<InstanceInfo> instances = this.data.getInstances();
-
-        InstanceInfo instance = instances.pollFirst();
 
         if (instance != null)
         {
-            DistributionInfo distribution = instance.getDistribution();
-
-            Deque<ProjectInfo> projects = instance.getProjects();
-            ProjectInfo project = projects.pollFirst();
+            InstanceInfo.DistributionInfo distribution = instance.getDistribution();
 
             if (project != null)
             {
                 presence.details = "Working on " + project.getName();
                 presence.startTimestamp = project.getTime() / 1000;
 
-                Deque<FileInfo> files = project.getFiles();
-                FileInfo file = files.pollFirst();
-
                 if (file != null)
                 {
-                    presence.state = "Editing " + file.getNameWithExtension();
+                    presence.state = "Editing " + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
-                    presence.largeImageKey = file.getAssetName() + "-large";
+                    presence.largeImageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
                     presence.largeImageText = file.getLanguageName();
 
-                    presence.smallImageKey = distribution.getAssetName() + "-small";
+                    presence.smallImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-small";
                     presence.smallImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
                 }
             }
 
             if (presence.largeImageKey == null)
             {
-                presence.largeImageKey = distribution.getAssetName() + "-large";
+                presence.largeImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-large";
                 presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
             }
         }

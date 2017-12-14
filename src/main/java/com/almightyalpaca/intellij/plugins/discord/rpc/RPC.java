@@ -80,8 +80,7 @@ public class RPC
                         if (timeout > 0)
                         {
                             LockSupport.parkNanos(timeout);
-                        }
-                        else
+                        } else
                         {
                             DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
 

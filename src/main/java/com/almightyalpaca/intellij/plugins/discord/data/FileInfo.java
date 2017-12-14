@@ -15,6 +15,7 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,26 +28,59 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FileInfo implements Serializable, Cloneable
+public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Comparable<FileInfo>
 {
     @NotNull
-    private final String name;
+    private final String id;
+    @NotNull
+    private final String baseName;
     @Nullable
     private final String extension;
+    private final long timeOpened;
+    private long timeAccessed;
     @NotNull
     private transient FileInfo.Language language;
 
     public FileInfo(@NotNull VirtualFile file)
     {
-        this(file.getNameWithoutExtension(), file.getExtension());
+        this(file.getPath(), file.getNameWithoutExtension(), file.getExtension(), System.currentTimeMillis());
     }
 
-    public FileInfo(@NotNull String name, @Nullable String extension)
+    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, long timeOpened)
     {
-        this.name = name;
-        this.extension = extension;
+        this(id, baseName, extension, timeOpened, timeOpened);
+    }
 
-        this.language = FileInfo.Language.get(getNameWithExtension());
+    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, long timeOpened, long timeAccessed)
+    {
+        this.id = id;
+        this.baseName = baseName;
+        this.extension = extension;
+        this.timeOpened = timeOpened;
+        this.timeAccessed = timeAccessed;
+
+        this.language = FileInfo.Language.get(getName());
+    }
+
+    @NotNull
+    public String getId()
+    {
+        return id;
+    }
+
+    public long getTimeOpened()
+    {
+        return timeOpened;
+    }
+
+    public long getTimeAccessed()
+    {
+        return timeAccessed;
+    }
+
+    void setTimeAccessed(long timeAccessed)
+    {
+        this.timeAccessed = timeAccessed;
     }
 
     @NotNull
@@ -56,9 +90,9 @@ public class FileInfo implements Serializable, Cloneable
     }
 
     @NotNull
-    public String getName()
+    public String getBaseName()
     {
-        return name;
+        return baseName;
     }
 
     @Nullable
@@ -68,39 +102,44 @@ public class FileInfo implements Serializable, Cloneable
     }
 
     @NotNull
-    public String getNameWithExtension()
+    public String getName()
     {
         if (extension == null)
-            return name;
+            return baseName;
         else
-            return name + '.' + extension;
+            return baseName + '.' + extension;
     }
 
     @NotNull
-    public String getAssetName()
+    public String getAssetName(boolean showUnknown)
     {
-        return this.language.getAssetName();
+        return this.language.getAssetName(showUnknown);
+    }
+
+    @Override
+    public int compareTo(@NotNull FileInfo file)
+    {
+        return Long.compare(this.timeAccessed, file.timeAccessed);
     }
 
     @Override
     public boolean equals(Object o)
     {
-        return o instanceof FileInfo && name.equals(((FileInfo) o).name) && Objects.equals(extension, ((FileInfo) o).extension);
+        return o instanceof FileInfo && baseName.equals(((FileInfo) o).baseName) && Objects.equals(extension, ((FileInfo) o).extension);
     }
 
     @Override
     public String toString()
     {
-        return "FileInfo{" + "name='" + name + '\'' + ", extension='" + extension + '\'' + '}';
+        return "FileInfo{" + "baseName='" + baseName + '\'' + ", extension='" + extension + '\'' + '}';
     }
 
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
-    protected FileInfo clone()
+    public FileInfo clone()
     {
-        return this;
+        return new FileInfo(id, baseName, extension, timeOpened, timeAccessed);
     }
-
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
@@ -111,7 +150,7 @@ public class FileInfo implements Serializable, Cloneable
     {
         in.defaultReadObject();
 
-        this.language = FileInfo.Language.get(getNameWithExtension());
+        this.language = FileInfo.Language.get(getName());
     }
 
     public String getLanguageName()
@@ -153,7 +192,15 @@ public class FileInfo implements Serializable, Cloneable
         VUE("Vue.js", "vue", "vue"),
         XML("XML", "xml", "xml"),
 
-        UNKNOWN("Unknown file type", "unknown");
+        UNKNOWN("Unknown file type", "unknown")
+                {
+                    @NotNull
+                    @Override
+                    public String getAssetName(boolean showUnknown)
+                    {
+                        return showUnknown ? super.getAssetName(true) : "none";
+                    }
+                };
 
         @NotNull
         private static final Map<String, Language> MAP;
@@ -213,7 +260,7 @@ public class FileInfo implements Serializable, Cloneable
         }
 
         @NotNull
-        public String getAssetName()
+        public String getAssetName(boolean showUnknown)
         {
             return assetName;
         }

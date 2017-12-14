@@ -15,6 +15,7 @@
   -->
 <idea-plugin>
     <id>com.almightyalpaca.intellij.plugins.discord</id>
+    <idea-version since-build="145.*"/>
     <name>Discord Integration</name>
     <version>@VERSION@</version>
     <vendor url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
@@ -33,6 +34,16 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
                 serviceImplementation="com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService"/>
+        <projectService
+                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationProjectService"/>
+
+        <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
+                             instance="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
+
+        <applicationService
+                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
+        <projectService
+                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings"/>
     </extensions>
 
     <application-components>

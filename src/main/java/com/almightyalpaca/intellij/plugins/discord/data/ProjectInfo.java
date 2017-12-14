@@ -15,46 +15,49 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueDeque;
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueLinkedDeque;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
+import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings;
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import com.intellij.openapi.project.Project;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class ProjectInfo implements Serializable, Cloneable
+public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, Comparable<ProjectInfo>
 {
-    final long time;
+    private final long time;
     @NotNull
-    final String name;
+    private final String name;
+    private final String id;
     @NotNull
-    final String id;
+    private final CloneableMap<String, FileInfo> files;
     @NotNull
-    final UniqueDeque<FileInfo> files;
+    private ProjectSettings<? extends ProjectSettings> settings;
 
-    public ProjectInfo(@NotNull String name, @NotNull String id, long time)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long time)
     {
-        this(name, id, time, new UniqueLinkedDeque<>());
+        this(id, settings, name, time, new CloneableHashMap<>());
     }
 
-    public ProjectInfo(@NotNull String name, @NotNull String id, long time, @NotNull UniqueDeque<FileInfo> files)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long time, @NotNull CloneableMap<String, FileInfo> files)
     {
+        this.settings = settings;
+        this.time = time;
         this.name = name;
         this.id = id;
-        this.time = time;
         this.files = files;
     }
 
-    public ProjectInfo(@NotNull Project project, long time)
+    public ProjectInfo(@NotNull Project project)
     {
-        this(project, time, new UniqueLinkedDeque<>());
-    }
-
-    public ProjectInfo(@NotNull Project project, long time, @NotNull UniqueDeque<FileInfo> files)
-    {
-        this(project.getName(), project.getLocationHash(), time, files);
+        this(project.getLocationHash(), DiscordIntegrationProjectSettings.getInstance(project).getSettings(), project.getName(), System.currentTimeMillis());
     }
 
     public long getTime()
@@ -75,13 +78,36 @@ public class ProjectInfo implements Serializable, Cloneable
     }
 
     @NotNull
-    public UniqueDeque<FileInfo> getFiles()
+    public ProjectSettings<? extends ProjectSettings> getSettings()
     {
-        return new UniqueLinkedDeque<>(files);
+        return settings;
+    }
+
+    @NotNull
+    public CloneableMap<String, FileInfo> getFiles()
+    {
+        return CloneableCollections.unmodifiableCloneableMap(files);
+    }
+
+    void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
+    {
+        this.settings = settings;
     }
 
     @Override
-    public boolean equals(Object obj)
+    public int compareTo(@NotNull ProjectInfo project)
+    {
+        return ObjectUtils.compare(this.getNewestFile(), project.getNewestFile());
+    }
+
+    @Nullable
+    public FileInfo getNewestFile()
+    {
+        return this.files.values().stream().max(Comparator.naturalOrder()).orElse(null);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj)
     {
         return obj instanceof ProjectInfo && Objects.equals(id, ((ProjectInfo) obj).id);
     }
@@ -94,8 +120,19 @@ public class ProjectInfo implements Serializable, Cloneable
 
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
-    protected ProjectInfo clone()
+    public ProjectInfo clone()
     {
-        return new ProjectInfo(name, id, time, files.stream().map(FileInfo::clone).collect(Collectors.toCollection(UniqueLinkedDeque::new)));
+        ProjectSettings<? extends ProjectSettings> s = settings.clone();
+        return new ProjectInfo(id, s, name, time, files.clone());
+    }
+
+    void addFile(@NotNull FileInfo file)
+    {
+        this.files.put(file.getId(), file);
+    }
+
+    void removeFile(@NotNull String fileId)
+    {
+        this.files.remove(fileId);
     }
 }

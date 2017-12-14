@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.intellij.plugins.discord.collections;
+package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 
-import java.util.Deque;
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 
-public interface UniqueDeque<E> extends Deque<E> {}
+public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStorage, ProjectSettings<ProjectSettingsStorage>> implements ProjectSettings<ProjectSettingsStorage>
+{
+    public ProjectSettingsStorage()
+    {
+        super(ProjectSettingsStorage.class, ProjectSettingsStorage::new);
+    }
+}
