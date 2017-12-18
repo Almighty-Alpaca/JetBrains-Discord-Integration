@@ -25,13 +25,16 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DiscordIntegrationProjectComponent implements ProjectComponent, FileEditorManagerListener
+public class DiscordIntegrationProjectComponent extends VirtualFileAdapter implements ProjectComponent, FileEditorManagerListener
 {
     private final DiscordIntegrationApplicationService service = ServiceManager.getService(DiscordIntegrationApplicationService.class);
     private final Project project;
@@ -74,17 +77,13 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-        FileInfo fileInfo = new FileInfo(file);
-
-        this.files.put(file, fileInfo);
-
-        this.service.getData().addFile(service.getInstanceInfo(), projectInfo, fileInfo);
+        this.fileOpened(file);
     }
 
     @Override
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-        this.service.getData().removeFile(service.getInstanceInfo(), projectInfo, this.files.remove(file));
+        this.fileClosed(file);
     }
 
     @Override
@@ -97,10 +96,37 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     }
 
     @Override
-    public void initComponent() {}
+    public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
+    {
+        if (event.getPropertyName().equals(VirtualFile.PROP_NAME) && files.containsKey(event.getFile()))
+        {
+            fileClosed(event.getFile());
+            fileOpened(event.getFile());
+        }
+    }
+
+    public void fileOpened(@NotNull VirtualFile file)
+    {
+        this.service.getData().addFile(service.getInstanceInfo(), projectInfo, this.files.computeIfAbsent(file, FileInfo::new));
+    }
+
+    public void fileClosed(@NotNull VirtualFile file)
+    {
+        this.service.getData().removeFile(service.getInstanceInfo(), projectInfo, this.files.remove(file));
+    }
 
     @Override
-    public void disposeComponent() {}
+    public void initComponent()
+    {
+        VirtualFileManager.getInstance().addVirtualFileListener(this);
+    }
+
+    @Override
+    public void disposeComponent()
+    {
+
+        VirtualFileManager.getInstance().removeVirtualFileListener(this);
+    }
 
     @NotNull
     @Override
