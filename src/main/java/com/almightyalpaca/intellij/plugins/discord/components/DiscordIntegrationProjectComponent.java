@@ -24,6 +24,9 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DiscordIntegrationProjectComponent implements ProjectComponent, FileEditorManagerListener
+public class DiscordIntegrationProjectComponent extends VirtualFileAdapter implements ProjectComponent, FileEditorManagerListener
 {
     @NotNull
     private final DiscordIntegrationProjectService projectService;
@@ -43,7 +46,6 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     private final Map<VirtualFile, FileInfo> files;
     @Nullable
     private MessageBusConnection bus;
-    private long time = 0;
 
     public DiscordIntegrationProjectComponent(@NotNull Project project)
     {
@@ -65,15 +67,11 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
 
         if (this.projectService.getProjectInfo() != null)
             this.applicationService.getData().projectRemove(this.applicationService.getInstanceInfo(), this.projectService.getProjectInfo());
-
-        this.time = 0;
     }
 
     @Override
     public void projectOpened()
     {
-        this.time = System.currentTimeMillis();
-
         this.bus = project.getMessageBus().connect();
         this.bus.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
 
@@ -83,15 +81,13 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     @Override
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-        if (this.projectService.getProjectInfo() != null)
-            this.applicationService.getData().fileAdd(applicationService.getInstanceInfo(), projectService.getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new));
+        this.fileOpened(file);
     }
 
     @Override
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file)
     {
-        if (this.projectService.getProjectInfo() != null)
-            this.applicationService.getData().fileRemove(applicationService.getInstanceInfo(), projectService.getProjectInfo(), this.files.remove(file));
+        this.fileClosed(file);
     }
 
     @Override
@@ -104,10 +100,38 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent, Fil
     }
 
     @Override
-    public void initComponent() {}
+    public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
+    {
+        if (event.getPropertyName().equals(VirtualFile.PROP_NAME) && files.containsKey(event.getFile()))
+        {
+            fileClosed(event.getFile());
+            fileOpened(event.getFile());
+        }
+    }
+
+    public void fileOpened(@NotNull VirtualFile file)
+    {
+        this.applicationService.getData().fileAdd(applicationService.getInstanceInfo(), projectService.getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new));
+    }
+
+    public void fileClosed(@NotNull VirtualFile file)
+    {
+        if (this.projectService.getProjectInfo() != null)
+            this.applicationService.getData().fileRemove(applicationService.getInstanceInfo(), projectService.getProjectInfo(), this.files.remove(file));
+    }
 
     @Override
-    public void disposeComponent() {}
+    public void initComponent()
+    {
+        VirtualFileManager.getInstance().addVirtualFileListener(this);
+    }
+
+    @Override
+    public void disposeComponent()
+    {
+
+        VirtualFileManager.getInstance().removeVirtualFileListener(this);
+    }
 
     @NotNull
     @Override
