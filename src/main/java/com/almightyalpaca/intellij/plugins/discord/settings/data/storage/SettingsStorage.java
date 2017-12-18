@@ -55,7 +55,7 @@ public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends
     }
 
     @NotNull
-    public T clone(V settings)
+    public T clone(@NotNull V settings)
     {
         return setEnabled(settings.isEnabled());
     }

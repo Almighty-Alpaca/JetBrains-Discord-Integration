@@ -25,6 +25,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 {
     public static final long STATE_TIMEOUT = 1000L;
 
+    @NotNull
     private static final TIntObjectHashMap<Method> methods;
     private static final short INSTANCE_ADD = 1;
     private static final short INSTANCE_REMOVE = 2;
@@ -403,7 +404,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     /*-------------------- State Exchange ----------------------*/
 
-    public void getState(OutputStream outputStream) throws Exception
+    public void getState(@NotNull OutputStream outputStream) throws Exception
     {
         try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(outputStream, 1024)))
         {
@@ -413,7 +414,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     /*------------------- Membership Changes ----------------------*/
 
-    public void viewAccepted(View view)
+    public void viewAccepted(@NotNull View view)
     {
         List<Integer> ids = view.getMembers().stream().map(Address::hashCode).collect(Collectors.toList());
 
@@ -421,7 +422,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     }
 
     @SuppressWarnings("unchecked")
-    public void setState(InputStream inputStream) throws Exception
+    public void setState(@NotNull InputStream inputStream) throws Exception
     {
         try (ObjectInputStream ois = new ObjectInputStream(inputStream))
         {
@@ -431,7 +432,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public interface Notifier
     {
-        void dataUpdated(Level level);
+        void dataUpdated(@NotNull Level level);
 
         enum Level
         {

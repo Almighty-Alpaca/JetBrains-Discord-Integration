@@ -77,7 +77,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
 
     @NotNull
     @Override
-    public ApplicationSettingsStorage clone(ApplicationSettings<ApplicationSettingsStorage> settings)
+    public ApplicationSettingsStorage clone(@NotNull ApplicationSettings<ApplicationSettingsStorage> settings)
     {
         return super.clone(settings).setShowUnknownImageFile(settings.isShowUnknownImageFile()).setShowUnknownImageIDE(settings.isShowUnknownImageIDE()).setShowFileExtensions(settings.isShowFileExtensions());
     }

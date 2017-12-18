@@ -123,7 +123,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(@Nullable Object o)
     {
         return o instanceof FileInfo && baseName.equals(((FileInfo) o).baseName) && Objects.equals(extension, ((FileInfo) o).extension);
     }
@@ -131,9 +131,10 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @Override
     public String toString()
     {
-        return "FileInfo{" + "baseName='" + baseName + '\'' + ", extension='" + extension + '\'' + '}';
+        return "FileInfo{" + "id='" + id + '\'' + ", baseName='" + baseName + '\'' + ", extension='" + extension + '\'' + ", timeOpened=" + timeOpened + ", timeAccessed=" + timeAccessed + '}';
     }
 
+    @NotNull
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     public FileInfo clone()
@@ -141,12 +142,12 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
         return new FileInfo(id, baseName, extension, timeOpened, timeAccessed);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException
+    private void writeObject(@NotNull ObjectOutputStream out) throws IOException
     {
         out.defaultWriteObject();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
     {
         in.defaultReadObject();
 

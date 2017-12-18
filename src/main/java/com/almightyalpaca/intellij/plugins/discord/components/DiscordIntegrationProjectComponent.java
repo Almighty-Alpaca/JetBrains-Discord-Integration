@@ -29,7 +29,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +43,6 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
     private final Project project;
     @NotNull
     private final Map<VirtualFile, FileInfo> files;
-    @Nullable
     private MessageBusConnection bus;
 
     public DiscordIntegrationProjectComponent(@NotNull Project project)

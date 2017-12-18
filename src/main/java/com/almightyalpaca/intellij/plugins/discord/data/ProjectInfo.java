@@ -22,7 +22,6 @@ import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyC
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,21 +82,21 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
         return settings;
     }
 
+    void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
+    {
+        this.settings = settings;
+    }
+
     @NotNull
     public CloneableMap<String, FileInfo> getFiles()
     {
         return CloneableCollections.unmodifiableCloneableMap(files);
     }
 
-    void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
-    {
-        this.settings = settings;
-    }
-
     @Override
     public int compareTo(@NotNull ProjectInfo project)
     {
-        return ObjectUtils.compare(this.getNewestFile(), project.getNewestFile());
+        return Objects.compare(getNewestFile(), project.getNewestFile(), Comparator.naturalOrder());
     }
 
     @Nullable
@@ -115,9 +114,10 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @Override
     public String toString()
     {
-        return "ProjectInfo{" + "time=" + time + ", name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + '}';
+        return "ProjectInfo{" + "time=" + time + ", name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + ", settings=" + settings + '}';
     }
 
+    @NotNull
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     public ProjectInfo clone()

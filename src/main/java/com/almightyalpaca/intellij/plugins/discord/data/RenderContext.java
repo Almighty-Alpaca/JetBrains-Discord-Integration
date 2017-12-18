@@ -1,8 +1,8 @@
 package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import kotlin.Pair;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,15 +29,15 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     {
         Triple<InstanceInfo, ProjectInfo,FileInfo> triple = data.instances.values().stream()
                 .flatMap(i -> i.getProjects().values().stream()
-                    .map(p-> Pair.of(i, p))
-                    .filter(p -> p.getLeft().getSettings().isEnabled() && p.getRight().getSettings().isEnabled()))
-                    .flatMap(p -> p.getRight().getFiles().values().stream().map(f-> Triple.of(p.getLeft(),p.getRight(),f)))
-                .max(Comparator.comparing(Triple::getRight))
-                .orElse(Triple.of(null,null,null));
+                    .map(p-> new Pair<>(i, p))
+                    .filter(p -> p.getFirst().getSettings().isEnabled() && p.getSecond().getSettings().isEnabled()))
+                    .flatMap(p -> p.getSecond().getFiles().values().stream().map(f-> new Triple<>(p.getFirst(),p.getSecond(),f)))
+                .max(Comparator.comparing(Triple::getSecond))
+                .orElse(new Triple<>(null,null,null));
 
-        this.instance = triple.getLeft();
-        this.project = triple.getMiddle();
-        this.file = triple.getRight();
+        this.instance = triple.getFirst();
+        this.project = triple.getSecond();
+        this.file = triple.getThird();
     }
 
     @Nullable
@@ -58,6 +58,7 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
         return file;
     }
 
+    @NotNull
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public RenderContext clone()

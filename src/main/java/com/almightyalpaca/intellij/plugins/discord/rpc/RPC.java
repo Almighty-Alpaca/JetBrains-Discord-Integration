@@ -128,12 +128,12 @@ public class RPC
         LockSupport.unpark(delayedPresenceRunner);
     }
 
-    public static long getPresenceDelay(TimeUnit unit)
+    public static long getPresenceDelay(@NotNull TimeUnit unit)
     {
         return TimeUnit.NANOSECONDS.convert(presenceDelay, unit);
     }
 
-    public static void setPresenceDelay(long presenceDelay, TimeUnit unit)
+    public static void setPresenceDelay(long presenceDelay, @NotNull TimeUnit unit)
     {
         RPC.presenceDelay = unit.toNanos(presenceDelay);
     }

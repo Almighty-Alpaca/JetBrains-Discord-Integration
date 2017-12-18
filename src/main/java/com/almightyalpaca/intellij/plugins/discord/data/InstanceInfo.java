@@ -22,7 +22,6 @@ import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyC
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import com.intellij.openapi.application.ApplicationInfo;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @Override
     public String toString()
     {
-        return "InstanceInfo{" + "distribution=" + distribution + ", projects=" + projects + ", id=" + id + '}';
+        return "InstanceInfo{" + "projects=" + projects + ", distribution=" + distribution + ", id=" + id + ", settings=" + settings + '}';
     }
 
     @NotNull
@@ -105,7 +104,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @Override
     public int compareTo(@NotNull InstanceInfo instance)
     {
-        return ObjectUtils.compare(getNewestProject(), instance.getNewestProject());
+        return Objects.compare(getNewestProject(), instance.getNewestProject(), Comparator.naturalOrder());
     }
 
     @Nullable
@@ -120,19 +119,20 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         return obj instanceof InstanceInfo && Objects.equals(id, ((InstanceInfo) obj).id);
     }
 
+    @NotNull
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     public InstanceInfo clone()
     {
-        return new InstanceInfo(id, settings.clone(), distribution, projects.clone());
+        return new InstanceInfo(id, settings.clone(), distribution.clone(), projects.clone());
     }
 
-    void addProject(ProjectInfo project)
+    void addProject(@NotNull ProjectInfo project)
     {
         this.projects.put(project.getId(), project);
     }
 
-    void removeProject(String projectId)
+    void removeProject(@NotNull String projectId)
     {
         this.projects.remove(projectId);
     }
@@ -212,6 +212,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
             this.type = Type.get(code);
         }
 
+        @NotNull
         @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
         @Override
         public DistributionInfo clone()

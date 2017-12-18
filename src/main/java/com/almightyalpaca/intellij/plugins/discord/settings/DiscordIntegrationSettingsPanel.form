@@ -93,7 +93,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="Show Unknown Image for unknown IDEs"/>
+                  <text value="Show image for unknown IDEs"/>
                 </properties>
               </component>
             </children>
@@ -117,7 +117,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="Show Unknown Image for unknown IDEs"/>
+                  <text value="Show image for unknown files"/>
                 </properties>
               </component>
             </children>

@@ -24,6 +24,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 {
     private final DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
 
+    @NotNull
     private final Application application;
 
     public DiscordIntegrationApplicationComponent(@NotNull Application application)
@@ -31,6 +32,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
         this.application = application;
     }
 
+    @NotNull
     public Application getApplication()
     {
         return application;

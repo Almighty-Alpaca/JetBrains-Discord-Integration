@@ -116,7 +116,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     public void receive(Message msg) {}
 
     @Override
-    public void viewAccepted(View new_view)
+    public void viewAccepted(@NotNull View view)
     {
         if (JGroupsUtil.isLeader(channel))
         {
