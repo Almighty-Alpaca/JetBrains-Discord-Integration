@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +66,8 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
 
         if (this.projectService.getProjectInfo() != null)
             this.applicationService.getData().projectRemove(this.applicationService.getInstanceInfo(), this.projectService.getProjectInfo());
+
+        files.clear();
     }
 
     @Override

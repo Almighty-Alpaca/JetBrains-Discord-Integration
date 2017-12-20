@@ -23,6 +23,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     private boolean showUnknownImageIDE = true;
     private boolean showUnknownImageFile = true;
     private boolean showFileExtensions = true;
+    private boolean hideReadOnlyFiles = true;
 
     public ApplicationSettingsStorage()
     {
@@ -68,17 +69,41 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this;
     }
 
+    @Override
+    public boolean isHideReadOnlyFiles()
+    {
+        return hideReadOnlyFiles;
+    }
+
+    public ApplicationSettingsStorage setHideReadOnlyFiles(boolean hideReadOnlyFiles)
+    {
+        this.hideReadOnlyFiles = hideReadOnlyFiles;
+        return this;
+    }
+
     @NotNull
     @Override
     public ApplicationSettingsStorage clone()
     {
-        return super.clone().setShowUnknownImageFile(showUnknownImageFile).setShowUnknownImageIDE(showUnknownImageIDE).setShowFileExtensions(showFileExtensions);
+        // @formatter:off
+        return super.clone()
+                .setShowUnknownImageFile(showUnknownImageFile)
+                .setShowUnknownImageIDE(showUnknownImageIDE)
+                .setShowFileExtensions(showFileExtensions)
+                .setHideReadOnlyFiles(hideReadOnlyFiles);
+        // @formatter:on
     }
 
     @NotNull
     @Override
     public ApplicationSettingsStorage clone(@NotNull ApplicationSettings<ApplicationSettingsStorage> settings)
     {
-        return super.clone(settings).setShowUnknownImageFile(settings.isShowUnknownImageFile()).setShowUnknownImageIDE(settings.isShowUnknownImageIDE()).setShowFileExtensions(settings.isShowFileExtensions());
+        // @formatter:off
+        return super.clone(settings)
+                .setShowUnknownImageFile(settings.isShowUnknownImageFile())
+                .setShowUnknownImageIDE(settings.isShowUnknownImageIDE())
+                .setShowFileExtensions(settings.isShowFileExtensions())
+                .setHideReadOnlyFiles(settings.isHideReadOnlyFiles());
+        // @formatter:on
     }
 }

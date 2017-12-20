@@ -37,25 +37,27 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @Nullable
     private final String extension;
     private final long timeOpened;
+    private boolean readOnly;
     private long timeAccessed;
     @NotNull
     private transient FileInfo.Language language;
 
     public FileInfo(@NotNull VirtualFile file)
     {
-        this(file.getPath(), file.getNameWithoutExtension(), file.getExtension(), System.currentTimeMillis());
+        this(file.getPath(), file.getNameWithoutExtension(), file.getExtension(), !file.isWritable(), System.currentTimeMillis());
     }
 
-    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, long timeOpened)
+    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, boolean readOnly, long timeOpened)
     {
-        this(id, baseName, extension, timeOpened, timeOpened);
+        this(id, baseName, extension, readOnly, timeOpened, timeOpened);
     }
 
-    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, long timeOpened, long timeAccessed)
+    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, boolean readOnly, long timeOpened, long timeAccessed)
     {
         this.id = id;
         this.baseName = baseName;
         this.extension = extension;
+        this.readOnly = readOnly;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
 
@@ -116,6 +118,16 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
         return this.language.getAssetName(showUnknown);
     }
 
+    public boolean isReadOnly()
+    {
+        return readOnly;
+    }
+
+    void setReadOnly(boolean readOnly)
+    {
+        this.readOnly = readOnly;
+    }
+
     @Override
     public int compareTo(@NotNull FileInfo file)
     {
@@ -139,7 +151,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @Override
     public FileInfo clone()
     {
-        return new FileInfo(id, baseName, extension, timeOpened, timeAccessed);
+        return new FileInfo(id, baseName, extension, readOnly, timeOpened, timeAccessed);
     }
 
     private void writeObject(@NotNull ObjectOutputStream out) throws IOException

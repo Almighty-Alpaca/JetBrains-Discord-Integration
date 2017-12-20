@@ -133,6 +133,9 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     @Override
     public synchronized void dataUpdated(@NotNull Level level)
     {
+        if (!JGroupsUtil.isLeader(channel))
+            return;
+
         checkInitialized();
 
         final long timeout;
@@ -141,6 +144,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
             case INSTANCE:
                 timeout = 10;
                 break;
+            case UNKNOWN:
             case PROJECT:
                 timeout = 5;
                 break;
@@ -204,7 +208,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
         return instanceInfo;
     }
 
-    public void checkInitialized()
+    public synchronized void checkInitialized()
     {
         if (!this.initialized)
         {

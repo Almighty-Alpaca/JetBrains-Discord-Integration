@@ -35,6 +35,7 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationUnknownImageIDE;
     private JBCheckBox applicationUnknownImageFile;
     private JBCheckBox applicationShowFileExtensions;
+    private JBCheckBox applicationHideReadOnlyFiles;
     private DiscordIntegrationApplicationSettings optionsProviderApplication;
     private DiscordIntegrationProjectSettings optionsProviderProject;
 
@@ -51,7 +52,14 @@ public class DiscordIntegrationSettingsPanel
 
     public boolean isModified()
     {
-        return (projectEnabled.isSelected() != optionsProviderProject.getState().isEnabled()) || (applicationEnabled.isSelected() != optionsProviderApplication.getState().isEnabled()) || (applicationUnknownImageIDE.isSelected() != optionsProviderApplication.getState().isShowUnknownImageIDE()) || (applicationUnknownImageFile.isSelected() != optionsProviderApplication.getState().isShowUnknownImageFile()) || (applicationShowFileExtensions.isSelected() != optionsProviderApplication.getState().isShowFileExtensions());
+        // @formatter:off
+        return (projectEnabled.isSelected() != optionsProviderProject.getState().isEnabled())
+                || (applicationEnabled.isSelected() != optionsProviderApplication.getState().isEnabled())
+                || (applicationUnknownImageIDE.isSelected() != optionsProviderApplication.getState().isShowUnknownImageIDE())
+                || (applicationUnknownImageFile.isSelected() != optionsProviderApplication.getState().isShowUnknownImageFile())
+                || (applicationShowFileExtensions.isSelected() != optionsProviderApplication.getState().isShowFileExtensions())
+                || (applicationHideReadOnlyFiles.isSelected() != optionsProviderApplication.getState().isHideReadOnlyFiles());
+        // @formatter:on
     }
 
     public void apply()
@@ -61,6 +69,7 @@ public class DiscordIntegrationSettingsPanel
         optionsProviderApplication.getState().setShowUnknownImageIDE(applicationUnknownImageIDE.isSelected());
         optionsProviderApplication.getState().setShowUnknownImageFile(applicationUnknownImageFile.isSelected());
         optionsProviderApplication.getState().setShowFileExtensions(applicationUnknownImageFile.isSelected());
+        optionsProviderApplication.getState().setHideReadOnlyFiles(applicationHideReadOnlyFiles.isSelected());
 
         DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
 
@@ -78,5 +87,6 @@ public class DiscordIntegrationSettingsPanel
         applicationUnknownImageIDE.setSelected(optionsProviderApplication.getState().isShowUnknownImageIDE());
         applicationUnknownImageFile.setSelected(optionsProviderApplication.getState().isShowUnknownImageFile());
         applicationShowFileExtensions.setSelected(optionsProviderApplication.getState().isShowFileExtensions());
+        applicationHideReadOnlyFiles.setSelected(optionsProviderApplication.getState().isHideReadOnlyFiles());
     }
 }

@@ -36,12 +36,13 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     private static final short FILE_ADD = 201;
     private static final short FILE_REMOVE = 202;
     private static final short FILE_SET_TIME_ACCESSED = 203;
+    private static final short FILE_SET_READ_ONLY = 204;
 
     static
     {
         try
         {
-            methods = new TIntObjectHashMap<>(6);
+            methods = new TIntObjectHashMap<>(10);
 
             methods.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", InstanceInfo.class));
             methods.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", int.class));
@@ -54,6 +55,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             methods.put(FILE_ADD, ReplicatedData.class.getDeclaredMethod("_fileAdd", int.class, String.class, FileInfo.class));
             methods.put(FILE_REMOVE, ReplicatedData.class.getDeclaredMethod("_fileRemove", int.class, String.class, String.class));
             methods.put(FILE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_fileSetTimeAccessed", int.class, String.class, String.class, long.class));
+            methods.put(FILE_SET_READ_ONLY, ReplicatedData.class.getDeclaredMethod("_fileSetReadOnly", int.class, String.class, String.class, boolean.class));
 
             methods.forEachValue(m -> {
                 m.setAccessible(true);
@@ -282,6 +284,19 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
+    public void fileSetReadOnly(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file, boolean readOnly)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(FILE_SET_READ_ONLY, instance.getId(), project.getId(), file.getId(), readOnly);
+            this.dispatcher.callRemoteMethods(null, call, call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("fileSetReadOnly(" + instance + ", " + project + ", " + file + ", " + readOnly + ") failed", e);
+        }
+    }
+
     /*------------------------ Callbacks -----------------------*/
 
     protected void _instanceAdd(@NotNull InstanceInfo instance)
@@ -402,6 +417,27 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 
+    protected void _fileSetReadOnly(int instanceId, @NotNull String projectId, @NotNull String fileId, boolean readOnly)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                FileInfo file = project.getFiles().get(fileId);
+
+                if (file != null)
+                    file.setReadOnly(readOnly);
+            }
+        }
+
+        for (ReplicatedData.Notifier notifier : notifiers)
+            notifier.dataUpdated(Notifier.Level.FILE);
+    }
+
     /*-------------------- State Exchange ----------------------*/
 
     public void getState(@NotNull OutputStream outputStream) throws Exception
@@ -438,7 +474,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         {
             INSTANCE,
             PROJECT,
-            FILE
+            FILE,
+            UNKNOWN
         }
     }
 }
