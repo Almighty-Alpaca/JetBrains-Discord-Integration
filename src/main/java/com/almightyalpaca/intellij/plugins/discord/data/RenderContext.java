@@ -16,8 +16,6 @@
 package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
-import kotlin.Pair;
-import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,20 +41,27 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     public RenderContext(@NotNull ReplicatedData data)
     {
         // @formatter:off
-        Triple<InstanceInfo, ProjectInfo,FileInfo> triple = data.instances.values().stream()
-                .flatMap(i -> i.getProjects().values().stream()
-                    .map(p-> new Pair<>(i, p))
-                    .filter(p -> p.getFirst().getSettings().isEnabled() && p.getSecond().getSettings().isEnabled()))
-                    .flatMap(p -> p.getSecond().getFiles().values().stream()
-                            .map(f-> new Triple<>(p.getFirst(),p.getSecond(),f)))
-                .filter(t -> !t.getFirst().getSettings().isHideReadOnlyFiles() || !t.getThird().isReadOnly())
-                .max(Comparator.comparing(Triple::getSecond))
-                .orElse(new Triple<>(null,null,null));
-        // @formatter:on
+        this.instance = data.getInstances().values().stream().max(Comparator.naturalOrder()).orElse(null);
+        if (this.instance != null)
+        {
+            this.project = this.instance.getProjects().values().stream()
+                    .max(Comparator.naturalOrder())
+                    .orElse(null);
 
-        this.instance = triple.getFirst();
-        this.project = triple.getSecond();
-        this.file = triple.getThird();
+            if (this.project != null)
+                this.file = this.project.getFiles().values().stream()
+                        .filter(f -> !instance.getSettings().isHideReadOnlyFiles() || !f.isReadOnly())
+                        .max(Comparator.naturalOrder())
+                        .orElse(null);
+            else
+                this.file = null;
+        }
+        else
+        {
+            this.project = null;
+            this.file = null;
+        }
+        // @formatter:on
     }
 
     @Nullable

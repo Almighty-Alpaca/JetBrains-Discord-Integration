@@ -7,7 +7,6 @@ import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSett
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jgroups.*;
 import org.jgroups.blocks.MethodCall;
 import org.jgroups.blocks.RequestOptions;
@@ -17,7 +16,10 @@ import org.jgroups.util.Util;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
@@ -27,16 +29,23 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     @NotNull
     private static final TIntObjectHashMap<Method> methods;
+    /*
+     *    xx3 -> change settings
+     *    xx4 -> set time accessed
+     * >= x50 -> custom
+     */
     private static final short INSTANCE_ADD = 1;
     private static final short INSTANCE_REMOVE = 2;
     private static final short INSTANCE_SET_SETTINGS = 3;
+    private static final short INSTANCE_SET_TIME_ACCESSED = 4;
     private static final short PROJECT_ADD = 101;
     private static final short PROJECT_REMOVE = 102;
     private static final short PROJECT_SET_SETTINGS = 103;
+    private static final short PROJECT_SET_TIME_ACCESSED = 104;
     private static final short FILE_ADD = 201;
     private static final short FILE_REMOVE = 202;
-    private static final short FILE_SET_TIME_ACCESSED = 203;
-    private static final short FILE_SET_READ_ONLY = 204;
+    private static final short FILE_SET_TIME_ACCESSED = 204;
+    private static final short FILE_SET_READ_ONLY = 250;
 
     static
     {
@@ -47,10 +56,12 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             methods.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", InstanceInfo.class));
             methods.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", int.class));
             methods.put(INSTANCE_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_instanceSetSettings", int.class, ApplicationSettings.class));
+            methods.put(INSTANCE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_instanceSetTimeAccessed", int.class, long.class));
 
             methods.put(PROJECT_ADD, ReplicatedData.class.getDeclaredMethod("_projectAdd", int.class, ProjectInfo.class));
             methods.put(PROJECT_REMOVE, ReplicatedData.class.getDeclaredMethod("_projectRemove", int.class, String.class));
             methods.put(PROJECT_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_projectSetSettings", int.class, String.class, ProjectSettings.class));
+            methods.put(PROJECT_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_projectSetTimeAccessed", int.class, String.class, long.class));
 
             methods.put(FILE_ADD, ReplicatedData.class.getDeclaredMethod("_fileAdd", int.class, String.class, FileInfo.class));
             methods.put(FILE_REMOVE, ReplicatedData.class.getDeclaredMethod("_fileRemove", int.class, String.class, String.class));
@@ -161,12 +172,6 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         return new RenderContext(this);
     }
 
-    @Nullable
-    public InstanceInfo getNewestInstance()
-    {
-        return this.instances.values().stream().max(Comparator.naturalOrder()).orElse(null);
-    }
-
     public void instanceAdd(@NotNull InstanceInfo instance)
     {
         try
@@ -206,6 +211,19 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
+    public void instanceSetTimeAccessed(@NotNull InstanceInfo instance, long timeAccessed)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(INSTANCE_SET_TIME_ACCESSED, instance.getId(), timeAccessed);
+            this.dispatcher.callRemoteMethods(null, call, call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("instanceSetTimeAccessed(" + instance + ", " + timeAccessed + ") failed", e);
+        }
+    }
+
     public void projectAdd(@NotNull InstanceInfo instance, @NotNull ProjectInfo project)
     {
         try
@@ -242,6 +260,19 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         catch (Exception e)
         {
             throw new RuntimeException("projectSetSettings(" + instance + ", " + project + ", " + settings + ") failed", e);
+        }
+    }
+
+    public void projectSetTimeAccessed(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, long timeAccessed)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(PROJECT_SET_TIME_ACCESSED, instance.getId(), project.getId(), timeAccessed);
+            this.dispatcher.callRemoteMethods(null, call, call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("projectSetTimeAccessed(" + instance + ", " + project + ", " + timeAccessed + ") failed", e);
         }
     }
 
@@ -326,6 +357,19 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
+    protected void _instanceSetTimeAccessed(int instanceId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            instance.setTimeAccessed(timeAccessed);
+        }
+
+        for (ReplicatedData.Notifier notifier : notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
+    }
+
     protected void _projectAdd(int instanceId, @NotNull ProjectInfo project)
     {
         InstanceInfo instance = this.instances.get(instanceId);
@@ -358,6 +402,24 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
             if (project != null)
                 project.setSettings(settings);
+        }
+
+        for (ReplicatedData.Notifier notifier : notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
+    }
+
+    protected void _projectSetTimeAccessed(int instanceId, @NotNull String projectId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                project.setTimeAccessed(timeAccessed);
+            }
         }
 
         for (ReplicatedData.Notifier notifier : notifiers)
@@ -409,7 +471,9 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 FileInfo file = project.getFiles().get(fileId);
 
                 if (file != null)
+                {
                     file.setTimeAccessed(timeAccessed);
+                }
             }
         }
 

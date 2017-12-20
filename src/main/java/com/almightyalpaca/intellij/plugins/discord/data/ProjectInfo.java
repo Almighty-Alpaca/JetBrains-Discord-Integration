@@ -26,29 +26,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Objects;
 
 public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, Comparable<ProjectInfo>
 {
-    private final long time;
     @NotNull
     private final String name;
     private final String id;
     @NotNull
     private final CloneableMap<String, FileInfo> files;
+    private final long timeOpened;
     @NotNull
     private ProjectSettings<? extends ProjectSettings> settings;
+    private long timeAccessed;
 
-    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long time)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened)
     {
-        this(id, settings, name, time, new CloneableHashMap<>());
+        this(id, settings, name, timeOpened, timeOpened);
     }
 
-    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long time, @NotNull CloneableMap<String, FileInfo> files)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
+    {
+        this(id, settings, name, timeOpened, timeAccessed, new CloneableHashMap<>());
+    }
+
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, FileInfo> files)
     {
         this.settings = settings;
-        this.time = time;
+        this.timeOpened = timeOpened;
+        this.timeAccessed = timeAccessed;
         this.name = name;
         this.id = id;
         this.files = files;
@@ -59,9 +65,19 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
         this(project.getLocationHash(), DiscordIntegrationProjectSettings.getInstance(project).getSettings(), project.getName(), System.currentTimeMillis());
     }
 
-    public long getTime()
+    public long getTimeOpened()
     {
-        return time;
+        return timeOpened;
+    }
+
+    public long getTimeAccessed()
+    {
+        return timeAccessed;
+    }
+
+    void setTimeAccessed(long timeAccessed)
+    {
+        this.timeAccessed = timeAccessed;
     }
 
     @NotNull
@@ -96,13 +112,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @Override
     public int compareTo(@NotNull ProjectInfo project)
     {
-        return Objects.compare(getNewestFile(), project.getNewestFile(), Comparator.naturalOrder());
-    }
-
-    @Nullable
-    public FileInfo getNewestFile()
-    {
-        return this.files.values().stream().max(Comparator.naturalOrder()).orElse(null);
+        return Long.compare(timeAccessed, project.timeAccessed);
     }
 
     @Override
@@ -114,7 +124,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @Override
     public String toString()
     {
-        return "ProjectInfo{" + "time=" + time + ", name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + ", settings=" + settings + '}';
+        return "ProjectInfo{" + "name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + ", timeOpened=" + timeOpened + ", settings=" + settings + ", timeAccessed=" + timeAccessed + '}';
     }
 
     @NotNull
@@ -123,7 +133,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     public ProjectInfo clone()
     {
         ProjectSettings<? extends ProjectSettings> s = settings.clone();
-        return new ProjectInfo(id, s, name, time, files.clone());
+        return new ProjectInfo(id, s, name, timeOpened, timeAccessed, files.clone());
     }
 
     void addFile(@NotNull FileInfo file)

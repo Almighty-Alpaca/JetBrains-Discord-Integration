@@ -15,6 +15,10 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.settings;
 
+import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
+import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
+import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationProjectService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -26,6 +30,9 @@ import javax.swing.*;
 
 public class DiscordIntegrationProjectConfigurable implements SearchableConfigurable
 {
+
+    private final DiscordIntegrationApplicationService applicationService = DiscordIntegrationApplicationService.getInstance();
+
     @NotNull
     private final Project project;
     @NotNull
@@ -87,9 +94,14 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     public void apply()
     {
         if (panel != null)
+        {
             panel.apply();
 
-        // TODO: set settings on data
+            InstanceInfo instance = applicationService.getInstanceInfo();
+            ProjectInfo project = DiscordIntegrationProjectService.getInstance(optionsProviderProject.getProject()).getProjectInfo();
+            applicationService.getData().instanceSetSettings(instance, optionsProviderApplication.getSettings());
+            applicationService.getData().projectSetSettings(instance, project, optionsProviderProject.getSettings());
+        }
     }
 
     @Override

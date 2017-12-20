@@ -15,10 +15,6 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.settings;
 
-import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
-import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
-import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
-import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationProjectService;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
@@ -70,14 +66,6 @@ public class DiscordIntegrationSettingsPanel
         optionsProviderApplication.getState().setShowUnknownImageFile(applicationUnknownImageFile.isSelected());
         optionsProviderApplication.getState().setShowFileExtensions(applicationUnknownImageFile.isSelected());
         optionsProviderApplication.getState().setHideReadOnlyFiles(applicationHideReadOnlyFiles.isSelected());
-
-        DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
-
-        InstanceInfo instance = service.getInstanceInfo();
-        ProjectInfo project = DiscordIntegrationProjectService.getInstance(optionsProviderProject.getProject()).getProjectInfo();
-
-        service.getData().instanceSetSettings(instance, optionsProviderApplication.getSettings());
-        service.getData().projectSetSettings(instance, project, optionsProviderProject.getSettings());
     }
 
     public void reset()

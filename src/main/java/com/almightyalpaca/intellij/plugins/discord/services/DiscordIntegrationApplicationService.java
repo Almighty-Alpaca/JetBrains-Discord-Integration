@@ -170,7 +170,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
             if (project != null)
             {
                 presence.details = "Working on " + project.getName();
-                presence.startTimestamp = project.getTime() / 1000;
+                presence.startTimestamp = project.getTimeOpened() / 1000;
 
                 if (file != null)
                 {

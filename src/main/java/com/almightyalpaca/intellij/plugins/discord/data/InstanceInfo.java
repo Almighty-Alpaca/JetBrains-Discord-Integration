@@ -23,13 +23,11 @@ import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationAp
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import com.intellij.openapi.application.ApplicationInfo;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -41,36 +39,60 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @NotNull
     private final DistributionInfo distribution;
     private final int id;
+    private final long timeOpened;
     @NotNull
     private ApplicationSettings<?> settings;
+    private long timeAccessed;
 
-    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull String distributionCode, @NotNull String distributionVersion)
+    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
     {
-        this(id, settings, new DistributionInfo(distributionCode, distributionVersion));
+        this(id, settings, distributionCode, distributionVersion, timeOpened, timeOpened);
     }
 
-    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution)
+    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened, long timeAccessed)
     {
-        this(id, settings, distribution, new CloneableHashMap<>());
+        this(id, settings, new DistributionInfo(distributionCode, distributionVersion), timeOpened, timeAccessed);
     }
 
-    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, @NotNull CloneableMap<String, ProjectInfo> projects)
+    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
+    {
+        this(id, settings, distribution, timeOpened, timeAccessed, new CloneableHashMap<>());
+    }
+
+    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, ProjectInfo> projects)
     {
         this.id = id;
         this.settings = settings;
         this.distribution = distribution;
+        this.timeOpened = timeOpened;
+        this.timeAccessed = timeAccessed;
         this.projects = projects;
     }
 
     public InstanceInfo(int id, @NotNull ApplicationInfo info)
     {
-        this(id, DiscordIntegrationApplicationSettings.getInstance().getSettings(), info.getBuild().getProductCode(), info.getFullVersion());
+        this(id, DiscordIntegrationApplicationSettings.getInstance().getSettings(), info.getBuild().getProductCode(), info.getFullVersion(), System.currentTimeMillis());
     }
 
     @Override
     public String toString()
     {
         return "InstanceInfo{" + "projects=" + projects + ", distribution=" + distribution + ", id=" + id + ", settings=" + settings + '}';
+    }
+
+    public long getTimeOpened()
+    {
+        return timeOpened;
+    }
+
+    public long getTimeAccessed()
+    {
+        return timeAccessed;
+    }
+
+    void setTimeAccessed(long timeAccessed)
+    {
+        this.timeAccessed = timeAccessed;
     }
 
     @NotNull
@@ -104,13 +126,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @Override
     public int compareTo(@NotNull InstanceInfo instance)
     {
-        return Objects.compare(getNewestProject(), instance.getNewestProject(), Comparator.naturalOrder());
-    }
-
-    @Nullable
-    public ProjectInfo getNewestProject()
-    {
-        return this.projects.values().stream().max(Comparator.naturalOrder()).orElse(null);
+        return Long.compare(timeAccessed, instance.timeAccessed);
     }
 
     @Override
@@ -124,7 +140,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @Override
     public InstanceInfo clone()
     {
-        return new InstanceInfo(id, settings.clone(), distribution.clone(), projects.clone());
+        return new InstanceInfo(id, settings.clone(), distribution.clone(), timeOpened, timeAccessed, projects.clone());
     }
 
     void addProject(@NotNull ProjectInfo project)
