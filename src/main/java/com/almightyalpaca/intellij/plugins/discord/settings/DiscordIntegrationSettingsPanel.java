@@ -64,7 +64,7 @@ public class DiscordIntegrationSettingsPanel
         optionsProviderApplication.getState().setEnabled(applicationEnabled.isSelected());
         optionsProviderApplication.getState().setShowUnknownImageIDE(applicationUnknownImageIDE.isSelected());
         optionsProviderApplication.getState().setShowUnknownImageFile(applicationUnknownImageFile.isSelected());
-        optionsProviderApplication.getState().setShowFileExtensions(applicationUnknownImageFile.isSelected());
+        optionsProviderApplication.getState().setShowFileExtensions(applicationShowFileExtensions.isSelected());
         optionsProviderApplication.getState().setHideReadOnlyFiles(applicationHideReadOnlyFiles.isSelected());
     }
 
