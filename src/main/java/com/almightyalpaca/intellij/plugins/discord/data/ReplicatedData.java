@@ -92,10 +92,9 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @NotNull
     protected RpcDispatcher dispatcher;
 
-    public ReplicatedData(JChannel channel, Notifier... notifiers) throws Exception
+    public ReplicatedData(@NotNull JChannel channel, @NotNull Notifier... notifiers) throws Exception
     {
-        if (notifiers != null)
-            this.notifiers.addAll(Arrays.asList(notifiers));
+        this.notifiers.addAll(Arrays.asList(notifiers));
 
         this.instances = new CloneableHashMap<>();
 
@@ -131,21 +130,19 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      *
      * @param timeout The timeout (in milliseconds) for blocking updates
      */
-    public void setTimeout(Integer timeout)
+    public void setTimeout(long timeout)
     {
         call_options.timeout(timeout);
     }
 
-    public void addNotifier(Notifier n)
+    public void addNotifier(@NotNull Notifier n)
     {
-        if (n != null)
-            notifiers.add(n);
+        notifiers.add(n);
     }
 
-    public void removeNotifier(Notifier n)
+    public void removeNotifier(@NotNull Notifier n)
     {
-        if (n != null)
-            notifiers.remove(n);
+        notifiers.remove(n);
     }
 
     @Override
@@ -167,6 +164,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         return CloneableCollections.unmodifiableCloneableMap(instances);
     }
 
+    @NotNull
     public RenderContext getRenderContext()
     {
         return new RenderContext(this);

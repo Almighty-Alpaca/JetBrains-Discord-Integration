@@ -15,17 +15,18 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.jgroups.JChannel;
 import org.jgroups.View;
 
 public class JGroupsUtil
 {
-    public static boolean isLeader(JChannel channel)
+    public static boolean isLeader(@NotNull JChannel channel)
     {
         return isLeader(channel, channel.getView());
     }
 
-    public static boolean isLeader(JChannel channel, View view)
+    public static boolean isLeader(@NotNull JChannel channel, @NotNull View view)
     {
         return view.getCoord().equals(channel.getAddress());
     }

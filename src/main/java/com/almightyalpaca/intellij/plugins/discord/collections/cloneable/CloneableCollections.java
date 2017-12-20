@@ -2,6 +2,7 @@ package com.almightyalpaca.intellij.plugins.discord.collections.cloneable;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,8 +13,8 @@ import java.util.stream.StreamSupport;
 @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass", "SuspiciousToArrayCall", "SuspiciousSystemArraycopy", "unused"})
 public class CloneableCollections
 {
-
-    public static <K, V> CloneableMap<K, V> unmodifiableCloneableMap(CloneableMap<K, V> m)
+    @NotNull
+    public static <K, V> CloneableMap<K, V> unmodifiableCloneableMap(@NotNull CloneableMap<K, V> m)
     {
         return new CloneableCollections.UnmodifiableCloneableMap<>(m);
     }
@@ -22,15 +23,17 @@ public class CloneableCollections
     {
         private static final long serialVersionUID = -1034234728574286014L;
 
+        @NotNull
         private final CloneableMap<K, V> m;
+        @Nullable
         private transient Set<K> keySet;
+        @Nullable
         private transient Set<Map.Entry<K, V>> entrySet;
+        @Nullable
         private transient Collection<V> values;
 
-        UnmodifiableCloneableMap(CloneableMap<K, V> m)
+        UnmodifiableCloneableMap(@NotNull CloneableMap<K, V> m)
         {
-            if (m == null)
-                throw new NullPointerException();
             this.m = m;
         }
 
