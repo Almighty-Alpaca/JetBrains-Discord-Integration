@@ -204,6 +204,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
         TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
         VUE("Vue.js", "vue", "vue"),
         XML("XML", "xml", "xml"),
+        YAML("YAML", "yaml", "yaml", "yml"),
 
         UNKNOWN("Unknown file type", "unknown")
                 {

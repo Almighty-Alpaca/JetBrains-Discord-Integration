@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v1.3.0'
+    compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v1.3.1'
 
     compile group: 'org.jgroups', name: 'jgroups', version: '4.0.9.Final'
 }

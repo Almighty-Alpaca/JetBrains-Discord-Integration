@@ -20,6 +20,8 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public class DiscordIntegrationApplicationComponent implements ApplicationComponent
 {
     private final DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
@@ -41,6 +43,19 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     @Override
     public void initComponent()
     {
+        try // Fixes problems that crashes JGroups if those two properties aren't properly set
+        {
+            Locale locale = Locale.getDefault();
+            if (System.getProperty("user.language") == null)
+                System.setProperty("user.language", locale.getLanguage());
+            if (System.getProperty("user.country") == null)
+                System.setProperty("user.country", locale.getCountry());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         this.service.checkInitialized();
     }
 

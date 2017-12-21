@@ -21,6 +21,7 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -35,7 +36,9 @@ public class RPC
     private static volatile long presenceDelay = 0;
 
     @Nullable
-    private static volatile DiscordRichPresence presence;
+    private static volatile DiscordRichPresence lastPresence;
+    @Nullable
+    private static volatile DiscordRichPresence nextPresence;
     private static volatile boolean initialized = false;
 
     private RPC() {}
@@ -74,15 +77,20 @@ public class RPC
                 {
                     try
                     {
-                        long nextPresenceUpdate = RPC.nextPresenceUpdate;
-                        long timeout = nextPresenceUpdate - System.nanoTime();
+                        long timeout = RPC.nextPresenceUpdate - System.nanoTime();
 
                         if (timeout > 0)
                         {
                             LockSupport.parkNanos(timeout);
                         } else
                         {
-                            DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
+                            synchronized (RPC.class)
+                            {
+                                if (!Objects.equals(lastPresence, nextPresence))
+                                    DiscordRPC.INSTANCE.Discord_UpdatePresence(nextPresence);
+
+                                lastPresence = nextPresence;
+                            }
 
                             LockSupport.park();
                         }
@@ -116,7 +124,7 @@ public class RPC
 
     public static synchronized void setRichPresence(@NotNull DiscordRichPresence presence)
     {
-        RPC.presence = presence;
+        RPC.nextPresence = presence;
 
         updatePresence();
     }
@@ -133,7 +141,7 @@ public class RPC
         return TimeUnit.NANOSECONDS.convert(presenceDelay, unit);
     }
 
-    public static void setPresenceDelay(long presenceDelay, @NotNull TimeUnit unit)
+    public static synchronized void setPresenceDelay(long presenceDelay, @NotNull TimeUnit unit)
     {
         RPC.presenceDelay = unit.toNanos(presenceDelay);
     }
