@@ -326,6 +326,68 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
+    /*--------------- Time accessed update methods -------------*/
+
+    private void updateInstance(int instanceId)
+    {
+        updateInstance(instanceId, System.currentTimeMillis());
+    }
+
+    private void updateInstance(int instanceId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            instance.setTimeAccessed(timeAccessed);
+        }
+    }
+
+    private void updateProject(int instanceId, String projectId)
+    {
+        updateProject(instanceId, projectId, System.currentTimeMillis());
+    }
+
+    private void updateProject(int instanceId, String projectId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                project.setTimeAccessed(timeAccessed);
+            }
+        }
+    }
+
+    private void updateFile(int instanceId, String projectId, String fileId)
+    {
+        updateFile(instanceId, projectId, fileId, System.currentTimeMillis());
+    }
+
+    private void updateFile(int instanceId, String projectId, String fileId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                FileInfo file = project.getFiles().get(fileId);
+
+                if (file != null)
+                {
+                    file.setTimeAccessed(timeAccessed);
+                }
+            }
+        }
+
+    }
     /*------------------------ Callbacks -----------------------*/
 
     protected void _instanceAdd(@NotNull InstanceInfo instance)
@@ -351,18 +413,15 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         if (instance != null)
             instance.setSettings(settings);
 
+        updateInstance(instanceId);
+
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
     protected void _instanceSetTimeAccessed(int instanceId, long timeAccessed)
     {
-        InstanceInfo instance = this.instances.get(instanceId);
-
-        if (instance != null)
-        {
-            instance.setTimeAccessed(timeAccessed);
-        }
+        updateInstance(instanceId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
@@ -375,6 +434,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         if (instance != null)
             instance.addProject(project);
 
+        updateInstance(instanceId);
+
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
@@ -385,6 +446,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         if (instance != null)
             instance.removeProject(projectId);
+
+        updateInstance(instanceId);
 
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
@@ -402,23 +465,15 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 project.setSettings(settings);
         }
 
+        updateInstance(instanceId);
+
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
     protected void _projectSetTimeAccessed(int instanceId, @NotNull String projectId, long timeAccessed)
     {
-        InstanceInfo instance = this.instances.get(instanceId);
-
-        if (instance != null)
-        {
-            ProjectInfo project = instance.getProjects().get(projectId);
-
-            if (project != null)
-            {
-                project.setTimeAccessed(timeAccessed);
-            }
-        }
+        updateProject(instanceId, projectId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
@@ -436,6 +491,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 project.addFile(file);
         }
 
+        updateProject(instanceId, projectId);
+
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
@@ -452,28 +509,15 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 project.removeFile(fileId);
         }
 
+        updateProject(instanceId, projectId);
+
         for (Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 
     protected void _fileSetTimeAccessed(int instanceId, @NotNull String projectId, @NotNull String fileId, long timeAccessed)
     {
-        InstanceInfo instance = this.instances.get(instanceId);
-
-        if (instance != null)
-        {
-            ProjectInfo project = instance.getProjects().get(projectId);
-
-            if (project != null)
-            {
-                FileInfo file = project.getFiles().get(fileId);
-
-                if (file != null)
-                {
-                    file.setTimeAccessed(timeAccessed);
-                }
-            }
-        }
+        updateFile(instanceId, projectId, fileId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
@@ -495,6 +539,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                     file.setReadOnly(readOnly);
             }
         }
+
+        updateFile(instanceId, projectId, fileId);
 
         for (ReplicatedData.Notifier notifier : notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);

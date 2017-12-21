@@ -15,10 +15,10 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.settings;
 
+import com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationProjectComponent;
 import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
 import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
-import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationProjectService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -80,8 +80,7 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     @Override
     public JComponent createComponent()
     {
-        this.panel = new DiscordIntegrationSettingsPanel();
-        return panel.createPanel(optionsProviderApplication, optionsProviderProject);
+        return (this.panel = new DiscordIntegrationSettingsPanel(optionsProviderApplication, optionsProviderProject)).getRootPanel();
     }
 
     @Override
@@ -98,9 +97,12 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
             panel.apply();
 
             InstanceInfo instance = applicationService.getInstanceInfo();
-            ProjectInfo project = DiscordIntegrationProjectService.getInstance(optionsProviderProject.getProject()).getProjectInfo();
+            DiscordIntegrationProjectComponent projectComponent = DiscordIntegrationProjectComponent.getInstance(optionsProviderProject.getProject());
+            ProjectInfo project = projectComponent != null ? projectComponent.getProjectInfo() : null;
+
             applicationService.getData().instanceSetSettings(instance, optionsProviderApplication.getSettings());
-            applicationService.getData().projectSetSettings(instance, project, optionsProviderProject.getSettings());
+            if (project != null)
+                applicationService.getData().projectSetSettings(instance, project, optionsProviderProject.getSettings());
         }
     }
 

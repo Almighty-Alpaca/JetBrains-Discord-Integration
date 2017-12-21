@@ -41,7 +41,9 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     public RenderContext(@NotNull ReplicatedData data)
     {
         // @formatter:off
-        this.instance = data.getInstances().values().stream().max(Comparator.naturalOrder()).orElse(null);
+        this.instance = data.getInstances().values().stream()
+                .max(Comparator.naturalOrder())
+                .orElse(null);
         if (this.instance != null)
         {
             this.project = this.instance.getProjects().values().stream()
@@ -50,7 +52,7 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
 
             if (this.project != null)
                 this.file = this.project.getFiles().values().stream()
-                        .filter(f -> !instance.getSettings().isHideReadOnlyFiles() || !f.isReadOnly())
+                        .filter(f -> !(instance.getSettings().isHideReadOnlyFiles() && f.isReadOnly()))
                         .max(Comparator.naturalOrder())
                         .orElse(null);
             else

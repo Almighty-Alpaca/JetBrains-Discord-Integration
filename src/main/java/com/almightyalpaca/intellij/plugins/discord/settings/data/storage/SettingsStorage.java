@@ -18,6 +18,7 @@ package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.Settings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends Settings<T>> implements Settings<T>
@@ -58,5 +59,22 @@ public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends
     public T clone(@NotNull V settings)
     {
         return setEnabled(settings.isEnabled());
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (!(o instanceof SettingsStorage))
+            return false;
+        SettingsStorage<?, ?> that = (SettingsStorage<?, ?>) o;
+        return isEnabled() == that.isEnabled();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(isEnabled());
     }
 }

@@ -18,6 +18,8 @@ package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSettingsStorage, ApplicationSettings<ApplicationSettingsStorage>> implements ApplicationSettings<ApplicationSettingsStorage>
 {
     private boolean showUnknownImageIDE = true;
@@ -105,5 +107,32 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 .setShowFileExtensions(settings.isShowFileExtensions())
                 .setHideReadOnlyFiles(settings.isHideReadOnlyFiles());
         // @formatter:on
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + showUnknownImageIDE + ", showUnknownImageFile=" + showUnknownImageFile + ", showFileExtensions=" + showFileExtensions + ", hideReadOnlyFiles=" + hideReadOnlyFiles + ", enabled=" + isEnabled() + '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (!(o instanceof ApplicationSettingsStorage))
+            return false;
+        ApplicationSettingsStorage that = (ApplicationSettingsStorage) o;
+        return super.equals(that)
+                && isShowUnknownImageIDE() == that.isShowUnknownImageIDE()
+                && isShowUnknownImageFile() == that.isShowUnknownImageFile()
+                && isShowFileExtensions() == that.isShowFileExtensions()
+                && isHideReadOnlyFiles() == that.isHideReadOnlyFiles();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(isShowUnknownImageIDE(), isShowUnknownImageFile(), isShowFileExtensions(), isHideReadOnlyFiles());
     }
 }

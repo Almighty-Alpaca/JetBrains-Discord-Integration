@@ -17,7 +17,6 @@ package com.almightyalpaca.intellij.plugins.discord.settings;
 
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBCheckBox;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -32,49 +31,52 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationUnknownImageFile;
     private JBCheckBox applicationShowFileExtensions;
     private JBCheckBox applicationHideReadOnlyFiles;
-    private DiscordIntegrationApplicationSettings optionsProviderApplication;
-    private DiscordIntegrationProjectSettings optionsProviderProject;
+    private DiscordIntegrationApplicationSettings applicationSettings;
+    private DiscordIntegrationProjectSettings projectSettings;
 
-    public JComponent createPanel(@NotNull DiscordIntegrationApplicationSettings provider, @NotNull DiscordIntegrationProjectSettings projectOptionsProvider)
+    public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
-        optionsProviderApplication = provider;
-        optionsProviderProject = projectOptionsProvider;
+        this.applicationSettings = applicationSettings;
+        this.projectSettings = projectSettings;
 
-        panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings"));
-        panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application settings"));
-
-        return panelRoot;
+        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings"));
+        this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application settings"));
     }
 
     public boolean isModified()
     {
         // @formatter:off
-        return (projectEnabled.isSelected() != optionsProviderProject.getState().isEnabled())
-                || (applicationEnabled.isSelected() != optionsProviderApplication.getState().isEnabled())
-                || (applicationUnknownImageIDE.isSelected() != optionsProviderApplication.getState().isShowUnknownImageIDE())
-                || (applicationUnknownImageFile.isSelected() != optionsProviderApplication.getState().isShowUnknownImageFile())
-                || (applicationShowFileExtensions.isSelected() != optionsProviderApplication.getState().isShowFileExtensions())
-                || (applicationHideReadOnlyFiles.isSelected() != optionsProviderApplication.getState().isHideReadOnlyFiles());
+        return (projectEnabled.isSelected() != projectSettings.getState().isEnabled())
+                || (applicationEnabled.isSelected() != applicationSettings.getState().isEnabled())
+                || (applicationUnknownImageIDE.isSelected() != applicationSettings.getState().isShowUnknownImageIDE())
+                || (applicationUnknownImageFile.isSelected() != applicationSettings.getState().isShowUnknownImageFile())
+                || (applicationShowFileExtensions.isSelected() != applicationSettings.getState().isShowFileExtensions())
+                || (applicationHideReadOnlyFiles.isSelected() != applicationSettings.getState().isHideReadOnlyFiles());
         // @formatter:on
     }
 
     public void apply()
     {
-        optionsProviderProject.getState().setEnabled(projectEnabled.isSelected());
-        optionsProviderApplication.getState().setEnabled(applicationEnabled.isSelected());
-        optionsProviderApplication.getState().setShowUnknownImageIDE(applicationUnknownImageIDE.isSelected());
-        optionsProviderApplication.getState().setShowUnknownImageFile(applicationUnknownImageFile.isSelected());
-        optionsProviderApplication.getState().setShowFileExtensions(applicationShowFileExtensions.isSelected());
-        optionsProviderApplication.getState().setHideReadOnlyFiles(applicationHideReadOnlyFiles.isSelected());
+        projectSettings.getState().setEnabled(projectEnabled.isSelected());
+        applicationSettings.getState().setEnabled(applicationEnabled.isSelected());
+        applicationSettings.getState().setShowUnknownImageIDE(applicationUnknownImageIDE.isSelected());
+        applicationSettings.getState().setShowUnknownImageFile(applicationUnknownImageFile.isSelected());
+        applicationSettings.getState().setShowFileExtensions(applicationShowFileExtensions.isSelected());
+        applicationSettings.getState().setHideReadOnlyFiles(applicationHideReadOnlyFiles.isSelected());
     }
 
     public void reset()
     {
-        projectEnabled.setSelected(optionsProviderProject.getState().isEnabled());
-        applicationEnabled.setSelected(optionsProviderApplication.getState().isEnabled());
-        applicationUnknownImageIDE.setSelected(optionsProviderApplication.getState().isShowUnknownImageIDE());
-        applicationUnknownImageFile.setSelected(optionsProviderApplication.getState().isShowUnknownImageFile());
-        applicationShowFileExtensions.setSelected(optionsProviderApplication.getState().isShowFileExtensions());
-        applicationHideReadOnlyFiles.setSelected(optionsProviderApplication.getState().isHideReadOnlyFiles());
+        projectEnabled.setSelected(projectSettings.getState().isEnabled());
+        applicationEnabled.setSelected(applicationSettings.getState().isEnabled());
+        applicationUnknownImageIDE.setSelected(applicationSettings.getState().isShowUnknownImageIDE());
+        applicationUnknownImageFile.setSelected(applicationSettings.getState().isShowUnknownImageFile());
+        applicationShowFileExtensions.setSelected(applicationSettings.getState().isShowFileExtensions());
+        applicationHideReadOnlyFiles.setSelected(applicationSettings.getState().isHideReadOnlyFiles());
+    }
+
+    public JPanel getRootPanel()
+    {
+        return panelRoot;
     }
 }

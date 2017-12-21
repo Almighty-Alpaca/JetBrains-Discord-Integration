@@ -23,4 +23,10 @@ public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStora
     {
         super(ProjectSettingsStorage.class, ProjectSettingsStorage::new);
     }
+
+    @Override
+    public String toString()
+    {
+        return "ProjectSettingsStorage{" + "enabled=" + isEnabled() + '}';
+    }
 }
