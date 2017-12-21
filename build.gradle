@@ -47,13 +47,3 @@ dependencies {
 
     compile group: 'org.jgroups', name: 'jgroups', version: '4.0.9.Final'
 }
-
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    filesMatching('META-INF/plugin.xml') {
-        filter ReplaceTokens, tokens: [
-                "VERSION": project.version
-        ]
-    }
-}
