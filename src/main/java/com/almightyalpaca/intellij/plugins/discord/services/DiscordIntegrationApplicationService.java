@@ -174,7 +174,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
                 if (file != null)
                 {
-                    presence.state = "Editing " + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
+                    presence.state = (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
                     presence.largeImageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
                     presence.largeImageText = file.getLanguageName();

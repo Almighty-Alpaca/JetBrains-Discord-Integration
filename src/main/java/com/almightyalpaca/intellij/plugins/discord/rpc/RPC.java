@@ -82,7 +82,8 @@ public class RPC
                         if (timeout > 0)
                         {
                             LockSupport.parkNanos(timeout);
-                        } else
+                        }
+                        else
                         {
                             synchronized (RPC.class)
                             {

@@ -9,4 +9,6 @@ public interface ApplicationSettings<T extends ApplicationSettings<T>> extends S
     boolean isShowUnknownImageFile();
 
     boolean isHideReadOnlyFiles();
+
+    boolean isShowReadingInsteadOfWriting();
 }

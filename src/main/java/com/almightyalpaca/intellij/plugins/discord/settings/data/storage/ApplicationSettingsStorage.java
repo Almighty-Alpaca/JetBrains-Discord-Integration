@@ -26,6 +26,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     private boolean showUnknownImageFile = true;
     private boolean showFileExtensions = true;
     private boolean hideReadOnlyFiles = true;
+    private boolean showReadingInsteadOfWriting = true;
 
     public ApplicationSettingsStorage()
     {
@@ -83,6 +84,18 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this;
     }
 
+    @Override
+    public boolean isShowReadingInsteadOfWriting()
+    {
+        return showReadingInsteadOfWriting;
+    }
+
+    public ApplicationSettingsStorage setShowReadingInsteadOfWriting(boolean showReadingInsteadOfWriting)
+    {
+        this.showReadingInsteadOfWriting = showReadingInsteadOfWriting;
+        return this;
+    }
+
     @NotNull
     @Override
     public ApplicationSettingsStorage clone()
@@ -92,7 +105,8 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 .setShowUnknownImageFile(showUnknownImageFile)
                 .setShowUnknownImageIDE(showUnknownImageIDE)
                 .setShowFileExtensions(showFileExtensions)
-                .setHideReadOnlyFiles(hideReadOnlyFiles);
+                .setHideReadOnlyFiles(hideReadOnlyFiles)
+                .setShowReadingInsteadOfWriting(showReadingInsteadOfWriting);
         // @formatter:on
     }
 
@@ -105,19 +119,27 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 .setShowUnknownImageFile(settings.isShowUnknownImageFile())
                 .setShowUnknownImageIDE(settings.isShowUnknownImageIDE())
                 .setShowFileExtensions(settings.isShowFileExtensions())
-                .setHideReadOnlyFiles(settings.isHideReadOnlyFiles());
+                .setHideReadOnlyFiles(settings.isHideReadOnlyFiles())
+                .setShowReadingInsteadOfWriting(settings.isShowReadingInsteadOfWriting());
         // @formatter:on
     }
 
     @Override
     public String toString()
     {
-        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + showUnknownImageIDE + ", showUnknownImageFile=" + showUnknownImageFile + ", showFileExtensions=" + showFileExtensions + ", hideReadOnlyFiles=" + hideReadOnlyFiles + ", enabled=" + isEnabled() + '}';
+        // @formatter:off
+        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + showUnknownImageIDE
+                + ", showUnknownImageFile=" + showUnknownImageFile
+                + ", showFileExtensions=" + showFileExtensions
+                + ", hideReadOnlyFiles=" + hideReadOnlyFiles
+                + ", showReadingInsteadOfWriting=" + showReadingInsteadOfWriting + '}';
+        // @formatter:on
     }
 
     @Override
     public boolean equals(Object o)
     {
+        // @formatter:off
         if (this == o)
             return true;
         if (!(o instanceof ApplicationSettingsStorage))
@@ -127,7 +149,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 && isShowUnknownImageIDE() == that.isShowUnknownImageIDE()
                 && isShowUnknownImageFile() == that.isShowUnknownImageFile()
                 && isShowFileExtensions() == that.isShowFileExtensions()
-                && isHideReadOnlyFiles() == that.isHideReadOnlyFiles();
+                && isHideReadOnlyFiles() == that.isHideReadOnlyFiles()
+                && isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting();
+        // @formatter:on
     }
 
     @Override
