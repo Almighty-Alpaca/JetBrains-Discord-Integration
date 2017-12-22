@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.intellij.plugins.discord.data;
+package com.almightyalpaca.intellij.plugins.discord.presence;
 
 import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
+import com.almightyalpaca.intellij.plugins.discord.data.FileInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.ReplicatedData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class RenderContext implements Serializable, ReallyCloneable<RenderContext>
+public class PresenceRenderContext implements Serializable, ReallyCloneable<PresenceRenderContext>
 {
     @Nullable
     private final InstanceInfo instance;
@@ -31,14 +35,14 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     @Nullable
     private final FileInfo file;
 
-    public RenderContext(@Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable FileInfo file)
+    public PresenceRenderContext(@Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable FileInfo file)
     {
         this.instance = instance;
         this.project = project;
         this.file = file;
     }
 
-    public RenderContext(@NotNull ReplicatedData data)
+    public PresenceRenderContext(@NotNull ReplicatedData data)
     {
         // @formatter:off
         this.instance = data.getInstances().values().stream()
@@ -89,8 +93,8 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     @NotNull
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
-    public RenderContext clone()
+    public PresenceRenderContext clone()
     {
-        return new RenderContext(ReallyCloneable.clone(instance), ReallyCloneable.clone(project), ReallyCloneable.clone(file));
+        return new PresenceRenderContext(ReallyCloneable.clone(instance), ReallyCloneable.clone(project), ReallyCloneable.clone(file));
     }
 }

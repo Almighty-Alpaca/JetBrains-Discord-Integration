@@ -164,12 +164,6 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         return CloneableCollections.unmodifiableCloneableMap(instances);
     }
 
-    @NotNull
-    public RenderContext getRenderContext()
-    {
-        return new RenderContext(this);
-    }
-
     public void instanceAdd(@NotNull InstanceInfo instance)
     {
         try

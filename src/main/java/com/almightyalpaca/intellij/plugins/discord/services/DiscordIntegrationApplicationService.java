@@ -16,9 +16,11 @@
 package com.almightyalpaca.intellij.plugins.discord.services;
 
 import club.minnced.discord.rpc.DiscordEventHandlers;
-import club.minnced.discord.rpc.DiscordRichPresence;
-import com.almightyalpaca.intellij.plugins.discord.data.*;
+import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.ReplicatedData;
 import com.almightyalpaca.intellij.plugins.discord.notifications.DiscordIntegrationErrorNotification;
+import com.almightyalpaca.intellij.plugins.discord.presence.PresenceRenderContext;
+import com.almightyalpaca.intellij.plugins.discord.presence.PresenceRenderer;
 import com.almightyalpaca.intellij.plugins.discord.rpc.RPC;
 import com.almightyalpaca.intellij.plugins.discord.utils.JGroupsUtil;
 import com.intellij.notification.Notifications;
@@ -59,9 +61,9 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 this.channel.setReceiver(this);
                 this.channel.connect("IntelliJDiscordIntegration");
 
-                this.instanceInfo = new InstanceInfo(channel.getAddress().hashCode(), ApplicationInfo.getInstance());
+                this.instanceInfo = new InstanceInfo(this.channel.getAddress().hashCode(), ApplicationInfo.getInstance());
 
-                this.data = new ReplicatedData(channel, this);
+                this.data = new ReplicatedData(this.channel, this);
                 this.data.instanceAdd(this.instanceInfo);
 
                 this.initialized = true;
@@ -95,8 +97,8 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
             RPC.dispose();
 
-            channel.close();
-            channel = null;
+            this.channel.close();
+            this.channel = null;
         }
     }
 
@@ -118,7 +120,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     @Override
     public void viewAccepted(@NotNull View view)
     {
-        if (JGroupsUtil.isLeader(channel))
+        if (JGroupsUtil.isLeader(this.channel))
         {
             DiscordEventHandlers handlers = new DiscordEventHandlers();
 
@@ -126,75 +128,34 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
             handlers.errored = this::rpcError;
             handlers.disconnected = this::rpcDisconnected;
 
-            RPC.init(handlers, CLIENT_ID);
+            RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(data), new PresenceRenderer());
         }
     }
 
     @Override
     public synchronized void dataUpdated(@NotNull Level level)
     {
-        if (!JGroupsUtil.isLeader(channel))
+        if (!JGroupsUtil.isLeader(this.channel))
             return;
 
         checkInitialized();
 
-        final long timeout;
+        final long delay;
         switch (level)
         {
             case INSTANCE:
-                timeout = 10;
+                delay = 10;
                 break;
             case UNKNOWN:
             case PROJECT:
-                timeout = 5;
+                delay = 5;
                 break;
             case FILE:
             default:
-                timeout = 2;
+                delay = 2;
                 break;
         }
-        RPC.setPresenceDelay(timeout, TimeUnit.SECONDS);
-
-        RenderContext context = new RenderContext(data);
-
-        InstanceInfo instance = context.getInstance();
-        ProjectInfo project = context.getProject();
-        FileInfo file = context.getFile();
-
-        DiscordRichPresence presence = new DiscordRichPresence();
-
-        if (instance != null)
-        {
-            InstanceInfo.DistributionInfo distribution = instance.getDistribution();
-
-            if (project != null)
-            {
-                presence.details = "Working on " + project.getName();
-                presence.startTimestamp = project.getTimeOpened() / 1000;
-
-                if (file != null)
-                {
-                    presence.state = (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
-
-                    presence.largeImageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
-                    presence.largeImageText = file.getLanguageName();
-
-                    presence.smallImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-small";
-                    presence.smallImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
-                }
-            }
-
-            if (presence.largeImageKey == null || presence.largeImageKey.equals("none-large"))
-            {
-                presence.largeImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-large";
-                presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
-
-                presence.smallImageKey = null;
-                presence.smallImageText = null;
-            }
-        }
-
-        RPC.setRichPresence(presence);
+        RPC.updatePresence(delay, TimeUnit.SECONDS);
     }
 
     public synchronized ReplicatedData getData() throws IllegalStateException

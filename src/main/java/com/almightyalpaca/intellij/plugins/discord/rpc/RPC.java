@@ -18,12 +18,15 @@ package com.almightyalpaca.intellij.plugins.discord.rpc;
 import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
+import com.almightyalpaca.intellij.plugins.discord.presence.PresenceRenderContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @SuppressWarnings("ConstantConditions")
 public class RPC
@@ -33,17 +36,14 @@ public class RPC
     @Nullable
     private static volatile Thread delayedPresenceRunner;
     private static volatile long nextPresenceUpdate = Long.MAX_VALUE;
-    private static volatile long presenceDelay = 0;
 
     @Nullable
-    private static volatile DiscordRichPresence lastPresence;
-    @Nullable
-    private static volatile DiscordRichPresence nextPresence;
+    private static volatile DiscordRichPresence presence;
     private static volatile boolean initialized = false;
 
     private RPC() {}
 
-    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId)
+    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId, Supplier<PresenceRenderContext> contextSupplier, Function<PresenceRenderContext, DiscordRichPresence> renderer)
     {
         if (!RPC.initialized)
         {
@@ -51,7 +51,7 @@ public class RPC
 
             DiscordRPC.INSTANCE.Discord_Initialize(clientId, handlers, true, null);
 
-            callbackRunner = new Thread(() -> {
+            RPC.callbackRunner = new Thread(() -> {
                 while (!Thread.currentThread().isInterrupted())
                 {
                     try
@@ -70,9 +70,9 @@ public class RPC
                 }
             }, "RPC-Callback-Handler");
 
-            callbackRunner.start();
+            RPC.callbackRunner.start();
 
-            delayedPresenceRunner = new Thread(() -> {
+            RPC.delayedPresenceRunner = new Thread(() -> {
                 while (!Thread.currentThread().isInterrupted())
                 {
                     try
@@ -85,16 +85,15 @@ public class RPC
                         }
                         else
                         {
-                            synchronized (RPC.class)
+                            DiscordRichPresence newPresence = renderer.apply(contextSupplier.get());
+                            if (!Objects.equals(RPC.presence, newPresence))
                             {
-                                if (!Objects.equals(lastPresence, nextPresence))
-                                    DiscordRPC.INSTANCE.Discord_UpdatePresence(nextPresence);
-
-                                lastPresence = nextPresence;
+                                DiscordRPC.INSTANCE.Discord_UpdatePresence(newPresence);
+                                RPC.presence = newPresence;
                             }
-
-                            LockSupport.park();
                         }
+
+                        LockSupport.park();
                     }
                     catch (Exception e)
                     {
@@ -103,47 +102,31 @@ public class RPC
                 }
             }, "RPC-Delayed-Presence-Handler");
 
-            delayedPresenceRunner.start();
+            RPC.delayedPresenceRunner.start();
         }
+
     }
 
     public static synchronized void dispose()
     {
         if (RPC.initialized)
         {
-            initialized = false;
+            RPC.initialized = false;
 
-            delayedPresenceRunner.interrupt();
-            delayedPresenceRunner = null;
+            RPC.delayedPresenceRunner.interrupt();
+            RPC.delayedPresenceRunner = null;
 
             DiscordRPC.INSTANCE.Discord_Shutdown();
 
-            callbackRunner.interrupt();
-            callbackRunner = null;
+            RPC.callbackRunner.interrupt();
+            RPC.callbackRunner = null;
         }
     }
 
-    public static synchronized void setRichPresence(@NotNull DiscordRichPresence presence)
+    public static void updatePresence(long delay, @NotNull TimeUnit unit)
     {
-        RPC.nextPresence = presence;
+        RPC.nextPresenceUpdate = System.nanoTime() + unit.convert(delay, TimeUnit.MILLISECONDS);
 
-        updatePresence();
-    }
-
-    private static synchronized void updatePresence()
-    {
-        nextPresenceUpdate = System.nanoTime() + presenceDelay;
-
-        LockSupport.unpark(delayedPresenceRunner);
-    }
-
-    public static long getPresenceDelay(@NotNull TimeUnit unit)
-    {
-        return TimeUnit.NANOSECONDS.convert(presenceDelay, unit);
-    }
-
-    public static synchronized void setPresenceDelay(long presenceDelay, @NotNull TimeUnit unit)
-    {
-        RPC.presenceDelay = unit.toNanos(presenceDelay);
+        LockSupport.unpark(RPC.delayedPresenceRunner);
     }
 }
