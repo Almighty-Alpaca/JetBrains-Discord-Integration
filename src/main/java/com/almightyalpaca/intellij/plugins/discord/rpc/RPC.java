@@ -43,7 +43,7 @@ public class RPC
 
     private RPC() {}
 
-    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId, Supplier<PresenceRenderContext> contextSupplier, Function<PresenceRenderContext, DiscordRichPresence> renderer)
+    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId, @NotNull Supplier<PresenceRenderContext> contextSupplier, @NotNull Function<PresenceRenderContext, DiscordRichPresence> renderer)
     {
         if (!RPC.initialized)
         {

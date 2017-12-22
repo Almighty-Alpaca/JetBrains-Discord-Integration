@@ -36,7 +36,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public boolean isShowFileExtensions()
     {
-        return showFileExtensions;
+        return this.showFileExtensions;
     }
 
     @NotNull
@@ -49,7 +49,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public boolean isShowUnknownImageIDE()
     {
-        return showUnknownImageIDE;
+        return this.showUnknownImageIDE;
     }
 
     @NotNull
@@ -62,7 +62,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public boolean isShowUnknownImageFile()
     {
-        return showUnknownImageFile;
+        return this.showUnknownImageFile;
     }
 
     @NotNull
@@ -75,9 +75,10 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public boolean isHideReadOnlyFiles()
     {
-        return hideReadOnlyFiles;
+        return this.hideReadOnlyFiles;
     }
 
+    @NotNull
     public ApplicationSettingsStorage setHideReadOnlyFiles(boolean hideReadOnlyFiles)
     {
         this.hideReadOnlyFiles = hideReadOnlyFiles;
@@ -87,9 +88,10 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public boolean isShowReadingInsteadOfWriting()
     {
-        return showReadingInsteadOfWriting;
+        return this.showReadingInsteadOfWriting;
     }
 
+    @NotNull
     public ApplicationSettingsStorage setShowReadingInsteadOfWriting(boolean showReadingInsteadOfWriting)
     {
         this.showReadingInsteadOfWriting = showReadingInsteadOfWriting;
@@ -102,11 +104,11 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     {
         // @formatter:off
         return super.clone()
-                .setShowUnknownImageFile(showUnknownImageFile)
-                .setShowUnknownImageIDE(showUnknownImageIDE)
-                .setShowFileExtensions(showFileExtensions)
-                .setHideReadOnlyFiles(hideReadOnlyFiles)
-                .setShowReadingInsteadOfWriting(showReadingInsteadOfWriting);
+                .setShowUnknownImageFile(this.showUnknownImageFile)
+                .setShowUnknownImageIDE(this.showUnknownImageIDE)
+                .setShowFileExtensions(this.showFileExtensions)
+                .setHideReadOnlyFiles(this.hideReadOnlyFiles)
+                .setShowReadingInsteadOfWriting(this.showReadingInsteadOfWriting);
         // @formatter:on
     }
 
@@ -124,15 +126,16 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         // @formatter:on
     }
 
+    @NotNull
     @Override
     public String toString()
     {
         // @formatter:off
-        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + showUnknownImageIDE
-                + ", showUnknownImageFile=" + showUnknownImageFile
-                + ", showFileExtensions=" + showFileExtensions
-                + ", hideReadOnlyFiles=" + hideReadOnlyFiles
-                + ", showReadingInsteadOfWriting=" + showReadingInsteadOfWriting + '}';
+        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + this.showUnknownImageIDE
+                + ", showUnknownImageFile=" + this.showUnknownImageFile
+                + ", showFileExtensions=" + this.showFileExtensions
+                + ", hideReadOnlyFiles=" + this.hideReadOnlyFiles
+                + ", showReadingInsteadOfWriting=" + this.showReadingInsteadOfWriting + '}';
         // @formatter:on
     }
 
@@ -146,17 +149,17 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
             return false;
         ApplicationSettingsStorage that = (ApplicationSettingsStorage) o;
         return super.equals(that)
-                && isShowUnknownImageIDE() == that.isShowUnknownImageIDE()
-                && isShowUnknownImageFile() == that.isShowUnknownImageFile()
-                && isShowFileExtensions() == that.isShowFileExtensions()
-                && isHideReadOnlyFiles() == that.isHideReadOnlyFiles()
-                && isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting();
+                && this.isShowUnknownImageIDE() == that.isShowUnknownImageIDE()
+                && this.isShowUnknownImageFile() == that.isShowUnknownImageFile()
+                && this.isShowFileExtensions() == that.isShowFileExtensions()
+                && this.isHideReadOnlyFiles() == that.isHideReadOnlyFiles()
+                && this.isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting();
         // @formatter:on
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(isShowUnknownImageIDE(), isShowUnknownImageFile(), isShowFileExtensions(), isHideReadOnlyFiles());
+        return Objects.hash(super.hashCode(), this.isShowUnknownImageIDE(), this.isShowUnknownImageFile(), this.isShowFileExtensions(), this.isHideReadOnlyFiles(), this.isShowReadingInsteadOfWriting());
     }
 }

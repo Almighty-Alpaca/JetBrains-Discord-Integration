@@ -67,12 +67,12 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
 
     public long getTimeOpened()
     {
-        return timeOpened;
+        return this.timeOpened;
     }
 
     public long getTimeAccessed()
     {
-        return timeAccessed;
+        return this.timeAccessed;
     }
 
     void setTimeAccessed(long timeAccessed)
@@ -83,19 +83,19 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @NotNull
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
     @NotNull
     public String getId()
     {
-        return id;
+        return this.id;
     }
 
     @NotNull
     public ProjectSettings<? extends ProjectSettings> getSettings()
     {
-        return settings;
+        return this.settings;
     }
 
     void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
@@ -106,25 +106,26 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @NotNull
     public CloneableMap<String, FileInfo> getFiles()
     {
-        return CloneableCollections.unmodifiableCloneableMap(files);
+        return CloneableCollections.unmodifiableCloneableMap(this.files);
     }
 
     @Override
     public int compareTo(@NotNull ProjectInfo project)
     {
-        return Long.compare(timeAccessed, project.timeAccessed);
+        return Long.compare(this.timeAccessed, project.timeAccessed);
     }
 
     @Override
     public boolean equals(@Nullable Object obj)
     {
-        return obj instanceof ProjectInfo && Objects.equals(id, ((ProjectInfo) obj).id);
+        return obj instanceof ProjectInfo && Objects.equals(this.id, ((ProjectInfo) obj).id);
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        return "ProjectInfo{" + "name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + ", timeOpened=" + timeOpened + ", settings=" + settings + ", timeAccessed=" + timeAccessed + '}';
+        return "ProjectInfo{" + "name='" + this.name + '\'' + ", id='" + this.id + '\'' + ", files=" + this.files + ", timeOpened=" + this.timeOpened + ", settings=" + this.settings + ", timeAccessed=" + this.timeAccessed + '}';
     }
 
     @NotNull
@@ -132,8 +133,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @Override
     public ProjectInfo clone()
     {
-        ProjectSettings<? extends ProjectSettings> s = settings.clone();
-        return new ProjectInfo(id, s, name, timeOpened, timeAccessed, files.clone());
+        return new ProjectInfo(this.id, this.settings.clone(), this.name, this.timeOpened, this.timeAccessed, this.files.clone());
     }
 
     void addFile(@NotNull FileInfo file)

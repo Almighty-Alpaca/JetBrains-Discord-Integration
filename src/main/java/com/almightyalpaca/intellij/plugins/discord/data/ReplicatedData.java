@@ -28,11 +28,11 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     public static final long STATE_TIMEOUT = 1000L;
 
     @NotNull
-    private static final TIntObjectHashMap<Method> methods;
+    private static final TIntObjectHashMap<Method> METHODS;
     /*
-     *    xx3 -> change settings
-     *    xx4 -> set time accessed
-     * >= x50 -> custom
+     * xx3 -> change settings
+     * xx4 -> set time accessed
+     * x50 -> file - read-only
      */
     private static final short INSTANCE_ADD = 1;
     private static final short INSTANCE_REMOVE = 2;
@@ -51,24 +51,24 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         try
         {
-            methods = new TIntObjectHashMap<>(10);
+            METHODS = new TIntObjectHashMap<>(10);
 
-            methods.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", InstanceInfo.class));
-            methods.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", int.class));
-            methods.put(INSTANCE_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_instanceSetSettings", int.class, ApplicationSettings.class));
-            methods.put(INSTANCE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_instanceSetTimeAccessed", int.class, long.class));
+            METHODS.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", InstanceInfo.class));
+            METHODS.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", int.class));
+            METHODS.put(INSTANCE_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_instanceSetSettings", int.class, ApplicationSettings.class));
+            METHODS.put(INSTANCE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_instanceSetTimeAccessed", int.class, long.class));
 
-            methods.put(PROJECT_ADD, ReplicatedData.class.getDeclaredMethod("_projectAdd", int.class, ProjectInfo.class));
-            methods.put(PROJECT_REMOVE, ReplicatedData.class.getDeclaredMethod("_projectRemove", int.class, String.class));
-            methods.put(PROJECT_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_projectSetSettings", int.class, String.class, ProjectSettings.class));
-            methods.put(PROJECT_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_projectSetTimeAccessed", int.class, String.class, long.class));
+            METHODS.put(PROJECT_ADD, ReplicatedData.class.getDeclaredMethod("_projectAdd", int.class, ProjectInfo.class));
+            METHODS.put(PROJECT_REMOVE, ReplicatedData.class.getDeclaredMethod("_projectRemove", int.class, String.class));
+            METHODS.put(PROJECT_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_projectSetSettings", int.class, String.class, ProjectSettings.class));
+            METHODS.put(PROJECT_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_projectSetTimeAccessed", int.class, String.class, long.class));
 
-            methods.put(FILE_ADD, ReplicatedData.class.getDeclaredMethod("_fileAdd", int.class, String.class, FileInfo.class));
-            methods.put(FILE_REMOVE, ReplicatedData.class.getDeclaredMethod("_fileRemove", int.class, String.class, String.class));
-            methods.put(FILE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_fileSetTimeAccessed", int.class, String.class, String.class, long.class));
-            methods.put(FILE_SET_READ_ONLY, ReplicatedData.class.getDeclaredMethod("_fileSetReadOnly", int.class, String.class, String.class, boolean.class));
+            METHODS.put(FILE_ADD, ReplicatedData.class.getDeclaredMethod("_fileAdd", int.class, String.class, FileInfo.class));
+            METHODS.put(FILE_REMOVE, ReplicatedData.class.getDeclaredMethod("_fileRemove", int.class, String.class, String.class));
+            METHODS.put(FILE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_fileSetTimeAccessed", int.class, String.class, String.class, long.class));
+            METHODS.put(FILE_SET_READ_ONLY, ReplicatedData.class.getDeclaredMethod("_fileSetReadOnly", int.class, String.class, String.class, boolean.class));
 
-            methods.forEachValue(m -> {
+            METHODS.forEachValue(m -> {
                 m.setAccessible(true);
                 return true;
             });
@@ -98,7 +98,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         this.instances = new CloneableHashMap<>();
 
-        this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(methods::get);
+        this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(METHODS::get);
         this.dispatcher.setMembershipListener(this).setStateListener(this);
 
         this.channel = channel.getState(null, STATE_TIMEOUT);
@@ -106,7 +106,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public boolean isBlockingUpdates()
     {
-        return call_options.mode() == ResponseMode.GET_ALL;
+        return this.call_options.mode() == ResponseMode.GET_ALL;
     }
 
     /**
@@ -122,7 +122,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      */
     public long getTimeout()
     {
-        return call_options.timeout();
+        return this.call_options.timeout();
     }
 
     /**
@@ -132,36 +132,37 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      */
     public void setTimeout(long timeout)
     {
-        call_options.timeout(timeout);
+        this.call_options.timeout(timeout);
     }
 
     public void addNotifier(@NotNull Notifier n)
     {
-        notifiers.add(n);
+        this.notifiers.add(n);
     }
 
     public void removeNotifier(@NotNull Notifier n)
     {
-        notifiers.remove(n);
+        this.notifiers.remove(n);
     }
 
     @Override
     public void close()
     {
         this.dispatcher.stop();
-        Util.close(channel);
+        Util.close(this.channel);
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        return "ReplicatedData{" + "instances=" + instances + '}';
+        return "ReplicatedData{" + "instances=" + this.instances + '}';
     }
 
     @NotNull
     public CloneableMap<Integer, InstanceInfo> getInstances()
     {
-        return CloneableCollections.unmodifiableCloneableMap(instances);
+        return CloneableCollections.unmodifiableCloneableMap(this.instances);
     }
 
     public void instanceAdd(@NotNull InstanceInfo instance)
@@ -169,7 +170,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(INSTANCE_ADD, instance);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -182,7 +183,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(INSTANCE_REMOVE, instance.getId());
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -195,7 +196,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(INSTANCE_SET_SETTINGS, instance.getId(), settings);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -208,7 +209,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(INSTANCE_SET_TIME_ACCESSED, instance.getId(), timeAccessed);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -221,7 +222,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(PROJECT_ADD, instance.getId(), project);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -234,7 +235,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(PROJECT_REMOVE, instance.getId(), project.getId());
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -247,7 +248,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(PROJECT_SET_SETTINGS, instance.getId(), project.getId(), settings);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -260,7 +261,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(PROJECT_SET_TIME_ACCESSED, instance.getId(), project.getId(), timeAccessed);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -273,7 +274,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(FILE_ADD, instance.getId(), project.getId(), file);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -286,7 +287,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(FILE_REMOVE, instance.getId(), project.getId(), file.getId());
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -299,7 +300,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(FILE_SET_TIME_ACCESSED, instance.getId(), project.getId(), file.getId(), timeAccessed);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -312,7 +313,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try
         {
             MethodCall call = new MethodCall(FILE_SET_READ_ONLY, instance.getId(), project.getId(), file.getId(), readOnly);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
@@ -320,7 +321,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
-    /*--------------- Time accessed update methods -------------*/
+    /*--------------- Time accessed update METHODS -------------*/
 
     private void updateInstance(int instanceId)
     {
@@ -388,7 +389,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         this.instances.put(instance.getId(), instance);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
@@ -396,7 +397,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         this.instances.remove(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
@@ -409,7 +410,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateInstance(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
@@ -417,7 +418,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         updateInstance(instanceId, timeAccessed);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
@@ -430,7 +431,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateInstance(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
@@ -443,7 +444,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateInstance(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
@@ -461,7 +462,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateInstance(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
@@ -469,7 +470,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         updateProject(instanceId, projectId, timeAccessed);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
@@ -487,7 +488,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateProject(instanceId, projectId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 
@@ -505,7 +506,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateProject(instanceId, projectId);
 
-        for (Notifier notifier : notifiers)
+        for (Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 
@@ -513,7 +514,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         updateFile(instanceId, projectId, fileId, timeAccessed);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 
@@ -536,7 +537,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         updateFile(instanceId, projectId, fileId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
             notifier.dataUpdated(Notifier.Level.FILE);
     }
 

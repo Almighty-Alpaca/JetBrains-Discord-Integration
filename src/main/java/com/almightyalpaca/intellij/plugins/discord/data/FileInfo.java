@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,17 +66,17 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @NotNull
     public String getId()
     {
-        return id;
+        return this.id;
     }
 
     public long getTimeOpened()
     {
-        return timeOpened;
+        return this.timeOpened;
     }
 
     public long getTimeAccessed()
     {
-        return timeAccessed;
+        return this.timeAccessed;
     }
 
     void setTimeAccessed(long timeAccessed)
@@ -88,28 +87,28 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @NotNull
     public Language getLanguage()
     {
-        return language;
+        return this.language;
     }
 
     @NotNull
     public String getBaseName()
     {
-        return baseName;
+        return this.baseName;
     }
 
     @Nullable
     public String getExtension()
     {
-        return extension;
+        return this.extension;
     }
 
     @NotNull
     public String getName()
     {
-        if (extension == null)
-            return baseName;
+        if (this.extension == null)
+            return this.baseName;
         else
-            return baseName + '.' + extension;
+            return this.baseName + '.' + this.extension;
     }
 
     @NotNull
@@ -120,7 +119,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
 
     public boolean isReadOnly()
     {
-        return readOnly;
+        return this.readOnly;
     }
 
     void setReadOnly(boolean readOnly)
@@ -137,13 +136,14 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @Override
     public boolean equals(@Nullable Object o)
     {
-        return o instanceof FileInfo && baseName.equals(((FileInfo) o).baseName) && Objects.equals(extension, ((FileInfo) o).extension);
+        return o instanceof FileInfo && this.baseName.equals(((FileInfo) o).baseName) && Objects.equals(this.extension, ((FileInfo) o).extension);
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        return "FileInfo{" + "id='" + id + '\'' + ", baseName='" + baseName + '\'' + ", extension='" + extension + '\'' + ", timeOpened=" + timeOpened + ", timeAccessed=" + timeAccessed + '}';
+        return "FileInfo{" + "id='" + this.id + '\'' + ", baseName='" + this.baseName + '\'' + ", extension='" + this.extension + '\'' + ", timeOpened=" + this.timeOpened + ", timeAccessed=" + this.timeAccessed + '}';
     }
 
     @NotNull
@@ -151,12 +151,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     @Override
     public FileInfo clone()
     {
-        return new FileInfo(id, baseName, extension, readOnly, timeOpened, timeAccessed);
-    }
-
-    private void writeObject(@NotNull ObjectOutputStream out) throws IOException
-    {
-        out.defaultWriteObject();
+        return new FileInfo(this.id, this.baseName, this.extension, this.readOnly, this.timeOpened, this.timeAccessed);
     }
 
     private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
@@ -166,6 +161,7 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
         this.language = FileInfo.Language.get(getName());
     }
 
+    @NotNull
     public String getLanguageName()
     {
         if (this.language == FileInfo.Language.UNKNOWN)
@@ -262,21 +258,21 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
         @NotNull
         public String getName()
         {
-            return name;
+            return this.name;
         }
 
         @NotNull
         public String[] getExtensions()
         {
-            String[] newExtensions = new String[extensions.length];
-            System.arraycopy(extensions, 0, newExtensions, 0, extensions.length);
+            String[] newExtensions = new String[this.extensions.length];
+            System.arraycopy(this.extensions, 0, newExtensions, 0, this.extensions.length);
             return newExtensions;
         }
 
         @NotNull
         public String getAssetName(boolean showUnknown)
         {
-            return assetName;
+            return this.assetName;
         }
     }
 }

@@ -39,7 +39,9 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 {
     public static final String CLIENT_ID = "382629176030658561";
 
+    @Nullable
     private volatile JChannel channel;
+    @Nullable
     private volatile ReplicatedData data;
     private volatile InstanceInfo instanceInfo;
     private volatile boolean initialized = false;
@@ -128,7 +130,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
             handlers.errored = this::rpcError;
             handlers.disconnected = this::rpcDisconnected;
 
-            RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(data), new PresenceRenderer());
+            RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(this.data), new PresenceRenderer());
         }
     }
 
@@ -155,9 +157,11 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 delay = 2;
                 break;
         }
+
         RPC.updatePresence(delay, TimeUnit.SECONDS);
     }
 
+    @Nullable
     public synchronized ReplicatedData getData() throws IllegalStateException
     {
         checkInitialized();

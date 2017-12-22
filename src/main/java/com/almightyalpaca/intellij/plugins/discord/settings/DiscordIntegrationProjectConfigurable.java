@@ -58,7 +58,7 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     @NotNull
     public Project getProject()
     {
-        return project;
+        return this.project;
     }
 
     @Nls
@@ -80,50 +80,50 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     @Override
     public JComponent createComponent()
     {
-        return (this.panel = new DiscordIntegrationSettingsPanel(optionsProviderApplication, optionsProviderProject)).getRootPanel();
+        return (this.panel = new DiscordIntegrationSettingsPanel(this.optionsProviderApplication, this.optionsProviderProject)).getRootPanel();
     }
 
     @Override
     public boolean isModified()
     {
-        return panel != null && panel.isModified();
+        return this.panel != null && this.panel.isModified();
     }
 
     @Override
     public void apply()
     {
-        if (panel != null)
+        if (this.panel != null)
         {
-            panel.apply();
+            this.panel.apply();
 
-            InstanceInfo instance = applicationService.getInstanceInfo();
-            DiscordIntegrationProjectComponent projectComponent = DiscordIntegrationProjectComponent.getInstance(optionsProviderProject.getProject());
+            InstanceInfo instance = this.applicationService.getInstanceInfo();
+            DiscordIntegrationProjectComponent projectComponent = DiscordIntegrationProjectComponent.getInstance(this.optionsProviderProject.getProject());
             ProjectInfo project = projectComponent != null ? projectComponent.getProjectInfo() : null;
 
-            applicationService.getData().instanceSetSettings(instance, optionsProviderApplication.getSettings());
+            this.applicationService.getData().instanceSetSettings(instance, this.optionsProviderApplication.getSettings());
             if (project != null)
-                applicationService.getData().projectSetSettings(instance, project, optionsProviderProject.getSettings());
+                this.applicationService.getData().projectSetSettings(instance, project, this.optionsProviderProject.getSettings());
         }
     }
 
     @Override
     public void reset()
     {
-        if (panel != null)
-            panel.reset();
+        if (this.panel != null)
+            this.panel.reset();
     }
 
     @Override
     public void disposeUIResources()
     {
-        panel = null;
+        this.panel = null;
     }
 
     @NotNull
     @Override
     public String getId()
     {
-        return "preferences.discord.project";
+        return "preferences.discord";
     }
 
     @Nullable

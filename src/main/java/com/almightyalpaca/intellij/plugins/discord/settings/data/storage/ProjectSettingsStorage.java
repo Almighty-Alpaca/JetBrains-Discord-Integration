@@ -16,6 +16,7 @@
 package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
+import org.jetbrains.annotations.NotNull;
 
 public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStorage, ProjectSettings<ProjectSettingsStorage>> implements ProjectSettings<ProjectSettingsStorage>
 {
@@ -24,6 +25,7 @@ public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStora
         super(ProjectSettingsStorage.class, ProjectSettingsStorage::new);
     }
 
+    @NotNull
     @Override
     public String toString()
     {

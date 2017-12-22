@@ -45,21 +45,21 @@ public class DiscordIntegrationApplicationSettings implements PersistentStateCom
     @NotNull
     public Application getApplication()
     {
-        return application;
+        return this.application;
     }
 
     @NotNull
     @Override
     public ApplicationSettingsStorage getState()
     {
-        return state;
+        return this.state;
     }
 
     @NotNull
     @Override
     public ApplicationSettingsStorage getSettings()
     {
-        return state;
+        return this.state;
     }
 
     @Override

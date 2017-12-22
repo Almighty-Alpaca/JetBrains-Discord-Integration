@@ -37,7 +37,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     @NotNull
     public Application getApplication()
     {
-        return application;
+        return this.application;
     }
 
     @Override

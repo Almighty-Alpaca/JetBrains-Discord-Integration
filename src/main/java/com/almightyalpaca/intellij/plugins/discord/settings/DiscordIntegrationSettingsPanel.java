@@ -58,7 +58,8 @@ public class DiscordIntegrationSettingsPanel
                 || (this.applicationUnknownImageIDE.isSelected() != this.applicationSettings.getState().isShowUnknownImageIDE())
                 || (this.applicationUnknownImageFile.isSelected() != this.applicationSettings.getState().isShowUnknownImageFile())
                 || (this.applicationShowFileExtensions.isSelected() != this.applicationSettings.getState().isShowFileExtensions())
-                || (this.applicationHideReadOnlyFiles.isSelected() != this.applicationSettings.getState().isHideReadOnlyFiles());
+                || (this.applicationHideReadOnlyFiles.isSelected() != this.applicationSettings.getState().isHideReadOnlyFiles())
+                || (this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting());
         // @formatter:on
     }
 
@@ -70,6 +71,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setShowUnknownImageFile(this.applicationUnknownImageFile.isSelected());
         this.applicationSettings.getState().setShowFileExtensions(this.applicationShowFileExtensions.isSelected());
         this.applicationSettings.getState().setHideReadOnlyFiles(this.applicationHideReadOnlyFiles.isSelected());
+        this.applicationSettings.getState().setShowReadingInsteadOfWriting(this.applicationShowReadingInsteadOfEditing.isSelected());
     }
 
     public void reset()
@@ -80,6 +82,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationUnknownImageFile.setSelected(this.applicationSettings.getState().isShowUnknownImageFile());
         this.applicationShowFileExtensions.setSelected(this.applicationSettings.getState().isShowFileExtensions());
         this.applicationHideReadOnlyFiles.setSelected(this.applicationSettings.getState().isHideReadOnlyFiles());
+        this.applicationShowReadingInsteadOfEditing.setSelected(this.applicationSettings.getState().isShowReadingInsteadOfWriting());
     }
 
     @NotNull

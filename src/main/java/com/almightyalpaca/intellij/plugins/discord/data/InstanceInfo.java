@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,20 +73,21 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         this(id, DiscordIntegrationApplicationSettings.getInstance().getSettings(), info.getBuild().getProductCode(), info.getFullVersion(), System.currentTimeMillis());
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        return "InstanceInfo{" + "projects=" + projects + ", distribution=" + distribution + ", id=" + id + ", settings=" + settings + '}';
+        return "InstanceInfo{" + "projects=" + this.projects + ", distribution=" + this.distribution + ", id=" + this.id + ", settings=" + this.settings + '}';
     }
 
     public long getTimeOpened()
     {
-        return timeOpened;
+        return this.timeOpened;
     }
 
     public long getTimeAccessed()
     {
-        return timeAccessed;
+        return this.timeAccessed;
     }
 
     void setTimeAccessed(long timeAccessed)
@@ -98,7 +98,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @NotNull
     public ApplicationSettings getSettings()
     {
-        return settings;
+        return this.settings;
     }
 
     void setSettings(@NotNull ApplicationSettings<?> settings)
@@ -108,31 +108,31 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
 
     public int getId()
     {
-        return id;
+        return this.id;
     }
 
     @NotNull
     public DistributionInfo getDistribution()
     {
-        return distribution;
+        return this.distribution;
     }
 
     @NotNull
     public CloneableMap<String, ProjectInfo> getProjects()
     {
-        return CloneableCollections.unmodifiableCloneableMap(projects);
+        return CloneableCollections.unmodifiableCloneableMap(this.projects);
     }
 
     @Override
     public int compareTo(@NotNull InstanceInfo instance)
     {
-        return Long.compare(timeAccessed, instance.timeAccessed);
+        return Long.compare(this.timeAccessed, instance.timeAccessed);
     }
 
     @Override
     public boolean equals(Object obj)
     {
-        return obj instanceof InstanceInfo && Objects.equals(id, ((InstanceInfo) obj).id);
+        return obj instanceof InstanceInfo && Objects.equals(this.id, ((InstanceInfo) obj).id);
     }
 
     @NotNull
@@ -140,7 +140,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @Override
     public InstanceInfo clone()
     {
-        return new InstanceInfo(id, settings.clone(), distribution.clone(), timeOpened, timeAccessed, projects.clone());
+        return new InstanceInfo(this.id, this.settings.clone(), this.distribution.clone(), this.timeOpened, this.timeAccessed, this.projects.clone());
     }
 
     void addProject(@NotNull ProjectInfo project)
@@ -177,19 +177,19 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         @NotNull
         public String getCode()
         {
-            return code;
+            return this.code;
         }
 
         @NotNull
         public Type getType()
         {
-            return type;
+            return this.type;
         }
 
         @NotNull
         public String getVersion()
         {
-            return version;
+            return this.version;
         }
 
         @NotNull
@@ -207,18 +207,14 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         @Override
         public boolean equals(Object o)
         {
-            return o instanceof DistributionInfo && type.equals(((DistributionInfo) o).type) && version.equals(((DistributionInfo) o).version);
+            return o instanceof DistributionInfo && this.type.equals(((DistributionInfo) o).type) && this.version.equals(((DistributionInfo) o).version);
         }
 
+        @NotNull
         @Override
         public String toString()
         {
-            return "DistributionInfo{" + "code='" + code + '\'' + ", version='" + version + '\'' + '}';
-        }
-
-        private void writeObject(@NotNull ObjectOutputStream out) throws IOException
-        {
-            out.defaultWriteObject();
+            return "DistributionInfo{" + "code='" + this.code + '\'' + ", version='" + this.version + '\'' + '}';
         }
 
         private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
@@ -299,19 +295,19 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
             @NotNull
             public String getName()
             {
-                return name;
+                return this.name;
             }
 
             @NotNull
             public String[] getCodes()
             {
-                return codes;
+                return this.codes;
             }
 
             @NotNull
             public String getAssetName(boolean showUnknown)
             {
-                return assetName;
+                return this.assetName;
             }
         }
     }

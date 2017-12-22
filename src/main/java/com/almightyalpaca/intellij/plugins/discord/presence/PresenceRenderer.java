@@ -4,13 +4,15 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import com.almightyalpaca.intellij.plugins.discord.data.FileInfo;
 import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 public class PresenceRenderer implements Function<PresenceRenderContext, DiscordRichPresence>
 {
+    @NotNull
     @Override
-    public DiscordRichPresence apply(PresenceRenderContext context)
+    public DiscordRichPresence apply(@NotNull PresenceRenderContext context)
     {
         InstanceInfo instance = context.getInstance();
         ProjectInfo project = context.getProject();

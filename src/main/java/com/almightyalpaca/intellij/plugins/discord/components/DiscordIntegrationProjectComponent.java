@@ -69,7 +69,7 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
     @Override
     public synchronized void projectClosed()
     {
-        if (bus != null)
+        if (this.bus != null)
         {
             this.bus.disconnect();
             this.bus = null;
@@ -79,16 +79,16 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
             this.applicationService.getData().projectRemove(this.applicationService.getInstanceInfo(), this.getProjectInfo());
 
         this.projectInfo = null;
-        files.clear();
+        this.files.clear();
     }
 
     @Override
     public synchronized void projectOpened()
     {
-        this.bus = project.getMessageBus().connect();
+        this.bus = this.project.getMessageBus().connect();
         this.bus.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
 
-        ProjectInfo projectInfo = new ProjectInfo(project);
+        ProjectInfo projectInfo = new ProjectInfo(this.project);
         this.projectInfo = projectInfo;
 
         this.applicationService.getData().projectAdd(this.applicationService.getInstanceInfo(), projectInfo);
@@ -112,18 +112,18 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
         VirtualFile file = event.getNewFile();
 
         if (file != null && this.getProjectInfo() != null)
-            this.applicationService.getData().fileSetTimeAccessed(applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new), System.currentTimeMillis());
+            this.applicationService.getData().fileSetTimeAccessed(this.applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new), System.currentTimeMillis());
     }
 
     @Override
     public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
     {
-        if ((event.getPropertyName().equals(VirtualFile.PROP_NAME)) && files.containsKey(event.getFile()))
+        if ((event.getPropertyName().equals(VirtualFile.PROP_NAME)) && this.files.containsKey(event.getFile()))
         {
             fileClosed(event.getFile());
             fileOpened(event.getFile());
         }
-        else if ((event.getPropertyName().equals(VirtualFile.PROP_WRITABLE)) && files.containsKey(event.getFile()))
+        else if ((event.getPropertyName().equals(VirtualFile.PROP_WRITABLE)) && this.files.containsKey(event.getFile()))
         {
             fileUpdateReadOnly(event.getFile());
         }
@@ -132,25 +132,25 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
     public void fileOpened(@NotNull VirtualFile file)
     {
         if (this.getProjectInfo() != null)
-            this.applicationService.getData().fileAdd(applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new));
+            this.applicationService.getData().fileAdd(this.applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new));
     }
 
     public void fileClosed(@NotNull VirtualFile file)
     {
         if (this.getProjectInfo() != null)
-            this.applicationService.getData().fileRemove(applicationService.getInstanceInfo(), getProjectInfo(), this.files.remove(file));
+            this.applicationService.getData().fileRemove(this.applicationService.getInstanceInfo(), getProjectInfo(), this.files.remove(file));
     }
 
     public void fileUpdateReadOnly(@NotNull VirtualFile file)
     {
         if (this.getProjectInfo() != null)
-            this.applicationService.getData().fileSetReadOnly(applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new), !file.isWritable());
+            this.applicationService.getData().fileSetReadOnly(this.applicationService.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new), !file.isWritable());
     }
 
     @Nullable
     public ProjectInfo getProjectInfo()
     {
-        return projectInfo;
+        return this.projectInfo;
     }
 
     @Override
@@ -163,7 +163,7 @@ public class DiscordIntegrationProjectComponent extends VirtualFileAdapter imple
     public void disposeComponent()
     {
         VirtualFileManager.getInstance().removeVirtualFileListener(this);
-        DiscordIntegrationProjectComponent.INSTANCES.remove(project);
+        DiscordIntegrationProjectComponent.INSTANCES.remove(this.project);
     }
 
     @NotNull

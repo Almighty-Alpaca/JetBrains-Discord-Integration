@@ -46,21 +46,21 @@ public class DiscordIntegrationProjectSettings implements PersistentStateCompone
     @NotNull
     public Project getProject()
     {
-        return project;
+        return this.project;
     }
 
     @NotNull
     @Override
     public ProjectSettingsStorage getState()
     {
-        return state;
+        return this.state;
     }
 
     @NotNull
     @Override
     public ProjectSettings<ProjectSettingsStorage> getSettings()
     {
-        return state;
+        return this.state;
     }
 
     @Override
