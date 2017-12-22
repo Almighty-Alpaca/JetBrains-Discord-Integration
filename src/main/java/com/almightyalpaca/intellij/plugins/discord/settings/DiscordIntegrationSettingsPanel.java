@@ -39,7 +39,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings = applicationSettings;
         this.projectSettings = projectSettings;
 
-        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings"));
+        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings (" + projectSettings.getProject().getName() + ")"));
         this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application settings"));
     }
 
