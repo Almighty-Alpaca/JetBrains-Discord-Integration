@@ -184,10 +184,13 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 }
             }
 
-            if (presence.largeImageKey == null)
+            if (presence.largeImageKey == null || presence.largeImageKey.equals("none-large"))
             {
                 presence.largeImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-large";
                 presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
+
+                presence.smallImageKey = null;
+                presence.smallImageText = null;
             }
         }
 
