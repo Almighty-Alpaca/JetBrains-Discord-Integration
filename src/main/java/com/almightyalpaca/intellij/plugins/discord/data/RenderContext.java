@@ -42,11 +42,13 @@ public class RenderContext implements Serializable, ReallyCloneable<RenderContex
     {
         // @formatter:off
         this.instance = data.getInstances().values().stream()
+                .filter(i -> i.getSettings().isEnabled())
                 .max(Comparator.naturalOrder())
                 .orElse(null);
         if (this.instance != null)
         {
             this.project = this.instance.getProjects().values().stream()
+                    .filter(p -> p.getSettings().isEnabled())
                     .max(Comparator.naturalOrder())
                     .orElse(null);
 
