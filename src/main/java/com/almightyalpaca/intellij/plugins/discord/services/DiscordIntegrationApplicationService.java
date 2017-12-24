@@ -16,27 +16,32 @@
 package com.almightyalpaca.intellij.plugins.discord.services;
 
 import club.minnced.discord.rpc.DiscordEventHandlers;
-import club.minnced.discord.rpc.DiscordRichPresence;
-import com.almightyalpaca.intellij.plugins.discord.data.*;
+import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
+import com.almightyalpaca.intellij.plugins.discord.data.ReplicatedData;
 import com.almightyalpaca.intellij.plugins.discord.notifications.DiscordIntegrationErrorNotification;
+import com.almightyalpaca.intellij.plugins.discord.presence.PresenceRenderContext;
+import com.almightyalpaca.intellij.plugins.discord.presence.PresenceRenderer;
 import com.almightyalpaca.intellij.plugins.discord.rpc.RPC;
 import com.almightyalpaca.intellij.plugins.discord.utils.JGroupsUtil;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ServiceManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
 import org.jgroups.View;
 
-import java.util.Deque;
+import java.util.concurrent.TimeUnit;
 
-public class DiscordIntegrationApplicationService implements Receiver, ReplicatedData.UpdateNotifier
+public class DiscordIntegrationApplicationService implements Receiver, ReplicatedData.Notifier
 {
     public static final String CLIENT_ID = "382629176030658561";
 
+    @Nullable
     private volatile JChannel channel;
+    @Nullable
     private volatile ReplicatedData data;
     private volatile InstanceInfo instanceInfo;
     private volatile boolean initialized = false;
@@ -58,10 +63,10 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
                 this.channel.setReceiver(this);
                 this.channel.connect("IntelliJDiscordIntegration");
 
-                this.instanceInfo = new InstanceInfo(channel.getAddress().hashCode(), ApplicationInfo.getInstance());
+                this.instanceInfo = new InstanceInfo(this.channel.getAddress().hashCode(), ApplicationInfo.getInstance());
 
-                this.data = new ReplicatedData(channel, this);
-                this.data.addInstance(this.instanceInfo);
+                this.data = new ReplicatedData(this.channel, this);
+                this.data.instanceAdd(this.instanceInfo);
 
                 this.initialized = true;
             }
@@ -94,8 +99,8 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
 
             RPC.dispose();
 
-            channel.close();
-            channel = null;
+            this.channel.close();
+            this.channel = null;
         }
     }
 
@@ -115,9 +120,9 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
     public void receive(Message msg) {}
 
     @Override
-    public void viewAccepted(View new_view)
+    public void viewAccepted(@NotNull View view)
     {
-        if (JGroupsUtil.isLeader(channel))
+        if (JGroupsUtil.isLeader(this.channel))
         {
             DiscordEventHandlers handlers = new DiscordEventHandlers();
 
@@ -125,58 +130,38 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
             handlers.errored = this::rpcError;
             handlers.disconnected = this::rpcDisconnected;
 
-            RPC.init(handlers, CLIENT_ID);
+            RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(this.data), new PresenceRenderer());
         }
     }
 
     @Override
-    public synchronized void dataUpdated()
+    public synchronized void dataUpdated(@NotNull Level level)
     {
+        if (!JGroupsUtil.isLeader(this.channel))
+            return;
+
         checkInitialized();
 
-        DiscordRichPresence presence = new DiscordRichPresence();
-
-        Deque<InstanceInfo> instances = this.data.getInstances();
-
-        InstanceInfo instance = instances.pollFirst();
-
-        if (instance != null)
+        final long delay;
+        switch (level)
         {
-            DistributionInfo distribution = instance.getDistribution();
-
-            Deque<ProjectInfo> projects = instance.getProjects();
-            ProjectInfo project = projects.pollFirst();
-
-            if (project != null)
-            {
-                presence.details = "Working on " + project.getName();
-                presence.startTimestamp = project.getTime() / 1000;
-
-                Deque<FileInfo> files = project.getFiles();
-                FileInfo file = files.pollFirst();
-
-                if (file != null)
-                {
-                    presence.state = "Editing " + file.getNameWithExtension();
-
-                    presence.largeImageKey = file.getAssetName() + "-large";
-                    presence.largeImageText = file.getLanguageName();
-
-                    presence.smallImageKey = distribution.getAssetName() + "-small";
-                    presence.smallImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
-                }
-            }
-
-            if (presence.largeImageKey == null)
-            {
-                presence.largeImageKey = distribution.getAssetName() + "-large";
-                presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
-            }
+            case INSTANCE:
+                delay = 10;
+                break;
+            case UNKNOWN:
+            case PROJECT:
+                delay = 5;
+                break;
+            case FILE:
+            default:
+                delay = 2;
+                break;
         }
 
-        RPC.setRichPresence(presence);
+        RPC.updatePresence(delay, TimeUnit.SECONDS);
     }
 
+    @Nullable
     public synchronized ReplicatedData getData() throws IllegalStateException
     {
         checkInitialized();
@@ -191,7 +176,7 @@ public class DiscordIntegrationApplicationService implements Receiver, Replicate
         return instanceInfo;
     }
 
-    public void checkInitialized()
+    public synchronized void checkInitialized()
     {
         if (!this.initialized)
         {

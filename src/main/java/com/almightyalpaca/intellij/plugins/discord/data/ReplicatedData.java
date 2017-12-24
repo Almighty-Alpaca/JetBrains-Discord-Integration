@@ -1,8 +1,11 @@
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueDeque;
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueLinkedDeque;
-import com.almightyalpaca.intellij.plugins.discord.rpc.RPC;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
+import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jgroups.*;
 import org.jgroups.blocks.MethodCall;
@@ -13,35 +16,62 @@ import org.jgroups.util.Util;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ReplicatedData implements MembershipListener, StateListener, Closeable
 {
-    public static final long STATE_TIMEOUT = 1000;
-    protected static final Map<Short, Method> methods;
-    private static final short ADD_INSTANCE = 1;
-    private static final short REMOVE_INSTANCE = 2;
-    private static final short ADD_PROJECT = 3;
-    private static final short REMOVE_PROJECT = 4;
-    private static final short ADD_FILE = 5;
-    private static final short REMOVE_FILE = 6;
+    public static final long STATE_TIMEOUT = 1000L;
+
+    @NotNull
+    private static final TIntObjectHashMap<Method> METHODS;
+    /*
+     * xx3 -> change settings
+     * xx4 -> set time accessed
+     * x50 -> file - read-only
+     */
+    private static final short INSTANCE_ADD = 1;
+    private static final short INSTANCE_REMOVE = 2;
+    private static final short INSTANCE_SET_SETTINGS = 3;
+    private static final short INSTANCE_SET_TIME_ACCESSED = 4;
+    private static final short PROJECT_ADD = 101;
+    private static final short PROJECT_REMOVE = 102;
+    private static final short PROJECT_SET_SETTINGS = 103;
+    private static final short PROJECT_SET_TIME_ACCESSED = 104;
+    private static final short FILE_ADD = 201;
+    private static final short FILE_REMOVE = 202;
+    private static final short FILE_SET_TIME_ACCESSED = 204;
+    private static final short FILE_SET_READ_ONLY = 250;
 
     static
     {
         try
         {
-            methods = new HashMap<>(6);
-            methods.put(ADD_INSTANCE, ReplicatedData.class.getDeclaredMethod("_addInstance", InstanceInfo.class));
-            methods.put(REMOVE_INSTANCE, ReplicatedData.class.getDeclaredMethod("_removeInstance", InstanceInfo.class));
-            methods.put(ADD_PROJECT, ReplicatedData.class.getDeclaredMethod("_addProject", InstanceInfo.class, ProjectInfo.class));
-            methods.put(REMOVE_PROJECT, ReplicatedData.class.getDeclaredMethod("_removeProject", InstanceInfo.class, ProjectInfo.class));
-            methods.put(ADD_FILE, ReplicatedData.class.getDeclaredMethod("_addFile", InstanceInfo.class, ProjectInfo.class, FileInfo.class));
-            methods.put(REMOVE_FILE, ReplicatedData.class.getDeclaredMethod("_removeFile", InstanceInfo.class, ProjectInfo.class, FileInfo.class));
-            for (Method method : methods.values())
-                method.setAccessible(true);
+            METHODS = new TIntObjectHashMap<>(10);
+
+            METHODS.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", InstanceInfo.class));
+            METHODS.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", int.class));
+            METHODS.put(INSTANCE_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_instanceSetSettings", int.class, ApplicationSettings.class));
+            METHODS.put(INSTANCE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_instanceSetTimeAccessed", int.class, long.class));
+
+            METHODS.put(PROJECT_ADD, ReplicatedData.class.getDeclaredMethod("_projectAdd", int.class, ProjectInfo.class));
+            METHODS.put(PROJECT_REMOVE, ReplicatedData.class.getDeclaredMethod("_projectRemove", int.class, String.class));
+            METHODS.put(PROJECT_SET_SETTINGS, ReplicatedData.class.getDeclaredMethod("_projectSetSettings", int.class, String.class, ProjectSettings.class));
+            METHODS.put(PROJECT_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_projectSetTimeAccessed", int.class, String.class, long.class));
+
+            METHODS.put(FILE_ADD, ReplicatedData.class.getDeclaredMethod("_fileAdd", int.class, String.class, FileInfo.class));
+            METHODS.put(FILE_REMOVE, ReplicatedData.class.getDeclaredMethod("_fileRemove", int.class, String.class, String.class));
+            METHODS.put(FILE_SET_TIME_ACCESSED, ReplicatedData.class.getDeclaredMethod("_fileSetTimeAccessed", int.class, String.class, String.class, long.class));
+            METHODS.put(FILE_SET_READ_ONLY, ReplicatedData.class.getDeclaredMethod("_fileSetReadOnly", int.class, String.class, String.class, boolean.class));
+
+            METHODS.forEachValue(m -> {
+                m.setAccessible(true);
+                return true;
+            });
         }
         catch (NoSuchMethodException e)
         {
@@ -58,23 +88,17 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @NotNull
     protected final JChannel channel;
     @NotNull
-    protected final UniqueDeque<InstanceInfo> instances;
+    protected CloneableMap<Integer, InstanceInfo> instances;
     @NotNull
     protected RpcDispatcher dispatcher;
 
-    public ReplicatedData(JChannel channel) throws Exception
+    public ReplicatedData(@NotNull JChannel channel, @NotNull Notifier... notifiers) throws Exception
     {
-        this(channel, (Notifier[]) null);
-    }
+        this.notifiers.addAll(Arrays.asList(notifiers));
 
-    public ReplicatedData(JChannel channel, Notifier... notifiers) throws Exception
-    {
-        if (notifiers != null)
-            this.notifiers.addAll(Arrays.asList(notifiers));
+        this.instances = new CloneableHashMap<>();
 
-        this.instances = new UniqueLinkedDeque<>();
-
-        this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(methods::get);
+        this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(METHODS::get);
         this.dispatcher.setMembershipListener(this).setStateListener(this);
 
         this.channel = channel.getState(null, STATE_TIMEOUT);
@@ -82,7 +106,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public boolean isBlockingUpdates()
     {
-        return call_options.mode() == ResponseMode.GET_ALL;
+        return this.call_options.mode() == ResponseMode.GET_ALL;
     }
 
     /**
@@ -98,7 +122,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      */
     public long getTimeout()
     {
-        return call_options.timeout();
+        return this.call_options.timeout();
     }
 
     /**
@@ -108,292 +132,453 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      */
     public void setTimeout(long timeout)
     {
-        call_options.timeout(timeout);
+        this.call_options.timeout(timeout);
     }
 
-    public void addNotifier(Notifier n)
+    public void addNotifier(@NotNull Notifier n)
     {
-        if (n != null)
-            notifiers.add(n);
+        this.notifiers.add(n);
     }
 
-    public void removeNotifier(Notifier n)
+    public void removeNotifier(@NotNull Notifier n)
     {
-        if (n != null)
-            notifiers.remove(n);
+        this.notifiers.remove(n);
     }
 
     @Override
     public void close()
     {
         this.dispatcher.stop();
-        Util.close(channel);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "ReplicatedData{" + "instances=" + instances + '}';
+        Util.close(this.channel);
     }
 
     @NotNull
-    public UniqueDeque<InstanceInfo> getInstances()
+    @Override
+    public String toString()
     {
-        return new UniqueLinkedDeque<>(instances);
+        return "ReplicatedData{" + "instances=" + this.instances + '}';
     }
 
-    public void addInstance(InstanceInfo instance)
+    @NotNull
+    public CloneableMap<Integer, InstanceInfo> getInstances()
     {
-        try
-        {
-            MethodCall call = new MethodCall(ADD_INSTANCE, instance);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("addInstance(" + instance + ") failed", e);
-        }
+        return CloneableCollections.unmodifiableCloneableMap(this.instances);
     }
 
-    public void removeInstance(InstanceInfo instance)
+    public void instanceAdd(@NotNull InstanceInfo instance)
     {
         try
         {
-            MethodCall call = new MethodCall(REMOVE_INSTANCE, instance);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            MethodCall call = new MethodCall(INSTANCE_ADD, instance);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("removeInstance(" + instance + ") failed", e);
+            throw new RuntimeException("instanceAdd(" + instance + ") failed", e);
         }
     }
 
-    public void addProject(InstanceInfo instance, ProjectInfo project)
+    public void instanceRemove(@NotNull InstanceInfo instance)
     {
         try
         {
-            MethodCall call = new MethodCall(ADD_PROJECT, instance, project);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            MethodCall call = new MethodCall(INSTANCE_REMOVE, instance.getId());
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("addProject(" + instance + ", " + project + ") failed", e);
+            throw new RuntimeException("instanceRemove(" + instance + ") failed", e);
         }
     }
 
-    public void removeProject(InstanceInfo instance, ProjectInfo project)
+    public void instanceSetSettings(@NotNull InstanceInfo instance, @NotNull ApplicationSettings settings)
     {
         try
         {
-            MethodCall call = new MethodCall(REMOVE_PROJECT, instance, project);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            MethodCall call = new MethodCall(INSTANCE_SET_SETTINGS, instance.getId(), settings);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("removeProject(" + instance + ", " + project + ") failed", e);
+            throw new RuntimeException("instanceRemove(" + instance + ", " + settings + ") failed", e);
         }
     }
 
-    public void addFile(InstanceInfo instance, ProjectInfo project, FileInfo file)
+    public void instanceSetTimeAccessed(@NotNull InstanceInfo instance, long timeAccessed)
     {
         try
         {
-            MethodCall call = new MethodCall(ADD_FILE, instance, project, file);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            MethodCall call = new MethodCall(INSTANCE_SET_TIME_ACCESSED, instance.getId(), timeAccessed);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("addFile(" + instance + ", " + project + ", " + file + ") failed", e);
+            throw new RuntimeException("instanceSetTimeAccessed(" + instance + ", " + timeAccessed + ") failed", e);
         }
     }
 
-    public void removeFile(InstanceInfo instance, ProjectInfo project, FileInfo file)
+    public void projectAdd(@NotNull InstanceInfo instance, @NotNull ProjectInfo project)
     {
         try
         {
-            MethodCall call = new MethodCall(REMOVE_FILE, instance, project, file);
-            this.dispatcher.callRemoteMethods(null, call, call_options);
+            MethodCall call = new MethodCall(PROJECT_ADD, instance.getId(), project);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("removeFile(" + instance + ", " + project + ", " + file + ") failed", e);
+            throw new RuntimeException("projectAdd(" + instance + ", " + project + ") failed", e);
         }
     }
 
+    public void projectRemove(@NotNull InstanceInfo instance, @NotNull ProjectInfo project)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(PROJECT_REMOVE, instance.getId(), project.getId());
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("projectRemove(" + instance + ", " + project + ") failed", e);
+        }
+    }
+
+    public void projectSetSettings(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull ProjectSettings settings)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(PROJECT_SET_SETTINGS, instance.getId(), project.getId(), settings);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("projectSetSettings(" + instance + ", " + project + ", " + settings + ") failed", e);
+        }
+    }
+
+    public void projectSetTimeAccessed(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, long timeAccessed)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(PROJECT_SET_TIME_ACCESSED, instance.getId(), project.getId(), timeAccessed);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("projectSetTimeAccessed(" + instance + ", " + project + ", " + timeAccessed + ") failed", e);
+        }
+    }
+
+    public void fileAdd(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(FILE_ADD, instance.getId(), project.getId(), file);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("fileAdd(" + instance + ", " + project + ", " + file + ") failed", e);
+        }
+    }
+
+    public void fileRemove(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(FILE_REMOVE, instance.getId(), project.getId(), file.getId());
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("fileRemove(" + instance + ", " + project + ", " + file + ") failed", e);
+        }
+    }
+
+    public void fileSetTimeAccessed(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file, long timeAccessed)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(FILE_SET_TIME_ACCESSED, instance.getId(), project.getId(), file.getId(), timeAccessed);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("fileSetTimeAccessed(" + instance + ", " + project + ", " + file + ", " + timeAccessed + ") failed", e);
+        }
+    }
+
+    public void fileSetReadOnly(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file, boolean readOnly)
+    {
+        try
+        {
+            MethodCall call = new MethodCall(FILE_SET_READ_ONLY, instance.getId(), project.getId(), file.getId(), readOnly);
+            this.dispatcher.callRemoteMethods(null, call, this.call_options);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("fileSetReadOnly(" + instance + ", " + project + ", " + file + ", " + readOnly + ") failed", e);
+        }
+    }
+
+    /*--------------- Time accessed update METHODS -------------*/
+
+    private void updateInstance(int instanceId)
+    {
+        updateInstance(instanceId, System.currentTimeMillis());
+    }
+
+    private void updateInstance(int instanceId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            instance.setTimeAccessed(timeAccessed);
+        }
+    }
+
+    private void updateProject(int instanceId, String projectId)
+    {
+        updateProject(instanceId, projectId, System.currentTimeMillis());
+    }
+
+    private void updateProject(int instanceId, String projectId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                project.setTimeAccessed(timeAccessed);
+            }
+        }
+    }
+
+    private void updateFile(int instanceId, String projectId, String fileId)
+    {
+        updateFile(instanceId, projectId, fileId, System.currentTimeMillis());
+    }
+
+    private void updateFile(int instanceId, String projectId, String fileId, long timeAccessed)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                FileInfo file = project.getFiles().get(fileId);
+
+                if (file != null)
+                {
+                    file.setTimeAccessed(timeAccessed);
+                }
+            }
+        }
+
+    }
     /*------------------------ Callbacks -----------------------*/
 
-    protected InstanceInfo _addInstance(InstanceInfo instance)
+    protected void _instanceAdd(@NotNull InstanceInfo instance)
     {
-        RPC.setPresenceDelay(10, TimeUnit.SECONDS);
+        this.instances.put(instance.getId(), instance);
 
-        this.instances.addFirst(instance);
-
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.instanceAdded(instance);
-
-        return instance;
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
-    protected InstanceInfo _removeInstance(InstanceInfo instance)
+    protected void _instanceRemove(int instanceId)
     {
-        this.instances.remove(instance);
+        this.instances.remove(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.instanceRemoved(instance);
-
-        return instance;
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
-    protected ProjectInfo _addProject(InstanceInfo instance, ProjectInfo project)
+    protected void _instanceSetSettings(int instanceId, @NotNull ApplicationSettings settings)
     {
-        RPC.setPresenceDelay(5, TimeUnit.SECONDS);
+        InstanceInfo instance = this.instances.get(instanceId);
 
-        getLocalObject(instance).projects.addFirst(project);
+        if (instance != null)
+            instance.setSettings(settings);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.projectAdded(instance, project);
+        updateInstance(instanceId);
 
-        return project;
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.INSTANCE);
     }
 
-    protected ProjectInfo _removeProject(InstanceInfo instance, ProjectInfo project)
+    protected void _instanceSetTimeAccessed(int instanceId, long timeAccessed)
     {
-        getLocalObject(instance).projects.remove(project);
+        updateInstance(instanceId, timeAccessed);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.projectRemoved(instance, project);
-
-        return project;
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
-    protected FileInfo _addFile(InstanceInfo instance, ProjectInfo project, FileInfo file)
+    protected void _projectAdd(int instanceId, @NotNull ProjectInfo project)
     {
-        RPC.setPresenceDelay(2, TimeUnit.SECONDS);
+        InstanceInfo instance = this.instances.get(instanceId);
 
-        getLocalObject(instance, project).files.addFirst(file);
+        if (instance != null)
+            instance.addProject(project);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.fileAdded(instance, project, file);
+        updateInstance(instanceId);
 
-        return file;
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
-    protected FileInfo _removeFile(InstanceInfo instance, ProjectInfo project, FileInfo file)
+    protected void _projectRemove(int instanceId, @NotNull String projectId)
     {
-        getLocalObject(instance, project).files.remove(file);
+        InstanceInfo instance = this.instances.get(instanceId);
 
-        for (ReplicatedData.Notifier notifier : notifiers)
-            notifier.fileRemoved(instance, project, file);
+        if (instance != null)
+            instance.removeProject(projectId);
 
-        return file;
+        updateInstance(instanceId);
+
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
-    /*------------- Conversion To Local Objects ---------------*/
-
-    private InstanceInfo getLocalObject(InstanceInfo instance)
+    protected void _projectSetSettings(int instanceId, @NotNull String projectId, @NotNull ProjectSettings<? extends ProjectSettings> settings)
     {
-        for (InstanceInfo info : instances)
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
         {
-            if (instance.equals(info))
-                return info;
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+                project.setSettings(settings);
         }
-        return _addInstance(instance);
+
+        updateInstance(instanceId);
+
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
     }
 
-    private ProjectInfo getLocalObject(InstanceInfo instance, ProjectInfo project)
+    protected void _projectSetTimeAccessed(int instanceId, @NotNull String projectId, long timeAccessed)
     {
-        instance = getLocalObject(instance);
+        updateProject(instanceId, projectId, timeAccessed);
 
-        for (ProjectInfo info : instance.projects)
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.PROJECT);
+    }
+
+    protected void _fileAdd(int instanceId, @NotNull String projectId, @NotNull FileInfo file)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
         {
-            if (project.equals(info))
-                return info;
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+                project.addFile(file);
         }
-        return _addProject(instance, project);
+
+        updateProject(instanceId, projectId);
+
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.FILE);
+    }
+
+    protected void _fileRemove(int instanceId, @NotNull String projectId, @NotNull String fileId)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+                project.removeFile(fileId);
+        }
+
+        updateProject(instanceId, projectId);
+
+        for (Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.FILE);
+    }
+
+    protected void _fileSetTimeAccessed(int instanceId, @NotNull String projectId, @NotNull String fileId, long timeAccessed)
+    {
+        updateFile(instanceId, projectId, fileId, timeAccessed);
+
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.FILE);
+    }
+
+    protected void _fileSetReadOnly(int instanceId, @NotNull String projectId, @NotNull String fileId, boolean readOnly)
+    {
+        InstanceInfo instance = this.instances.get(instanceId);
+
+        if (instance != null)
+        {
+            ProjectInfo project = instance.getProjects().get(projectId);
+
+            if (project != null)
+            {
+                FileInfo file = project.getFiles().get(fileId);
+
+                if (file != null)
+                    file.setReadOnly(readOnly);
+            }
+        }
+
+        updateFile(instanceId, projectId, fileId);
+
+        for (ReplicatedData.Notifier notifier : this.notifiers)
+            notifier.dataUpdated(Notifier.Level.FILE);
     }
 
     /*-------------------- State Exchange ----------------------*/
 
-    public void getState(OutputStream outputStream) throws Exception
+    public void getState(@NotNull OutputStream outputStream) throws Exception
     {
         try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(outputStream, 1024)))
         {
-            oos.writeObject(instances.stream().map(InstanceInfo::clone).collect(Collectors.toCollection(UniqueLinkedDeque::new)));
+            oos.writeObject(instances);
         }
-
     }
 
     /*------------------- Membership Changes ----------------------*/
 
-    public void viewAccepted(View view)
+    public void viewAccepted(@NotNull View view)
     {
         List<Integer> ids = view.getMembers().stream().map(Address::hashCode).collect(Collectors.toList());
 
-        instances.stream().filter(i -> !ids.contains(i.getId())).forEach(this::_removeInstance);
+        this.instances.keySet().stream().filter(i -> !ids.contains(i)).forEach(this::_instanceRemove);
     }
 
     @SuppressWarnings("unchecked")
-    public void setState(InputStream inputStream) throws Exception
+    public void setState(@NotNull InputStream inputStream) throws Exception
     {
-        UniqueDeque<InstanceInfo> newInstances;
         try (ObjectInputStream ois = new ObjectInputStream(inputStream))
         {
-            newInstances = (UniqueDeque<InstanceInfo>) ois.readObject();
+            this.instances = (CloneableMap<Integer, InstanceInfo>) ois.readObject();
         }
-        if (newInstances != null)
-            for (InstanceInfo instance : newInstances)
-                addInstance(instance);
     }
 
     public interface Notifier
     {
-        default void instanceAdded(InstanceInfo instance) {}
+        void dataUpdated(@NotNull Level level);
 
-        default void instanceRemoved(InstanceInfo instance) {}
-
-        default void projectAdded(InstanceInfo instance, ProjectInfo project) {}
-
-        default void projectRemoved(InstanceInfo instance, ProjectInfo project) {}
-
-        default void fileAdded(InstanceInfo instance, ProjectInfo project, FileInfo file) {}
-
-        default void fileRemoved(InstanceInfo instance, ProjectInfo project, FileInfo file) {}
-
-    }
-
-    public interface UpdateNotifier extends Notifier
-    {
-        default void instanceAdded(InstanceInfo instance)
+        enum Level
         {
-            this.dataUpdated();
+            INSTANCE,
+            PROJECT,
+            FILE,
+            UNKNOWN
         }
-
-        default void instanceRemoved(InstanceInfo instance)
-        {
-            this.dataUpdated();
-        }
-
-        default void projectAdded(InstanceInfo instance, ProjectInfo project)
-        {
-            this.dataUpdated();
-        }
-
-        default void projectRemoved(InstanceInfo instance, ProjectInfo project)
-        {
-            this.dataUpdated();
-        }
-
-        default void fileAdded(InstanceInfo instance, ProjectInfo project, FileInfo file)
-        {
-            this.dataUpdated();
-        }
-
-        default void fileRemoved(InstanceInfo instance, ProjectInfo project, FileInfo file)
-        {
-            this.dataUpdated();
-        }
-
-        void dataUpdated();
-
     }
 }

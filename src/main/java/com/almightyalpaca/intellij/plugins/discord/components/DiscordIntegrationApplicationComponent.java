@@ -16,6 +16,7 @@
 package com.almightyalpaca.intellij.plugins.discord.components;
 
 import com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,20 @@ import java.util.Locale;
 public class DiscordIntegrationApplicationComponent implements ApplicationComponent
 {
     private final DiscordIntegrationApplicationService service = DiscordIntegrationApplicationService.getInstance();
+
+    @NotNull
+    private final Application application;
+
+    public DiscordIntegrationApplicationComponent(@NotNull Application application)
+    {
+        this.application = application;
+    }
+
+    @NotNull
+    public Application getApplication()
+    {
+        return this.application;
+    }
 
     @Override
     public void initComponent()

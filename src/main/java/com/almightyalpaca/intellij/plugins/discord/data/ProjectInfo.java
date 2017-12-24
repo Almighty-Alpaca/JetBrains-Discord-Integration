@@ -15,87 +15,134 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueDeque;
-import com.almightyalpaca.intellij.plugins.discord.collections.UniqueLinkedDeque;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
+import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
+import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings;
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class ProjectInfo implements Serializable, Cloneable
+public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, Comparable<ProjectInfo>
 {
-    final long time;
     @NotNull
-    final String name;
+    private final String name;
+    private final String id;
     @NotNull
-    final String id;
+    private final CloneableMap<String, FileInfo> files;
+    private final long timeOpened;
     @NotNull
-    final UniqueDeque<FileInfo> files;
+    private ProjectSettings<? extends ProjectSettings> settings;
+    private long timeAccessed;
 
-    public ProjectInfo(@NotNull String name, @NotNull String id, long time)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened)
     {
-        this(name, id, time, new UniqueLinkedDeque<>());
+        this(id, settings, name, timeOpened, timeOpened);
     }
 
-    public ProjectInfo(@NotNull String name, @NotNull String id, long time, @NotNull UniqueDeque<FileInfo> files)
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
     {
+        this(id, settings, name, timeOpened, timeAccessed, new CloneableHashMap<>());
+    }
+
+    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, FileInfo> files)
+    {
+        this.settings = settings;
+        this.timeOpened = timeOpened;
+        this.timeAccessed = timeAccessed;
         this.name = name;
         this.id = id;
-        this.time = time;
         this.files = files;
     }
 
-    public ProjectInfo(@NotNull Project project, long time)
+    public ProjectInfo(@NotNull Project project)
     {
-        this(project, time, new UniqueLinkedDeque<>());
+        this(project.getLocationHash(), DiscordIntegrationProjectSettings.getInstance(project).getSettings(), project.getName(), System.currentTimeMillis());
     }
 
-    public ProjectInfo(@NotNull Project project, long time, @NotNull UniqueDeque<FileInfo> files)
+    public long getTimeOpened()
     {
-        this(project.getName(), project.getLocationHash(), time, files);
+        return this.timeOpened;
     }
 
-    public long getTime()
+    public long getTimeAccessed()
     {
-        return time;
+        return this.timeAccessed;
+    }
+
+    void setTimeAccessed(long timeAccessed)
+    {
+        this.timeAccessed = timeAccessed;
     }
 
     @NotNull
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
     @NotNull
     public String getId()
     {
-        return id;
+        return this.id;
     }
 
     @NotNull
-    public UniqueDeque<FileInfo> getFiles()
+    public ProjectSettings<? extends ProjectSettings> getSettings()
     {
-        return new UniqueLinkedDeque<>(files);
+        return this.settings;
+    }
+
+    void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
+    {
+        this.settings = settings;
+    }
+
+    @NotNull
+    public CloneableMap<String, FileInfo> getFiles()
+    {
+        return CloneableCollections.unmodifiableCloneableMap(this.files);
     }
 
     @Override
-    public boolean equals(Object obj)
+    public int compareTo(@NotNull ProjectInfo project)
     {
-        return obj instanceof ProjectInfo && Objects.equals(id, ((ProjectInfo) obj).id);
+        return Long.compare(this.timeAccessed, project.timeAccessed);
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj)
+    {
+        return obj instanceof ProjectInfo && Objects.equals(this.id, ((ProjectInfo) obj).id);
+    }
+
+    @NotNull
     @Override
     public String toString()
     {
-        return "ProjectInfo{" + "time=" + time + ", name='" + name + '\'' + ", id='" + id + '\'' + ", files=" + files + '}';
+        return "ProjectInfo{" + "name='" + this.name + '\'' + ", id='" + this.id + '\'' + ", files=" + this.files + ", timeOpened=" + this.timeOpened + ", settings=" + this.settings + ", timeAccessed=" + this.timeAccessed + '}';
     }
 
+    @NotNull
     @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
-    protected ProjectInfo clone()
+    public ProjectInfo clone()
     {
-        return new ProjectInfo(name, id, time, files.stream().map(FileInfo::clone).collect(Collectors.toCollection(UniqueLinkedDeque::new)));
+        return new ProjectInfo(this.id, this.settings.clone(), this.name, this.timeOpened, this.timeAccessed, this.files.clone());
+    }
+
+    void addFile(@NotNull FileInfo file)
+    {
+        this.files.put(file.getId(), file);
+    }
+
+    void removeFile(@NotNull String fileId)
+    {
+        this.files.remove(fileId);
     }
 }

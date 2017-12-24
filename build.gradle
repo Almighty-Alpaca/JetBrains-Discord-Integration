@@ -24,19 +24,14 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 group 'com.almightyalpaca.intellij.plugins.discord'
 version '0.4.0'
 
-patchPluginXml {
-    sinceBuild = "145"
-    untilBuild = "173.9999.9999"
-}
-
 intellij {
-    version '2017.3'
+    version '2016.1.4'
     pluginName 'Discord Integration'
 
-    updateSinceUntilBuild = true
+    updateSinceUntilBuild = false
     downloadSources = true
 
-    instrumentCode = false
+    instrumentCode = true
 }
 
 repositories {
@@ -50,15 +45,5 @@ repositories {
 dependencies {
     compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v1.3.1'
 
-    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.8.Final'
-}
-
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    filesMatching('META-INF/plugin.xml') {
-        filter ReplaceTokens, tokens: [
-                "VERSION": project.version
-        ]
-    }
+    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.9.Final'
 }

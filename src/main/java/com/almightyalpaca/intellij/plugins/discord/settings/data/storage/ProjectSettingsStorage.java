@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.intellij.plugins.discord.utils;
+package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 
+import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jgroups.JChannel;
-import org.jgroups.View;
 
-public class JGroupsUtil
+public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStorage, ProjectSettings<ProjectSettingsStorage>> implements ProjectSettings<ProjectSettingsStorage>
 {
-    public static boolean isLeader(@NotNull JChannel channel)
+    public ProjectSettingsStorage()
     {
-        return isLeader(channel, channel.getView());
+        super(ProjectSettingsStorage.class, ProjectSettingsStorage::new);
     }
 
-    public static boolean isLeader(@NotNull JChannel channel, @NotNull View view)
+    @NotNull
+    @Override
+    public String toString()
     {
-        return view.getCoord().equals(channel.getAddress());
+        return "ProjectSettingsStorage{" + "enabled=" + isEnabled() + '}';
     }
 }

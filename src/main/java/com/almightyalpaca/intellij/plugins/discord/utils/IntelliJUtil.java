@@ -16,9 +16,11 @@
 package com.almightyalpaca.intellij.plugins.discord.utils;
 
 import com.intellij.openapi.application.ApplicationInfo;
+import org.jetbrains.annotations.NotNull;
 
 public class IntelliJUtil
 {
+    @NotNull
     public static String getDistribution()
     {
         return ApplicationInfo.getInstance().getBuild().getProductCode();

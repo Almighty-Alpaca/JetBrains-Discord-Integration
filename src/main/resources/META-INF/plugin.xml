@@ -15,8 +15,8 @@
   -->
 <idea-plugin>
     <id>com.almightyalpaca.intellij.plugins.discord</id>
+    <idea-version since-build="145"/>
     <name>Discord Integration</name>
-    <version>@VERSION@</version>
     <vendor url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
     <description><![CDATA[
@@ -24,15 +24,19 @@
         For bugs or feature requests visit <a href="https://github.com/Almighty-Alpaca/Intellij-Discord-Integration">the official github</a>.
     ]]></description>
 
-    <change-notes><![CDATA[
-    ]]>
-    </change-notes>
-
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
                 serviceImplementation="com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService"/>
+
+        <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
+                             instance="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
+
+        <applicationService
+                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
+        <projectService
+                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings"/>
     </extensions>
 
     <application-components>
