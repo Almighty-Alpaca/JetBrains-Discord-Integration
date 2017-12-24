@@ -22,7 +22,7 @@ plugins {
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group 'com.almightyalpaca.intellij.plugins.discord'
-version '0.4.0'
+version '0.5.0'
 
 intellij {
     version '2016.1.4'
