@@ -65,7 +65,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         this.distribution = distribution;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
-        this.projects = projects;
+        this.projects = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<>(projects));
     }
 
     public InstanceInfo(int id, @NotNull ApplicationInfo info)
@@ -120,7 +120,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     @NotNull
     public CloneableMap<String, ProjectInfo> getProjects()
     {
-        return CloneableCollections.unmodifiableCloneableMap(this.projects);
+        return new CloneableHashMap<>(this.projects);
     }
 
     @Override

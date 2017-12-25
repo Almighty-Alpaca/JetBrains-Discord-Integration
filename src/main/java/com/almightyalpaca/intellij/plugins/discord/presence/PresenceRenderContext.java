@@ -52,9 +52,9 @@ public class PresenceRenderContext implements Serializable, ReallyCloneable<Pres
         if (this.instance != null)
         {
             this.project = this.instance.getProjects().values().stream()
-                    .filter(p -> p.getSettings().isEnabled())
-                    .max(Comparator.naturalOrder())
-                    .orElse(null);
+                   .filter(p -> p.getSettings().isEnabled())
+                   .max(Comparator.naturalOrder())
+                   .orElse(null);
 
             if (this.project != null)
                 this.file = this.project.getFiles().values().stream()
@@ -95,6 +95,10 @@ public class PresenceRenderContext implements Serializable, ReallyCloneable<Pres
     @Override
     public PresenceRenderContext clone()
     {
-        return new PresenceRenderContext(ReallyCloneable.clone(this.instance), ReallyCloneable.clone(this.project), ReallyCloneable.clone(this.file));
+        // @formatter:off
+        return new PresenceRenderContext(ReallyCloneable.clone(this.instance),
+                                         ReallyCloneable.clone(this.project),
+                                         ReallyCloneable.clone(this.file));
+        // @formatter:on
     }
 }

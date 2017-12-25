@@ -4,19 +4,26 @@ package com.almightyalpaca.intellij.plugins.discord.collections.cloneable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@SuppressWarnings({"EqualsWhichDoesntCheckParameterClass", "SuspiciousToArrayCall", "SuspiciousSystemArraycopy", "unused"})
+@SuppressWarnings({"EqualsWhichDoesntCheckParameterClass", "SuspiciousToArrayCall", "SuspiciousSystemArraycopy", "unused", "MethodDoesntCallSuperMethod", "rawtypes", "unchecked"})
 public class CloneableCollections
 {
     @NotNull
-    public static <K, V> CloneableMap<K, V> unmodifiableCloneableMap(@NotNull CloneableMap<K, V> m)
+    public static <K, V extends ReallyCloneable<V>> CloneableMap<K, V> unmodifiableCloneableMap(@NotNull CloneableMap<K, V> m)
     {
         return new CloneableCollections.UnmodifiableCloneableMap<>(m);
+    }
+
+    public static <K, V extends ReallyCloneable<V>> CloneableMap<K, V> synchronizedCloneableMap(CloneableMap<K, V> m)
+    {
+        return new CloneableCollections.SynchronizedCloneableMap<>(m);
     }
 
     private static class UnmodifiableCloneableMap<K, V> implements CloneableMap<K, V>, Serializable
@@ -37,7 +44,6 @@ public class CloneableCollections
             this.m = m;
         }
 
-        @SuppressWarnings("MethodDoesntCallSuperMethod")
         @NotNull
         @Override
         public CloneableMap<K, V> clone()
@@ -107,7 +113,6 @@ public class CloneableCollections
 
         // Override default methods in Map
         @Override
-        @SuppressWarnings("unchecked")
         public V getOrDefault(Object k, V defaultValue)
         {
             // Safe cast as we don't change the value
@@ -186,7 +191,6 @@ public class CloneableCollections
         {
             private static final long serialVersionUID = 7854390611657943733L;
 
-            @SuppressWarnings({"unchecked", "rawtypes"})
             UnmodifiableEntrySet(Set<? extends Map.Entry<? extends K, ? extends V>> s)
             {
                 // Need to cast to raw in order to work around a limitation in the type system
@@ -204,7 +208,6 @@ public class CloneableCollections
                 c.forEach(entryConsumer(action));
             }
 
-            @SuppressWarnings("unchecked")
             public Spliterator<Entry<K, V>> spliterator()
             {
                 return new UnmodifiableEntrySetSpliterator<>((Spliterator<Map.Entry<K, V>>) c.spliterator());
@@ -247,7 +250,6 @@ public class CloneableCollections
             }
 
             @NotNull
-            @SuppressWarnings("unchecked")
             public Object[] toArray()
             {
                 Object[] a = c.toArray();
@@ -257,7 +259,6 @@ public class CloneableCollections
             }
 
             @NotNull
-            @SuppressWarnings("unchecked")
             public <T> T[] toArray(@NotNull T[] a)
             {
                 // We don't pass a to c.toArray, to avoid window of
@@ -532,21 +533,18 @@ public class CloneableCollections
             throw new UnsupportedOperationException();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Spliterator<E> spliterator()
         {
             return (Spliterator<E>) c.spliterator();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Stream<E> stream()
         {
             return (Stream<E>) c.stream();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Stream<E> parallelStream()
         {
@@ -554,4 +552,355 @@ public class CloneableCollections
         }
     }
 
+    private static class SynchronizedCloneableMap<K, V> implements CloneableMap<K, V>, Serializable
+    {
+        private static final long serialVersionUID = 1978198479659022715L;
+        final Object mutex;        // Object on which to synchronize
+        private final CloneableMap<K, V> m;     // Backing Map
+        private transient Set<K> keySet;
+        private transient Set<Map.Entry<K, V>> entrySet;
+        private transient Collection<V> values;
+
+        SynchronizedCloneableMap(CloneableMap<K, V> m)
+        {
+            this.m = Objects.requireNonNull(m);
+            mutex = this;
+        }
+
+        SynchronizedCloneableMap(CloneableMap<K, V> m, Object mutex)
+        {
+            this.m = m;
+            this.mutex = mutex;
+        }
+
+        public int size()
+        {
+            synchronized (mutex) {return m.size();}
+        }
+
+        public boolean isEmpty()
+        {
+            synchronized (mutex) {return m.isEmpty();}
+        }
+
+        public boolean containsKey(Object key)
+        {
+            synchronized (mutex) {return m.containsKey(key);}
+        }
+
+        public boolean containsValue(Object value)
+        {
+            synchronized (mutex) {return m.containsValue(value);}
+        }
+
+        public V get(Object key)
+        {
+            synchronized (mutex) {return m.get(key);}
+        }
+
+        public V put(K key, V value)
+        {
+            synchronized (mutex) {return m.put(key, value);}
+        }
+
+        public V remove(Object key)
+        {
+            synchronized (mutex) {return m.remove(key);}
+        }
+
+        public void putAll(@NotNull Map<? extends K, ? extends V> map)
+        {
+            synchronized (mutex) {m.putAll(map);}
+        }
+
+        public void clear()
+        {
+            synchronized (mutex) {m.clear();}
+        }
+
+        @NotNull
+        public Set<K> keySet()
+        {
+            synchronized (mutex)
+            {
+                if (keySet == null)
+                    keySet = new CloneableCollections.SynchronizedSet<>(m.keySet(), mutex);
+                return keySet;
+            }
+        }
+
+        @NotNull
+        public Set<Map.Entry<K, V>> entrySet()
+        {
+            synchronized (mutex)
+            {
+                if (entrySet == null)
+                    entrySet = new CloneableCollections.SynchronizedSet<>(m.entrySet(), mutex);
+                return entrySet;
+            }
+        }
+
+        @NotNull
+        public Collection<V> values()
+        {
+            synchronized (mutex)
+            {
+                if (values == null)
+                    values = new CloneableCollections.SynchronizedCollection<>(m.values(), mutex);
+                return values;
+            }
+        }
+
+        public boolean equals(Object o)
+        {
+            if (this == o)
+                return true;
+            synchronized (mutex) {return m.equals(o);}
+        }
+
+        public int hashCode()
+        {
+            synchronized (mutex) {return m.hashCode();}
+        }
+
+        public String toString()
+        {
+            synchronized (mutex) {return m.toString();}
+        }
+
+        @NotNull
+        @Override
+        public CloneableMap<K, V> clone()
+        {
+            return new SynchronizedCloneableMap<>(m.clone());
+        }
+
+        // Override default methods in Map
+        @Override
+        public V getOrDefault(Object k, V defaultValue)
+        {
+            synchronized (mutex) {return m.getOrDefault(k, defaultValue);}
+        }
+
+        @Override
+        public void forEach(BiConsumer<? super K, ? super V> action)
+        {
+            synchronized (mutex) {m.forEach(action);}
+        }
+
+        @Override
+        public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function)
+        {
+            synchronized (mutex) {m.replaceAll(function);}
+        }
+
+        @Override
+        public V putIfAbsent(K key, V value)
+        {
+            synchronized (mutex) {return m.putIfAbsent(key, value);}
+        }
+
+        @Override
+        public boolean remove(Object key, Object value)
+        {
+            synchronized (mutex) {return m.remove(key, value);}
+        }
+
+        @Override
+        public boolean replace(K key, V oldValue, V newValue)
+        {
+            synchronized (mutex) {return m.replace(key, oldValue, newValue);}
+        }
+
+        @Override
+        public V replace(K key, V value)
+        {
+            synchronized (mutex) {return m.replace(key, value);}
+        }
+
+        @Override
+        public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction)
+        {
+            synchronized (mutex) {return m.computeIfAbsent(key, mappingFunction);}
+        }
+
+        @Override
+        public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction)
+        {
+            synchronized (mutex) {return m.computeIfPresent(key, remappingFunction);}
+        }
+
+        @Override
+        public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction)
+        {
+            synchronized (mutex) {return m.compute(key, remappingFunction);}
+        }
+
+        @Override
+        public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction)
+        {
+            synchronized (mutex) {return m.merge(key, value, remappingFunction);}
+        }
+
+        private void writeObject(ObjectOutputStream s) throws IOException
+        {
+            synchronized (mutex) {s.defaultWriteObject();}
+        }
+    }
+
+    static class SynchronizedSet<E> extends CloneableCollections.SynchronizedCollection<E> implements Set<E>
+    {
+        private static final long serialVersionUID = 487447009682186044L;
+
+        SynchronizedSet(Set<E> s)
+        {
+            super(s);
+        }
+
+        SynchronizedSet(Set<E> s, Object mutex)
+        {
+            super(s, mutex);
+        }
+
+        public boolean equals(Object o)
+        {
+            if (this == o)
+                return true;
+            synchronized (mutex) {return c.equals(o);}
+        }
+
+        public int hashCode()
+        {
+            synchronized (mutex) {return c.hashCode();}
+        }
+    }
+
+    static class SynchronizedCollection<E> implements Collection<E>, Serializable
+    {
+        private static final long serialVersionUID = 3053995032091335093L;
+
+        final Collection<E> c;  // Backing Collection
+        final Object mutex;     // Object on which to synchronize
+
+        SynchronizedCollection(Collection<E> c)
+        {
+            this.c = Objects.requireNonNull(c);
+            mutex = this;
+        }
+
+        SynchronizedCollection(Collection<E> c, Object mutex)
+        {
+            this.c = Objects.requireNonNull(c);
+            this.mutex = Objects.requireNonNull(mutex);
+        }
+
+        public int size()
+        {
+            synchronized (mutex) {return c.size();}
+        }
+
+        public boolean isEmpty()
+        {
+            synchronized (mutex) {return c.isEmpty();}
+        }
+
+        public boolean contains(Object o)
+        {
+            synchronized (mutex) {return c.contains(o);}
+        }
+
+        @NotNull
+        public Object[] toArray()
+        {
+            synchronized (mutex) {return c.toArray();}
+        }
+
+        @NotNull
+        public <T> T[] toArray(@NotNull T[] a)
+        {
+            synchronized (mutex) {return c.toArray(a);}
+        }
+
+        @NotNull
+        public Iterator<E> iterator()
+        {
+            return c.iterator(); // Must be manually synched by user!
+        }
+
+        public boolean add(E e)
+        {
+            synchronized (mutex) {return c.add(e);}
+        }
+
+        public boolean remove(Object o)
+        {
+            synchronized (mutex) {return c.remove(o);}
+        }
+
+        public boolean containsAll(@NotNull Collection<?> coll)
+        {
+            synchronized (mutex) {return c.containsAll(coll);}
+        }
+
+        public boolean addAll(@NotNull Collection<? extends E> coll)
+        {
+            synchronized (mutex) {return c.addAll(coll);}
+        }
+
+        public boolean removeAll(@NotNull Collection<?> coll)
+        {
+            synchronized (mutex) {return c.removeAll(coll);}
+        }
+
+        public boolean retainAll(@NotNull Collection<?> coll)
+        {
+            synchronized (mutex) {return c.retainAll(coll);}
+        }
+
+        public void clear()
+        {
+            synchronized (mutex) {c.clear();}
+        }
+
+        public String toString()
+        {
+            synchronized (mutex) {return c.toString();}
+        }
+
+        // Override default methods in Collection
+        @Override
+        public void forEach(Consumer<? super E> consumer)
+        {
+            synchronized (mutex) {c.forEach(consumer);}
+        }
+
+        @Override
+        public boolean removeIf(Predicate<? super E> filter)
+        {
+            synchronized (mutex) {return c.removeIf(filter);}
+        }
+
+        @Override
+        public Spliterator<E> spliterator()
+        {
+            return c.spliterator(); // Must be manually synched by user!
+        }
+
+        @Override
+        public Stream<E> stream()
+        {
+            return c.stream(); // Must be manually synched by user!
+        }
+
+        @Override
+        public Stream<E> parallelStream()
+        {
+            return c.parallelStream(); // Must be manually synched by user!
+        }
+
+        private void writeObject(ObjectOutputStream s) throws IOException
+        {
+            synchronized (mutex) {s.defaultWriteObject();}
+        }
+    }
 }

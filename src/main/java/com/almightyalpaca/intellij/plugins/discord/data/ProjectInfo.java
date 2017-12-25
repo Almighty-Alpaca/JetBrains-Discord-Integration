@@ -32,6 +32,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
 {
     @NotNull
     private final String name;
+    @NotNull
     private final String id;
     @NotNull
     private final CloneableMap<String, FileInfo> files;
@@ -40,24 +41,24 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     private ProjectSettings<? extends ProjectSettings> settings;
     private long timeAccessed;
 
-    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened)
     {
         this(id, settings, name, timeOpened, timeOpened);
     }
 
-    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
     {
         this(id, settings, name, timeOpened, timeAccessed, new CloneableHashMap<>());
     }
 
-    public ProjectInfo(String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, FileInfo> files)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, FileInfo> files)
     {
         this.settings = settings;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
         this.name = name;
         this.id = id;
-        this.files = files;
+        this.files = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<>(files));
     }
 
     public ProjectInfo(@NotNull Project project)
@@ -106,7 +107,7 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     @NotNull
     public CloneableMap<String, FileInfo> getFiles()
     {
-        return CloneableCollections.unmodifiableCloneableMap(this.files);
+        return new CloneableHashMap<>(this.files);
     }
 
     @Override

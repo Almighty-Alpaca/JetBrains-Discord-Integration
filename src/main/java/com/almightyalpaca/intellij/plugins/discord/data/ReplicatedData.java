@@ -88,7 +88,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @NotNull
     protected final JChannel channel;
     @NotNull
-    protected CloneableMap<Integer, InstanceInfo> instances;
+    protected final CloneableMap<Integer, InstanceInfo> instances;
     @NotNull
     protected RpcDispatcher dispatcher;
 
@@ -96,7 +96,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         this.notifiers.addAll(Arrays.asList(notifiers));
 
-        this.instances = new CloneableHashMap<>();
+        this.instances = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<Integer, InstanceInfo>());
 
         this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(METHODS::get);
         this.dispatcher.setMembershipListener(this).setStateListener(this);
@@ -114,7 +114,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
      */
     public void setBlockingUpdates(boolean blocking_updates)
     {
-        call_options.mode(blocking_updates ? ResponseMode.GET_ALL : ResponseMode.GET_NONE);
+        this.call_options.mode(blocking_updates ? ResponseMode.GET_ALL : ResponseMode.GET_NONE);
     }
 
     /**
@@ -162,7 +162,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @NotNull
     public CloneableMap<Integer, InstanceInfo> getInstances()
     {
-        return CloneableCollections.unmodifiableCloneableMap(this.instances);
+        return new CloneableHashMap<>(this.instances);
     }
 
     public void instanceAdd(@NotNull InstanceInfo instance)
@@ -557,7 +557,10 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         List<Integer> ids = view.getMembers().stream().map(Address::hashCode).collect(Collectors.toList());
 
-        this.instances.keySet().stream().filter(i -> !ids.contains(i)).forEach(this::_instanceRemove);
+        synchronized (this.instances)
+        {
+            this.instances.keySet().stream().filter(i -> !ids.contains(i)).forEach(this::_instanceRemove);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -565,7 +568,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         try (ObjectInputStream ois = new ObjectInputStream(inputStream))
         {
-            this.instances = (CloneableMap<Integer, InstanceInfo>) ois.readObject();
+            this.instances.clear();
+            this.instances.putAll((CloneableMap<Integer, InstanceInfo>) ois.readObject());
         }
     }
 

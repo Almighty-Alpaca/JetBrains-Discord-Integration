@@ -33,8 +33,8 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationShowFileExtensions;
     private JBCheckBox applicationHideReadOnlyFiles;
     private JBCheckBox applicationShowReadingInsteadOfEditing;
-    private DiscordIntegrationApplicationSettings applicationSettings;
-    private DiscordIntegrationProjectSettings projectSettings;
+    private final DiscordIntegrationApplicationSettings applicationSettings;
+    private final DiscordIntegrationProjectSettings projectSettings;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {

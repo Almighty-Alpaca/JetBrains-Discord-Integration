@@ -16,6 +16,13 @@ public class CloneableHashMap<K, V extends ReallyCloneable<V>> extends HashMap<K
         super(initialCapacity);
     }
 
+    public CloneableHashMap(@NotNull CloneableMap<K, V> map)
+    {
+        super(map.size());
+
+        map.forEach((l, e) -> this.put(l, e.clone()));
+    }
+
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @NotNull
     @Override
