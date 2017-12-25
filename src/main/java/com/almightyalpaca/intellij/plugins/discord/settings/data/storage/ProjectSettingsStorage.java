@@ -22,7 +22,7 @@ public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStora
 {
     public ProjectSettingsStorage()
     {
-        super(ProjectSettingsStorage.class, ProjectSettingsStorage::new);
+        super(ProjectSettingsStorage.class);
     }
 
     @NotNull

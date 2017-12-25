@@ -15,7 +15,6 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Comparable<FileInfo>
+public class FileInfo implements Serializable, Comparable<FileInfo>
 {
     @NotNull
     private final String id;
@@ -144,14 +143,6 @@ public class FileInfo implements Serializable, ReallyCloneable<FileInfo>, Compar
     public String toString()
     {
         return "FileInfo{" + "id='" + this.id + '\'' + ", baseName='" + this.baseName + '\'' + ", extension='" + this.extension + '\'' + ", timeOpened=" + this.timeOpened + ", timeAccessed=" + this.timeAccessed + '}';
-    }
-
-    @NotNull
-    @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
-    @Override
-    public FileInfo clone()
-    {
-        return new FileInfo(this.id, this.baseName, this.extension, this.readOnly, this.timeOpened, this.timeAccessed);
     }
 
     private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException

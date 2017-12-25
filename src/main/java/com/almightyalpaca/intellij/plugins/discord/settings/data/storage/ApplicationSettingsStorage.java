@@ -30,7 +30,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
 
     public ApplicationSettingsStorage()
     {
-        super(ApplicationSettingsStorage.class, ApplicationSettingsStorage::new);
+        super(ApplicationSettingsStorage.class);
     }
 
     @Override
@@ -96,20 +96,6 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     {
         this.showReadingInsteadOfWriting = showReadingInsteadOfWriting;
         return this;
-    }
-
-    @NotNull
-    @Override
-    public ApplicationSettingsStorage clone()
-    {
-        // @formatter:off
-        return super.clone()
-                .setShowUnknownImageFile(this.showUnknownImageFile)
-                .setShowUnknownImageIDE(this.showUnknownImageIDE)
-                .setShowFileExtensions(this.showFileExtensions)
-                .setHideReadOnlyFiles(this.hideReadOnlyFiles)
-                .setShowReadingInsteadOfWriting(this.showReadingInsteadOfWriting);
-        // @formatter:on
     }
 
     @NotNull

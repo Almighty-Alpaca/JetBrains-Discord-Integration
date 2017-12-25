@@ -1,8 +1,5 @@
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import gnu.trove.TIntObjectHashMap;
@@ -16,10 +13,7 @@ import org.jgroups.util.Util;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
@@ -88,7 +82,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @NotNull
     protected final JChannel channel;
     @NotNull
-    protected final CloneableMap<Integer, InstanceInfo> instances;
+    protected final Map<Integer, InstanceInfo> instances;
     @NotNull
     protected RpcDispatcher dispatcher;
 
@@ -96,7 +90,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         this.notifiers.addAll(Arrays.asList(notifiers));
 
-        this.instances = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<Integer, InstanceInfo>());
+        this.instances = Collections.synchronizedMap(new HashMap<Integer, InstanceInfo>());
 
         this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(METHODS::get);
         this.dispatcher.setMembershipListener(this).setStateListener(this);
@@ -160,9 +154,9 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     }
 
     @NotNull
-    public CloneableMap<Integer, InstanceInfo> getInstances()
+    public Map<Integer, InstanceInfo> getInstances()
     {
-        return new CloneableHashMap<>(this.instances);
+        return new HashMap<>(this.instances);
     }
 
     public void instanceAdd(@NotNull InstanceInfo instance)
@@ -569,7 +563,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         try (ObjectInputStream ois = new ObjectInputStream(inputStream))
         {
             this.instances.clear();
-            this.instances.putAll((CloneableMap<Integer, InstanceInfo>) ois.readObject());
+            this.instances.putAll((Map<Integer, InstanceInfo>) ois.readObject());
         }
     }
 

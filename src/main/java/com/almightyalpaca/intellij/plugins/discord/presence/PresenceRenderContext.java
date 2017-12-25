@@ -15,7 +15,6 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.presence;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
 import com.almightyalpaca.intellij.plugins.discord.data.FileInfo;
 import com.almightyalpaca.intellij.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.intellij.plugins.discord.data.ProjectInfo;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class PresenceRenderContext implements Serializable, ReallyCloneable<PresenceRenderContext>
+public class PresenceRenderContext implements Serializable
 {
     @Nullable
     private final InstanceInfo instance;
@@ -88,17 +87,5 @@ public class PresenceRenderContext implements Serializable, ReallyCloneable<Pres
     public FileInfo getFile()
     {
         return this.file;
-    }
-
-    @NotNull
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
-    @Override
-    public PresenceRenderContext clone()
-    {
-        // @formatter:off
-        return new PresenceRenderContext(ReallyCloneable.clone(this.instance),
-                                         ReallyCloneable.clone(this.project),
-                                         ReallyCloneable.clone(this.file));
-        // @formatter:on
     }
 }

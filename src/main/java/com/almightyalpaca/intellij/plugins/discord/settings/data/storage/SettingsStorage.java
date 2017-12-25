@@ -19,21 +19,17 @@ import com.almightyalpaca.intellij.plugins.discord.settings.data.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends Settings<T>> implements Settings<T>
 {
     @NotNull
     private transient final Class<T> clazz;
-    @NotNull
-    private transient final Supplier<T> factory;
 
     private boolean enabled = true;
 
-    public SettingsStorage(@NotNull Class<T> clazz, @NotNull Supplier<T> factory)
+    public SettingsStorage(@NotNull Class<T> clazz)
     {
         this.clazz = clazz;
-        this.factory = factory;
     }
 
     @Override
@@ -46,13 +42,6 @@ public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends
     {
         this.enabled = enabled;
         return clazz.cast(this);
-    }
-
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
-    @NotNull
-    public T clone()
-    {
-        return factory.get().setEnabled(enabled);
     }
 
     @NotNull

@@ -15,10 +15,6 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
 import com.intellij.openapi.project.Project;
@@ -26,16 +22,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, Comparable<ProjectInfo>
+public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
 {
     @NotNull
     private final String name;
     @NotNull
     private final String id;
     @NotNull
-    private final CloneableMap<String, FileInfo> files;
+    private final Map<String, FileInfo> files;
     private final long timeOpened;
     @NotNull
     private ProjectSettings<? extends ProjectSettings> settings;
@@ -48,17 +47,17 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
 
     public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
     {
-        this(id, settings, name, timeOpened, timeAccessed, new CloneableHashMap<>());
+        this(id, settings, name, timeOpened, timeAccessed, new HashMap<>());
     }
 
-    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, FileInfo> files)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull Map<String, FileInfo> files)
     {
         this.settings = settings;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
         this.name = name;
         this.id = id;
-        this.files = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<>(files));
+        this.files = Collections.synchronizedMap(new HashMap<>(files));
     }
 
     public ProjectInfo(@NotNull Project project)
@@ -105,9 +104,9 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     }
 
     @NotNull
-    public CloneableMap<String, FileInfo> getFiles()
+    public Map<String, FileInfo> getFiles()
     {
-        return new CloneableHashMap<>(this.files);
+        return new HashMap<>(this.files);
     }
 
     @Override
@@ -127,14 +126,6 @@ public class ProjectInfo implements Serializable, ReallyCloneable<ProjectInfo>, 
     public String toString()
     {
         return "ProjectInfo{" + "name='" + this.name + '\'' + ", id='" + this.id + '\'' + ", files=" + this.files + ", timeOpened=" + this.timeOpened + ", settings=" + this.settings + ", timeAccessed=" + this.timeAccessed + '}';
-    }
-
-    @NotNull
-    @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
-    @Override
-    public ProjectInfo clone()
-    {
-        return new ProjectInfo(this.id, this.settings.clone(), this.name, this.timeOpened, this.timeAccessed, this.files.clone());
     }
 
     void addFile(@NotNull FileInfo file)

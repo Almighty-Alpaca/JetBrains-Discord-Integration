@@ -15,10 +15,6 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableCollections;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableHashMap;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.CloneableMap;
-import com.almightyalpaca.intellij.plugins.discord.collections.cloneable.ReallyCloneable;
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import com.intellij.openapi.application.ApplicationInfo;
@@ -27,14 +23,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>, Comparable<InstanceInfo>
+public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
 {
     @NotNull
-    private final CloneableMap<String, ProjectInfo> projects;
+    private final Map<String, ProjectInfo> projects;
     @NotNull
     private final DistributionInfo distribution;
     private final int id;
@@ -55,17 +52,17 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
 
     public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
     {
-        this(id, settings, distribution, timeOpened, timeAccessed, new CloneableHashMap<>());
+        this(id, settings, distribution, timeOpened, timeAccessed, new HashMap<>());
     }
 
-    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull CloneableMap<String, ProjectInfo> projects)
+    public InstanceInfo(int id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull Map<String, ProjectInfo> projects)
     {
         this.id = id;
         this.settings = settings;
         this.distribution = distribution;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
-        this.projects = CloneableCollections.synchronizedCloneableMap(new CloneableHashMap<>(projects));
+        this.projects = Collections.synchronizedMap(new HashMap<>(projects));
     }
 
     public InstanceInfo(int id, @NotNull ApplicationInfo info)
@@ -118,9 +115,9 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
     }
 
     @NotNull
-    public CloneableMap<String, ProjectInfo> getProjects()
+    public Map<String, ProjectInfo> getProjects()
     {
-        return new CloneableHashMap<>(this.projects);
+        return new HashMap<>(this.projects);
     }
 
     @Override
@@ -135,14 +132,6 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         return obj instanceof InstanceInfo && Objects.equals(this.id, ((InstanceInfo) obj).id);
     }
 
-    @NotNull
-    @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
-    @Override
-    public InstanceInfo clone()
-    {
-        return new InstanceInfo(this.id, this.settings.clone(), this.distribution.clone(), this.timeOpened, this.timeAccessed, this.projects.clone());
-    }
-
     void addProject(@NotNull ProjectInfo project)
     {
         this.projects.put(project.getId(), project);
@@ -153,7 +142,7 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
         this.projects.remove(projectId);
     }
 
-    public static class DistributionInfo implements Serializable, ReallyCloneable<DistributionInfo>
+    public static class DistributionInfo implements Serializable
     {
         @NotNull
         private final String code;
@@ -222,14 +211,6 @@ public class InstanceInfo implements Serializable, ReallyCloneable<InstanceInfo>
             in.defaultReadObject();
 
             this.type = Type.get(code);
-        }
-
-        @NotNull
-        @SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
-        @Override
-        public DistributionInfo clone()
-        {
-            return this;
         }
 
         public enum Type

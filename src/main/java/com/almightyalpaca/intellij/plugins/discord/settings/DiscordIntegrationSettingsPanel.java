@@ -23,6 +23,8 @@ import javax.swing.*;
 
 public class DiscordIntegrationSettingsPanel
 {
+    private final DiscordIntegrationApplicationSettings applicationSettings;
+    private final DiscordIntegrationProjectSettings projectSettings;
     private JPanel panelRoot;
     private JPanel panelProject;
     private JBCheckBox projectEnabled;
@@ -33,8 +35,6 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationShowFileExtensions;
     private JBCheckBox applicationHideReadOnlyFiles;
     private JBCheckBox applicationShowReadingInsteadOfEditing;
-    private final DiscordIntegrationApplicationSettings applicationSettings;
-    private final DiscordIntegrationProjectSettings projectSettings;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
