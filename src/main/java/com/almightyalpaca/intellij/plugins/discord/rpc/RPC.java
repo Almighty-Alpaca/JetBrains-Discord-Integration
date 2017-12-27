@@ -104,7 +104,6 @@ public class RPC
 
             RPC.delayedPresenceRunner.start();
         }
-
     }
 
     public static synchronized void dispose()

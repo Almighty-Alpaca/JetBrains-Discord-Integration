@@ -15,6 +15,7 @@
  */
 package com.almightyalpaca.intellij.plugins.discord.data;
 
+import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,9 @@ import java.util.Objects;
 
 public class FileInfo implements Serializable, Comparable<FileInfo>
 {
+    @NotNull
+    private static final Gson GSON = new Gson();
+
     @NotNull
     private final String id;
     @NotNull
@@ -142,7 +146,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     @Override
     public String toString()
     {
-        return "FileInfo{" + "id='" + this.id + '\'' + ", baseName='" + this.baseName + '\'' + ", extension='" + this.extension + '\'' + ", timeOpened=" + this.timeOpened + ", timeAccessed=" + this.timeAccessed + '}';
+        return GSON.toJson(this);
     }
 
     private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
@@ -264,6 +268,13 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         public String getAssetName(boolean showUnknown)
         {
             return this.assetName;
+        }
+
+        @NotNull
+        @Override
+        public String toString()
+        {
+            return GSON.toJson(this);
         }
     }
 }

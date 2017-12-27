@@ -17,6 +17,7 @@ package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
+import com.google.gson.Gson;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,9 @@ import java.util.Objects;
 
 public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
 {
+    @NotNull
+    private static final Gson GSON = new Gson();
+
     @NotNull
     private final String name;
     @NotNull
@@ -125,7 +129,7 @@ public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
     @Override
     public String toString()
     {
-        return "ProjectInfo{" + "name='" + this.name + '\'' + ", id='" + this.id + '\'' + ", files=" + this.files + ", timeOpened=" + this.timeOpened + ", settings=" + this.settings + ", timeAccessed=" + this.timeAccessed + '}';
+        return GSON.toJson(this);
     }
 
     void addFile(@NotNull FileInfo file)

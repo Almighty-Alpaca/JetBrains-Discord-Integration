@@ -16,10 +16,14 @@
 package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
+import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStorage, ProjectSettings<ProjectSettingsStorage>> implements ProjectSettings<ProjectSettingsStorage>
 {
+    @NotNull
+    private static final Gson GSON = new Gson();
+
     public ProjectSettingsStorage()
     {
         super(ProjectSettingsStorage.class);
@@ -29,6 +33,6 @@ public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStora
     @Override
     public String toString()
     {
-        return "ProjectSettingsStorage{" + "enabled=" + isEnabled() + '}';
+        return GSON.toJson(this);
     }
 }

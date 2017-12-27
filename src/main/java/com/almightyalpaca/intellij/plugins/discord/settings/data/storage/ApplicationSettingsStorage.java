@@ -16,12 +16,16 @@
 package com.almightyalpaca.intellij.plugins.discord.settings.data.storage;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
+import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSettingsStorage, ApplicationSettings<ApplicationSettingsStorage>> implements ApplicationSettings<ApplicationSettingsStorage>
 {
+    @NotNull
+    private static final Gson GSON = new Gson();
+
     private boolean showUnknownImageIDE = true;
     private boolean showUnknownImageFile = true;
     private boolean showFileExtensions = true;
@@ -116,13 +120,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @Override
     public String toString()
     {
-        // @formatter:off
-        return "ApplicationSettingsStorage{" + "showUnknownImageIDE=" + this.showUnknownImageIDE
-                + ", showUnknownImageFile=" + this.showUnknownImageFile
-                + ", showFileExtensions=" + this.showFileExtensions
-                + ", hideReadOnlyFiles=" + this.hideReadOnlyFiles
-                + ", showReadingInsteadOfWriting=" + this.showReadingInsteadOfWriting + '}';
-        // @formatter:on
+        return GSON.toJson(this);
     }
 
     @Override

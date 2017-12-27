@@ -2,6 +2,7 @@ package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ProjectSettings;
+import com.google.gson.Gson;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jgroups.*;
@@ -22,6 +23,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     public static final long STATE_TIMEOUT = 1000L;
 
     @NotNull
+    private static final Gson GSON = new Gson();
     private static final TIntObjectHashMap<Method> METHODS;
     /*
      * xx3 -> change settings
@@ -150,7 +152,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     @Override
     public String toString()
     {
-        return "ReplicatedData{" + "instances=" + this.instances + '}';
+        return GSON.toJson(this);
     }
 
     @NotNull

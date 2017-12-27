@@ -17,6 +17,7 @@ package com.almightyalpaca.intellij.plugins.discord.data;
 
 import com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings;
 import com.almightyalpaca.intellij.plugins.discord.settings.data.ApplicationSettings;
+import com.google.gson.Gson;
 import com.intellij.openapi.application.ApplicationInfo;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +31,9 @@ import java.util.Objects;
 
 public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
 {
+    @NotNull
+    private static final Gson GSON = new Gson();
+
     @NotNull
     private final Map<String, ProjectInfo> projects;
     @NotNull
@@ -74,7 +78,7 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     @Override
     public String toString()
     {
-        return "InstanceInfo{" + "projects=" + this.projects + ", distribution=" + this.distribution + ", id=" + this.id + ", settings=" + this.settings + '}';
+        return GSON.toJson(this);
     }
 
     public long getTimeOpened()
@@ -203,7 +207,7 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
         @Override
         public String toString()
         {
-            return "DistributionInfo{" + "code='" + this.code + '\'' + ", version='" + this.version + '\'' + '}';
+            return GSON.toJson(this);
         }
 
         private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
