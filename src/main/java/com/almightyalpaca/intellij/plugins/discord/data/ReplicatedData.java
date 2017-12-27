@@ -11,6 +11,8 @@ import org.jgroups.blocks.RequestOptions;
 import org.jgroups.blocks.ResponseMode;
 import org.jgroups.blocks.RpcDispatcher;
 import org.jgroups.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -24,6 +26,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     @NotNull
     private static final Gson GSON = new Gson();
+    private static final Logger LOG = LoggerFactory.getLogger(ReplicatedData.class);
+    @NotNull
     private static final TIntObjectHashMap<Method> METHODS;
     /*
      * xx3 -> change settings
@@ -163,6 +167,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void instanceAdd(@NotNull InstanceInfo instance)
     {
+        LOG.trace("instanceAdd({})", instance);
+
         try
         {
             MethodCall call = new MethodCall(INSTANCE_ADD, instance);
@@ -176,6 +182,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void instanceRemove(@NotNull InstanceInfo instance)
     {
+        LOG.trace("instanceRemove({})", instance);
+
         try
         {
             MethodCall call = new MethodCall(INSTANCE_REMOVE, instance.getId());
@@ -189,6 +197,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void instanceSetSettings(@NotNull InstanceInfo instance, @NotNull ApplicationSettings settings)
     {
+        LOG.trace("instanceSetSettings({}, {})", instance, settings);
+
         try
         {
             MethodCall call = new MethodCall(INSTANCE_SET_SETTINGS, instance.getId(), settings);
@@ -202,6 +212,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void instanceSetTimeAccessed(@NotNull InstanceInfo instance, long timeAccessed)
     {
+        LOG.trace("instanceSetTimeAccessed({}, {})", instance, timeAccessed);
+
         try
         {
             MethodCall call = new MethodCall(INSTANCE_SET_TIME_ACCESSED, instance.getId(), timeAccessed);
@@ -215,6 +227,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void projectAdd(@NotNull InstanceInfo instance, @NotNull ProjectInfo project)
     {
+        LOG.trace("projectAdd({}, {})", instance, project);
+
         try
         {
             MethodCall call = new MethodCall(PROJECT_ADD, instance.getId(), project);
@@ -228,6 +242,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void projectRemove(@NotNull InstanceInfo instance, @NotNull ProjectInfo project)
     {
+        LOG.trace("projectRemove({}, {})", instance, project);
+
         try
         {
             MethodCall call = new MethodCall(PROJECT_REMOVE, instance.getId(), project.getId());
@@ -241,6 +257,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void projectSetSettings(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull ProjectSettings settings)
     {
+        LOG.trace("projectSetSettings({}, {}, {})", instance, project, settings);
+
         try
         {
             MethodCall call = new MethodCall(PROJECT_SET_SETTINGS, instance.getId(), project.getId(), settings);
@@ -254,6 +272,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void projectSetTimeAccessed(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, long timeAccessed)
     {
+        LOG.trace("projectSetTimeAccessed({}, {}, {})", instance, project, timeAccessed);
+
         try
         {
             MethodCall call = new MethodCall(PROJECT_SET_TIME_ACCESSED, instance.getId(), project.getId(), timeAccessed);
@@ -267,6 +287,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void fileAdd(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file)
     {
+        LOG.trace("fileAdd({}, {}, {})", instance, project, file);
+
         try
         {
             MethodCall call = new MethodCall(FILE_ADD, instance.getId(), project.getId(), file);
@@ -280,6 +302,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void fileRemove(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file)
     {
+        LOG.trace("fileRemove({}, {}, {})", instance, project, file);
+
         try
         {
             MethodCall call = new MethodCall(FILE_REMOVE, instance.getId(), project.getId(), file.getId());
@@ -293,6 +317,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void fileSetTimeAccessed(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file, long timeAccessed)
     {
+        LOG.trace("fileSetTimeAccessed({}, {}, {}, {})", instance, project, file, timeAccessed);
+
         try
         {
             MethodCall call = new MethodCall(FILE_SET_TIME_ACCESSED, instance.getId(), project.getId(), file.getId(), timeAccessed);
@@ -306,6 +332,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void fileSetReadOnly(@NotNull InstanceInfo instance, @NotNull ProjectInfo project, @NotNull FileInfo file, boolean readOnly)
     {
+        LOG.trace("fileSetReadOnly({}, {}, {}, {})", instance, project, file, readOnly);
+
         try
         {
             MethodCall call = new MethodCall(FILE_SET_READ_ONLY, instance.getId(), project.getId(), file.getId(), readOnly);
@@ -377,12 +405,14 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 }
             }
         }
-
     }
+
     /*------------------------ Callbacks -----------------------*/
 
     protected void _instanceAdd(@NotNull InstanceInfo instance)
     {
+        LOG.trace("_instanceAdd({})", instance);
+
         this.instances.put(instance.getId(), instance);
 
         for (ReplicatedData.Notifier notifier : this.notifiers)
@@ -391,6 +421,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _instanceRemove(int instanceId)
     {
+        LOG.trace("_instanceRemove({})", instanceId);
+
         this.instances.remove(instanceId);
 
         for (ReplicatedData.Notifier notifier : this.notifiers)
@@ -399,6 +431,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _instanceSetSettings(int instanceId, @NotNull ApplicationSettings settings)
     {
+        LOG.trace("_instanceRemove({}, {})", instanceId, settings);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -412,6 +446,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _instanceSetTimeAccessed(int instanceId, long timeAccessed)
     {
+        LOG.trace("_instanceSetTimeAccessed({}, {})", instanceId, timeAccessed);
+
         updateInstance(instanceId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : this.notifiers)
@@ -420,6 +456,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _projectAdd(int instanceId, @NotNull ProjectInfo project)
     {
+        LOG.trace("_projectAdd({}, {})", instanceId, project);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -433,6 +471,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _projectRemove(int instanceId, @NotNull String projectId)
     {
+        LOG.trace("_projectRemove({}, {})", instanceId, projectId);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -446,6 +486,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _projectSetSettings(int instanceId, @NotNull String projectId, @NotNull ProjectSettings<? extends ProjectSettings> settings)
     {
+        LOG.trace("_projectSetSettings({}, {}, {})", instanceId, projectId, settings);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -464,6 +506,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _projectSetTimeAccessed(int instanceId, @NotNull String projectId, long timeAccessed)
     {
+        LOG.trace("_projectSetTimeAccessed({}, {}, {})", instanceId, projectId, timeAccessed);
+
         updateProject(instanceId, projectId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : this.notifiers)
@@ -472,6 +516,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _fileAdd(int instanceId, @NotNull String projectId, @NotNull FileInfo file)
     {
+        LOG.trace("_fileAdd({}, {}, {})", instanceId, projectId, file);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -490,6 +536,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _fileRemove(int instanceId, @NotNull String projectId, @NotNull String fileId)
     {
+        LOG.trace("_fileRemove({}, {}, {})", instanceId, projectId, fileId);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
@@ -508,6 +556,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _fileSetTimeAccessed(int instanceId, @NotNull String projectId, @NotNull String fileId, long timeAccessed)
     {
+        LOG.trace("fileSetTimeAccessed({}, {}, {}, {})", instanceId, projectId, fileId, timeAccessed);
+
         updateFile(instanceId, projectId, fileId, timeAccessed);
 
         for (ReplicatedData.Notifier notifier : this.notifiers)
@@ -516,6 +566,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     protected void _fileSetReadOnly(int instanceId, @NotNull String projectId, @NotNull String fileId, boolean readOnly)
     {
+        LOG.trace("fileSetReadOnly({}, {}, {}, {})", instanceId, projectId, fileId, readOnly);
+
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
