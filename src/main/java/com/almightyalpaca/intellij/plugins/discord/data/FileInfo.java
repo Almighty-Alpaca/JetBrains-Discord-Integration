@@ -195,7 +195,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         SWIFT("Swift", "swift", "swift"),
         TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
         VUE("Vue.js", "vue", "vue"),
-        XML("XML", "xml", "xml"),
+        XML("XML", "xml", "xml", "cxml", "fxml"),
         YAML("YAML", "yaml", "yaml", "yml"),
 
         UNKNOWN("Unknown file type", "unknown")
