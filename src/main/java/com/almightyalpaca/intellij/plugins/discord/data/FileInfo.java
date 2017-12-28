@@ -179,6 +179,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         GO("Go", "go", "go"),
         GRADLE("Gradle", "gradle", "gradle", "gradle.kts"),
         GROOVY("Groovy", "groovy", "groovy"),
+        HTACCESS(".htaccess", "apache", ".htaccess"),
         HTML("HTML", "html", "html", "htm"),
         JAVA("Java", "java", "java"),
         JAVASCRIPT("JavaScript", "javascript", "js"),
