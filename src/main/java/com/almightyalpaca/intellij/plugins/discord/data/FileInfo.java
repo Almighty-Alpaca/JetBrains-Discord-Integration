@@ -175,6 +175,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         CPP("C++", "cpp", "cpp", "hpp"),
         CSS("CSS", "css", "css"),
         C_SHARP("C#", "csharp", "cs"),
+        GIT("Git", "git", ".gitmodules", ".gitignore", ".gitattributes"),
         GO("Go", "go", "go"),
         GRADLE("Gradle", "gradle", "gradle", "gradle.kts"),
         GROOVY("Groovy", "groovy", "groovy"),
