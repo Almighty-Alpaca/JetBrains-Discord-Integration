@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,9 +30,6 @@ import java.util.Map;
 
 public class DiscordIntegrationProjectComponent implements ProjectComponent
 {
-    @NotNull
-    private static final Map<Project, DiscordIntegrationProjectComponent> INSTANCES = new HashMap<>();
-
     @NotNull
     private final DiscordIntegrationApplicationComponent applicationComponent;
     @NotNull
@@ -47,14 +45,13 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
 
         this.applicationComponent = DiscordIntegrationApplicationComponent.getInstance();
         this.files = new HashMap<>();
-
-        DiscordIntegrationProjectComponent.INSTANCES.put(project, this);
     }
 
     @Nullable
-    public static DiscordIntegrationProjectComponent getInstance(Project project)
+    @Contract(pure = true, value = "null -> null; _ -> _")
+    public static DiscordIntegrationProjectComponent getInstance(@Nullable Project project)
     {
-        return DiscordIntegrationProjectComponent.INSTANCES.get(project);
+        return project != null ? project.getComponent(DiscordIntegrationProjectComponent.class) : null;
     }
 
     @NotNull
@@ -124,16 +121,10 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
     }
 
     @Override
-    public void initComponent()
-    {
-
-    }
+    public void initComponent() {}
 
     @Override
-    public void disposeComponent()
-    {
-        DiscordIntegrationProjectComponent.INSTANCES.remove(this.project);
-    }
+    public void disposeComponent() {}
 
     @NotNull
     @Override

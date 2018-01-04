@@ -26,7 +26,7 @@ import javax.swing.*;
 
 public class DiscordIntegrationNotification extends Notification
 {
-    public static final Icon ICON = IconLoader.getIcon("/icons/discord/logos/blurple.png");
+    public static final Icon ICON = IconLoader.getIcon("/icons/discord/logo/blurple.png");
 
     public DiscordIntegrationNotification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type)
     {

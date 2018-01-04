@@ -57,7 +57,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     @NotNull
     private static final Logger LOG = LoggerFactory.getLogger(DiscordIntegrationApplicationComponent.class);
 
-    private static DiscordIntegrationApplicationComponent INSTANCE;
     @NotNull
     private final Application application;
     @Nullable
@@ -81,14 +80,12 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     public DiscordIntegrationApplicationComponent(@NotNull Application application)
     {
         this.application = application;
-
-        INSTANCE = this;
     }
 
     @NotNull
     public static DiscordIntegrationApplicationComponent getInstance()
     {
-        return DiscordIntegrationApplicationComponent.INSTANCE;
+        return ApplicationManager.getApplication().getComponent(DiscordIntegrationApplicationComponent.class);
     }
 
     @NotNull
@@ -112,8 +109,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
         {
             e.printStackTrace();
         }
-
-        DiscordIntegrationApplicationComponent.INSTANCE = this;
 
         try
         {
@@ -205,8 +200,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
             VirtualFileManager.getInstance().removeVirtualFileListener(this.virtualFileListener);
             this.virtualFileListener = null;
         }
-
-        DiscordIntegrationApplicationComponent.INSTANCE = null;
 
         if (this.channel != null)
         {

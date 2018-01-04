@@ -29,7 +29,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
                              instance="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
-
+        <projectService
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
         <applicationService
                 serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
         <projectService
@@ -51,4 +52,13 @@
             </implementation-class>
         </component>
     </project-components>
+
+    <actions>
+        <action id="ToolsMenuDisableAnActionSeparator" class="com.intellij.openapi.actionSystem.Separator">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="ToolsMenuDisable" class="com.almightyalpaca.jetbrains.plugins.discord.actions.ToolsMenuDisableAnAction">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>

@@ -35,9 +35,9 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     @NotNull
     private final Project project;
     @NotNull
-    private final DiscordIntegrationApplicationSettings optionsProviderApplication;
+    private final DiscordIntegrationApplicationSettings settingsProviderApplication;
     @NotNull
-    private final DiscordIntegrationProjectSettings optionsProviderProject;
+    private final DiscordIntegrationProjectSettings settingsProviderProject;
     @Nullable
     private DiscordIntegrationSettingsPanel panel;
 
@@ -45,8 +45,8 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     {
         this.project = project;
 
-        this.optionsProviderApplication = DiscordIntegrationApplicationSettings.getInstance();
-        this.optionsProviderProject = DiscordIntegrationProjectSettings.getInstance(project);
+        this.settingsProviderApplication = DiscordIntegrationApplicationSettings.getInstance();
+        this.settingsProviderProject = DiscordIntegrationProjectSettings.getInstance(project);
     }
 
     public static DiscordIntegrationProjectConfigurable getInstance(@NotNull Project project)
@@ -68,7 +68,7 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
         return "Discord";
     }
 
-    @Nullable
+    @NotNull
     @Override
     public String getHelpTopic()
     {
@@ -79,7 +79,10 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     @Override
     public JComponent createComponent()
     {
-        return (this.panel = new DiscordIntegrationSettingsPanel(this.optionsProviderApplication, this.optionsProviderProject)).getRootPanel();
+        if (this.panel == null)
+            this.panel = new DiscordIntegrationSettingsPanel(this.settingsProviderApplication, this.settingsProviderProject);
+
+        return this.panel.getRootPanel();
     }
 
     @Override
@@ -96,11 +99,15 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
             this.panel.apply();
 
             InstanceInfo instance = this.applicationComponent.getInstanceInfo();
-            DiscordIntegrationProjectComponent projectComponent = DiscordIntegrationProjectComponent.getInstance(this.optionsProviderProject.getProject());
-            ProjectInfo project = projectComponent != null ? projectComponent.getProjectInfo() : null;
+            DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(this.settingsProviderProject.getProject());
 
-            this.applicationComponent.updateData(data -> data.instanceSetSettings(System.currentTimeMillis(), instance, this.optionsProviderApplication.getSettings()));
-            this.applicationComponent.updateData(data -> data.projectSetSettings(System.currentTimeMillis(), instance, project, this.optionsProviderProject.getSettings()));
+            if (component != null)
+            {
+                ProjectInfo project = component.getProjectInfo();
+
+                this.applicationComponent.updateData(data -> data.instanceSetSettings(System.currentTimeMillis(), instance, this.settingsProviderApplication.getSettings()));
+                this.applicationComponent.updateData(data -> data.projectSetSettings(System.currentTimeMillis(), instance, project, this.settingsProviderProject.getSettings()));
+            }
         }
     }
 
