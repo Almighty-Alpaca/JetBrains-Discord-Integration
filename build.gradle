@@ -21,11 +21,11 @@ plugins {
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
-group 'com.almightyalpaca.intellij.plugins.discord'
+group 'com.almightyalpaca.jetbrains.plugins.discord'
 version '0.5.0'
 
 intellij {
-    version '2016.1.4'
+    version '2017.2.6'
     pluginName 'Discord Integration'
 
     updateSinceUntilBuild = false

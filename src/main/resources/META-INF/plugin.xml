@@ -27,22 +27,19 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService
-                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.services.DiscordIntegrationApplicationService"/>
-
         <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
-                             instance="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
+                             instance="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
 
         <applicationService
-                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
         <projectService
-                serviceImplementation="com.almightyalpaca.intellij.plugins.discord.settings.DiscordIntegrationProjectSettings"/>
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectSettings"/>
     </extensions>
 
     <application-components>
         <component>
             <implementation-class>
-                com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationApplicationComponent
+                com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent
             </implementation-class>
         </component>
     </application-components>
@@ -50,12 +47,8 @@
     <project-components>
         <component>
             <implementation-class>
-                com.almightyalpaca.intellij.plugins.discord.components.DiscordIntegrationProjectComponent
+                com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent
             </implementation-class>
         </component>
     </project-components>
-
-    <actions>
-    </actions>
-
 </idea-plugin>
