@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.FileInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,14 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
     @NotNull
     private static final Logger LOG = LoggerFactory.getLogger(PresenceRenderContext.class);
 
-    @NotNull
+    @Nullable
     @Override
     public DiscordRichPresence apply(@NotNull PresenceRenderContext context)
     {
         LOG.trace("DiscordRichPresence#apply({})", context);
+
+        if (context.isEmpty())
+            return null;
 
         InstanceInfo instance = context.getInstance();
         ProjectInfo project = context.getProject();

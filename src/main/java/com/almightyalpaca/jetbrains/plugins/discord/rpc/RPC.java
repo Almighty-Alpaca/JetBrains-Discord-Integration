@@ -21,16 +21,11 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -50,12 +45,12 @@ public class RPC
     private static volatile Thread delayedPresenceRunner;
     @Nullable
     private static volatile DiscordRichPresence presence;
-    private static volatile long nextPresenceUpdate = Long.MAX_VALUE;
+    private static volatile long nextPresenceUpdate = 0L;
     private static volatile boolean initialized = false;
 
     static
     {
-        GSON = new GsonBuilder().registerTypeAdapter(DiscordRichPresence.class, new DiscordRichPresenceAdapter()).create();
+        GSON = new GsonBuilder().registerTypeAdapter(DiscordRichPresence.class, new DiscordRichPresenceGsonTypeAdapter()).create();
     }
 
     private RPC() {}
@@ -70,80 +65,86 @@ public class RPC
 
             DiscordRPC.INSTANCE.Discord_Initialize(clientId, handlers, true, null);
 
-            RPC.callbackRunner = new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted())
-                {
-                    try
-                    {
-                        DiscordRPC.INSTANCE.Discord_RunCallbacks();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    try
-                    {
-                        Thread.sleep(2000);
-                    }
-                    catch (InterruptedException ignored) {}
-                }
-            }, "RPC-Callback-Handler");
+            RPC.updatePresence(1, TimeUnit.SECONDS);
 
-            RPC.callbackRunner.start();
-
-            RPC.delayedPresenceRunner = new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted())
-                {
-                    try
+            if (callbackRunner == null)
+            {
+                RPC.callbackRunner = new Thread(() -> {
+                    while (!Thread.currentThread().isInterrupted())
                     {
-                        long timeout = RPC.nextPresenceUpdate - System.nanoTime();
-
-                        LOG.trace("RPC.delayedPresenceRunner$run#timeout = {}", timeout);
-
-                        if (timeout > 0)
+                        try
                         {
-                            LockSupport.parkNanos(timeout);
+                            DiscordRPC.INSTANCE.Discord_RunCallbacks();
+
+                            LockSupport.parkNanos(2_000_000);
                         }
-                        else
+                        catch (Exception e)
                         {
-                            DiscordRichPresence newPresence = renderer.apply(contextSupplier.get());
+                            if (!(e instanceof InterruptedException))
+                                LOG.warn("An error occurred in RPC.callbackRunner", e);
+                        }
+                    }
+                }, "RPC-Callback-Handler");
 
-                            LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", GSON.toJson(newPresence));
+                RPC.callbackRunner.start();
+            }
 
-                            if (!Objects.equals(RPC.presence, newPresence))
+            if (delayedPresenceRunner == null)
+            {
+                RPC.delayedPresenceRunner = new Thread(() -> {
+                    while (!Thread.currentThread().isInterrupted())
+                    {
+                        try
+                        {
+                            long timeout = RPC.nextPresenceUpdate - System.nanoTime();
+
+                            LOG.trace("RPC.delayedPresenceRunner$run#timeout = {}", timeout);
+
+                            if (timeout > 0)
                             {
-                                DiscordRPC.INSTANCE.Discord_UpdatePresence(newPresence);
-                                RPC.presence = newPresence;
+                                LockSupport.parkNanos(timeout);
                             }
+                            else
+                            {
+                                DiscordRichPresence newPresence = renderer.apply(contextSupplier.get());
+
+                                LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", GSON.toJson(newPresence));
+
+                                if (!Objects.equals(RPC.presence, newPresence))
+                                {
+                                    DiscordRPC.INSTANCE.Discord_UpdatePresence(newPresence);
+                                    RPC.presence = newPresence;
+                                }
+                            }
+
+                            LockSupport.park();
                         }
-
-                        LockSupport.park();
+                        catch (Exception e)
+                        {
+                            if (!(e instanceof InterruptedException))
+                                LOG.warn("An error occurred in RPC.delayedPresenceRunner", e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }, "RPC-Delayed-Presence-Handler");
+                }, "RPC-Delayed-Presence-Handler");
 
-            RPC.delayedPresenceRunner.start();
+                RPC.delayedPresenceRunner.start();
+            }
         }
     }
 
     public static synchronized void dispose()
     {
-        if (RPC.initialized)
-        {
-            RPC.initialized = false;
+        LOG.trace("RPC.dispose()");
 
-            RPC.delayedPresenceRunner.interrupt();
-            RPC.delayedPresenceRunner = null;
+        RPC.delayedPresenceRunner.interrupt();
+        RPC.delayedPresenceRunner = null;
 
-            DiscordRPC.INSTANCE.Discord_Shutdown();
+        DiscordRPC.INSTANCE.Discord_UpdatePresence(new DiscordRichPresence());
 
-            RPC.callbackRunner.interrupt();
-            RPC.callbackRunner = null;
-        }
+        DiscordRPC.INSTANCE.Discord_Shutdown();
+
+        RPC.callbackRunner.interrupt();
+        RPC.callbackRunner = null;
     }
 
     public static synchronized void updatePresence(long delay, @NotNull TimeUnit unit)
@@ -153,65 +154,5 @@ public class RPC
         RPC.nextPresenceUpdate = System.nanoTime() + unit.convert(delay, TimeUnit.NANOSECONDS);
 
         LockSupport.unpark(RPC.delayedPresenceRunner);
-    }
-
-    public static class DiscordRichPresenceAdapter extends TypeAdapter<DiscordRichPresence>
-    {
-        public DiscordRichPresence read(JsonReader reader) throws IOException
-        {
-            if (reader.peek() == JsonToken.NULL)
-            {
-                reader.nextNull();
-                return null;
-            }
-
-            throw new IOException();
-        }
-
-        public void write(JsonWriter writer, DiscordRichPresence value) throws IOException
-        {
-            writer.setSerializeNulls(true);
-
-            if (value == null)
-            {
-                writer.nullValue();
-                return;
-            }
-
-            writer.beginObject();
-
-            writer.name("state");
-            writer.value(value.state);
-            writer.name("details");
-            writer.value(value.details);
-            writer.name("startTimestamp");
-            writer.value(value.startTimestamp);
-            writer.name("endTimestamp");
-            writer.value(value.endTimestamp);
-            writer.name("largeImageKey");
-            writer.value(value.largeImageKey);
-            writer.name("largeImageText");
-            writer.value(value.largeImageText);
-            writer.name("smallImageKey");
-            writer.value(value.smallImageKey);
-            writer.name("smallImageText");
-            writer.value(value.smallImageText);
-            writer.name("partyId");
-            writer.value(value.partyId);
-            writer.name("partySize");
-            writer.value(value.partySize);
-            writer.name("partyMax");
-            writer.value(value.partyMax);
-            writer.name("matchSecret");
-            writer.value(value.matchSecret);
-            writer.name("joinSecret");
-            writer.value(value.joinSecret);
-            writer.name("spectateSecret");
-            writer.value(value.spectateSecret);
-            writer.name("instance");
-            writer.value(value.instance);
-
-            writer.endObject();
-        }
     }
 }

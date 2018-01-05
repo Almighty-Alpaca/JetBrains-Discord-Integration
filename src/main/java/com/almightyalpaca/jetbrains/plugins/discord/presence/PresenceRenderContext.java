@@ -55,42 +55,59 @@ public class PresenceRenderContext implements Serializable
     {
         LOG.trace("PresenceRenderContext#new({})", data);
 
+
+        InstanceInfo instance;
+        ProjectInfo project;
+        FileInfo file;
+
         if (data != null)
         {
             // @formatter:off
-            this.instance = data.getInstances().values().stream()
+            instance = data.getInstances().values().stream()
                     .filter(i -> i.getSettings().isEnabled())
                     .max(Comparator.naturalOrder())
                     .orElse(null);
 
-            if (this.instance != null)
+            if (instance != null)
             {
-                this.project = this.instance.getProjects().values().stream()
+                project = instance.getProjects().values().stream()
                         .filter(p -> p.getSettings().isEnabled())
                         .max(Comparator.naturalOrder())
                         .orElse(null);
 
-                if (this.project != null)
-                    this.file = this.project.getFiles().values().stream()
-                            .filter(f -> !(this.instance.getSettings().isHideReadOnlyFiles() && f.isReadOnly()))
+                if (project != null)
+                {
+                    final InstanceInfo instanceFinal = instance;
+                    file = project.getFiles().values().stream()
+                            .filter(f -> !(instanceFinal.getSettings().isHideReadOnlyFiles() && f.isReadOnly()))
                             .max(Comparator.naturalOrder())
                             .orElse(null);
+                }
                 else
-                    this.file = null;
+                {
+                    if (!instance.getSettings().isShowIDEWhenNoProjectIsAvailable())
+                        instance = null;
+
+                    file = null;
+                }
             }
             else
             {
-                this.project = null;
-                this.file = null;
+                project = null;
+                file = null;
             }
             // @formatter:on
         }
         else
         {
-            this.instance = null;
-            this.project = null;
-            this.file = null;
+            instance = null;
+            project = null;
+            file = null;
         }
+
+        this.instance = instance;
+        this.project = project;
+        this.file = file;
 
         LOG.trace("PresenceRenderContext#new({}, {}, {})", instance != null ? instance.getDistribution().getCode() : null, project != null ? project.getName() : null, file != null ? file.getName() : null);
     }
@@ -120,4 +137,8 @@ public class PresenceRenderContext implements Serializable
         return GSON.toJson(this);
     }
 
+    public boolean isEmpty()
+    {
+        return instance == null;
+    }
 }

@@ -34,6 +34,7 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     private boolean showFileExtensions = true;
     private boolean hideReadOnlyFiles = true;
     private boolean showReadingInsteadOfWriting = true;
+    private boolean showIDEWhenNoProjectIsAvailable = true;
 
     public ApplicationSettingsStorage()
     {
@@ -105,6 +106,19 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this;
     }
 
+    @Override
+    public boolean isShowIDEWhenNoProjectIsAvailable()
+    {
+        return showIDEWhenNoProjectIsAvailable;
+    }
+
+    @NotNull
+    public ApplicationSettingsStorage setShowIDEWhenNoProjectIsAvailable(boolean showIDEWhenNoProjectIsAvailable)
+    {
+        this.showIDEWhenNoProjectIsAvailable = showIDEWhenNoProjectIsAvailable;
+        return this;
+    }
+
     @NotNull
     @Override
     public ApplicationSettingsStorage clone(@NotNull ApplicationSettings<ApplicationSettingsStorage> settings)
@@ -115,7 +129,8 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 .setShowUnknownImageIDE(settings.isShowUnknownImageIDE())
                 .setShowFileExtensions(settings.isShowFileExtensions())
                 .setHideReadOnlyFiles(settings.isHideReadOnlyFiles())
-                .setShowReadingInsteadOfWriting(settings.isShowReadingInsteadOfWriting());
+                .setShowReadingInsteadOfWriting(settings.isShowReadingInsteadOfWriting())
+                .setShowIDEWhenNoProjectIsAvailable(settings.isShowIDEWhenNoProjectIsAvailable());
         // @formatter:on
     }
 
@@ -140,13 +155,23 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 && this.isShowUnknownImageFile() == that.isShowUnknownImageFile()
                 && this.isShowFileExtensions() == that.isShowFileExtensions()
                 && this.isHideReadOnlyFiles() == that.isHideReadOnlyFiles()
-                && this.isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting();
+                && this.isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting()
+                && this.isShowIDEWhenNoProjectIsAvailable() == that.isShowIDEWhenNoProjectIsAvailable();
         // @formatter:on
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(super.hashCode(), this.isShowUnknownImageIDE(), this.isShowUnknownImageFile(), this.isShowFileExtensions(), this.isHideReadOnlyFiles(), this.isShowReadingInsteadOfWriting());
+        // @formatter:off
+        return Objects.hash(
+                super.hashCode(),
+                this.isShowUnknownImageIDE(),
+                this.isShowUnknownImageFile(),
+                this.isShowFileExtensions(),
+                this.isHideReadOnlyFiles(),
+                this.isShowReadingInsteadOfWriting(),
+                this.isShowIDEWhenNoProjectIsAvailable());
+        // @formatter:on
     }
 }

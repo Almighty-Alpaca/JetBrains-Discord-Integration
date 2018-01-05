@@ -35,6 +35,7 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationShowFileExtensions;
     private JBCheckBox applicationHideReadOnlyFiles;
     private JBCheckBox applicationShowReadingInsteadOfEditing;
+    private JBCheckBox applicationShowIDEWhenNoProjectIsAvailable;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -57,7 +58,9 @@ public class DiscordIntegrationSettingsPanel
                 || (this.applicationUnknownImageFile.isSelected() != this.applicationSettings.getState().isShowUnknownImageFile())
                 || (this.applicationShowFileExtensions.isSelected() != this.applicationSettings.getState().isShowFileExtensions())
                 || (this.applicationHideReadOnlyFiles.isSelected() != this.applicationSettings.getState().isHideReadOnlyFiles())
-                || (this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting());
+                || (this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting())
+                || (this.applicationShowIDEWhenNoProjectIsAvailable.isSelected() != this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
+
         // @formatter:on
     }
 
@@ -70,6 +73,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setShowFileExtensions(this.applicationShowFileExtensions.isSelected());
         this.applicationSettings.getState().setHideReadOnlyFiles(this.applicationHideReadOnlyFiles.isSelected());
         this.applicationSettings.getState().setShowReadingInsteadOfWriting(this.applicationShowReadingInsteadOfEditing.isSelected());
+        this.applicationSettings.getState().setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
     }
 
     public void reset()
@@ -81,6 +85,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationShowFileExtensions.setSelected(this.applicationSettings.getState().isShowFileExtensions());
         this.applicationHideReadOnlyFiles.setSelected(this.applicationSettings.getState().isHideReadOnlyFiles());
         this.applicationShowReadingInsteadOfEditing.setSelected(this.applicationSettings.getState().isShowReadingInsteadOfWriting());
+        this.applicationShowIDEWhenNoProjectIsAvailable.setSelected(this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
     }
 
     @NotNull

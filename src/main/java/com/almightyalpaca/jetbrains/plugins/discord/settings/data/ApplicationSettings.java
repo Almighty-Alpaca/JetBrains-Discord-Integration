@@ -26,4 +26,6 @@ public interface ApplicationSettings<T extends ApplicationSettings<T>> extends S
     boolean isHideReadOnlyFiles();
 
     boolean isShowReadingInsteadOfWriting();
+
+    boolean isShowIDEWhenNoProjectIsAvailable();
 }

@@ -234,8 +234,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     private void rpcReady()
     {
         LOG.trace("DiscordIntegrationApplicationComponent#rpcReady()");
-
-        RPC.updatePresence(2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -253,7 +251,9 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 
     private synchronized void checkRpcConnection()
     {
-        if (this.data == null)
+        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()");
+
+        if (this.data == null || this.instanceInfo == null)
             return;
 
         Map<String, InstanceInfo> instances = this.data.getInstances();
@@ -266,7 +266,18 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
             rpcConnectionExists = instances.size() != 0 && instances.values().stream().anyMatch(InstanceInfo::isHasRpcConnection);
         }
 
-        if (!rpcConnectionExists && this.channel != null && Objects.equals(channel.getView().getCoord(), this.channel.getAddress()))
+        boolean noData = new PresenceRenderContext(data).isEmpty();
+
+        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#instanceInfo.isHasRpcConnection() = {}", instanceInfo.isHasRpcConnection());
+        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#noData = {}", noData);
+
+        if (instanceInfo.isHasRpcConnection() && noData)
+        {
+            this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, false);
+
+            RPC.dispose();
+        }
+        else if (!rpcConnectionExists && !noData && !instanceInfo.isHasRpcConnection() && this.channel != null && Objects.equals(channel.getView().getCoord(), this.channel.getAddress()))
         {
             this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, true);
 
