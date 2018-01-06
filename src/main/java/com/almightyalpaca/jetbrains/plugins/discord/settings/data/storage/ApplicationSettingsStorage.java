@@ -21,11 +21,17 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSettingsStorage, ApplicationSettings<ApplicationSettingsStorage>> implements ApplicationSettings<ApplicationSettingsStorage>
 {
-    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
+    @NotNull
+    public static final TimeUnit INACTIVITY_TIMEOUT_TIMEUNIT = TimeUnit.MILLISECONDS;
+    public static final long INACTIVITY_TIMEOUT_DEFAULT_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(10, TimeUnit.MINUTES);
+    public static final long INACTIVITY_TIMEOUT_MIN_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(1, TimeUnit.MINUTES);
+    public static final long INACTIVITY_TIMEOUT_MAX_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(1, TimeUnit.DAYS);
 
+    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
     @NotNull
     private static final Gson GSON = new Gson();
 
@@ -35,6 +41,8 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     private boolean hideReadOnlyFiles = true;
     private boolean showReadingInsteadOfWriting = true;
     private boolean showIDEWhenNoProjectIsAvailable = true;
+    private boolean hideAfterPeriodOfInactivity = true;
+    private long inactivityTimeout = INACTIVITY_TIMEOUT_DEFAULT_VALUE;
 
     public ApplicationSettingsStorage()
     {
@@ -119,6 +127,31 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this;
     }
 
+    public boolean isHideAfterPeriodOfInactivity()
+    {
+        return hideAfterPeriodOfInactivity;
+    }
+
+    @NotNull
+    public ApplicationSettingsStorage setHideAfterPeriodOfInactivity(boolean hideAfterPeriodOfInactivity)
+    {
+        this.hideAfterPeriodOfInactivity = hideAfterPeriodOfInactivity;
+        return this;
+    }
+
+    @Override
+    public long getInactivityTimeout(TimeUnit unit)
+    {
+        return unit.convert(inactivityTimeout, INACTIVITY_TIMEOUT_TIMEUNIT);
+    }
+
+    @NotNull
+    public ApplicationSettingsStorage setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
+    {
+        this.inactivityTimeout = INACTIVITY_TIMEOUT_TIMEUNIT.convert(inactivityTimeout, unit);
+        return this;
+    }
+
     @NotNull
     @Override
     public ApplicationSettingsStorage clone(@NotNull ApplicationSettings<ApplicationSettingsStorage> settings)
@@ -130,7 +163,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 .setShowFileExtensions(settings.isShowFileExtensions())
                 .setHideReadOnlyFiles(settings.isHideReadOnlyFiles())
                 .setShowReadingInsteadOfWriting(settings.isShowReadingInsteadOfWriting())
-                .setShowIDEWhenNoProjectIsAvailable(settings.isShowIDEWhenNoProjectIsAvailable());
+                .setShowIDEWhenNoProjectIsAvailable(settings.isShowIDEWhenNoProjectIsAvailable())
+                .setHideAfterPeriodOfInactivity(settings.isHideAfterPeriodOfInactivity())
+                .setInactivityTimeout(settings.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT), INACTIVITY_TIMEOUT_TIMEUNIT);
         // @formatter:on
     }
 
@@ -156,7 +191,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 && this.isShowFileExtensions() == that.isShowFileExtensions()
                 && this.isHideReadOnlyFiles() == that.isHideReadOnlyFiles()
                 && this.isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting()
-                && this.isShowIDEWhenNoProjectIsAvailable() == that.isShowIDEWhenNoProjectIsAvailable();
+                && this.isShowIDEWhenNoProjectIsAvailable() == that.isShowIDEWhenNoProjectIsAvailable()
+                && this.isHideAfterPeriodOfInactivity() == that.isHideAfterPeriodOfInactivity()
+                && this.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT) == that.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT);
         // @formatter:on
     }
 
@@ -171,7 +208,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
                 this.isShowFileExtensions(),
                 this.isHideReadOnlyFiles(),
                 this.isShowReadingInsteadOfWriting(),
-                this.isShowIDEWhenNoProjectIsAvailable());
+                this.isShowIDEWhenNoProjectIsAvailable(),
+                this.isHideAfterPeriodOfInactivity(),
+                this.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT));
         // @formatter:on
     }
 }

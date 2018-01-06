@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.ToLongFunction;
 
 @SuppressWarnings("ConstantConditions")
 public class RPC
@@ -39,13 +40,13 @@ public class RPC
     private static final Gson GSON;
     @NotNull
     private static final Logger LOG = LoggerFactory.getLogger(RPC.class);
+    private static volatile long nextPresenceUpdate = 0L;
     @Nullable
     private static volatile Thread callbackRunner;
     @Nullable
     private static volatile Thread delayedPresenceRunner;
-    @Nullable
-    private static volatile DiscordRichPresence presence;
-    private static volatile long nextPresenceUpdate = 0L;
+    @NotNull
+    private static volatile DiscordRichPresence presence = new DiscordRichPresence();
     private static volatile boolean initialized = false;
 
     static
@@ -55,7 +56,7 @@ public class RPC
 
     private RPC() {}
 
-    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId, @NotNull Supplier<PresenceRenderContext> contextSupplier, @NotNull Function<PresenceRenderContext, DiscordRichPresence> renderer)
+    public static synchronized void init(@NotNull DiscordEventHandlers handlers, @NotNull String clientId, @NotNull Supplier<PresenceRenderContext> contextSupplier, @NotNull Function<PresenceRenderContext, DiscordRichPresence> renderer, @NotNull ToLongFunction<PresenceRenderContext> changeCallback)
     {
         LOG.trace("RPC.init({}, {}, {}, {})", "DiscordEventHandler", clientId, contextSupplier, renderer);
 
@@ -63,7 +64,7 @@ public class RPC
         {
             RPC.initialized = true;
 
-            DiscordRPC.INSTANCE.Discord_Initialize(clientId, handlers, true, null);
+            DiscordRPC.INSTANCE.Discord_Initialize(clientId, handlers, false, null);
 
             RPC.updatePresence(1, TimeUnit.SECONDS);
 
@@ -84,7 +85,7 @@ public class RPC
                                 LOG.warn("An error occurred in RPC.callbackRunner", e);
                         }
                     }
-                }, "RPC-Callback-Handler");
+                }, "JetbrainsDiscordIntegration-RPC-Callback-Handler");
 
                 RPC.callbackRunner.start();
             }
@@ -98,15 +99,16 @@ public class RPC
                         {
                             long timeout = RPC.nextPresenceUpdate - System.nanoTime();
 
-                            LOG.trace("RPC.delayedPresenceRunner$run#timeout = {}", timeout);
+                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~1 = {}", timeout);
 
-                            if (timeout > 0)
+                            if (timeout <= 0)
                             {
-                                LockSupport.parkNanos(timeout);
-                            }
-                            else
-                            {
-                                DiscordRichPresence newPresence = renderer.apply(contextSupplier.get());
+                                PresenceRenderContext renderContext = contextSupplier.get();
+
+                                DiscordRichPresence newPresence = renderer.apply(renderContext);
+
+                                if (newPresence == null)
+                                    newPresence = new DiscordRichPresence();
 
                                 LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", GSON.toJson(newPresence));
 
@@ -115,9 +117,22 @@ public class RPC
                                     DiscordRPC.INSTANCE.Discord_UpdatePresence(newPresence);
                                     RPC.presence = newPresence;
                                 }
+
+                                timeout = changeCallback.applyAsLong(renderContext);
                             }
 
-                            LockSupport.park();
+                            long newTimeout = RPC.nextPresenceUpdate - System.nanoTime();
+                            if (newTimeout < 0)
+                                newTimeout = Long.MAX_VALUE;
+
+                            timeout = Long.min(timeout, newTimeout);
+
+                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~2 = {}", timeout);
+
+                            if (timeout > 0)
+                                LockSupport.parkNanos(timeout);
+                            else
+                                LockSupport.park();
                         }
                         catch (Exception e)
                         {
@@ -125,7 +140,7 @@ public class RPC
                                 LOG.warn("An error occurred in RPC.delayedPresenceRunner", e);
                         }
                     }
-                }, "RPC-Delayed-Presence-Handler");
+                }, "JetbrainsDiscordIntegration-RPC-Delayed-Presence-Handler");
 
                 RPC.delayedPresenceRunner.start();
             }
@@ -136,22 +151,27 @@ public class RPC
     {
         LOG.trace("RPC.dispose()");
 
-        RPC.delayedPresenceRunner.interrupt();
-        RPC.delayedPresenceRunner = null;
+        if (RPC.initialized)
+        {
+            RPC.initialized = false;
 
-        DiscordRPC.INSTANCE.Discord_UpdatePresence(new DiscordRichPresence());
+            RPC.delayedPresenceRunner.interrupt();
+            RPC.delayedPresenceRunner = null;
 
-        DiscordRPC.INSTANCE.Discord_Shutdown();
+            DiscordRPC.INSTANCE.Discord_UpdatePresence(new DiscordRichPresence());
 
-        RPC.callbackRunner.interrupt();
-        RPC.callbackRunner = null;
+            DiscordRPC.INSTANCE.Discord_Shutdown();
+
+            RPC.callbackRunner.interrupt();
+            RPC.callbackRunner = null;
+        }
     }
 
-    public static synchronized void updatePresence(long delay, @NotNull TimeUnit unit)
+    public synchronized static void updatePresence(long delay, @NotNull TimeUnit unit)
     {
         LOG.trace("RPC.updatePresence({}, {})", delay, unit);
 
-        RPC.nextPresenceUpdate = System.nanoTime() + unit.convert(delay, TimeUnit.NANOSECONDS);
+        RPC.nextPresenceUpdate = System.nanoTime() + TimeUnit.NANOSECONDS.convert(delay, unit);
 
         LockSupport.unpark(RPC.delayedPresenceRunner);
     }

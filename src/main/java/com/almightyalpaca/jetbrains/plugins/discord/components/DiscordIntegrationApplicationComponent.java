@@ -59,6 +59,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 
     @NotNull
     private final Application application;
+    private final Object rpcLock = new Object();
     @Nullable
     public MessageBusConnection connection;
     @Nullable
@@ -67,7 +68,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     private JChannel channel;
     @Nullable
     private ReplicatedData data;
-
     @Nullable
     private DocumentListener documentListener;
     @Nullable
@@ -130,7 +130,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
             LOG.trace("DiscordIntegrationApplicationComponent#initComponent()#this.instanceInfo = {}", this.instanceInfo);
             data.instanceAdd(System.currentTimeMillis(), this.instanceInfo);
 
-            checkRpcConnection();
+            RPC.updatePresence(2, TimeUnit.SECONDS);
         }
         catch (Exception e)
         {
@@ -237,68 +237,99 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     }
 
     @Override
-    public synchronized void dataUpdated(@NotNull Type type)
+    public void dataUpdated(@NotNull Type type)
     {
         LOG.trace("DiscordIntegrationApplicationComponent#dataUpdated({})", type);
         LOG.trace("DiscordIntegrationApplicationComponent#dataUpdated()#this.instanceInfo = {}", this.instanceInfo);
         LOG.trace("DiscordIntegrationApplicationComponent#dataUpdated()#this.instanceInfo.isHasRpcConnection() = {}", this.instanceInfo != null && this.instanceInfo.isHasRpcConnection());
 
-        checkRpcConnection();
+        if (!instanceInfo.isHasRpcConnection())
+            checkRpcConnection(null);
 
         if (this.instanceInfo != null && this.instanceInfo.isHasRpcConnection())
             RPC.updatePresence(type.getDelay(), TimeUnit.SECONDS);
     }
 
-    private synchronized void checkRpcConnection()
+    protected long presenceUpdated(@NotNull PresenceRenderContext renderContext)
     {
-        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()");
+        LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated({})", renderContext);
 
-        if (this.data == null || this.instanceInfo == null)
-            return;
+        InstanceInfo instance = renderContext.getInstance();
 
-        Map<String, InstanceInfo> instances = this.data.getInstances();
+        checkRpcConnection(renderContext);
 
-        boolean rpcConnectionExists;
+        LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#instance = {}", instance);
+        LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#instance.getSettings().isHideAfterPeriodOfInactivity() = {}", instance != null && instance.getSettings().isHideAfterPeriodOfInactivity());
 
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (instances)
+        if (instance != null && instance.getSettings().isHideAfterPeriodOfInactivity())
         {
-            rpcConnectionExists = instances.size() != 0 && instances.values().stream().anyMatch(InstanceInfo::isHasRpcConnection);
+            long delay = TimeUnit.NANOSECONDS.convert(instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+
+            LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#instance.getTimeAccessed() = {}", instance.getTimeAccessed());
+            LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) = {}", instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS));
+            LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#System.currentTimeMillis() = {}", System.currentTimeMillis());
+            LOG.trace("DiscordIntegrationApplicationComponent#presenceUpdated()#delay = {}", delay);
+
+            return delay;
         }
 
-        boolean noData = new PresenceRenderContext(data).isEmpty();
+        return Long.MAX_VALUE;
+    }
 
-        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#instanceInfo.isHasRpcConnection() = {}", instanceInfo.isHasRpcConnection());
-        LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#noData = {}", noData);
-
-        if (instanceInfo.isHasRpcConnection() && noData)
+    private void checkRpcConnection(@Nullable PresenceRenderContext renderContext)
+    {
+        synchronized (rpcLock)
         {
-            this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, false);
 
-            RPC.dispose();
-        }
-        else if (!rpcConnectionExists && !noData && !instanceInfo.isHasRpcConnection() && this.channel != null && Objects.equals(channel.getView().getCoord(), this.channel.getAddress()))
-        {
-            this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, true);
+            LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()");
 
-            new Thread(() -> {
-                try
-                {
-                    TimeUnit.SECONDS.sleep(2);
-                }
-                catch (InterruptedException e)
-                {
-                    LOG.error("An error occurred", e);
-                }
+            if (this.data == null || this.instanceInfo == null)
+                return;
 
-                DiscordEventHandlers handlers = new DiscordEventHandlers();
+            Map<String, InstanceInfo> instances = this.data.getInstances();
 
-                handlers.ready = this::rpcReady;
-                handlers.errored = this::rpcError;
-                handlers.disconnected = this::rpcDisconnected;
+            boolean rpcConnectionExists;
 
-                RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(this.data), new PresenceRenderer());
-            }).start();
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (instances)
+            {
+                rpcConnectionExists = instances.values().stream().anyMatch(InstanceInfo::isHasRpcConnection);
+            }
+
+            boolean noData = (renderContext == null ? new PresenceRenderContext(data) : renderContext).isEmpty();
+
+            LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#instanceInfo.isHasRpcConnection() = {}", instanceInfo.isHasRpcConnection());
+            LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#noData = {}", noData);
+
+            if (instanceInfo.isHasRpcConnection() && noData)
+            {
+                this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, false);
+
+                RPC.dispose();
+            }
+            else if (!rpcConnectionExists && !noData && !instanceInfo.isHasRpcConnection() && this.channel != null && Objects.equals(channel.getView().getCoord(), this.channel.getAddress()))
+            {
+                this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, true);
+
+                new Thread(() -> {
+                    try
+                    {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        LOG.error("An error occurred", e);
+                    }
+
+                    DiscordEventHandlers handlers = new DiscordEventHandlers();
+
+                    handlers.ready = this::rpcReady;
+                    handlers.errored = this::rpcError;
+                    handlers.disconnected = this::rpcDisconnected;
+
+                    RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(this.data), new PresenceRenderer(), this::presenceUpdated);
+                }, "JetbrainsDiscordIntegration-RPC-Starter").start();
+            }
         }
     }
 

@@ -20,6 +20,7 @@ import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.concurrent.TimeUnit;
 
 public class DiscordIntegrationSettingsPanel
 {
@@ -36,6 +37,9 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationHideReadOnlyFiles;
     private JBCheckBox applicationShowReadingInsteadOfEditing;
     private JBCheckBox applicationShowIDEWhenNoProjectIsAvailable;
+    private JBCheckBox applicationHideAfterPeriodOfInactivity;
+    private JSpinner applicationInactivityTimeout;
+    private JLabel applicationInactivityTimeoutLabel;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -45,22 +49,27 @@ public class DiscordIntegrationSettingsPanel
         this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings (" + projectSettings.getProject().getName() + ")"));
         this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application settings"));
 
-        this.applicationShowReadingInsteadOfEditing.setEnabled(!this.applicationHideReadOnlyFiles.isSelected());
         this.applicationHideReadOnlyFiles.addItemListener(e -> this.applicationShowReadingInsteadOfEditing.setEnabled(!this.applicationHideReadOnlyFiles.isSelected()));
+
+        this.applicationHideAfterPeriodOfInactivity.addItemListener(e -> {
+            this.applicationInactivityTimeoutLabel.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+            this.applicationInactivityTimeout.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+        });
     }
 
     public boolean isModified()
     {
         // @formatter:off
-        return (this.projectEnabled.isSelected() != this.projectSettings.getState().isEnabled())
-                || (this.applicationEnabled.isSelected() != this.applicationSettings.getState().isEnabled())
-                || (this.applicationUnknownImageIDE.isSelected() != this.applicationSettings.getState().isShowUnknownImageIDE())
-                || (this.applicationUnknownImageFile.isSelected() != this.applicationSettings.getState().isShowUnknownImageFile())
-                || (this.applicationShowFileExtensions.isSelected() != this.applicationSettings.getState().isShowFileExtensions())
-                || (this.applicationHideReadOnlyFiles.isSelected() != this.applicationSettings.getState().isHideReadOnlyFiles())
-                || (this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting())
-                || (this.applicationShowIDEWhenNoProjectIsAvailable.isSelected() != this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
-
+        return this.projectEnabled.isSelected() != this.projectSettings.getState().isEnabled()
+                || this.applicationEnabled.isSelected() != this.applicationSettings.getState().isEnabled()
+                || this.applicationUnknownImageIDE.isSelected() != this.applicationSettings.getState().isShowUnknownImageIDE()
+                || this.applicationUnknownImageFile.isSelected() != this.applicationSettings.getState().isShowUnknownImageFile()
+                || this.applicationShowFileExtensions.isSelected() != this.applicationSettings.getState().isShowFileExtensions()
+                || this.applicationHideReadOnlyFiles.isSelected() != this.applicationSettings.getState().isHideReadOnlyFiles()
+                || this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting()
+                || this.applicationShowIDEWhenNoProjectIsAvailable.isSelected() != this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable()
+                || this.applicationHideAfterPeriodOfInactivity.isSelected() != this.applicationSettings.getState().isHideAfterPeriodOfInactivity()
+                || (long) this.applicationInactivityTimeout.getValue() != this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES);
         // @formatter:on
     }
 
@@ -74,6 +83,8 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setHideReadOnlyFiles(this.applicationHideReadOnlyFiles.isSelected());
         this.applicationSettings.getState().setShowReadingInsteadOfWriting(this.applicationShowReadingInsteadOfEditing.isSelected());
         this.applicationSettings.getState().setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
+        this.applicationSettings.getState().setHideAfterPeriodOfInactivity(this.applicationHideAfterPeriodOfInactivity.isSelected());
+        this.applicationSettings.getState().setInactivityTimeout((long) this.applicationInactivityTimeout.getValue(), TimeUnit.MINUTES);
     }
 
     public void reset()
@@ -86,11 +97,23 @@ public class DiscordIntegrationSettingsPanel
         this.applicationHideReadOnlyFiles.setSelected(this.applicationSettings.getState().isHideReadOnlyFiles());
         this.applicationShowReadingInsteadOfEditing.setSelected(this.applicationSettings.getState().isShowReadingInsteadOfWriting());
         this.applicationShowIDEWhenNoProjectIsAvailable.setSelected(this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
+        this.applicationHideAfterPeriodOfInactivity.setSelected(this.applicationSettings.getState().isHideAfterPeriodOfInactivity());
+        this.applicationInactivityTimeout.setValue(this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES));
     }
 
     @NotNull
     public JPanel getRootPanel()
     {
         return this.panelRoot;
+    }
+
+    private void createUIComponents()
+    {
+        Long value = 1L;
+        Long minimum = 1L;
+        Long maximum = TimeUnit.MINUTES.convert(1, TimeUnit.DAYS);
+        Long stepSize = 1L;
+
+        this.applicationInactivityTimeout = new JSpinner(new SpinnerNumberModel(value, minimum, maximum, stepSize));
     }
 }

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 
 public class PresenceRenderContext implements Serializable
 {
@@ -55,7 +56,6 @@ public class PresenceRenderContext implements Serializable
     {
         LOG.trace("PresenceRenderContext#new({})", data);
 
-
         InstanceInfo instance;
         ProjectInfo project;
         FileInfo file;
@@ -65,21 +65,24 @@ public class PresenceRenderContext implements Serializable
             // @formatter:off
             instance = data.getInstances().values().stream()
                     .filter(i -> i.getSettings().isEnabled())
+                    .filter(i -> !i.getSettings().isHideAfterPeriodOfInactivity() || i.getTimeAccessed() + i.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) >= System.currentTimeMillis())
                     .max(Comparator.naturalOrder())
                     .orElse(null);
 
             if (instance != null)
             {
+                final InstanceInfo instanceFinal = instance;
                 project = instance.getProjects().values().stream()
                         .filter(p -> p.getSettings().isEnabled())
+                        .filter(p -> !instanceFinal.getSettings().isHideAfterPeriodOfInactivity() || p.getTimeAccessed() + instanceFinal.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) >= System.currentTimeMillis())
                         .max(Comparator.naturalOrder())
                         .orElse(null);
 
                 if (project != null)
                 {
-                    final InstanceInfo instanceFinal = instance;
                     file = project.getFiles().values().stream()
                             .filter(f -> !(instanceFinal.getSettings().isHideReadOnlyFiles() && f.isReadOnly()))
+                            .filter(f -> !instanceFinal.getSettings().isHideAfterPeriodOfInactivity() || f.getTimeAccessed() + instanceFinal.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) >= System.currentTimeMillis())
                             .max(Comparator.naturalOrder())
                             .orElse(null);
                 }

@@ -15,6 +15,8 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
+import java.util.concurrent.TimeUnit;
+
 public interface ApplicationSettings<T extends ApplicationSettings<T>> extends Settings<T>
 {
     boolean isShowFileExtensions();
@@ -28,4 +30,8 @@ public interface ApplicationSettings<T extends ApplicationSettings<T>> extends S
     boolean isShowReadingInsteadOfWriting();
 
     boolean isShowIDEWhenNoProjectIsAvailable();
+
+    boolean isHideAfterPeriodOfInactivity();
+
+    long getInactivityTimeout(TimeUnit unit);
 }
