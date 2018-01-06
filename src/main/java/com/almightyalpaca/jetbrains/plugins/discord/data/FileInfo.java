@@ -185,6 +185,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         GOLO("Golo", "golo", "golo"),
         GRADLE("Gradle", "gradle", "gradle", "gradle.kts"),
         GROOVY("Groovy", "groovy", "groovy"),
+        HANDLEBARS("Handlebars.js", "handlebars", "hbs", "handlebars"),
         HTACCESS(".htaccess", "apache", ".htaccess"),
         HTML("HTML", "html", "html", "htm"),
         JAVA("Java", "java", "java"),
