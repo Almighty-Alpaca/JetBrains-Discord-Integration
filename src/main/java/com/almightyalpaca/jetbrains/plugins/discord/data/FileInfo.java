@@ -198,6 +198,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         RUBY("Ruby", "ruby", "rb"),
         RUST("Rust", "rust", "rs"),
         SCALA("Scala", "scala", "scala", "sc"),
+        SHELL("Shell", "shell", "sh"),
         SQL("SQL", "sql", "sql"),
         SWIFT("Swift", "swift", "swift"),
         TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
