@@ -178,6 +178,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         CPP("C++", "cpp", "cpp", "hpp"),
         CSS("CSS", "css", "css"),
         C_SHARP("C#", "csharp", "cs"),
+        ERLANG("Erlang", "erlang", "erl", "hrl"),
         GIT("Git", "git", ".gitmodules", ".gitignore", ".gitattributes"),
         GO("Go", "go", "go"),
         GOLO("Golo", "golo", "golo"),
