@@ -44,20 +44,20 @@ public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
     private final Map<String, FileInfo> files;
     private final long timeOpened;
     @NotNull
-    private ProjectSettings<? extends ProjectSettings> settings;
+    private ProjectSettings settings;
     private long timeAccessed;
 
-    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings settings, @NotNull String name, long timeOpened)
     {
         this(id, settings, name, timeOpened, timeOpened);
     }
 
-    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings settings, @NotNull String name, long timeOpened, long timeAccessed)
     {
         this(id, settings, name, timeOpened, timeAccessed, new HashMap<>());
     }
 
-    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings<? extends ProjectSettings> settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull Map<String, FileInfo> files)
+    public ProjectInfo(@NotNull String id, @NotNull ProjectSettings settings, @NotNull String name, long timeOpened, long timeAccessed, @NotNull Map<String, FileInfo> files)
     {
         this.settings = settings;
         this.timeOpened = timeOpened;
@@ -100,12 +100,12 @@ public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
     }
 
     @NotNull
-    public ProjectSettings<? extends ProjectSettings> getSettings()
+    public ProjectSettings getSettings()
     {
         return this.settings;
     }
 
-    void setSettings(@NotNull ProjectSettings<? extends ProjectSettings> settings)
+    void setSettings(@NotNull ProjectSettings settings)
     {
         this.settings = settings;
     }

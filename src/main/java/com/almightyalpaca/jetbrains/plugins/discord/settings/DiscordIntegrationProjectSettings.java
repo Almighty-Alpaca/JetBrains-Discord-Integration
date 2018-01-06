@@ -22,10 +22,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "DiscordIntegrationProjectSettings", storages = @Storage("discord.xml"))
-public class DiscordIntegrationProjectSettings implements PersistentStateComponent<ProjectSettingsStorage>, SettingsProvider<ProjectSettings<?>>
+public class DiscordIntegrationProjectSettings implements PersistentStateComponent<ProjectSettingsStorage>, SettingsProvider<ProjectSettings>
 {
     @NotNull
     private final Project project;
@@ -58,7 +59,7 @@ public class DiscordIntegrationProjectSettings implements PersistentStateCompone
 
     @NotNull
     @Override
-    public ProjectSettings<ProjectSettingsStorage> getSettings()
+    public ProjectSettings getSettings()
     {
         return this.state;
     }
@@ -66,6 +67,6 @@ public class DiscordIntegrationProjectSettings implements PersistentStateCompone
     @Override
     public void loadState(@NotNull ProjectSettingsStorage state)
     {
-        this.state.clone(state);
+        XmlSerializerUtil.copyBean(state, this.state);
     }
 }

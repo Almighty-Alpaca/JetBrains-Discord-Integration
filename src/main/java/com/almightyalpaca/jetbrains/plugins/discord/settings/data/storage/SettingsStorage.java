@@ -17,23 +17,16 @@ package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.Settings;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.util.xmlb.annotations.Attribute;
 
 import java.util.Objects;
 
-public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends Settings<T>> implements Settings<T>
+public abstract class SettingsStorage implements Settings
 {
     private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
 
-    @NotNull
-    private transient final Class<T> clazz;
-
+    @Attribute
     private boolean enabled = true;
-
-    public SettingsStorage(@NotNull Class<T> clazz)
-    {
-        this.clazz = clazz;
-    }
 
     @Override
     public boolean isEnabled()
@@ -41,16 +34,9 @@ public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends
         return enabled;
     }
 
-    public T setEnabled(boolean enabled)
+    public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
-        return clazz.cast(this);
-    }
-
-    @NotNull
-    public T clone(@NotNull V settings)
-    {
-        return setEnabled(settings.isEnabled());
     }
 
     @Override
@@ -60,7 +46,7 @@ public abstract class SettingsStorage<T extends SettingsStorage<T, V>, V extends
             return true;
         if (!(o instanceof SettingsStorage))
             return false;
-        SettingsStorage<?, ?> that = (SettingsStorage<?, ?>) o;
+        SettingsStorage that = (SettingsStorage) o;
         return isEnabled() == that.isEnabled();
     }
 

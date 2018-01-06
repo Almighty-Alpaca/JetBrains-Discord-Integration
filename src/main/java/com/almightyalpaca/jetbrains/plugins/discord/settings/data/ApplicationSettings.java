@@ -17,7 +17,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
 import java.util.concurrent.TimeUnit;
 
-public interface ApplicationSettings<T extends ApplicationSettings<T>> extends Settings<T>
+public interface ApplicationSettings extends Settings
 {
     boolean isShowFileExtensions();
 

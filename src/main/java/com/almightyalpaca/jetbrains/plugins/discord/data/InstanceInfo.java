@@ -45,26 +45,26 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     private final String id;
     private final long timeOpened;
     @NotNull
-    private ApplicationSettings<?> settings;
+    private ApplicationSettings settings;
     private long timeAccessed;
     private boolean hasRpcConnection = false;
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings<?> settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
+    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
     {
         this(id, settings, distributionCode, distributionVersion, timeOpened, timeOpened);
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings<?> settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened, long timeAccessed)
+    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened, long timeAccessed)
     {
         this(id, settings, new DistributionInfo(distributionCode, distributionVersion), timeOpened, timeAccessed);
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
+    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
     {
         this(id, settings, distribution, timeOpened, timeAccessed, new HashMap<>());
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings<?> settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull Map<String, ProjectInfo> projects)
+    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull Map<String, ProjectInfo> projects)
     {
         this.id = id;
         this.settings = settings;
@@ -117,7 +117,7 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
         return this.settings;
     }
 
-    void setSettings(@NotNull ApplicationSettings<?> settings)
+    void setSettings(@NotNull ApplicationSettings settings)
     {
         this.settings = settings;
     }

@@ -344,7 +344,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
-    public void projectSetSettings(long timestamp, @Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable ProjectSettings<? extends ProjectSettings> settings)
+    public void projectSetSettings(long timestamp, @Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable ProjectSettings settings)
     {
         LOG.trace("ReplicatedData#projectSetSettings({}, {}, {}, {})", timestamp, instance, project, settings);
 
@@ -600,7 +600,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         notifyListeners(Notifier.Type.PROJECT_REMOVE);
     }
 
-    protected void _projectSetSettings(long timestamp, @NotNull String instanceId, @NotNull String projectId, @NotNull ProjectSettings<? extends ProjectSettings> settings)
+    protected void _projectSetSettings(long timestamp, @NotNull String instanceId, @NotNull String projectId, @NotNull ProjectSettings settings)
     {
         LOG.trace("ReplicatedData#_projectSetSettings({}, {}, {}, {})", timestamp, instanceId, projectId, settings);
 

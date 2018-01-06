@@ -20,17 +20,12 @@ import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSetting
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectSettingsStorage extends SettingsStorage<ProjectSettingsStorage, ProjectSettings<ProjectSettingsStorage>> implements ProjectSettings<ProjectSettingsStorage>
+public class ProjectSettingsStorage extends SettingsStorage implements ProjectSettings
 {
     private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
 
     @NotNull
     private static final Gson GSON = new Gson();
-
-    public ProjectSettingsStorage()
-    {
-        super(ProjectSettingsStorage.class);
-    }
 
     @NotNull
     @Override

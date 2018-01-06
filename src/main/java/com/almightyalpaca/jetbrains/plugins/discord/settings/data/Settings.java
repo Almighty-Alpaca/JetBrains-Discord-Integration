@@ -17,7 +17,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
 import java.io.Serializable;
 
-public interface Settings<T extends Settings<T>> extends Serializable, Cloneable
+public interface Settings extends Serializable, Cloneable
 {
     boolean isEnabled();
 }

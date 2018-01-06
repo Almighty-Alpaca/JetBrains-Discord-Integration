@@ -15,7 +15,4 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
-public interface ProjectSettings<T extends ProjectSettings<T>> extends Settings<T>
-{
-
-}
+public interface ProjectSettings extends Settings {}

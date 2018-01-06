@@ -18,12 +18,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.google.gson.Gson;
+import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSettingsStorage, ApplicationSettings<ApplicationSettingsStorage>> implements ApplicationSettings<ApplicationSettingsStorage>
+public class ApplicationSettingsStorage extends SettingsStorage implements ApplicationSettings
 {
     @NotNull
     public static final TimeUnit INACTIVITY_TIMEOUT_TIMEUNIT = TimeUnit.MILLISECONDS;
@@ -35,19 +36,22 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
     @NotNull
     private static final Gson GSON = new Gson();
 
+    @Attribute
     private boolean showUnknownImageIDE = true;
+    @Attribute
     private boolean showUnknownImageFile = true;
+    @Attribute
     private boolean showFileExtensions = true;
+    @Attribute
     private boolean hideReadOnlyFiles = true;
+    @Attribute
     private boolean showReadingInsteadOfWriting = true;
+    @Attribute
     private boolean showIDEWhenNoProjectIsAvailable = true;
+    @Attribute
     private boolean hideAfterPeriodOfInactivity = true;
+    @Attribute
     private long inactivityTimeout = INACTIVITY_TIMEOUT_DEFAULT_VALUE;
-
-    public ApplicationSettingsStorage()
-    {
-        super(ApplicationSettingsStorage.class);
-    }
 
     @Override
     public boolean isShowFileExtensions()
@@ -55,11 +59,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this.showFileExtensions;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setShowFileExtensions(boolean showFileExtensions)
+    public void setShowFileExtensions(boolean showFileExtensions)
     {
         this.showFileExtensions = showFileExtensions;
-        return this;
     }
 
     @Override
@@ -68,11 +70,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this.showUnknownImageIDE;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setShowUnknownImageIDE(boolean showUnknownImageIDE)
+    public void setShowUnknownImageIDE(boolean showUnknownImageIDE)
     {
         this.showUnknownImageIDE = showUnknownImageIDE;
-        return this;
     }
 
     @Override
@@ -81,11 +81,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this.showUnknownImageFile;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setShowUnknownImageFile(boolean showUnknownImageFile)
+    public void setShowUnknownImageFile(boolean showUnknownImageFile)
     {
         this.showUnknownImageFile = showUnknownImageFile;
-        return this;
     }
 
     @Override
@@ -94,11 +92,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this.hideReadOnlyFiles;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setHideReadOnlyFiles(boolean hideReadOnlyFiles)
+    public void setHideReadOnlyFiles(boolean hideReadOnlyFiles)
     {
         this.hideReadOnlyFiles = hideReadOnlyFiles;
-        return this;
     }
 
     @Override
@@ -107,11 +103,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return this.showReadingInsteadOfWriting;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setShowReadingInsteadOfWriting(boolean showReadingInsteadOfWriting)
+    public void setShowReadingInsteadOfWriting(boolean showReadingInsteadOfWriting)
     {
         this.showReadingInsteadOfWriting = showReadingInsteadOfWriting;
-        return this;
     }
 
     @Override
@@ -120,11 +114,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return showIDEWhenNoProjectIsAvailable;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setShowIDEWhenNoProjectIsAvailable(boolean showIDEWhenNoProjectIsAvailable)
+    public void setShowIDEWhenNoProjectIsAvailable(boolean showIDEWhenNoProjectIsAvailable)
     {
         this.showIDEWhenNoProjectIsAvailable = showIDEWhenNoProjectIsAvailable;
-        return this;
     }
 
     public boolean isHideAfterPeriodOfInactivity()
@@ -132,11 +124,9 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return hideAfterPeriodOfInactivity;
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setHideAfterPeriodOfInactivity(boolean hideAfterPeriodOfInactivity)
+    public void setHideAfterPeriodOfInactivity(boolean hideAfterPeriodOfInactivity)
     {
         this.hideAfterPeriodOfInactivity = hideAfterPeriodOfInactivity;
-        return this;
     }
 
     @Override
@@ -145,28 +135,14 @@ public class ApplicationSettingsStorage extends SettingsStorage<ApplicationSetti
         return unit.convert(inactivityTimeout, INACTIVITY_TIMEOUT_TIMEUNIT);
     }
 
-    @NotNull
-    public ApplicationSettingsStorage setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
+    public long getInactivityTimeout()
     {
-        this.inactivityTimeout = INACTIVITY_TIMEOUT_TIMEUNIT.convert(inactivityTimeout, unit);
-        return this;
+        return inactivityTimeout;
     }
 
-    @NotNull
-    @Override
-    public ApplicationSettingsStorage clone(@NotNull ApplicationSettings<ApplicationSettingsStorage> settings)
+    public void setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
     {
-        // @formatter:off
-        return super.clone(settings)
-                .setShowUnknownImageFile(settings.isShowUnknownImageFile())
-                .setShowUnknownImageIDE(settings.isShowUnknownImageIDE())
-                .setShowFileExtensions(settings.isShowFileExtensions())
-                .setHideReadOnlyFiles(settings.isHideReadOnlyFiles())
-                .setShowReadingInsteadOfWriting(settings.isShowReadingInsteadOfWriting())
-                .setShowIDEWhenNoProjectIsAvailable(settings.isShowIDEWhenNoProjectIsAvailable())
-                .setHideAfterPeriodOfInactivity(settings.isHideAfterPeriodOfInactivity())
-                .setInactivityTimeout(settings.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT), INACTIVITY_TIMEOUT_TIMEUNIT);
-        // @formatter:on
+        this.inactivityTimeout = INACTIVITY_TIMEOUT_TIMEUNIT.convert(inactivityTimeout, unit);
     }
 
     @NotNull
