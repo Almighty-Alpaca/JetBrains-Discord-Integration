@@ -280,7 +280,6 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     {
         synchronized (rpcLock)
         {
-
             LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()");
 
             if (this.data == null || this.instanceInfo == null)

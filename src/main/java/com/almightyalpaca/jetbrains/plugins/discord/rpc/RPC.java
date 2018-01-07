@@ -19,6 +19,7 @@ import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderContext;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.LazyString;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +111,8 @@ public class RPC
                                 if (newPresence == null)
                                     newPresence = new DiscordRichPresence();
 
-                                LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", GSON.toJson(newPresence));
+                                final DiscordRichPresence finalNewPresence = newPresence;
+                                LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", LazyString.of(() -> GSON.toJson(finalNewPresence)));
 
                                 if (!Objects.equals(RPC.presence, newPresence))
                                 {
