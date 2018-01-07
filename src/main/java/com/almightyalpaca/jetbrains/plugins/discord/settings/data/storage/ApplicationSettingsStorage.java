@@ -52,6 +52,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     private boolean hideAfterPeriodOfInactivity = true;
     @Attribute
     private long inactivityTimeout = INACTIVITY_TIMEOUT_DEFAULT_VALUE;
+    @Attribute
+    private boolean resetOpenTimeAfterInactivity = true;
 
     @Override
     public boolean isShowFileExtensions()
@@ -135,7 +137,7 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
         return unit.convert(inactivityTimeout, INACTIVITY_TIMEOUT_TIMEUNIT);
     }
 
-    public long getInactivityTimeout()
+    protected long getInactivityTimeout()
     {
         return inactivityTimeout;
     }
@@ -143,6 +145,17 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public void setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
     {
         this.inactivityTimeout = INACTIVITY_TIMEOUT_TIMEUNIT.convert(inactivityTimeout, unit);
+    }
+
+    @Override
+    public boolean isResetOpenTimeAfterInactivity()
+    {
+        return resetOpenTimeAfterInactivity;
+    }
+
+    public void setResetOpenTimeAfterInactivity(boolean resetOpenTimeAfterInactivity)
+    {
+        this.resetOpenTimeAfterInactivity = resetOpenTimeAfterInactivity;
     }
 
     @NotNull
@@ -169,7 +182,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 && this.isShowReadingInsteadOfWriting() == that.isShowReadingInsteadOfWriting()
                 && this.isShowIDEWhenNoProjectIsAvailable() == that.isShowIDEWhenNoProjectIsAvailable()
                 && this.isHideAfterPeriodOfInactivity() == that.isHideAfterPeriodOfInactivity()
-                && this.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT) == that.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT);
+                && this.getInactivityTimeout() == that.getInactivityTimeout()
+                && this.isResetOpenTimeAfterInactivity() == that.isResetOpenTimeAfterInactivity();
         // @formatter:on
     }
 
@@ -186,7 +200,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 this.isShowReadingInsteadOfWriting(),
                 this.isShowIDEWhenNoProjectIsAvailable(),
                 this.isHideAfterPeriodOfInactivity(),
-                this.getInactivityTimeout(INACTIVITY_TIMEOUT_TIMEUNIT));
+                this.getInactivityTimeout(),
+                this.isResetOpenTimeAfterInactivity());
         // @formatter:on
     }
 }

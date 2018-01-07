@@ -42,10 +42,10 @@ public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
     private final String id;
     @NotNull
     private final Map<String, FileInfo> files;
-    private final long timeOpened;
     @NotNull
     private ProjectSettings settings;
     private long timeAccessed;
+    private long timeOpened;
 
     public ProjectInfo(@NotNull String id, @NotNull ProjectSettings settings, @NotNull String name, long timeOpened)
     {
@@ -75,6 +75,16 @@ public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
     public long getTimeOpened()
     {
         return this.timeOpened;
+    }
+
+    void setTimeOpened(long timeOpened)
+    {
+        this.timeOpened = timeOpened;
+
+        if (timeOpened > this.timeAccessed)
+            this.timeAccessed = timeOpened;
+
+        this.files.values().forEach(f -> f.setTimeOpened(timeOpened));
     }
 
     public long getTimeAccessed()

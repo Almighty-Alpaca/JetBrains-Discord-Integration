@@ -40,6 +40,7 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationHideAfterPeriodOfInactivity;
     private JSpinner applicationInactivityTimeout;
     private JLabel applicationInactivityTimeoutLabel;
+    private JBCheckBox applicationResetOpenTimeAfterInactivity;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -54,6 +55,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationHideAfterPeriodOfInactivity.addItemListener(e -> {
             this.applicationInactivityTimeoutLabel.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
             this.applicationInactivityTimeout.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+            this.applicationResetOpenTimeAfterInactivity.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
         });
     }
 
@@ -69,7 +71,8 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationShowReadingInsteadOfEditing.isSelected() != this.applicationSettings.getState().isShowReadingInsteadOfWriting()
                 || this.applicationShowIDEWhenNoProjectIsAvailable.isSelected() != this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable()
                 || this.applicationHideAfterPeriodOfInactivity.isSelected() != this.applicationSettings.getState().isHideAfterPeriodOfInactivity()
-                || (long) this.applicationInactivityTimeout.getValue() != this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES);
+                || (long) this.applicationInactivityTimeout.getValue() != this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES)
+                || this.applicationResetOpenTimeAfterInactivity.isSelected() != this.applicationSettings.getState().isResetOpenTimeAfterInactivity();
         // @formatter:on
     }
 
@@ -85,6 +88,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
         this.applicationSettings.getState().setHideAfterPeriodOfInactivity(this.applicationHideAfterPeriodOfInactivity.isSelected());
         this.applicationSettings.getState().setInactivityTimeout((long) this.applicationInactivityTimeout.getValue(), TimeUnit.MINUTES);
+        this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
     }
 
     public void reset()
@@ -99,6 +103,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationShowIDEWhenNoProjectIsAvailable.setSelected(this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
         this.applicationHideAfterPeriodOfInactivity.setSelected(this.applicationSettings.getState().isHideAfterPeriodOfInactivity());
         this.applicationInactivityTimeout.setValue(this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES));
+        this.applicationResetOpenTimeAfterInactivity.setSelected(this.applicationSettings.getState().isResetOpenTimeAfterInactivity());
     }
 
     @NotNull

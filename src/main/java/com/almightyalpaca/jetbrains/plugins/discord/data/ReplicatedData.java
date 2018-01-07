@@ -19,6 +19,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSet
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.google.gson.Gson;
 import gnu.trove.TIntObjectHashMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgroups.*;
@@ -466,53 +467,77 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     /*--------------- Time accessed update METHODS -------------*/
 
-    private void updateInstance(@NotNull String instanceId, long timeAccessed)
+    private InstanceInfo updateInstance(@NotNull String instanceId, long timeAccessed)
     {
         InstanceInfo instance = this.instances.get(instanceId);
 
         if (instance != null)
         {
+            // @formatter:off
+            if (instance.getSettings().isHideAfterPeriodOfInactivity()
+                    && instance.getSettings().isResetOpenTimeAfterInactivity()
+                    && instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
+                        < System.currentTimeMillis())
+                // @formatter:on
+                instance.setTimeOpened(timeAccessed);
+
             instance.setTimeAccessed(timeAccessed);
+
+            return instance;
         }
+
+        return null;
     }
 
-    private void updateProject(@NotNull String instanceId, String projectId, long timeAccessed)
+    private Pair<InstanceInfo, ProjectInfo> updateProject(@NotNull String instanceId, String projectId, long timeAccessed)
     {
-        InstanceInfo instance = this.instances.get(instanceId);
+        InstanceInfo instance = updateInstance(instanceId, timeAccessed);
 
         if (instance != null)
         {
-            instance.setTimeAccessed(timeAccessed);
-
             ProjectInfo project = instance.getProjects().get(projectId);
 
             if (project != null)
             {
+                // @formatter:off
+                if (instance.getSettings().isHideAfterPeriodOfInactivity()
+                        && instance.getSettings().isResetOpenTimeAfterInactivity()
+                        && project.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
+                            < System.currentTimeMillis())
+                    // @formatter:on
+                    project.setTimeOpened(timeAccessed);
+
                 project.setTimeAccessed(timeAccessed);
+
+                return Pair.of(instance, project);
             }
         }
+
+        return null;
     }
 
     private void updateFile(@NotNull String instanceId, String projectId, String fileId, long timeAccessed)
     {
-        InstanceInfo instance = this.instances.get(instanceId);
+        Pair<InstanceInfo, ProjectInfo> pair = updateProject(instanceId, projectId, timeAccessed);
 
-        if (instance != null)
+        if (pair != null)
         {
-            instance.setTimeAccessed(timeAccessed);
+            InstanceInfo instance = pair.getLeft();
+            ProjectInfo project = pair.getRight();
 
-            ProjectInfo project = instance.getProjects().get(projectId);
+            FileInfo file = project.getFiles().get(fileId);
 
-            if (project != null)
+            if (file != null)
             {
-                project.setTimeAccessed(timeAccessed);
+                // @formatter:off
+                if (instance.getSettings().isHideAfterPeriodOfInactivity()
+                        && instance.getSettings().isResetOpenTimeAfterInactivity()
+                        && file.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
+                            < System.currentTimeMillis())
+                    // @formatter:on
+                    file.setTimeOpened(timeAccessed);
 
-                FileInfo file = project.getFiles().get(fileId);
-
-                if (file != null)
-                {
-                    file.setTimeAccessed(timeAccessed);
-                }
+                file.setTimeAccessed(timeAccessed);
             }
         }
     }

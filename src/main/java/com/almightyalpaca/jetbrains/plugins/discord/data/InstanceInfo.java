@@ -43,10 +43,10 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     private final DistributionInfo distribution;
     @NotNull
     private final String id;
-    private final long timeOpened;
     @NotNull
     private ApplicationSettings settings;
     private long timeAccessed;
+    private long timeOpened;
     private boolean hasRpcConnection = false;
 
     public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
@@ -89,6 +89,16 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     public long getTimeOpened()
     {
         return this.timeOpened;
+    }
+
+    void setTimeOpened(long timeOpened)
+    {
+        this.timeOpened = timeOpened;
+
+        if (timeOpened > this.timeAccessed)
+            this.timeAccessed = timeOpened;
+
+        this.projects.values().forEach(p -> p.setTimeOpened(timeOpened));
     }
 
     public long getTimeAccessed()

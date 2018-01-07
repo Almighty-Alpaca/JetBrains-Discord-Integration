@@ -34,4 +34,6 @@ public interface ApplicationSettings extends Settings
     boolean isHideAfterPeriodOfInactivity();
 
     long getInactivityTimeout(TimeUnit unit);
+
+    boolean isResetOpenTimeAfterInactivity();
 }

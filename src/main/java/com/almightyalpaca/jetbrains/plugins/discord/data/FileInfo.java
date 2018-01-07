@@ -41,9 +41,9 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     private final String baseName;
     @Nullable
     private final String extension;
-    private final long timeOpened;
     private boolean readOnly;
     private long timeAccessed;
+    private long timeOpened;
     @NotNull
     private transient FileInfo.Language language;
 
@@ -78,6 +78,14 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     public long getTimeOpened()
     {
         return this.timeOpened;
+    }
+
+    void setTimeOpened(long timeOpened)
+    {
+        this.timeOpened = timeOpened;
+
+        if (timeOpened > this.timeAccessed)
+            this.timeAccessed = timeOpened;
     }
 
     public long getTimeAccessed()
