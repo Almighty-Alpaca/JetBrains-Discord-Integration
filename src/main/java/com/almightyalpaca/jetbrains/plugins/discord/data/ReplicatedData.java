@@ -18,8 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.data;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.google.gson.Gson;
+import com.intellij.openapi.util.Pair;
 import gnu.trove.TIntObjectHashMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgroups.*;
@@ -509,7 +509,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
                 project.setTimeAccessed(timeAccessed);
 
-                return Pair.of(instance, project);
+                return Pair.create(instance, project);
             }
         }
 
@@ -522,8 +522,8 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         if (pair != null)
         {
-            InstanceInfo instance = pair.getLeft();
-            ProjectInfo project = pair.getRight();
+            InstanceInfo instance = pair.getFirst();
+            ProjectInfo project = pair.getSecond();
 
             FileInfo file = project.getFiles().get(fileId);
 

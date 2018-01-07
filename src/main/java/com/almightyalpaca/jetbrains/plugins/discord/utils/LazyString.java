@@ -1,12 +1,22 @@
 package com.almightyalpaca.jetbrains.plugins.discord.utils;
 
-@FunctionalInterface
-public interface LazyString
+import java.util.Objects;
+import java.util.function.Supplier;
+
+public class LazyString
 {
-    static LazyString of(LazyString string)
+    private final Supplier<?> string;
+
+    public LazyString(Supplier<?> string) {this.string = string;}
+
+    public static LazyString of(Supplier<?> string)
     {
-        return string;
+        return new LazyString(string);
     }
 
-    String getString() throws Exception;
+    @Override
+    public String toString()
+    {
+        return Objects.toString(string);
+    }
 }
