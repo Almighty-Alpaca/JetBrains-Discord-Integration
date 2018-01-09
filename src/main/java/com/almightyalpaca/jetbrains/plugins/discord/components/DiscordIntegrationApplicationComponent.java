@@ -127,7 +127,9 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
             this.data = data;
 
             this.instanceInfo = new InstanceInfo(channel.getAddressAsString(), ApplicationInfo.getInstance());
+
             LOG.trace("DiscordIntegrationApplicationComponent#initComponent()#this.instanceInfo = {}", this.instanceInfo);
+
             data.instanceAdd(System.currentTimeMillis(), this.instanceInfo);
 
             RPC.updatePresence(2, TimeUnit.SECONDS);
@@ -199,6 +201,12 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
         {
             VirtualFileManager.getInstance().removeVirtualFileListener(this.virtualFileListener);
             this.virtualFileListener = null;
+        }
+
+        if (this.data != null)
+        {
+            this.data.close();
+            this.data = null;
         }
 
         if (this.channel != null)

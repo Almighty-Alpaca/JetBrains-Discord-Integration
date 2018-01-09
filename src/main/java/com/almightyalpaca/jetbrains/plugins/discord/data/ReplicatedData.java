@@ -78,7 +78,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         try
         {
-            METHODS = new TIntObjectHashMap<>(10);
+            METHODS = new TIntObjectHashMap<>(13);
 
             METHODS.put(INSTANCE_ADD, ReplicatedData.class.getDeclaredMethod("_instanceAdd", long.class, InstanceInfo.class));
             METHODS.put(INSTANCE_REMOVE, ReplicatedData.class.getDeclaredMethod("_instanceRemove", long.class, String.class));
@@ -111,7 +111,6 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     protected transient final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "JetbrainsDiscordIntegration-Notifier"));
     @NotNull
     protected transient final AtomicReference<Notifier.Type> modified = new AtomicReference<>(null);
-
     @NotNull
     protected transient final RequestOptions call_options = new RequestOptions(ResponseMode.GET_ALL, 100);
     @NotNull
@@ -127,6 +126,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public ReplicatedData(@NotNull JChannel channel, @NotNull Notifier... notifiers) throws Exception
     {
+        LOG.trace("ReplicatedData#new()");
         this.executor.scheduleAtFixedRate(() -> {
             Notifier.Type type = modified.getAndSet(null);
             if (type != null)
@@ -135,12 +135,16 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         this.notifiers.addAll(Arrays.asList(notifiers));
 
-        this.instances = Collections.synchronizedMap(new HashMap<>());
+        this.instances = Collections.synchronizedMap(new HashMap<>(1));
 
-        this.dispatcher = new RpcDispatcher(channel, this).setMethodLookup(METHODS::get);
-        this.dispatcher.setMembershipListener(this).setStateListener(this);
+        this.dispatcher = new RpcDispatcher(channel, this);
+        this.dispatcher.setMethodLookup(METHODS::get);
+        this.dispatcher.setMembershipListener(this);
+        this.dispatcher.setStateListener(this);
 
         this.channel = channel.getState(null, STATE_TIMEOUT);
+
+        LOG.trace("ReplicatedData#new() end");
     }
 
     public boolean isBlockingUpdates()
@@ -216,7 +220,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(INSTANCE_ADD, instance);
+            MethodCall call = new MethodCall(INSTANCE_ADD, timestamp, instance);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -236,7 +240,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(INSTANCE_REMOVE, instance.getId());
+            MethodCall call = new MethodCall(INSTANCE_REMOVE, timestamp, instance.getId());
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -256,7 +260,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(INSTANCE_SET_SETTINGS, instance.getId(), settings);
+            MethodCall call = new MethodCall(INSTANCE_SET_SETTINGS, timestamp, instance.getId(), settings);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -276,7 +280,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(INSTANCE_SET_HAS_RPC_CONNECTION, instance.getId(), hasRpcConnection);
+            MethodCall call = new MethodCall(INSTANCE_SET_HAS_RPC_CONNECTION, timestamp, instance.getId(), hasRpcConnection);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -316,7 +320,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(PROJECT_ADD, instance.getId(), project);
+            MethodCall call = new MethodCall(PROJECT_ADD, timestamp, instance.getId(), project);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -336,7 +340,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(PROJECT_REMOVE, instance.getId(), project.getId());
+            MethodCall call = new MethodCall(PROJECT_REMOVE,timestamp,  instance.getId(), project.getId());
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -356,7 +360,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(PROJECT_SET_SETTINGS, instance.getId(), project.getId(), settings);
+            MethodCall call = new MethodCall(PROJECT_SET_SETTINGS, timestamp, instance.getId(), project.getId(), settings);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -396,7 +400,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(FILE_ADD, instance.getId(), project.getId(), file);
+            MethodCall call = new MethodCall(FILE_ADD, timestamp, instance.getId(), project.getId(), file);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -416,7 +420,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(FILE_REMOVE, instance.getId(), project.getId(), file.getId());
+            MethodCall call = new MethodCall(FILE_REMOVE, timestamp, instance.getId(), project.getId(), file.getId());
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
@@ -489,7 +493,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         return null;
     }
 
-    private Pair<InstanceInfo, ProjectInfo> updateProject(@NotNull String instanceId, String projectId, long timeAccessed)
+    private Pair<InstanceInfo, ProjectInfo> updateProject(@NotNull String instanceId, @NotNull String projectId, long timeAccessed)
     {
         InstanceInfo instance = updateInstance(instanceId, timeAccessed);
 
@@ -516,7 +520,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         return null;
     }
 
-    private void updateFile(@NotNull String instanceId, String projectId, String fileId, long timeAccessed)
+    private void updateFile(@NotNull String instanceId, @NotNull String projectId, @NotNull String fileId, long timeAccessed)
     {
         Pair<InstanceInfo, ProjectInfo> pair = updateProject(instanceId, projectId, timeAccessed);
 
@@ -728,10 +732,31 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
     public void getState(@NotNull OutputStream outputStream) throws Exception
     {
+        LOG.trace("ReplicatedData#setState()");
+        LOG.trace("ReplicatedData#setState()#this.instances = {}", this.instances);
+
         try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(outputStream, 1024)))
         {
             oos.writeObject(instances);
         }
+
+        LOG.trace("ReplicatedData#setState() end");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setState(@NotNull InputStream inputStream) throws Exception
+    {
+        LOG.trace("ReplicatedData#setState()");
+        LOG.trace("ReplicatedData#setState()#this.instances (before) = {}", this.instances);
+
+        try (ObjectInputStream ois = new ObjectInputStream(inputStream))
+        {
+            this.instances.clear();
+            this.instances.putAll((Map<String, InstanceInfo>) ois.readObject());
+        }
+
+        LOG.trace("ReplicatedData#setState()#this.instances (after) = {}", this.instances);
+        LOG.trace("ReplicatedData#setState() end");
     }
 
     /*------------------- Membership Changes ----------------------*/
@@ -753,31 +778,25 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             notifyListeners(Notifier.Type.INSTANCE_REMOVE);
     }
 
-    protected void notifyListeners(Notifier.Type type)
+    protected void notifyListeners(@NotNull Notifier.Type type)
     {
         LOG.trace("ReplicatedData#notifyListeners({})", type);
 
         this.modified.set(type);
     }
 
-    @SuppressWarnings("unchecked")
-    public void setState(@NotNull InputStream inputStream) throws Exception
-    {
-        try (ObjectInputStream ois = new ObjectInputStream(inputStream))
-        {
-            this.instances.clear();
-            this.instances.putAll((Map<String, InstanceInfo>) ois.readObject());
-        }
-    }
-
     @NotNull
     public Collection<Address> getTargets()
     {
         // @formatter:off
-        return channel.getView().getMembers().stream().
+        Collection<Address> channels = channel.getView().getMembers().stream().
                 filter(a -> !Objects.equals(a, channel.getAddress()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         // @formatter:on
+
+        LOG.trace("ReplicatedData#getTargets() -> {}", channels.size());
+
+        return channels;
     }
 
     public interface Notifier
