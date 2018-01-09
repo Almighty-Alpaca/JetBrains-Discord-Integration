@@ -303,31 +303,25 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
                 rpcConnectionExists = instances.values().stream().anyMatch(InstanceInfo::isHasRpcConnection);
             }
 
-            boolean noData = (renderContext == null ? new PresenceRenderContext(data) : renderContext).isEmpty();
-
             LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#instanceInfo.isHasRpcConnection() = {}", instanceInfo.isHasRpcConnection());
-            LOG.trace("DiscordIntegrationApplicationComponent#checkRpcConnection()#noData = {}", noData);
 
-            if (instanceInfo.isHasRpcConnection() && noData)
+            if (instanceInfo.isHasRpcConnection() && (renderContext == null ? renderContext = new PresenceRenderContext(data) : renderContext).isEmpty())
             {
                 this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, false);
 
                 RPC.dispose();
             }
-            else if (!rpcConnectionExists && !noData && !instanceInfo.isHasRpcConnection() && this.channel != null && Objects.equals(channel.getView().getCoord(), this.channel.getAddress()))
+            // @formatter:off
+            else if (!rpcConnectionExists
+                    && !instanceInfo.isHasRpcConnection()
+                    && this.channel != null
+                    && Objects.equals(channel.getView().getCoord(), this.channel.getAddress())
+                    && !(renderContext == null ? new PresenceRenderContext(data) : renderContext).isEmpty())
+            // @formatter:on
             {
                 this.data.instanceSetHasRpcConnection(System.currentTimeMillis(), instanceInfo, true);
 
                 new Thread(() -> {
-                    try
-                    {
-                        TimeUnit.SECONDS.sleep(2);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        LOG.error("An error occurred", e);
-                    }
-
                     DiscordEventHandlers handlers = new DiscordEventHandlers();
 
                     handlers.ready = this::rpcReady;

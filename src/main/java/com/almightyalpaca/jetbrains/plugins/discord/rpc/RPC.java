@@ -100,7 +100,7 @@ public class RPC
                         {
                             long timeout = RPC.nextPresenceUpdate - System.nanoTime();
 
-                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~1 = {}", timeout);
+                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~1 = {}ns", timeout);
 
                             if (timeout <= 0)
                             {
@@ -129,7 +129,7 @@ public class RPC
 
                             timeout = Long.min(timeout, newTimeout);
 
-                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~2 = {}", timeout);
+                            LOG.trace("RPC.delayedPresenceRunner$run#timeout~2 = {}ns", timeout);
 
                             if (timeout > 0)
                                 LockSupport.parkNanos(timeout);
