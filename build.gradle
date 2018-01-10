@@ -28,7 +28,7 @@ plugins {
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
-version = '0.5.0'
+version = '0.6.0'
 
 ext {
     github = 'https://github.com/Almighty-Alpaca/Intellij-Discord-Integration/'
