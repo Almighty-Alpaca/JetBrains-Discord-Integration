@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+buildscript {
+    dependencies {
+        classpath group: 'org.apache.commons', name: 'commons-text', version: '1.2'
+    }
+}
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.2.17'
@@ -21,17 +26,20 @@ plugins {
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
-group 'com.almightyalpaca.jetbrains.plugins.discord'
-version '0.5.0'
+group = 'com.almightyalpaca.jetbrains.plugins.discord'
+version = '0.5.0'
+
+ext {
+    github = 'https://github.com/Almighty-Alpaca/Intellij-Discord-Integration/'
+}
 
 intellij {
     version '2017.2.6'
-    pluginName 'Discord Integration'
+    // version '2016.1.4'
 
-    updateSinceUntilBuild = false
     downloadSources = true
 
-    instrumentCode = true
+    updateSinceUntilBuild = false
 }
 
 repositories {
@@ -46,4 +54,38 @@ dependencies {
     compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v1.3.1'
 
     compile group: 'org.jgroups', name: 'jgroups', version: '4.0.9.Final'
+}
+
+import org.apache.commons.text.StringEscapeUtils
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    filter ReplaceTokens, tokens: [
+            DESCRIPTION: readResourceFile('DESCRIPTION.md'),
+            CHANGELOG  : readResourceFile('CHANGELOG.md')
+    ]
+}
+
+String readResourceFile(String name) {
+    String content = file(name).text
+
+    content = content.trim()
+
+    content = content.replaceAll('(\\n|^)##(.*)(\\n|$)', { matcher -> "${matcher[1]}<b>${matcher[2]}</b>${matcher[3]}" })
+
+    content = content.replaceAll('\\[([^\\[]+)\\]\\(([^\\)]+)\\)', { matcher -> "<a href=\"${matcher[2]}\">${matcher[1]}</a>" })
+    content = content.replaceAll('\\(#([0-9]+)\\)', { matcher -> "(<a href=\"${github}/issues/${matcher[1]}\">#${matcher[1]}</a>)" })
+
+    content = content.replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
+    content = content.replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
+    content = content.replaceAll('\\s*<li>\\s*', '<li>')
+    content = content.replaceAll('\\s*</li>\\s*', '</li>')
+    content = content.replaceAll('\\s*<ul>\\s*', '<ul>')
+    content = content.replaceAll('\\s*</ul>\\s*', '</ul>')
+
+    content = content.replace('\n', '<br>')
+
+    content = StringEscapeUtils.escapeHtml4(content)
+
+    return content
 }
