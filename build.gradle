@@ -64,33 +64,35 @@ processResources {
     eachFile { file ->
         if (file.path == 'META-INF/plugin.xml') {
             file.filter ReplaceTokens, tokens: [
-                    DESCRIPTION: readResourceFile('DESCRIPTION.md'),
-                    CHANGELOG  : readResourceFile('CHANGELOG.md')
+                    DESCRIPTION: StringEscapeUtils.escapeHtml4(readInfoFile('DESCRIPTION.md') as String),
+                    CHANGELOG  : StringEscapeUtils.escapeHtml4(readInfoFile('CHANGELOG.md') as String)
             ]
         }
     }
 }
 
-String readResourceFile(String name) {
-    String content = file(name).text
+ext.readInfoFile = { name ->
+    // @formatter:off
+    return file(name).text
+            // Remove unnecessary whitespace
+            .trim()
 
-    content = content.trim()
+            // Replace headlines
+            .replaceAll('(\\n|^)##(.*)(\\n|$)', { matcher -> "${matcher[1]}<b>${matcher[2]}</b>${matcher[3]}" })
 
-    content = content.replaceAll('(\\n|^)##(.*)(\\n|$)', { matcher -> "${matcher[1]}<b>${matcher[2]}</b>${matcher[3]}" })
+            // Replace issue links
+            .replaceAll('\\[([^\\[]+)\\]\\(([^\\)]+)\\)', { matcher -> "<a href=\"${matcher[2]}\">${matcher[1]}</a>" })
+            .replaceAll('\\(#([0-9]+)\\)', { matcher -> "(<a href=\"${github}/issues/${matcher[1]}\">#${matcher[1]}</a>)" })
 
-    content = content.replaceAll('\\[([^\\[]+)\\]\\(([^\\)]+)\\)', { matcher -> "<a href=\"${matcher[2]}\">${matcher[1]}</a>" })
-    content = content.replaceAll('\\(#([0-9]+)\\)', { matcher -> "(<a href=\"${github}/issues/${matcher[1]}\">#${matcher[1]}</a>)" })
+            // Replace lists
+            .replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
+            .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
+            .replaceAll('\\s*<li>\\s*', '<li>')
+            .replaceAll('\\s*</li>\\s*', '</li>')
+            .replaceAll('\\s*<ul>\\s*', '<ul>')
+            .replaceAll('\\s*</ul>\\s*', '</ul>')
 
-    content = content.replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
-    content = content.replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
-    content = content.replaceAll('\\s*<li>\\s*', '<li>')
-    content = content.replaceAll('\\s*</li>\\s*', '</li>')
-    content = content.replaceAll('\\s*<ul>\\s*', '<ul>')
-    content = content.replaceAll('\\s*</ul>\\s*', '</ul>')
-
-    content = content.replace('\n', '<br>')
-
-    content = StringEscapeUtils.escapeHtml4(content)
-
-    return content
+            // Replace newlines
+            .replace('\n', '<br>')
+    // @formatter:on
 }
