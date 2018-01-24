@@ -19,11 +19,14 @@ import club.minnced.discord.rpc.DiscordEventHandlers;
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ReplicatedData;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.listeners.*;
 import com.almightyalpaca.jetbrains.plugins.discord.notifications.DiscordIntegrationErrorNotification;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderContext;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderer;
 import com.almightyalpaca.jetbrains.plugins.discord.rpc.RPC;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings;
 import com.intellij.AppTopics;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.Application;
@@ -42,8 +45,6 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
 import org.jgroups.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
     }
 
     @Override
-    public void initComponent()
+    public synchronized void initComponent()
     {
         try // Fixes problems that crashes JGroups if those two properties aren't properly set
         {
@@ -161,13 +162,34 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
         EditorEventMulticaster multicaster = EditorFactory.getInstance().getEventMulticaster();
         multicaster.addDocumentListener(this.documentListener = new DocumentListener());
         multicaster.addEditorMouseListener(this.editorMouseListener = new EditorMouseListener());
-        // multicaster.addVisibleAreaListener(this.visibleAreaListener = new VisibleAreaListener());
+
+        checkExperiementalWindowListener();
 
         VirtualFileManager.getInstance().addVirtualFileListener(this.virtualFileListener = new VirtualFileListener());
     }
 
+    public synchronized void checkExperiementalWindowListener()
+    {
+
+        if (DiscordIntegrationApplicationSettings.getInstance().getSettings().isExperimentalWindowListenerEnabled())
+        {
+            if (this.visibleAreaListener == null)
+            {
+                EditorFactory.getInstance().getEventMulticaster().addVisibleAreaListener(this.visibleAreaListener = new VisibleAreaListener());
+            }
+        }
+        else
+        {
+            if (this.visibleAreaListener != null)
+            {
+                EditorFactory.getInstance().getEventMulticaster().removeVisibleAreaListener(this.visibleAreaListener);
+                this.visibleAreaListener = null;
+            }
+        }
+    }
+
     @Override
-    public void disposeComponent()
+    public synchronized void disposeComponent()
     {
         RPC.dispose();
 
@@ -191,16 +213,16 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
             this.editorMouseListener = null;
         }
 
-        if (this.visibleAreaListener != null)
-        {
-            multicaster.removeVisibleAreaListener(this.visibleAreaListener);
-            this.visibleAreaListener = null;
-        }
-
         if (this.virtualFileListener != null)
         {
             VirtualFileManager.getInstance().removeVirtualFileListener(this.virtualFileListener);
             this.virtualFileListener = null;
+        }
+
+        if (this.visibleAreaListener != null)
+        {
+            multicaster.removeVisibleAreaListener(this.visibleAreaListener);
+            this.visibleAreaListener = null;
         }
 
         if (this.data != null)

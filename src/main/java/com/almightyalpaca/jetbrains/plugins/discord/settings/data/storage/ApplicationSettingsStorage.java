@@ -16,25 +16,32 @@
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.google.gson.Gson;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ApplicationSettingsStorage extends SettingsStorage implements ApplicationSettings
 {
+
     @NotNull
-    public static final TimeUnit INACTIVITY_TIMEOUT_TIMEUNIT = TimeUnit.MILLISECONDS;
-    public static final long INACTIVITY_TIMEOUT_DEFAULT_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(10, TimeUnit.MINUTES);
-    public static final long INACTIVITY_TIMEOUT_MIN_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(1, TimeUnit.MINUTES);
-    public static final long INACTIVITY_TIMEOUT_MAX_VALUE = INACTIVITY_TIMEOUT_TIMEUNIT.convert(1, TimeUnit.DAYS);
+    public static final TimeUnit INACTIVITY_TIMEOUT_TIME_UNIT = TimeUnit.MILLISECONDS;
+    public static final long INACTIVITY_TIMEOUT_DEFAULT_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(10, TimeUnit.MINUTES);
+    public static final long INACTIVITY_TIMEOUT_MIN_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.MINUTES);
+    public static final long INACTIVITY_TIMEOUT_MAX_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.DAYS);
 
     private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
     @NotNull
     private static final Gson GSON = new Gson();
+    @NotNull
+    private static final Logger LOG = LoggerFactory.getLogger(DiscordIntegrationApplicationComponent.class);
 
     @Attribute
     private boolean showUnknownImageIDE = true;
@@ -54,6 +61,23 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     private long inactivityTimeout = INACTIVITY_TIMEOUT_DEFAULT_VALUE;
     @Attribute
     private boolean resetOpenTimeAfterInactivity = true;
+    @Attribute
+    private boolean experimentalWindowListenerEnabled = false;
+    @Attribute
+    private boolean debugLoggingEnabled = false;
+    @Attribute
+    private String debugLogFolder;
+
+    {
+        try
+        {
+            this.debugLogFolder = Paths.get(System.getProperty("user.home"), "Desktop", "Jetbrains-Discord-Integration").toString();
+        }
+        catch (Exception e)
+        {
+            LOG.error("An error occurred while getting the default debug log folder", e);
+        }
+    }
 
     @Override
     public boolean isShowFileExtensions()
@@ -134,7 +158,12 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     @Override
     public long getInactivityTimeout(TimeUnit unit)
     {
-        return unit.convert(inactivityTimeout, INACTIVITY_TIMEOUT_TIMEUNIT);
+        return unit.convert(inactivityTimeout, INACTIVITY_TIMEOUT_TIME_UNIT);
+    }
+
+    public void setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
+    {
+        this.inactivityTimeout = INACTIVITY_TIMEOUT_TIME_UNIT.convert(inactivityTimeout, unit);
     }
 
     protected long getInactivityTimeout()
@@ -142,9 +171,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
         return inactivityTimeout;
     }
 
-    public void setInactivityTimeout(long inactivityTimeout, @NotNull TimeUnit unit)
+    protected void setInactivityTimeout(long inactivityTimeout)
     {
-        this.inactivityTimeout = INACTIVITY_TIMEOUT_TIMEUNIT.convert(inactivityTimeout, unit);
+        this.inactivityTimeout = inactivityTimeout;
     }
 
     @Override
@@ -156,6 +185,39 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public void setResetOpenTimeAfterInactivity(boolean resetOpenTimeAfterInactivity)
     {
         this.resetOpenTimeAfterInactivity = resetOpenTimeAfterInactivity;
+    }
+
+    @Override
+    public boolean isExperimentalWindowListenerEnabled()
+    {
+        return experimentalWindowListenerEnabled;
+    }
+
+    public void setExperimentalWindowListenerEnabled(boolean experimentalWindowListenerEnabled)
+    {
+        this.experimentalWindowListenerEnabled = experimentalWindowListenerEnabled;
+    }
+
+    @Override
+    public boolean isDebugLoggingEnabled()
+    {
+        return this.debugLoggingEnabled;
+    }
+
+    public void setDebugLoggingEnabled(boolean debugLoggingEnabled)
+    {
+        this.debugLoggingEnabled = debugLoggingEnabled;
+    }
+
+    @Override
+    public String getDebugLogFolder()
+    {
+        return debugLogFolder;
+    }
+
+    public void setDebugLogFolder(String debugLogFolder)
+    {
+        this.debugLogFolder = debugLogFolder;
     }
 
     @NotNull
@@ -183,7 +245,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 && this.isShowIDEWhenNoProjectIsAvailable() == that.isShowIDEWhenNoProjectIsAvailable()
                 && this.isHideAfterPeriodOfInactivity() == that.isHideAfterPeriodOfInactivity()
                 && this.getInactivityTimeout() == that.getInactivityTimeout()
-                && this.isResetOpenTimeAfterInactivity() == that.isResetOpenTimeAfterInactivity();
+                && this.isResetOpenTimeAfterInactivity() == that.isResetOpenTimeAfterInactivity()
+                && this.isDebugLoggingEnabled() == that.isDebugLoggingEnabled()
+                && Objects.equals(this.getDebugLogFolder(), that.getDebugLogFolder());
         // @formatter:on
     }
 
@@ -201,7 +265,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 this.isShowIDEWhenNoProjectIsAvailable(),
                 this.isHideAfterPeriodOfInactivity(),
                 this.getInactivityTimeout(),
-                this.isResetOpenTimeAfterInactivity());
+                this.isResetOpenTimeAfterInactivity(),
+                this.isDebugLoggingEnabled(),
+                this.getDebugLogFolder());
         // @formatter:on
     }
 }

@@ -28,8 +28,8 @@ import org.jgroups.blocks.RequestOptions;
 import org.jgroups.blocks.ResponseMode;
 import org.jgroups.blocks.RpcDispatcher;
 import org.jgroups.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;

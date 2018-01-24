@@ -22,8 +22,8 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 public class FileEditorManagerListener implements com.intellij.openapi.fileEditor.FileEditorManagerListener
 {

@@ -19,13 +19,12 @@ import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderContext;
-import com.almightyalpaca.jetbrains.plugins.discord.utils.LazyString;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -112,7 +111,7 @@ public class RPC
                                     newPresence = new DiscordRichPresence();
 
                                 final DiscordRichPresence finalNewPresence = newPresence;
-                                LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", LazyString.of(() -> GSON.toJson(finalNewPresence)));
+                                LOG.trace("RPC.delayedPresenceRunner$run#newPresence = {}", Logger.LazyString.create(() -> GSON.toJson(finalNewPresence)));
 
                                 if (!Objects.equals(RPC.presence, newPresence))
                                 {

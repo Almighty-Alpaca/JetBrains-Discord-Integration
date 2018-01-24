@@ -15,11 +15,23 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings;
 
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Debug;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordIntegrationSettingsPanel
@@ -41,14 +53,22 @@ public class DiscordIntegrationSettingsPanel
     private JSpinner applicationInactivityTimeout;
     private JLabel applicationInactivityTimeoutLabel;
     private JBCheckBox applicationResetOpenTimeAfterInactivity;
+    private JPanel panelExperimental;
+    private JBCheckBox applicationExperimentalWindowListenerEnabled;
+    private JPanel panelDebug;
+    private JBCheckBox applicationDebuggingEnabled;
+    private TextFieldWithBrowseButton applicationDebugLogFolder;
+    private JButton buttonDumpCurrentState;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
         this.applicationSettings = applicationSettings;
         this.projectSettings = projectSettings;
 
-        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project settings (" + projectSettings.getProject().getName() + ")"));
-        this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application settings"));
+        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project Settings (" + projectSettings.getProject().getName() + ")"));
+        this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application Settings"));
+        this.panelExperimental.setBorder(IdeBorderFactory.createTitledBorder("Experimental Settings"));
+        this.panelDebug.setBorder(IdeBorderFactory.createTitledBorder("Debugging Settings"));
 
         this.applicationHideReadOnlyFiles.addItemListener(e -> this.applicationShowReadingInsteadOfEditing.setEnabled(!this.applicationHideReadOnlyFiles.isSelected()));
 
@@ -57,6 +77,22 @@ public class DiscordIntegrationSettingsPanel
             this.applicationInactivityTimeout.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
             this.applicationResetOpenTimeAfterInactivity.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
         });
+
+        this.applicationDebuggingEnabled.addItemListener(e -> this.applicationDebugLogFolder.setEnabled(this.applicationDebuggingEnabled.isSelected()));
+        this.applicationDebuggingEnabled.addItemListener(e -> this.buttonDumpCurrentState.setEnabled(this.applicationDebuggingEnabled.isSelected()));
+
+        this.applicationDebugLogFolder.setTextFieldPreferredWidth(60);
+        this.applicationDebugLogFolder.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()));
+        this.applicationDebugLogFolder.getTextField().getDocument().addDocumentListener(new DocumentAdapter()
+        {
+            @Override
+            protected void textChanged(DocumentEvent e)
+            {
+                verifyLogFolder();
+            }
+        });
+
+        this.buttonDumpCurrentState.addActionListener(e -> Debug.printDebugInfo());
     }
 
     public boolean isModified()
@@ -72,7 +108,10 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationShowIDEWhenNoProjectIsAvailable.isSelected() != this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable()
                 || this.applicationHideAfterPeriodOfInactivity.isSelected() != this.applicationSettings.getState().isHideAfterPeriodOfInactivity()
                 || (long) this.applicationInactivityTimeout.getValue() != this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES)
-                || this.applicationResetOpenTimeAfterInactivity.isSelected() != this.applicationSettings.getState().isResetOpenTimeAfterInactivity();
+                || this.applicationResetOpenTimeAfterInactivity.isSelected() != this.applicationSettings.getState().isResetOpenTimeAfterInactivity()
+                || this.applicationExperimentalWindowListenerEnabled.isSelected() != this.applicationSettings.getState().isExperimentalWindowListenerEnabled()
+                || this.applicationDebuggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
+                || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder());
         // @formatter:on
     }
 
@@ -88,7 +127,12 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
         this.applicationSettings.getState().setHideAfterPeriodOfInactivity(this.applicationHideAfterPeriodOfInactivity.isSelected());
         this.applicationSettings.getState().setInactivityTimeout((long) this.applicationInactivityTimeout.getValue(), TimeUnit.MINUTES);
+        this.applicationSettings.getState().setExperimentalWindowListenerEnabled(this.applicationExperimentalWindowListenerEnabled.isSelected());
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
+        this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebuggingEnabled.isSelected());
+
+        if (verifyLogFolder())
+            this.applicationSettings.getState().setDebugLogFolder(this.applicationDebugLogFolder.getText());
     }
 
     public void reset()
@@ -104,6 +148,48 @@ public class DiscordIntegrationSettingsPanel
         this.applicationHideAfterPeriodOfInactivity.setSelected(this.applicationSettings.getState().isHideAfterPeriodOfInactivity());
         this.applicationInactivityTimeout.setValue(this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES));
         this.applicationResetOpenTimeAfterInactivity.setSelected(this.applicationSettings.getState().isResetOpenTimeAfterInactivity());
+        this.applicationExperimentalWindowListenerEnabled.setSelected(this.applicationSettings.getState().isExperimentalWindowListenerEnabled());
+        this.applicationDebuggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
+        this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
+
+        verifyLogFolder();
+    }
+
+    private boolean verifyLogFolder()
+    {
+        Path path;
+        try
+        {
+            path = Paths.get(this.applicationDebugLogFolder.getText());
+        }
+        catch (Exception e)
+        {
+            this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
+            this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Invalid path"));
+
+            return false;
+        }
+
+        if (Files.exists(path) && !Files.isWritable(path))
+        {
+            this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
+            this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Cannot write to this path"));
+
+            return false;
+        }
+
+        if (!Files.isDirectory(path))
+        {
+            this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
+            this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Path is a file"));
+
+            return false;
+        }
+
+        this.applicationDebugLogFolder.getTextField().setForeground(JBColor.foreground());
+        this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(null);
+
+        return true;
     }
 
     @NotNull

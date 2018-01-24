@@ -36,4 +36,10 @@ public interface ApplicationSettings extends Settings
     long getInactivityTimeout(TimeUnit unit);
 
     boolean isResetOpenTimeAfterInactivity();
+
+    boolean isExperimentalWindowListenerEnabled();
+
+    boolean isDebugLoggingEnabled();
+
+    String getDebugLogFolder();
 }

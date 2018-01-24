@@ -21,8 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.util.function.Function;
 

@@ -22,8 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.ReplicatedData;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Comparator;

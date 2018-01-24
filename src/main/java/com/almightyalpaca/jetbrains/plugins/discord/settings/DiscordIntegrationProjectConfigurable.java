@@ -107,6 +107,8 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
 
                 this.applicationComponent.updateData(data -> data.instanceSetSettings(System.currentTimeMillis(), instance, this.settingsProviderApplication.getSettings()));
                 this.applicationComponent.updateData(data -> data.projectSetSettings(System.currentTimeMillis(), instance, project, this.settingsProviderProject.getSettings()));
+
+                this.applicationComponent.checkExperiementalWindowListener();
             }
         }
     }
