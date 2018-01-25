@@ -60,6 +60,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 
     @NotNull
     private final Application application;
+    @NotNull
     private final Object rpcLock = new Object();
     @Nullable
     public MessageBusConnection connection;

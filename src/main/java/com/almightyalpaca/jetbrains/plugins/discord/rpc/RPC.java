@@ -162,7 +162,7 @@ public class RPC
                 RPC.delayedPresenceRunner = null;
             }
 
-            DiscordRPC.INSTANCE.Discord_UpdatePresence(new DiscordRichPresence());
+            DiscordRPC.INSTANCE.Discord_ClearPresence();
 
             DiscordRPC.INSTANCE.Discord_Shutdown();
 
