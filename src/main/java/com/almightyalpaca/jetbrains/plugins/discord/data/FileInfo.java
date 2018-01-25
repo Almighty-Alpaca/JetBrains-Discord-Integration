@@ -182,6 +182,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     public enum Language
     {
         C("C", "c", "c", "h"),
+        CEYLON("Ceylon", "ceylon", "ceylon"),
         CMAKE("CMake", "cmake", "CMakeLists.txt"),
         CPP("C++", "cpp", "cpp", "hpp"),
         CSS("CSS", "css", "css"),
