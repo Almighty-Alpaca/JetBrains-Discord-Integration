@@ -71,7 +71,7 @@ public class RPC
             if (callbackRunner == null)
             {
                 RPC.callbackRunner = new Thread(() -> {
-                    while (!Thread.currentThread().isInterrupted())
+                    while (RPC.initialized)
                     {
                         try
                         {
@@ -85,12 +85,14 @@ public class RPC
                                 LOG.warn("An error occurred in RPC.callbackRunner", e);
                         }
                     }
+
+                    RPC.callbackRunner = null;
                 }, "JetbrainsDiscordIntegration-RPC-Callback-Handler");
 
                 RPC.callbackRunner.start();
             }
 
-            if (delayedPresenceRunner == null)
+            if (RPC.initialized)
             {
                 RPC.delayedPresenceRunner = new Thread(() -> {
                     while (!Thread.currentThread().isInterrupted())
@@ -138,9 +140,11 @@ public class RPC
                         catch (Exception e)
                         {
                             if (!(e instanceof InterruptedException))
-                                LOG.warn("An error occurred in RPC.delayedPresenceRunner", e);
+                                LOG.error("An error occurred in RPC.delayedPresenceRunner", e);
                         }
                     }
+
+                    RPC.delayedPresenceRunner = null;
                 }, "JetbrainsDiscordIntegration-RPC-Delayed-Presence-Handler");
 
                 RPC.delayedPresenceRunner.start();
@@ -156,21 +160,9 @@ public class RPC
         {
             RPC.initialized = false;
 
-            if (RPC.delayedPresenceRunner != null)
-            {
-                RPC.delayedPresenceRunner.interrupt();
-                RPC.delayedPresenceRunner = null;
-            }
-
             DiscordRPC.INSTANCE.Discord_ClearPresence();
 
             DiscordRPC.INSTANCE.Discord_Shutdown();
-
-            if (RPC.delayedPresenceRunner != null)
-            {
-                RPC.callbackRunner.interrupt();
-                RPC.callbackRunner = null;
-            }
         }
     }
 
