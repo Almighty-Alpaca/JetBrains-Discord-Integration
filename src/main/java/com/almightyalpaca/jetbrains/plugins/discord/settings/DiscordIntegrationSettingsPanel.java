@@ -15,7 +15,10 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings;
 
+import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Debug;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
@@ -28,6 +31,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,6 +42,9 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscordIntegrationSettingsPanel
 {
+    @NotNull
+    private static final Logger LOG = LoggerFactory.getLogger(DiscordIntegrationApplicationComponent.class);
+
     private final DiscordIntegrationApplicationSettings applicationSettings;
     private final DiscordIntegrationProjectSettings projectSettings;
     private JPanel panelRoot;
@@ -59,6 +68,7 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationDebuggingEnabled;
     private TextFieldWithBrowseButton applicationDebugLogFolder;
     private JButton buttonDumpCurrentState;
+    private JButton buttonOpenDebugLogFolder;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -80,6 +90,7 @@ public class DiscordIntegrationSettingsPanel
 
         this.applicationDebuggingEnabled.addItemListener(e -> this.applicationDebugLogFolder.setEnabled(this.applicationDebuggingEnabled.isSelected()));
         this.applicationDebuggingEnabled.addItemListener(e -> this.buttonDumpCurrentState.setEnabled(this.applicationDebuggingEnabled.isSelected()));
+        this.applicationDebuggingEnabled.addItemListener(e -> this.buttonOpenDebugLogFolder.setEnabled(this.applicationDebuggingEnabled.isSelected()));
 
         this.applicationDebugLogFolder.setTextFieldPreferredWidth(60);
         this.applicationDebugLogFolder.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()));
@@ -93,6 +104,17 @@ public class DiscordIntegrationSettingsPanel
         });
 
         this.buttonDumpCurrentState.addActionListener(e -> Debug.printDebugInfo());
+        this.buttonOpenDebugLogFolder.addActionListener(e -> {
+            try
+            {
+                if (verifyLogFolder())
+                    Desktop.getDesktop().open(new File(applicationDebugLogFolder.getText()));
+            }
+            catch (Exception ex)
+            {
+                LOG.error("An error occurred while trying to open the debig log folder", ex);
+            }
+        });
     }
 
     public boolean isModified()
@@ -166,6 +188,7 @@ public class DiscordIntegrationSettingsPanel
         {
             this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
             this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Invalid path"));
+            this.buttonOpenDebugLogFolder.setEnabled(false);
 
             return false;
         }
@@ -174,6 +197,7 @@ public class DiscordIntegrationSettingsPanel
         {
             this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
             this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Cannot write to this path"));
+            this.buttonOpenDebugLogFolder.setEnabled(false);
 
             return false;
         }
@@ -182,12 +206,14 @@ public class DiscordIntegrationSettingsPanel
         {
             this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
             this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Path is a file"));
+            this.buttonOpenDebugLogFolder.setEnabled(false);
 
             return false;
         }
 
         this.applicationDebugLogFolder.getTextField().setForeground(JBColor.foreground());
         this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(null);
+        this.buttonOpenDebugLogFolder.setEnabled(true);
 
         return true;
     }
