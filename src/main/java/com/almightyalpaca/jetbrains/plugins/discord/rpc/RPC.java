@@ -18,13 +18,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.rpc;
 import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.presence.PresenceRenderContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -156,15 +156,21 @@ public class RPC
         {
             RPC.initialized = false;
 
-            RPC.delayedPresenceRunner.interrupt();
-            RPC.delayedPresenceRunner = null;
+            if (RPC.delayedPresenceRunner != null)
+            {
+                RPC.delayedPresenceRunner.interrupt();
+                RPC.delayedPresenceRunner = null;
+            }
 
             DiscordRPC.INSTANCE.Discord_UpdatePresence(new DiscordRichPresence());
 
             DiscordRPC.INSTANCE.Discord_Shutdown();
 
-            RPC.callbackRunner.interrupt();
-            RPC.callbackRunner = null;
+            if (RPC.delayedPresenceRunner != null)
+            {
+                RPC.callbackRunner.interrupt();
+                RPC.callbackRunner = null;
+            }
         }
     }
 

@@ -140,4 +140,3 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
         return null;
     }
 }
-
