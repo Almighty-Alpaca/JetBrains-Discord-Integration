@@ -1,3 +1,10 @@
+## v0.7.0 - Debugging and experimental options
+- Added Ceylon (#20)
+- Clearing the presence should now work better
+- Added experimental and debug settings
+  - Added option to enable debug logs
+  - Added option to enable the experimental VisibleAreaListener
+
 ## v0.6.0 - More languages & options, quick settings button and bug fixes
 - Added an option to reset the open time after an inactivity timeout
 - Added Handlebars.js (#16)

@@ -28,6 +28,8 @@ plugins {
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.tools.ant.filters.ReplaceTokens
 
+import javax.swing.JFrame
+import javax.swing.JLabel
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
@@ -71,7 +73,7 @@ processResources {
     }
 }
 
-ext.readInfoFile = { name ->
+ext.readInfoFile = { String name ->
     // @formatter:off
     return file(name).text
             // Remove unnecessary whitespace
@@ -84,6 +86,10 @@ ext.readInfoFile = { name ->
             .replaceAll('\\[([^\\[]+)\\]\\(([^\\)]+)\\)', { matcher -> "<a href=\"${matcher[2]}\">${matcher[1]}</a>" })
             .replaceAll('\\(#([0-9]+)\\)', { matcher -> "(<a href=\"${github}/issues/${matcher[1]}\">#${matcher[1]}</a>)" })
 
+            // Replace inner lists
+            .replaceAll("\n  - (.*)", { matcher -> "<li>${matcher[1]}</li>" })
+            .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
+//
             // Replace lists
             .replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
             .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
@@ -95,4 +101,45 @@ ext.readInfoFile = { name ->
             // Replace newlines
             .replace('\n', '<br>')
     // @formatter:on
+}
+
+ext.showHtml = { String html ->
+    JFrame frame = new JFrame("Changelog")
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
+    frame.getContentPane().add(new JLabel('<html>' + html))
+    frame.setAlwaysOnTop(true)
+    frame.pack()
+    frame.setVisible(true)
+}
+
+tasks.create(name: 'showChangelog') {
+    group 'markdown'
+
+    doLast {
+        showHtml(readInfoFile('CHANGELOG.md') as String)
+    }
+}
+
+tasks.create(name: 'printChangelog') {
+    group 'markdown'
+
+    doLast {
+        println readInfoFile('CHANGELOG.md') as String
+    }
+}
+
+tasks.create(name: 'showDescription') {
+    group 'markdown'
+
+    doLast {
+        showHtml(readInfoFile('DESCRIPTION.md') as String)
+    }
+}
+
+tasks.create(name: 'printDescription') {
+    group 'markdown'
+
+    doLast {
+        println readInfoFile('DESCRIPTION.md') as String
+    }
 }
