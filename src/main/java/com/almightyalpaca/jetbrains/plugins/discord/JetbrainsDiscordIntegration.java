@@ -17,5 +17,5 @@ package com.almightyalpaca.jetbrains.plugins.discord;
 
 public class JetbrainsDiscordIntegration
 {
-    public static final int PROTOCOL_VERSION = 1;
+    public static final int PROTOCOL_VERSION = 2;
 }
