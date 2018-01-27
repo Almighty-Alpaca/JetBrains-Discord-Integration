@@ -33,7 +33,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,7 +64,7 @@ public class DiscordIntegrationSettingsPanel
     private JPanel panelExperimental;
     private JBCheckBox applicationExperimentalWindowListenerEnabled;
     private JPanel panelDebug;
-    private JBCheckBox applicationDebuggingEnabled;
+    private JBCheckBox applicationDebugLoggingEnabled;
     private TextFieldWithBrowseButton applicationDebugLogFolder;
     private JButton buttonDumpCurrentState;
     private JButton buttonOpenDebugLogFolder;
@@ -88,9 +87,10 @@ public class DiscordIntegrationSettingsPanel
             this.applicationResetOpenTimeAfterInactivity.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
         });
 
-        this.applicationDebuggingEnabled.addItemListener(e -> this.applicationDebugLogFolder.setEnabled(this.applicationDebuggingEnabled.isSelected()));
-        this.applicationDebuggingEnabled.addItemListener(e -> this.buttonDumpCurrentState.setEnabled(this.applicationDebuggingEnabled.isSelected()));
-        this.applicationDebuggingEnabled.addItemListener(e -> this.buttonOpenDebugLogFolder.setEnabled(this.applicationDebuggingEnabled.isSelected()));
+        this.applicationDebugLoggingEnabled.addItemListener(e -> {
+            this.applicationDebugLogFolder.setEnabled(this.applicationDebugLoggingEnabled.isSelected());
+            verifyLogFolder();
+        });
 
         this.applicationDebugLogFolder.setTextFieldPreferredWidth(60);
         this.applicationDebugLogFolder.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()));
@@ -103,12 +103,12 @@ public class DiscordIntegrationSettingsPanel
             }
         });
 
-        this.buttonDumpCurrentState.addActionListener(e -> Debug.printDebugInfo());
+        this.buttonDumpCurrentState.addActionListener(e -> Debug.printDebugInfo(this.applicationDebugLogFolder.getText()));
         this.buttonOpenDebugLogFolder.addActionListener(e -> {
             try
             {
                 if (verifyLogFolder())
-                    Desktop.getDesktop().open(new File(applicationDebugLogFolder.getText()));
+                    Desktop.getDesktop().open(createFolder(new File(applicationDebugLogFolder.getText())));
             }
             catch (Exception ex)
             {
@@ -120,7 +120,8 @@ public class DiscordIntegrationSettingsPanel
     public boolean isModified()
     {
         // @formatter:off
-        return this.projectEnabled.isSelected() != this.projectSettings.getState().isEnabled()
+        return verifyLogFolder() &&
+                ( this.projectEnabled.isSelected() != this.projectSettings.getState().isEnabled()
                 || this.applicationEnabled.isSelected() != this.applicationSettings.getState().isEnabled()
                 || this.applicationUnknownImageIDE.isSelected() != this.applicationSettings.getState().isShowUnknownImageIDE()
                 || this.applicationUnknownImageFile.isSelected() != this.applicationSettings.getState().isShowUnknownImageFile()
@@ -132,8 +133,8 @@ public class DiscordIntegrationSettingsPanel
                 || (long) this.applicationInactivityTimeout.getValue() != this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES)
                 || this.applicationResetOpenTimeAfterInactivity.isSelected() != this.applicationSettings.getState().isResetOpenTimeAfterInactivity()
                 || this.applicationExperimentalWindowListenerEnabled.isSelected() != this.applicationSettings.getState().isExperimentalWindowListenerEnabled()
-                || this.applicationDebuggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
-                || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder());
+                || this.applicationDebugLoggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
+                || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()));
         // @formatter:on
     }
 
@@ -151,10 +152,10 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setInactivityTimeout((long) this.applicationInactivityTimeout.getValue(), TimeUnit.MINUTES);
         this.applicationSettings.getState().setExperimentalWindowListenerEnabled(this.applicationExperimentalWindowListenerEnabled.isSelected());
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
-        this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebuggingEnabled.isSelected());
+        this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
 
         if (verifyLogFolder())
-            this.applicationSettings.getState().setDebugLogFolder(this.applicationDebugLogFolder.getText());
+            this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()));
     }
 
     public void reset()
@@ -171,7 +172,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationInactivityTimeout.setValue(this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES));
         this.applicationResetOpenTimeAfterInactivity.setSelected(this.applicationSettings.getState().isResetOpenTimeAfterInactivity());
         this.applicationExperimentalWindowListenerEnabled.setSelected(this.applicationSettings.getState().isExperimentalWindowListenerEnabled());
-        this.applicationDebuggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
+        this.applicationDebugLoggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
 
         verifyLogFolder();
@@ -188,34 +189,58 @@ public class DiscordIntegrationSettingsPanel
         {
             this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
             this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Invalid path"));
+            this.buttonDumpCurrentState.setEnabled(false);
             this.buttonOpenDebugLogFolder.setEnabled(false);
 
             return false;
         }
 
-        if (Files.exists(path) && !Files.isWritable(path))
+        if (Files.isRegularFile(path))
+        {
+            this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
+            this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Path is a file"));
+            this.buttonDumpCurrentState.setEnabled(false);
+            this.buttonOpenDebugLogFolder.setEnabled(false);
+
+            return false;
+        }
+
+        if (!Files.isWritable(path))
         {
             this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
             this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Cannot write to this path"));
             this.buttonOpenDebugLogFolder.setEnabled(false);
-
-            return false;
-        }
-
-        if (!Files.isDirectory(path))
-        {
-            this.applicationDebugLogFolder.getTextField().setForeground(JBColor.RED);
-            this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(new JBPopupMenu("Path is a file"));
-            this.buttonOpenDebugLogFolder.setEnabled(false);
-
-            return false;
         }
 
         this.applicationDebugLogFolder.getTextField().setForeground(JBColor.foreground());
         this.applicationDebugLogFolder.getTextField().setComponentPopupMenu(null);
+        this.buttonDumpCurrentState.setEnabled(applicationDebugLoggingEnabled.isSelected());
         this.buttonOpenDebugLogFolder.setEnabled(true);
 
+        if (!Files.exists(path))
+        {
+            this.buttonDumpCurrentState.setEnabled(false);
+            this.buttonOpenDebugLogFolder.setEnabled(false);
+        }
+
         return true;
+    }
+
+    private String createFolder(@NotNull String folder)
+    {
+        createFolder(new File(folder));
+
+        return folder;
+    }
+
+    private File createFolder(@NotNull File folder)
+    {
+        if (applicationDebugLoggingEnabled.isEnabled() && verifyLogFolder() && !folder.exists() && !folder.mkdirs())
+        {
+            LOG.warn("Could not create folder");
+        }
+
+        return folder;
     }
 
     @NotNull

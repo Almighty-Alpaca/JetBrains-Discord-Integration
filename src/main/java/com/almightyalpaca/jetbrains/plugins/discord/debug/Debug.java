@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,17 +33,22 @@ public class Debug
         return SETTINGS.getSettings().isDebugLoggingEnabled();
     }
 
-    public static synchronized void log(String name, Level trace, String message)
+    public static void log(String name, Level level, String message)
     {
-        if (SETTINGS.getSettings().isDebugLoggingEnabled())
+        log(null, name, level, message);
+    }
+
+    public static synchronized void log(@Nullable String folder, @NotNull String name, @NotNull Level level, @NotNull String message)
+    {
+        if (folder != null || SETTINGS.getSettings().isDebugLoggingEnabled())
         {
             try
             {
-                Path path = Paths.get(SETTINGS.getSettings().getDebugLogFolder(), PRODUCT_CODE + "-" + FILE_NAME_FORMATTER.format(Instant.ofEpochMilli(START_TIME)) + ".log");
+                Path path = Paths.get(folder == null ? SETTINGS.getSettings().getDebugLogFolder() : folder, PRODUCT_CODE + "-" + FILE_NAME_FORMATTER.format(Instant.ofEpochMilli(START_TIME)) + ".log");
 
                 Files.createDirectories(path.getParent());
 
-                String line = StringUtils.leftPad(name, 100) + ": " + trace.getName() + " - " + message + System.lineSeparator();
+                String line = StringUtils.leftPad(name, 100) + ": " + level.getName() + " - " + message + System.lineSeparator();
 
                 Files.write(path, line.getBytes("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
             }
@@ -53,7 +59,7 @@ public class Debug
         }
     }
 
-    public static void printDebugInfo()
+    public static void printDebugInfo(@Nullable String folder)
     {
         log("forced debug data dump", Level.TRACE, Objects.toString(DiscordIntegrationApplicationComponent.getInstance().getInstanceInfo()));
     }
