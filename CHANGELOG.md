@@ -1,4 +1,7 @@
 ## v0.7.0 - Debugging and experimental options
+- Fixed wrong artifact
+
+## v0.7.0 - Debugging and experimental options
 - Added Ceylon (#20)
 - Clearing the presence should now work better
 - Added experimental and debug settings
