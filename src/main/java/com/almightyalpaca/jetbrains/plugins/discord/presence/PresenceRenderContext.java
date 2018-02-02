@@ -19,11 +19,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.FileInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ReplicatedData;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Comparator;

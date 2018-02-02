@@ -15,6 +15,8 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.google.gson.Gson;
@@ -28,8 +30,6 @@ import org.jgroups.blocks.RequestOptions;
 import org.jgroups.blocks.ResponseMode;
 import org.jgroups.blocks.RpcDispatcher;
 import org.jgroups.util.Util;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -340,7 +340,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
 
         try
         {
-            MethodCall call = new MethodCall(PROJECT_REMOVE,timestamp,  instance.getId(), project.getId());
+            MethodCall call = new MethodCall(PROJECT_REMOVE, timestamp, instance.getId(), project.getId());
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)

@@ -16,6 +16,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
 import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -23,8 +25,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 @SuppressWarnings("Duplicates")
 public class FileDocumentManagerListener implements com.intellij.openapi.fileEditor.FileDocumentManagerListener

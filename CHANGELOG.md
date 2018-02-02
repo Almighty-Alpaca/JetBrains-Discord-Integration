@@ -1,4 +1,7 @@
-## v0.7.0 - Debugging and experimental options
+## v0.8.0-pre
+- Attempt to fix ghost files
+
+## v0.7.1 - Debugging and experimental options
 - Fixed wrong artifact
 
 ## v0.7.0 - Debugging and experimental options

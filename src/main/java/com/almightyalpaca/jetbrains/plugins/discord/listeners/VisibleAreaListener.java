@@ -16,12 +16,12 @@
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
 import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
+import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.editor.event.VisibleAreaEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
-import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 
 @SuppressWarnings("Duplicates")
 public class VisibleAreaListener implements com.intellij.openapi.editor.event.VisibleAreaListener

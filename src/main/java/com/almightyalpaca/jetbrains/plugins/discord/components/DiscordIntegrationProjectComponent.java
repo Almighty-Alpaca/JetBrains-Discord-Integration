@@ -19,6 +19,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.FileInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +81,7 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
 
     public void fileUpdateTimeAccessed(@Nullable VirtualFile file)
     {
-        if (this.getProjectInfo() != null && file != null)
+        if (this.getProjectInfo() != null && file != null && FileUtil.isAbsolute(file.getPath()))
         {
             if (!files.containsKey(file))
                 this.applicationComponent.updateData(data -> data.fileAdd(System.currentTimeMillis(), this.applicationComponent.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new)));
@@ -97,7 +98,7 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
 
     public void fileUpdateReadOnly(@Nullable VirtualFile file)
     {
-        if (file != null)
+        if (file != null && FileUtil.isAbsolute(file.getPath()))
             this.applicationComponent.updateData(data -> data.fileSetReadOnly(System.currentTimeMillis(), this.applicationComponent.getInstanceInfo(), getProjectInfo(), this.files.computeIfAbsent(file, FileInfo::new), !file.isWritable()));
     }
 
