@@ -198,7 +198,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         HTACCESS(".htaccess", "apache", ".htaccess"),
         HTML("HTML", "html", "html", "htm"),
         JAVA("Java", "java", "java"),
-        JAVASCRIPT("JavaScript", "javascript", "js"),
+        JAVASCRIPT("JavaScript", "javascript", "js", "jsx"),
         JSON("JSON", "json", "json"),
         KOTLIN("Kotlin", "kotlin", "kt", "kts"),
         LUA("Lua", "lua", "lua"),
