@@ -1,5 +1,5 @@
-## v0.8.0-pre
-- Attempt to fix ghost files
+## v0.7.2 - Fixed ghost files
+- Fixed ghost files
 
 ## v0.7.1 - Debugging and experimental options
 - Fixed wrong artifact

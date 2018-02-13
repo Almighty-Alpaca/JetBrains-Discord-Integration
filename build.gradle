@@ -33,7 +33,7 @@ import javax.swing.JLabel
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
-version = '0.7.1'
+version = '0.7.2'
 
 ext {
     github = 'https://github.com/Almighty-Alpaca/Intellij-Discord-Integration/'
