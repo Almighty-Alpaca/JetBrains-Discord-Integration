@@ -59,7 +59,7 @@ repositories {
 dependencies {
     compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v1.3.3'
 
-    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.9.Final'
+    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.10.Final'
 }
 
 processResources {
@@ -73,7 +73,7 @@ processResources {
     }
 }
 
-ext.readInfoFile = { String name ->
+project.ext.readInfoFile = { String name ->
     // @formatter:off
     return file(name).text
             // Remove unnecessary whitespace
@@ -89,7 +89,7 @@ ext.readInfoFile = { String name ->
             // Replace inner lists
             .replaceAll("\n  - (.*)", { matcher -> "<li>${matcher[1]}</li>" })
             .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
-//
+
             // Replace lists
             .replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
             .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
@@ -103,7 +103,7 @@ ext.readInfoFile = { String name ->
     // @formatter:on
 }
 
-ext.showHtml = { String html ->
+project.ext.showHtml = { String html ->
     JFrame frame = new JFrame("Changelog")
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
     frame.getContentPane().add(new JLabel('<html>' + html))
