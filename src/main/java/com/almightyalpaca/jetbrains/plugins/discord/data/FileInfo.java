@@ -204,6 +204,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         LUA("Lua", "lua", "lua"),
         MARKDOWN("Markdown", "markdown", "md", "markdown"),
         PHP("PHP", "php", "php"),
+        POWERSHELL("PowerShell", "powershell", "ps1","ps1xml","psc1","psd1","psm1","pssc","cdxml"),
         PYTHON("Python", "python", "py"),
         RUBY("Ruby", "ruby", "rb"),
         RUST("Rust", "rust", "rs"),
