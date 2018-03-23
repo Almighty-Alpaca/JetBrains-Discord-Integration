@@ -213,6 +213,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         SHELL("Shell", "shell", "sh"),
         SQL("SQL", "sql", "sql"),
         SWIFT("Swift", "swift", "swift"),
+        TWIG("Twig", "twig", "twig"),
         TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
         VUE("Vue.js", "vue", "vue"),
         XML("XML", "xml", "xml", "cxml", "fxml"),
