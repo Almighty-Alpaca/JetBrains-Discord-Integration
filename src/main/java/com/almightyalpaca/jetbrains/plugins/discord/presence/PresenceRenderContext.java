@@ -78,7 +78,7 @@ public class PresenceRenderContext implements Serializable
                         .max(Comparator.naturalOrder())
                         .orElse(null);
 
-                if (project != null)
+                if (project != null && instance.getSettings().isShowFiles())
                 {
                     file = project.getFiles().values().stream()
                             .filter(f -> !(instanceFinal.getSettings().isHideReadOnlyFiles() && f.isReadOnly()))

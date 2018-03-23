@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,6 +68,7 @@ public class DiscordIntegrationSettingsPanel
     private TextFieldWithBrowseButton applicationDebugLogFolder;
     private JButton buttonDumpCurrentState;
     private JButton buttonOpenDebugLogFolder;
+    private JBCheckBox applicationShowFiles;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -79,18 +80,10 @@ public class DiscordIntegrationSettingsPanel
         this.panelExperimental.setBorder(IdeBorderFactory.createTitledBorder("Experimental Settings"));
         this.panelDebug.setBorder(IdeBorderFactory.createTitledBorder("Debugging Settings"));
 
-        this.applicationHideReadOnlyFiles.addItemListener(e -> this.applicationShowReadingInsteadOfEditing.setEnabled(!this.applicationHideReadOnlyFiles.isSelected()));
-
-        this.applicationHideAfterPeriodOfInactivity.addItemListener(e -> {
-            this.applicationInactivityTimeoutLabel.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
-            this.applicationInactivityTimeout.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
-            this.applicationResetOpenTimeAfterInactivity.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
-        });
-
-        this.applicationDebugLoggingEnabled.addItemListener(e -> {
-            this.applicationDebugLogFolder.setEnabled(this.applicationDebugLoggingEnabled.isSelected());
-            verifyLogFolder();
-        });
+        this.applicationHideReadOnlyFiles.addItemListener(e -> this.updateButtons());
+        this.applicationHideAfterPeriodOfInactivity.addItemListener(e -> this.updateButtons());
+        this.applicationDebugLoggingEnabled.addItemListener(e -> this.updateButtons());
+        this.applicationShowFiles.addItemListener(e -> updateButtons());
 
         this.applicationDebugLogFolder.setTextFieldPreferredWidth(60);
         this.applicationDebugLogFolder.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()));
@@ -108,11 +101,11 @@ public class DiscordIntegrationSettingsPanel
             try
             {
                 if (verifyLogFolder())
-                    Desktop.getDesktop().open(createFolder(new File(applicationDebugLogFolder.getText())));
+                    Desktop.getDesktop().open(createFolder(applicationDebugLogFolder.getText()).toFile());
             }
             catch (Exception ex)
             {
-                LOG.error("An error occurred while trying to open the debig log folder", ex);
+                LOG.error("An error occurred while trying to open the debug log folder", ex);
             }
         });
     }
@@ -134,7 +127,8 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationResetOpenTimeAfterInactivity.isSelected() != this.applicationSettings.getState().isResetOpenTimeAfterInactivity()
                 || this.applicationExperimentalWindowListenerEnabled.isSelected() != this.applicationSettings.getState().isExperimentalWindowListenerEnabled()
                 || this.applicationDebugLoggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
-                || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()));
+                || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()))
+                || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles();
         // @formatter:on
     }
 
@@ -153,9 +147,10 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setExperimentalWindowListenerEnabled(this.applicationExperimentalWindowListenerEnabled.isSelected());
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
         this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
+        this.applicationSettings.getState().setShowFiles(this.applicationShowFiles.isSelected());
 
         if (verifyLogFolder())
-            this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()));
+            this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
     }
 
     public void reset()
@@ -174,8 +169,26 @@ public class DiscordIntegrationSettingsPanel
         this.applicationExperimentalWindowListenerEnabled.setSelected(this.applicationSettings.getState().isExperimentalWindowListenerEnabled());
         this.applicationDebugLoggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
+        this.applicationShowFiles.setSelected(this.applicationSettings.getState().isShowFiles());
 
-        verifyLogFolder();
+        this.updateButtons();
+    }
+
+    public void updateButtons()
+    {
+        this.applicationInactivityTimeoutLabel.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+        this.applicationInactivityTimeout.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+        this.applicationResetOpenTimeAfterInactivity.setEnabled(this.applicationHideAfterPeriodOfInactivity.isSelected());
+
+        this.applicationUnknownImageFile.setEnabled(this.applicationShowFiles.isSelected());
+        this.applicationShowFileExtensions.setEnabled(this.applicationShowFiles.isSelected());
+        this.applicationHideReadOnlyFiles.setEnabled(this.applicationShowFiles.isSelected());
+
+        this.applicationShowReadingInsteadOfEditing.setEnabled(this.applicationShowFiles.isSelected() && !this.applicationHideReadOnlyFiles.isSelected());
+
+        this.applicationDebugLogFolder.setEnabled(this.applicationDebugLoggingEnabled.isSelected());
+
+        this.verifyLogFolder();
     }
 
     private boolean verifyLogFolder()
@@ -226,21 +239,26 @@ public class DiscordIntegrationSettingsPanel
         return true;
     }
 
-    private String createFolder(@NotNull String folder)
+    private Path createFolder(@NotNull String path)
     {
-        createFolder(new File(folder));
-
-        return folder;
+        return createFolder(Paths.get(path));
     }
 
-    private File createFolder(@NotNull File folder)
+    private Path createFolder(@NotNull Path path)
     {
-        if (applicationDebugLoggingEnabled.isEnabled() && verifyLogFolder() && !folder.exists() && !folder.mkdirs())
+        if (applicationDebugLoggingEnabled.isEnabled() && verifyLogFolder() && !Files.isDirectory(path))
         {
-            LOG.warn("Could not create folder");
+            try
+            {
+                Files.createDirectories(path);
+            }
+            catch (IOException e)
+            {
+                LOG.warn("Could not create folder", e);
+            }
         }
 
-        return folder;
+        return path;
     }
 
     @NotNull

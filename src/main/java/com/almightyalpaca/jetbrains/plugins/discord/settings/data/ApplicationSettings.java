@@ -42,4 +42,6 @@ public interface ApplicationSettings extends Settings
     boolean isDebugLoggingEnabled();
 
     String getDebugLogFolder();
+
+    boolean isShowFiles();
 }

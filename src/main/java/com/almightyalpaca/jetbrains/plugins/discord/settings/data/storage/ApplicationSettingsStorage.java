@@ -66,7 +66,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     @Attribute
     private boolean debugLoggingEnabled = false;
     @Attribute
-    private String debugLogFolder;
+    private String debugLogFolder = null;
+    @Attribute
+    private boolean showFiles = true;
 
     {
         try
@@ -218,6 +220,17 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public void setDebugLogFolder(String debugLogFolder)
     {
         this.debugLogFolder = debugLogFolder;
+    }
+
+    @Override
+    public boolean isShowFiles()
+    {
+        return showFiles;
+    }
+
+    public void setShowFiles(boolean showFiles)
+    {
+        this.showFiles = showFiles;
     }
 
     @NotNull

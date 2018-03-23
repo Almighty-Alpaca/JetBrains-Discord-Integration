@@ -1,4 +1,5 @@
 ## development
+- Added option to hide files (#23)
 - Added Twig (#26)
 - Added Sass (#25)
 - Added PowerShell (#29)
