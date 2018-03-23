@@ -15,21 +15,21 @@
  */
 buildscript {
     dependencies {
-        classpath group: 'org.apache.commons', name: 'commons-text', version: '1.2'
+        classpath group: 'org.apache.commons', name: 'commons-text', version: '1.3'
     }
 }
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.2.18'
+    id 'org.jetbrains.intellij' version '0.3.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
 }
 
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.tools.ant.filters.ReplaceTokens
 
-import javax.swing.JFrame
-import javax.swing.JLabel
+import javax.swing.*
+
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
@@ -40,7 +40,7 @@ ext {
 }
 
 intellij {
-    version '2017.2.6'
+    version '2017.3.5'
     // version '2016.1.4'
 
     downloadSources = true
@@ -73,7 +73,7 @@ processResources {
     }
 }
 
-project.ext.readInfoFile = { String name ->
+ext.readInfoFile = { String name ->
     // @formatter:off
     return file(name).text
             // Remove unnecessary whitespace
@@ -105,11 +105,11 @@ project.ext.readInfoFile = { String name ->
 
 project.ext.showHtml = { String html ->
     JFrame frame = new JFrame("Changelog")
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
-    frame.getContentPane().add(new JLabel('<html>' + html))
-    frame.setAlwaysOnTop(true)
+    frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+    frame.contentPane.add(new JLabel('<html>' + html))
+    frame.alwaysOnTop = true
     frame.pack()
-    frame.setVisible(true)
+    frame.visible = true
 }
 
 tasks.create(name: 'showChangelog') {
