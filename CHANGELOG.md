@@ -5,7 +5,7 @@
 - Added Sass (#25)
 - Added PowerShell (#29)
 - Updated JGroups to 4.0.11
-- Updated Java-DiscordRPC to v1.3.4
+- Updated Java-DiscordRPC to v1.3.6
 
 ## v0.7.2 - Fixed ghost files
 - Fixed ghost files
