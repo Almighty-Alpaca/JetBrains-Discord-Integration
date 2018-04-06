@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSet
 import com.google.gson.Gson;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -30,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ApplicationSettingsStorage extends SettingsStorage implements ApplicationSettings
 {
-
     @NotNull
     public static final TimeUnit INACTIVITY_TIMEOUT_TIME_UNIT = TimeUnit.MILLISECONDS;
     public static final long INACTIVITY_TIMEOUT_DEFAULT_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(10, TimeUnit.MINUTES);
@@ -211,13 +211,14 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
         this.debugLoggingEnabled = debugLoggingEnabled;
     }
 
+    @Nullable
     @Override
     public String getDebugLogFolder()
     {
         return debugLogFolder;
     }
 
-    public void setDebugLogFolder(String debugLogFolder)
+    public void setDebugLogFolder(@Nullable String debugLogFolder)
     {
         this.debugLogFolder = debugLogFolder;
     }
@@ -260,7 +261,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 && this.getInactivityTimeout() == that.getInactivityTimeout()
                 && this.isResetOpenTimeAfterInactivity() == that.isResetOpenTimeAfterInactivity()
                 && this.isDebugLoggingEnabled() == that.isDebugLoggingEnabled()
-                && Objects.equals(this.getDebugLogFolder(), that.getDebugLogFolder());
+                && Objects.equals(this.getDebugLogFolder(), that.getDebugLogFolder())
+                && this.isShowFiles() == that.isShowFiles();
         // @formatter:on
     }
 
@@ -280,7 +282,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 this.getInactivityTimeout(),
                 this.isResetOpenTimeAfterInactivity(),
                 this.isDebugLoggingEnabled(),
-                this.getDebugLogFolder());
+                this.getDebugLogFolder(),
+                this.isShowFiles());
         // @formatter:on
     }
 }

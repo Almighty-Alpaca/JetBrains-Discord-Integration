@@ -27,10 +27,15 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -69,6 +74,7 @@ public class DiscordIntegrationSettingsPanel
     private JButton buttonDumpCurrentState;
     private JButton buttonOpenDebugLogFolder;
     private JBCheckBox applicationShowFiles;
+    private JBTextField projectDescription;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -80,12 +86,31 @@ public class DiscordIntegrationSettingsPanel
         this.panelExperimental.setBorder(IdeBorderFactory.createTitledBorder("Experimental Settings"));
         this.panelDebug.setBorder(IdeBorderFactory.createTitledBorder("Debugging Settings"));
 
+        PlainDocument document = new PlainDocument();
+        document.setDocumentFilter(new DocumentFilter()
+        {
+            @Override
+            public void insertString(FilterBypass bypass, int offset, String text, AttributeSet attributes) throws BadLocationException
+            {
+                if (bypass.getDocument().getLength() + text.length() <= 128)
+                    super.insertString(bypass, offset, text, attributes);
+            }
+
+            @Override
+            public void replace(FilterBypass bypass, int offset, int length, String text, AttributeSet attributes)
+                    throws BadLocationException
+            {
+                if (bypass.getDocument().getLength() - length + text.length() <= 128)
+                    super.replace(bypass, offset, length, text, attributes);
+            }
+        });
+        this.projectDescription.setDocument(document);
+
         this.applicationHideReadOnlyFiles.addItemListener(e -> this.updateButtons());
         this.applicationHideAfterPeriodOfInactivity.addItemListener(e -> this.updateButtons());
         this.applicationDebugLoggingEnabled.addItemListener(e -> this.updateButtons());
         this.applicationShowFiles.addItemListener(e -> updateButtons());
 
-        this.applicationDebugLogFolder.setTextFieldPreferredWidth(60);
         this.applicationDebugLogFolder.addBrowseFolderListener(new TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()));
         this.applicationDebugLogFolder.getTextField().getDocument().addDocumentListener(new DocumentAdapter()
         {
@@ -128,7 +153,8 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationExperimentalWindowListenerEnabled.isSelected() != this.applicationSettings.getState().isExperimentalWindowListenerEnabled()
                 || this.applicationDebugLoggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
                 || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()))
-                || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles();
+                || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles()
+                || !Objects.equals(this.projectDescription.getText(), this.projectSettings.getState().getDescription());
         // @formatter:on
     }
 
@@ -148,6 +174,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
         this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
         this.applicationSettings.getState().setShowFiles(this.applicationShowFiles.isSelected());
+        this.projectSettings.getState().setDescription(this.projectDescription.getText());
 
         if (verifyLogFolder())
             this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
@@ -170,6 +197,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationDebugLoggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
         this.applicationShowFiles.setSelected(this.applicationSettings.getState().isShowFiles());
+        this.projectDescription.setText(this.projectSettings.getState().getDescription());
 
         this.updateButtons();
     }

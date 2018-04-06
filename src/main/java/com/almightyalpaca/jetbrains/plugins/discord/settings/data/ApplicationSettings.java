@@ -15,6 +15,8 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.TimeUnit;
 
 public interface ApplicationSettings extends Settings
@@ -41,6 +43,7 @@ public interface ApplicationSettings extends Settings
 
     boolean isDebugLoggingEnabled();
 
+    @Nullable
     String getDebugLogFolder();
 
     boolean isShowFiles();

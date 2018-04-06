@@ -55,7 +55,11 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                 presence.details = "Working on " + project.getName();
                 presence.startTimestamp = project.getTimeOpened() / 1000;
 
-                if (file != null)
+                if (project.getSettings().getDescription() != null)
+                {
+                    presence.state = project.getSettings().getDescription();
+                }
+                else if (file != null && instance.getSettings().isShowFiles())
                 {
                     presence.state = (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 

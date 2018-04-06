@@ -15,4 +15,10 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
-public interface ProjectSettings extends Settings {}
+import org.jetbrains.annotations.Nullable;
+
+public interface ProjectSettings extends Settings
+{
+    @Nullable
+    String getDescription();
+}

@@ -18,7 +18,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.google.gson.Gson;
+import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class ProjectSettingsStorage extends SettingsStorage implements ProjectSettings
 {
@@ -27,10 +31,49 @@ public class ProjectSettingsStorage extends SettingsStorage implements ProjectSe
     @NotNull
     private static final Gson GSON = new Gson();
 
+    @Attribute
+    private String description = null;
+
     @NotNull
     @Override
     public String toString()
     {
         return GSON.toJson(this);
+    }
+
+    @Nullable
+    @Override
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(@Nullable String description)
+    {
+        this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        // @formatter:off
+        if (this == o)
+            return true;
+        if (!(o instanceof ProjectSettingsStorage))
+            return false;
+        ProjectSettingsStorage that = (ProjectSettingsStorage) o;
+        return super.equals(that)
+                && Objects.equals(this.getDescription(), that.getDescription());
+        // @formatter:on
+    }
+
+    @Override
+    public int hashCode()
+    {
+        // @formatter:off
+        return Objects.hash(
+                super.hashCode(),
+                this.getDescription());
+        // @formatter:on
     }
 }
