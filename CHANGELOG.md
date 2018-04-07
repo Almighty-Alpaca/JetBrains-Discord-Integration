@@ -1,4 +1,4 @@
-## development
+## v0.8.0 - Project descriptions and even more languages
 - Added the ability to add project descriptions (#24)
 - Added Dart (#30)
 - Added option to hide files (#23)
