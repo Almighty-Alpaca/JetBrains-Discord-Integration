@@ -29,6 +29,7 @@ import org.apache.commons.text.StringEscapeUtils
 import org.apache.tools.ant.filters.ReplaceTokens
 
 import javax.swing.*
+import java.awt.*
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -73,25 +74,26 @@ processResources {
     }
 }
 
-ext.readInfoFile = { String name ->
-    // @formatter:off
-    return file(name).text
+ext {
+    readInfoFile = { String name ->
+        // @formatter:off
+        return file(name).text
             // Remove unnecessary whitespace
             .trim()
 
             // Replace headlines
-            .replaceAll('(\\n|^)##(.*)(\\n|$)', { matcher -> "${matcher[1]}<b>${matcher[2]}</b>${matcher[3]}" })
+            .replaceAll('(\r?\n|^)##(.*)(\r?\n|$)', { matcher -> "${matcher[1]}<b>${matcher[2]}</b>${matcher[3]}" })
 
             // Replace issue links
             .replaceAll('\\[([^\\[]+)\\]\\(([^\\)]+)\\)', { matcher -> "<a href=\"${matcher[2]}\">${matcher[1]}</a>" })
             .replaceAll('\\(#([0-9]+)\\)', { matcher -> "(<a href=\"${github}/issues/${matcher[1]}\">#${matcher[1]}</a>)" })
 
             // Replace inner lists
-            .replaceAll("\n  - (.*)", { matcher -> "<li>${matcher[1]}</li>" })
+            .replaceAll("\r?\n  - (.*)", { matcher -> "<li>${matcher[1]}</li>" })
             .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
 
             // Replace lists
-            .replaceAll("\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
+            .replaceAll("\r?\n- (.*)", { matcher -> "<li>${matcher[1]}</li>" })
             .replaceAll("((?:<li>.*</li>)+)", { matcher -> "<ul>${matcher[1]}</ul>" })
             .replaceAll('\\s*<li>\\s*', '<li>')
             .replaceAll('\\s*</li>\\s*', '</li>')
@@ -99,17 +101,22 @@ ext.readInfoFile = { String name ->
             .replaceAll('\\s*</ul>\\s*', '</ul>')
 
             // Replace newlines
-            .replace('\n', '<br>')
+            .replace('\r?\n', '<br>')
     // @formatter:on
-}
+    }
 
-project.ext.showHtml = { String html ->
-    JFrame frame = new JFrame("Changelog")
-    frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-    frame.contentPane.add(new JLabel('<html>' + html))
-    frame.alwaysOnTop = true
-    frame.pack()
-    frame.visible = true
+    showHtml = { String html ->
+        JFrame frame = new JFrame("Changelog")
+        frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        frame.contentPane = new JScrollPane(new JLabel('<html>' + html))
+        Dimension screenSize = Toolkit.defaultToolkit.screenSize
+        frame.preferredSize = new Dimension((screenSize.width / 2).intValue(), (screenSize.height / 2).intValue())
+        frame.location = new Point((screenSize.width / 4).intValue(), (screenSize.height / 4).intValue())
+        frame.alwaysOnTop = true
+        frame.pack()
+        frame.visible = true
+    }
+
 }
 
 tasks.create(name: 'showChangelog') {
