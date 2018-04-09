@@ -274,7 +274,7 @@ public class DiscordIntegrationSettingsPanel
 
     private Path createFolder(@NotNull Path path)
     {
-        if (applicationDebugLoggingEnabled.isEnabled() && verifyLogFolder() && !Files.isDirectory(path))
+        if (this.applicationDebugLoggingEnabled.isSelected() && verifyLogFolder() && !Files.isDirectory(path))
         {
             try
             {

@@ -1,3 +1,6 @@
+## development 
+- Fixed debug folder being created even when debug logging was disabled
+
 ## v0.8.0 - Project descriptions and even more languages
 - Added the ability to add project descriptions (#24)
 - Added Dart (#30)
