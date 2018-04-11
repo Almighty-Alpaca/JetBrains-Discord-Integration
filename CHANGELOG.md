@@ -1,4 +1,5 @@
-## development 
+## development
+- Fixed file not reappearing after unsetting project description (#31)
 - Fixed debug folder being created even when debug logging was disabled
 
 ## v0.8.0 - Project descriptions and even more languages

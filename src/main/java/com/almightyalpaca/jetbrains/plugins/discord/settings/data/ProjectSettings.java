@@ -15,10 +15,10 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public interface ProjectSettings extends Settings
 {
-    @Nullable
+    @NotNull
     String getDescription();
 }

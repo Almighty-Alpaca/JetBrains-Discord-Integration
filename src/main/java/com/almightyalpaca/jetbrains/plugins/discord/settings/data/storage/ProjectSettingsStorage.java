@@ -32,7 +32,8 @@ public class ProjectSettingsStorage extends SettingsStorage implements ProjectSe
     private static final Gson GSON = new Gson();
 
     @Attribute
-    private String description = null;
+    @NotNull
+    private String description = "";
 
     @NotNull
     @Override
@@ -41,16 +42,16 @@ public class ProjectSettingsStorage extends SettingsStorage implements ProjectSe
         return GSON.toJson(this);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public String getDescription()
     {
-        return description;
+        return this.description;
     }
 
     public void setDescription(@Nullable String description)
     {
-        this.description = description;
+        this.description = description == null ? "" : description.trim();
     }
 
     @Override
