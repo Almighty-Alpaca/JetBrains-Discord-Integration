@@ -16,6 +16,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.components;
 
 import club.minnced.discord.rpc.DiscordEventHandlers;
+import club.minnced.discord.rpc.DiscordUser;
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ReplicatedData;
@@ -262,7 +263,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
         Notifications.Bus.notify(new DiscordIntegrationErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
     }
 
-    private void rpcReady()
+    private void rpcReady(DiscordUser user)
     {
         LOG.trace("DiscordIntegrationApplicationComponent#rpcReady()");
     }
