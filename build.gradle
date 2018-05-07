@@ -63,15 +63,9 @@ dependencies {
     compile group: 'org.jgroups', name: 'jgroups', version: '4.0.11.Final'
 }
 
-processResources {
-    eachFile { file ->
-        if (file.path == 'META-INF/plugin.xml') {
-            file.filter ReplaceTokens, tokens: [
-                    DESCRIPTION: StringEscapeUtils.escapeHtml4(readInfoFile('DESCRIPTION.md') as String),
-                    CHANGELOG  : StringEscapeUtils.escapeHtml4(readInfoFile('CHANGELOG.md') as String)
-            ]
-        }
-    }
+patchPluginXml {
+    changeNotes = { readInfoFile('CHANGELOG.md') }
+    pluginDescription = { readInfoFile('DESCRIPTION.md') }
 }
 
 ext {

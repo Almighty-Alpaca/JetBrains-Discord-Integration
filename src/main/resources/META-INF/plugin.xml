@@ -19,14 +19,6 @@
     <name>Discord Integration</name>
     <vendor url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
-    <description><![CDATA[
-        @DESCRIPTION@
-    ]]></description>
-
-    <change-notes><![CDATA[
-        @CHANGELOG@
-    ]]></change-notes>
-
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
