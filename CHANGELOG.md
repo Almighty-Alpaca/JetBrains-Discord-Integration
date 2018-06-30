@@ -1,4 +1,5 @@
 ## development
+- Added additional C++ file extensions (#40)
 - Updated Java-DiscordRPC to v2.0.0
 - Added Slim and CoffeeScript (#34)
 - Fixed file not reappearing after unsetting project description (#31)
