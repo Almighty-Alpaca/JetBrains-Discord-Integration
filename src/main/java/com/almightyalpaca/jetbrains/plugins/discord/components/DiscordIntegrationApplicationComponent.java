@@ -265,7 +265,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 
     private void rpcReady(DiscordUser user)
     {
-        LOG.trace("DiscordIntegrationApplicationComponent#rpcReady()");
+        LOG.trace("DiscordIntegrationApplicationComponent#rpcReady(" + user.username + "#" + user.discriminator + ")");
     }
 
     @Override

@@ -40,7 +40,7 @@ public class Debug
 
     public static synchronized void log(@Nullable String folder, @NotNull String name, @NotNull Level level, @NotNull String message)
     {
-        if (folder != null || SETTINGS.getSettings().isDebugLoggingEnabled())
+        if (folder != null || (SETTINGS.getSettings().isDebugLoggingEnabled() && SETTINGS.getSettings().getDebugLogFolder() != null))
         {
             try
             {

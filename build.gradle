@@ -13,20 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-buildscript {
-    dependencies {
-        classpath group: 'org.apache.commons', name: 'commons-text', version: '1.3'
-    }
-}
-
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.3.1'
-    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'org.jetbrains.intellij' version '0.3.4'
+    id 'com.github.ben-manes.versions' version '0.20.0'
 }
-
-import org.apache.commons.text.StringEscapeUtils
-import org.apache.tools.ant.filters.ReplaceTokens
 
 import javax.swing.*
 import java.awt.*
@@ -41,7 +32,7 @@ ext {
 }
 
 intellij {
-    version = '2018.1'
+    version = '2018.1.5'
     // version '2016.1.4'
 
     downloadSources = true
@@ -60,7 +51,7 @@ repositories {
 dependencies {
     compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v2.0.0'
 
-    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.11.Final'
+    compile group: 'org.jgroups', name: 'jgroups', version: '4.0.12.Final'
 }
 
 patchPluginXml {
@@ -142,5 +133,15 @@ tasks.create(name: 'printDescription') {
 
     doLast {
         println readInfoFile('DESCRIPTION.md') as String
+    }
+}
+
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            if (['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/ }) {
+                selection.reject('Release candidate')
+            }
+        }
     }
 }
