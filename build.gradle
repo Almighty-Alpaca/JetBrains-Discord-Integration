@@ -28,7 +28,7 @@ group = 'com.almightyalpaca.jetbrains.plugins.discord'
 version = '0.8.0'
 
 ext {
-    github = 'https://github.com/Almighty-Alpaca/Intellij-Discord-Integration/'
+    github = 'https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/'
 }
 
 intellij {
