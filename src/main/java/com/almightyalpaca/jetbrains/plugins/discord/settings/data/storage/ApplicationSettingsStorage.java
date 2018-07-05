@@ -69,6 +69,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     private String debugLogFolder = null;
     @Attribute
     private boolean showFiles = true;
+    @Attribute
+    private boolean showElapsedTime = true;
 
     {
         try
@@ -226,12 +228,23 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     @Override
     public boolean isShowFiles()
     {
-        return showFiles;
+        return this.showFiles;
     }
 
     public void setShowFiles(boolean showFiles)
     {
         this.showFiles = showFiles;
+    }
+
+    @Override
+    public boolean isShowElapsedTime()
+    {
+        return this.showElapsedTime;
+    }
+
+    public void setShowElapsedTime(boolean showElapsedTime)
+    {
+        this.showElapsedTime = showElapsedTime;
     }
 
     @NotNull
@@ -262,7 +275,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 && this.isResetOpenTimeAfterInactivity() == that.isResetOpenTimeAfterInactivity()
                 && this.isDebugLoggingEnabled() == that.isDebugLoggingEnabled()
                 && Objects.equals(this.getDebugLogFolder(), that.getDebugLogFolder())
-                && this.isShowFiles() == that.isShowFiles();
+                && this.isShowFiles() == that.isShowFiles()
+                && this.isShowElapsedTime() == that.isShowElapsedTime();
         // @formatter:on
     }
 
@@ -283,7 +297,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 this.isResetOpenTimeAfterInactivity(),
                 this.isDebugLoggingEnabled(),
                 this.getDebugLogFolder(),
-                this.isShowFiles());
+                this.isShowFiles(),
+                this.isShowElapsedTime());
         // @formatter:on
     }
 }

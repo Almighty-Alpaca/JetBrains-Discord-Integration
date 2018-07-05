@@ -75,6 +75,7 @@ public class DiscordIntegrationSettingsPanel
     private JButton buttonOpenDebugLogFolder;
     private JBCheckBox applicationShowFiles;
     private JBTextField projectDescription;
+    private JBCheckBox applicationShowElapsedTime;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -154,13 +155,15 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationDebugLoggingEnabled.isSelected() != this.applicationSettings.getState().isDebugLoggingEnabled()
                 || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()))
                 || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles()
-                || !Objects.equals(this.projectDescription.getText(), this.projectSettings.getState().getDescription());
+                || !Objects.equals(this.projectDescription.getText(), this.projectSettings.getState().getDescription())
+                || this.applicationShowElapsedTime.isSelected() != this.applicationSettings.getState().isShowElapsedTime();
         // @formatter:on
     }
 
     public void apply()
     {
         this.projectSettings.getState().setEnabled(this.projectEnabled.isSelected());
+        this.projectSettings.getState().setDescription(this.projectDescription.getText());
         this.applicationSettings.getState().setEnabled(this.applicationEnabled.isSelected());
         this.applicationSettings.getState().setShowUnknownImageIDE(this.applicationUnknownImageIDE.isSelected());
         this.applicationSettings.getState().setShowUnknownImageFile(this.applicationUnknownImageFile.isSelected());
@@ -174,7 +177,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
         this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
         this.applicationSettings.getState().setShowFiles(this.applicationShowFiles.isSelected());
-        this.projectSettings.getState().setDescription(this.projectDescription.getText());
+        this.applicationSettings.getState().setShowElapsedTime(this.applicationShowElapsedTime.isSelected());
 
         if (verifyLogFolder())
             this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
@@ -183,6 +186,7 @@ public class DiscordIntegrationSettingsPanel
     public void reset()
     {
         this.projectEnabled.setSelected(this.projectSettings.getState().isEnabled());
+        this.projectDescription.setText(this.projectSettings.getState().getDescription());
         this.applicationEnabled.setSelected(this.applicationSettings.getState().isEnabled());
         this.applicationUnknownImageIDE.setSelected(this.applicationSettings.getState().isShowUnknownImageIDE());
         this.applicationUnknownImageFile.setSelected(this.applicationSettings.getState().isShowUnknownImageFile());
@@ -197,7 +201,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationDebugLoggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
         this.applicationShowFiles.setSelected(this.applicationSettings.getState().isShowFiles());
-        this.projectDescription.setText(this.projectSettings.getState().getDescription());
+        this.applicationShowElapsedTime.setSelected(this.applicationSettings.getState().isShowElapsedTime());
 
         this.updateButtons();
     }

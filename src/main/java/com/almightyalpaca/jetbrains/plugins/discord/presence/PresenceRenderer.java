@@ -53,7 +53,9 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
             if (project != null)
             {
                 presence.details = "Working on " + project.getName();
-                presence.startTimestamp = project.getTimeOpened() / 1000;
+
+                if (instance.getSettings().isShowElapsedTime())
+                    presence.startTimestamp = project.getTimeOpened() / 1000;
 
                 if (!project.getSettings().getDescription().isEmpty())
                 {

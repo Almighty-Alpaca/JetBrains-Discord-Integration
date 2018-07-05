@@ -47,4 +47,6 @@ public interface ApplicationSettings extends Settings
     String getDebugLogFolder();
 
     boolean isShowFiles();
+
+    boolean isShowElapsedTime();
 }

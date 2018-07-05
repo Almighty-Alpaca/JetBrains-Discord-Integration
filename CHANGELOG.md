@@ -1,4 +1,5 @@
 ## development
+- Added setting to hide elapsed time (#37)
 - Added additional C++ file extensions (#40)
 - Added Slim and CoffeeScript (#34)
 - Fixed C files not showing (#42)
