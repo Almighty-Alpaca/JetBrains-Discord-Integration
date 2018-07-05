@@ -1,6 +1,6 @@
 ## Discord Integration
 Publishes rich presence information about your current project to Discord.
-For bugs or feature requests visit [the official github](https://github.com/Almighty-Alpaca/Intellij-Discord-Integration) or contact me on Discord ([Almighty Alpaca#6242](https://discordapp.com/channels/@me/107490111414882304)).
+For bugs or feature requests visit [the project on github](https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration) or [join the Discord server](https://discord.gg/SvuyuMP).
 
 
 ## Features:
