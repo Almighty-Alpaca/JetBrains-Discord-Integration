@@ -1,10 +1,11 @@
 ## development
-- Updated JGroups to 4.0.12
 - Added additional C++ file extensions (#40)
-- Updated Java-DiscordRPC to v2.0.0
 - Added Slim and CoffeeScript (#34)
+- Fixed C files not showing (#42)
 - Fixed file not reappearing after removing project description (#31)
 - Fixed debug folder being created after when debug logging has been disabled
+- Updated Java-DiscordRPC to v2.0.1
+- Updated Java-DiscordRPC to v1.3.6
 
 ## v0.8.0 - Project descriptions and even more languages
 - Added the ability to add project descriptions (#24)

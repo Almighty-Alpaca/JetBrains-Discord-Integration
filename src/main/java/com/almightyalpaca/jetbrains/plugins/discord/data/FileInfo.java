@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.data;
 import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -254,7 +255,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
 
         Language(@NotNull String name, @NotNull String assetName, @NotNull String... extensions)
         {
-            this.name = name;
+            this.name = StringUtils.rightPad(name, 2, '\u200B');
             this.assetName = assetName;
             this.extensions = extensions;
         }
