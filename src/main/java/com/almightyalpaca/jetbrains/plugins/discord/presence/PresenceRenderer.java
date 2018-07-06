@@ -65,11 +65,28 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                 {
                     presence.state = (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
-                    presence.largeImageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
-                    presence.largeImageText = file.getLanguageName();
+                    final String languageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
+                    final String languageText = file.getLanguageName();
 
-                    presence.smallImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-small";
-                    presence.smallImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
+                    final String ideKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-small";
+                    final String ideText = "Using " + distribution.getName() + " version " + distribution.getVersion();
+
+                    if (instance.getSettings().isForceBigIDEIcon())
+                    {
+                        presence.largeImageKey = ideKey;
+                        presence.largeImageText = ideText;
+
+                        presence.smallImageKey = languageKey;
+                        presence.smallImageText = languageText;
+                    }
+                    else
+                    {
+                        presence.largeImageKey = languageKey;
+                        presence.largeImageText = languageText;
+
+                        presence.smallImageKey = ideKey;
+                        presence.smallImageText = ideText;
+                    }
                 }
             }
 

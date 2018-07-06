@@ -76,6 +76,7 @@ public class DiscordIntegrationSettingsPanel
     private JBCheckBox applicationShowFiles;
     private JBTextField projectDescription;
     private JBCheckBox applicationShowElapsedTime;
+    private JBCheckBox applicationForceBigIDEIcon;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
@@ -156,7 +157,8 @@ public class DiscordIntegrationSettingsPanel
                 || !Objects.equals(this.applicationDebugLogFolder.getText(), this.applicationSettings.getState().getDebugLogFolder()))
                 || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles()
                 || !Objects.equals(this.projectDescription.getText(), this.projectSettings.getState().getDescription())
-                || this.applicationShowElapsedTime.isSelected() != this.applicationSettings.getState().isShowElapsedTime();
+                || this.applicationShowElapsedTime.isSelected() != this.applicationSettings.getState().isShowElapsedTime()
+                || this.applicationForceBigIDEIcon.isSelected() != this.applicationSettings.getState().isForceBigIDEIcon();
         // @formatter:on
     }
 
@@ -178,6 +180,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
         this.applicationSettings.getState().setShowFiles(this.applicationShowFiles.isSelected());
         this.applicationSettings.getState().setShowElapsedTime(this.applicationShowElapsedTime.isSelected());
+        this.applicationSettings.getState().setForceBigIDEIcon(this.applicationForceBigIDEIcon.isSelected());
 
         if (verifyLogFolder())
             this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
@@ -202,6 +205,7 @@ public class DiscordIntegrationSettingsPanel
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
         this.applicationShowFiles.setSelected(this.applicationSettings.getState().isShowFiles());
         this.applicationShowElapsedTime.setSelected(this.applicationSettings.getState().isShowElapsedTime());
+        this.applicationForceBigIDEIcon.setSelected(this.applicationSettings.getState().isForceBigIDEIcon());
 
         this.updateButtons();
     }

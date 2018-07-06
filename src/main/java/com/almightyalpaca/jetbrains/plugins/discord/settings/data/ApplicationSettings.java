@@ -49,4 +49,6 @@ public interface ApplicationSettings extends Settings
     boolean isShowFiles();
 
     boolean isShowElapsedTime();
+
+    boolean isForceBigIDEIcon();
 }

@@ -71,6 +71,8 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     private boolean showFiles = true;
     @Attribute
     private boolean showElapsedTime = true;
+    @Attribute
+    private boolean forceBigIDEIcon = false;
 
     {
         try
@@ -245,6 +247,17 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public void setShowElapsedTime(boolean showElapsedTime)
     {
         this.showElapsedTime = showElapsedTime;
+    }
+
+    @Override
+    public boolean isForceBigIDEIcon()
+    {
+        return forceBigIDEIcon;
+    }
+
+    public void setForceBigIDEIcon(boolean forceBigIDEIcon)
+    {
+        this.forceBigIDEIcon = forceBigIDEIcon;
     }
 
     @NotNull

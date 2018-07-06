@@ -1,4 +1,5 @@
 ## development
+- Added setting to force big IDE icon (#27)
 - Added setting to hide elapsed time (#37)
 - Added additional C++ file extensions (#40)
 - Added Slim and CoffeeScript (#34)
