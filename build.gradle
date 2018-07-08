@@ -25,7 +25,7 @@ import java.awt.*
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
-version = '0.8.0'
+version = '0.9.0'
 
 ext {
     github = 'https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/'
@@ -86,7 +86,7 @@ ext {
             .replaceAll('\\s*</ul>\\s*', '</ul>')
 
             // Replace newlines
-            .replace('\r?\n', '<br>')
+            .replace('\n', '<br>')
     // @formatter:on
     }
 

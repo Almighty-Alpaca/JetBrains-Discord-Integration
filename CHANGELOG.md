@@ -1,4 +1,4 @@
-## development
+## v0.9.0 - More settings & languages, less bugs
 - Added F# (#43)
 - Added additional C# file extensions (#43)
 - Added setting to force big IDE icon (#27)
