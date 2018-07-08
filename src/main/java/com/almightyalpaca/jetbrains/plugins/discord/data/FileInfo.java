@@ -189,7 +189,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         CPP("C++", "cpp", "cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx"),
         CSS("CSS", "css", "css"),
         C_SHARP("C#", "csharp", "cs", "csx", "csscript"),
-        F_SHARP("F#", "fs", "fsx", "fsi"),
+        F_SHARP("F#", "fsharp", "fs", "fsx", "fsi"),
         DART("Dart", "dart", "dart"),
         ELIXIR("Elixir", "elixir", "ex", "exs"),
         ERLANG("Erlang", "erlang", "erl", "hrl"),
