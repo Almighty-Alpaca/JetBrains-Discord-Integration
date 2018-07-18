@@ -87,7 +87,7 @@ public class RPC
                     }
 
                     RPC.callbackRunner = null;
-                }, "JetBrainsDiscordIntegration-RPC-Callback-Handler");
+                }, "JetbrainsDiscordIntegration-RPC-Callback-Handler");
 
                 RPC.callbackRunner.start();
             }
@@ -145,7 +145,7 @@ public class RPC
                     }
 
                     RPC.delayedPresenceRunner = null;
-                }, "JetBrainsDiscordIntegration-RPC-Delayed-Presence-Handler");
+                }, "JetbrainsDiscordIntegration-RPC-Delayed-Presence-Handler");
 
                 RPC.delayedPresenceRunner.start();
             }

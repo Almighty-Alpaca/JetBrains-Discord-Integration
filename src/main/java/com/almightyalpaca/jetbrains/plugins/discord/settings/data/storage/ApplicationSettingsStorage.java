@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
@@ -37,7 +37,7 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public static final long INACTIVITY_TIMEOUT_MIN_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.MINUTES);
     public static final long INACTIVITY_TIMEOUT_MAX_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.DAYS);
 
-    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
+    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
     @NotNull
     private static final Gson GSON = new Gson();
     @NotNull

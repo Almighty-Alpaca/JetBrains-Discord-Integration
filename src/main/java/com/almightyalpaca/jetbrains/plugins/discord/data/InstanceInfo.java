@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.google.gson.Gson;
@@ -32,7 +32,7 @@ import java.util.Objects;
 
 public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
 {
-    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
+    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
 
     @NotNull
     private static final Gson GSON = new Gson();
@@ -174,7 +174,8 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
 
     public static class DistributionInfo implements Serializable
     {
-        @NotNull
+        private static final long serialVersionUID = 1L;
+		@NotNull
         private final String code;
         @NotNull
         private final String version;

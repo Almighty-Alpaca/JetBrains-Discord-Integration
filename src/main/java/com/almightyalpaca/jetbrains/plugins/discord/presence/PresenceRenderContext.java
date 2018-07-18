@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 public class PresenceRenderContext implements Serializable
 {
-    @NotNull
+    private static final long serialVersionUID = 1L;
+	@NotNull
     private static final Gson GSON = new Gson();
     @NotNull
     private static final Logger LOG = LoggerFactory.getLogger(PresenceRenderContext.class);

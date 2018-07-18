@@ -17,7 +17,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.components;
 
 import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordUser;
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ReplicatedData;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
@@ -124,7 +124,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
 
             this.channel = channel;
 
-            channel.connect("JetBrainsDiscordIntegration v" + JetBrainsDiscordIntegration.PROTOCOL_VERSION);
+            channel.connect("JetbrainsDiscordIntegration v" + JetbrainsDiscordIntegration.PROTOCOL_VERSION);
 
             ReplicatedData data = new ReplicatedData(channel, this);
             this.data = data;
@@ -353,7 +353,7 @@ public class DiscordIntegrationApplicationComponent implements ApplicationCompon
                     handlers.disconnected = this::rpcDisconnected;
 
                     RPC.init(handlers, CLIENT_ID, () -> new PresenceRenderContext(this.data), new PresenceRenderer(), this::presenceUpdated);
-                }, "JetBrainsDiscordIntegration-RPC-Starter").start();
+                }, "JetbrainsDiscordIntegration-RPC-Starter").start();
             }
         }
     }

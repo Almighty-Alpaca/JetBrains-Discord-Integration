@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
 import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class FileInfo implements Serializable, Comparable<FileInfo>
 {
-    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
+    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
 
     @NotNull
     private static final Gson GSON = new Gson();
@@ -188,6 +188,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         COFFEESCRIPT("CoffeeScript", "coffeescript", "coffee", "litcoffee"),
         CPP("C++", "cpp", "cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx"),
         CSS("CSS", "css", "css"),
+        LESS("LESS", "less", "less"),
         C_SHARP("C#", "csharp", "cs", "csx", "csscript"),
         F_SHARP("F#", "fsharp", "fs", "fsx", "fsi"),
         DART("Dart", "dart", "dart"),
