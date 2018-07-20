@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
 import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class FileInfo implements Serializable, Comparable<FileInfo>
 {
-    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
+    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
 
     @NotNull
     private static final Gson GSON = new Gson();

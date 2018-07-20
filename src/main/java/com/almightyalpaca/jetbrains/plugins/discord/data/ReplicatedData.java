@@ -108,7 +108,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     }
 
     @NotNull
-    protected transient final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "JetbrainsDiscordIntegration-Notifier"));
+    protected transient final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "JetBrainsDiscordIntegration-Notifier"));
     @NotNull
     protected transient final AtomicReference<Notifier.Type> modified = new AtomicReference<>(null);
     @NotNull

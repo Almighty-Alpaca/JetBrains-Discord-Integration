@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetbrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.google.gson.Gson;
@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class ProjectInfo implements Serializable, Comparable<ProjectInfo>
 {
-    private static final long serialVersionUID = JetbrainsDiscordIntegration.PROTOCOL_VERSION;
+    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
 
     @NotNull
     private static final Gson GSON = new Gson();
