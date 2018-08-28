@@ -15,59 +15,49 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FileUtil;
 import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class FileInfo implements Serializable, Comparable<FileInfo>
 {
-    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
-
     @NotNull
     private static final Gson GSON = new Gson();
 
     @NotNull
     private final String id;
     @NotNull
-    private final String baseName;
-    @Nullable
-    private final String extension;
+    private final String name;
+    @NotNull
+    private String firstLine;
     private boolean readOnly;
     private long timeAccessed;
     private long timeOpened;
-    @NotNull
-    private transient FileInfo.Language language;
 
     public FileInfo(@NotNull VirtualFile file)
     {
-        this(file.getPath(), file.getNameWithoutExtension(), file.getExtension(), !file.isWritable(), System.currentTimeMillis());
+        this(file.getPath(), file.getName(), FileUtil.readFirstLine(file), !file.isWritable(), System.currentTimeMillis());
     }
 
-    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, boolean readOnly, long timeOpened)
+    public FileInfo(@NotNull String id, @NotNull String name, @NotNull String firstLine, boolean readOnly, long timeOpened)
     {
-        this(id, baseName, extension, readOnly, timeOpened, timeOpened);
+        this(id, name, firstLine, readOnly, timeOpened, timeOpened);
     }
 
-    public FileInfo(@NotNull String id, @NotNull String baseName, @Nullable String extension, boolean readOnly, long timeOpened, long timeAccessed)
+    public FileInfo(@NotNull String id, @NotNull String name, @NotNull String firstLine, boolean readOnly, long timeOpened, long timeAccessed)
     {
         this.id = id;
-        this.baseName = baseName;
-        this.extension = extension;
+        this.name = name;
+        this.firstLine = firstLine;
         this.readOnly = readOnly;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
-
-        this.language = FileInfo.Language.get(getName());
     }
 
     @NotNull
@@ -100,36 +90,20 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     }
 
     @NotNull
-    public Language getLanguage()
-    {
-        return this.language;
-    }
-
-    @NotNull
-    public String getBaseName()
-    {
-        return this.baseName;
-    }
-
-    @Nullable
-    public String getExtension()
-    {
-        return this.extension;
-    }
-
-    @NotNull
     public String getName()
     {
-        if (this.extension == null)
-            return this.baseName;
-        else
-            return this.baseName + '.' + this.extension;
+        return this.name;
     }
 
     @NotNull
-    public String getAssetName(boolean showUnknown)
+    public String getFirstLine()
     {
-        return this.language.getAssetName(showUnknown);
+        return firstLine;
+    }
+
+    void setFirstLine(@NotNull String firstLine)
+    {
+        this.firstLine = firstLine;
     }
 
     public boolean isReadOnly()
@@ -142,6 +116,18 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
         this.readOnly = readOnly;
     }
 
+    @NotNull
+    public String getBaseName()
+    {
+        return FilenameUtils.getBaseName(this.name);
+    }
+
+    @Nullable
+    public String getExtension()
+    {
+        return FilenameUtils.getExtension(this.name);
+    }
+
     @Override
     public int compareTo(@NotNull FileInfo file)
     {
@@ -149,9 +135,25 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     }
 
     @Override
-    public boolean equals(@Nullable Object o)
+    public boolean equals(Object o)
     {
-        return o instanceof FileInfo && this.baseName.equals(((FileInfo) o).baseName) && Objects.equals(this.extension, ((FileInfo) o).extension);
+        if (this == o)
+            return true;
+        if (!(o instanceof FileInfo))
+            return false;
+        FileInfo fileInfo = (FileInfo) o;
+        return isReadOnly() == fileInfo.isReadOnly() &&
+               getTimeAccessed() == fileInfo.getTimeAccessed() &&
+               getTimeOpened() == fileInfo.getTimeOpened() &&
+               Objects.equals(getId(), fileInfo.getId()) &&
+               Objects.equals(getName(), fileInfo.getName()) &&
+               Objects.equals(getFirstLine(), fileInfo.getFirstLine());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getId(), getName(), getFirstLine(), isReadOnly(), getTimeAccessed(), getTimeOpened());
     }
 
     @NotNull
@@ -159,149 +161,5 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     public String toString()
     {
         return GSON.toJson(this);
-    }
-
-    private void readObject(@NotNull ObjectInputStream in) throws IOException, ClassNotFoundException
-    {
-        in.defaultReadObject();
-
-        this.language = FileInfo.Language.get(getName());
-    }
-
-    @NotNull
-    public String getLanguageName()
-    {
-        if (this.language == FileInfo.Language.UNKNOWN)
-            if (extension == null)
-                return this.language.getName();
-            else
-                return this.language.getName() + " ." + extension + "";
-        else
-            return this.language.getName();
-    }
-
-    public enum Language
-    {
-        C("C", "c", "c", "h"),
-        CEYLON("Ceylon", "ceylon", "ceylon"),
-        CMAKE("CMake", "cmake", "CMakeLists.txt"),
-        COFFEESCRIPT("CoffeeScript", "coffeescript", "coffee", "litcoffee"),
-        CPP("C++", "cpp", "cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx"),
-        CSS("CSS", "css", "css"),
-        C_SHARP("C#", "csharp", "cs", "csx", "csscript"),
-        F_SHARP("F#", "fsharp", "fs", "fsx", "fsi"),
-        DART("Dart", "dart", "dart"),
-        ELIXIR("Elixir", "elixir", "ex", "exs"),
-        ERLANG("Erlang", "erlang", "erl", "hrl"),
-        GIT("Git", "git", ".gitmodules", ".gitignore", ".gitattributes"),
-        GO("Go", "go", "go"),
-        GOLO("Golo", "golo", "golo"),
-        GRADLE("Gradle", "gradle", "gradle", "gradle.kts"),
-        GROOVY("Groovy", "groovy", "groovy"),
-        HANDLEBARS("Handlebars.js", "handlebars", "hbs", "handlebars"),
-        HTACCESS(".htaccess", "apache", ".htaccess"),
-        HTML("HTML", "html", "html", "htm"),
-        JAVA("Java", "java", "java"),
-        JAVASCRIPT("JavaScript", "javascript", "js", "jsx"),
-        JSON("JSON", "json", "json"),
-        KOTLIN("Kotlin", "kotlin", "kt", "kts"),
-        LUA("Lua", "lua", "lua"),
-        MARKDOWN("Markdown", "markdown", "md", "markdown"),
-        PHP("PHP", "php", "php"),
-        POWERSHELL("PowerShell", "powershell", "ps1", "ps1xml", "psc1", "psd1", "psm1", "pssc", "cdxml"),
-        PYTHON("Python", "python", "py"),
-        RUBY("Ruby", "ruby", "rb"),
-        RUST("Rust", "rust", "rs"),
-        SASS("Sass", "sass", "sass", "scss"),
-        SCALA("Scala", "scala", "scala", "sc"),
-        SHELL("Shell", "shell", "sh"),
-        SLIM("Slim", "slim", "slim"),
-        SQL("SQL", "sql", "sql"),
-        SWIFT("Swift", "swift", "swift"),
-        TWIG("Twig", "twig", "twig"),
-        TYPESCRIPT("TypeScript", "typescript", "ts", "tsx"),
-        VUE("Vue.js", "vue", "vue"),
-        XML("XML", "xml", "xml", "cxml", "fxml"),
-        YAML("YAML", "yaml", "yaml", "yml"),
-
-        UNKNOWN("Unknown file type", "unknown")
-                {
-                    @NotNull
-                    @Override
-                    public String getAssetName(boolean showUnknown)
-                    {
-                        return showUnknown ? super.getAssetName(true) : "none";
-                    }
-                };
-
-        @NotNull
-        private static final Map<String, Language> MAP;
-
-        static
-        {
-            MAP = new HashMap<>();
-
-            for (FileInfo.Language language : FileInfo.Language.values())
-                for (String extension : language.extensions)
-                    if (MAP.put(extension, language) != null)
-                        throw new ExceptionInInitializerError("Two language cannot have the same extension");
-        }
-
-        @NotNull
-        private final String name;
-        @NotNull
-        private final String assetName;
-        @NotNull
-        private final String[] extensions;
-
-        Language(@NotNull String name, @NotNull String assetName, @NotNull String... extensions)
-        {
-            this.name = StringUtils.rightPad(name, 2, '\u200B');
-            this.assetName = assetName;
-            this.extensions = extensions;
-        }
-
-        @NotNull
-        public static FileInfo.Language get(@NotNull String fileName)
-        {
-            int index = 0;
-            do
-            {
-                Language language = MAP.get(fileName.substring(index));
-
-                if (language != null)
-                    return language;
-            }
-            while ((index = fileName.indexOf('.', index) + 1) != 0);
-
-            return UNKNOWN;
-        }
-
-        @NotNull
-        public String getName()
-        {
-            return this.name;
-        }
-
-        @NotNull
-        public String[] getExtensions()
-        {
-            String[] newExtensions = new String[this.extensions.length];
-            System.arraycopy(this.extensions, 0, newExtensions, 0, this.extensions.length);
-            return newExtensions;
-        }
-
-        @NotNull
-        public String getAssetName(boolean showUnknown)
-        {
-            return this.assetName;
-        }
-
-        @NotNull
-        @Override
-        public String toString()
-        {
-            return GSON.toJson(this);
-        }
     }
 }

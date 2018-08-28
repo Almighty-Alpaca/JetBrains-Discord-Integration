@@ -19,6 +19,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegratio
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Debug;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.ThemeLoader;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
@@ -27,6 +29,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +45,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordIntegrationSettingsPanel
@@ -77,13 +82,17 @@ public class DiscordIntegrationSettingsPanel
     private JBTextField projectDescription;
     private JBCheckBox applicationShowElapsedTime;
     private JBCheckBox applicationForceBigIDEIcon;
+    private Theme applicationTheme;
+    private JButton applicationThemeButton;
+    private JBLabel applicationThemeLabel;
 
     public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
     {
         this.applicationSettings = applicationSettings;
         this.projectSettings = projectSettings;
 
-        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder("Project Settings (" + projectSettings.getProject().getName() + ")"));
+        this.panelProject.setBorder(IdeBorderFactory.createTitledBorder(
+                "Project Settings (" + projectSettings.getProject().getName() + ")"));
         this.panelApplication.setBorder(IdeBorderFactory.createTitledBorder("Application Settings"));
         this.panelExperimental.setBorder(IdeBorderFactory.createTitledBorder("Experimental Settings"));
         this.panelDebug.setBorder(IdeBorderFactory.createTitledBorder("Debugging Settings"));
@@ -135,6 +144,8 @@ public class DiscordIntegrationSettingsPanel
                 LOG.error("An error occurred while trying to open the debug log folder", ex);
             }
         });
+
+        this.applicationThemeButton.addActionListener(e -> SwingUtilities.invokeLater(() -> new ThemeChooser(this).show()));
     }
 
     public boolean isModified()
@@ -158,7 +169,8 @@ public class DiscordIntegrationSettingsPanel
                 || this.applicationShowFiles.isSelected() != this.applicationSettings.getState().isShowFiles()
                 || !Objects.equals(this.projectDescription.getText(), this.projectSettings.getState().getDescription())
                 || this.applicationShowElapsedTime.isSelected() != this.applicationSettings.getState().isShowElapsedTime()
-                || this.applicationForceBigIDEIcon.isSelected() != this.applicationSettings.getState().isForceBigIDEIcon();
+                || this.applicationForceBigIDEIcon.isSelected() != this.applicationSettings.getState().isForceBigIDEIcon()
+                || !Objects.equals(this.applicationTheme, this.applicationSettings.getState().getTheme());
         // @formatter:on
     }
 
@@ -172,22 +184,31 @@ public class DiscordIntegrationSettingsPanel
         this.applicationSettings.getState().setShowFileExtensions(this.applicationShowFileExtensions.isSelected());
         this.applicationSettings.getState().setHideReadOnlyFiles(this.applicationHideReadOnlyFiles.isSelected());
         this.applicationSettings.getState().setShowReadingInsteadOfWriting(this.applicationShowReadingInsteadOfEditing.isSelected());
-        this.applicationSettings.getState().setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
+        this.applicationSettings
+                .getState()
+                .setShowIDEWhenNoProjectIsAvailable(this.applicationShowIDEWhenNoProjectIsAvailable.isSelected());
         this.applicationSettings.getState().setHideAfterPeriodOfInactivity(this.applicationHideAfterPeriodOfInactivity.isSelected());
         this.applicationSettings.getState().setInactivityTimeout((long) this.applicationInactivityTimeout.getValue(), TimeUnit.MINUTES);
-        this.applicationSettings.getState().setExperimentalWindowListenerEnabled(this.applicationExperimentalWindowListenerEnabled.isSelected());
+        this.applicationSettings
+                .getState()
+                .setExperimentalWindowListenerEnabled(this.applicationExperimentalWindowListenerEnabled.isSelected());
         this.applicationSettings.getState().setResetOpenTimeAfterInactivity(this.applicationResetOpenTimeAfterInactivity.isSelected());
         this.applicationSettings.getState().setDebugLoggingEnabled(this.applicationDebugLoggingEnabled.isSelected());
         this.applicationSettings.getState().setShowFiles(this.applicationShowFiles.isSelected());
         this.applicationSettings.getState().setShowElapsedTime(this.applicationShowElapsedTime.isSelected());
         this.applicationSettings.getState().setForceBigIDEIcon(this.applicationForceBigIDEIcon.isSelected());
+        this.applicationSettings.getState().setTheme(this.applicationTheme);
 
         if (verifyLogFolder())
-            this.applicationSettings.getState().setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
+            this.applicationSettings
+                    .getState()
+                    .setDebugLogFolder(createFolder(this.applicationDebugLogFolder.getText()).toAbsolutePath().toString());
     }
 
     public void reset()
     {
+        System.out.println("RESET");
+
         this.projectEnabled.setSelected(this.projectSettings.getState().isEnabled());
         this.projectDescription.setText(this.projectSettings.getState().getDescription());
         this.applicationEnabled.setSelected(this.applicationSettings.getState().isEnabled());
@@ -196,16 +217,21 @@ public class DiscordIntegrationSettingsPanel
         this.applicationShowFileExtensions.setSelected(this.applicationSettings.getState().isShowFileExtensions());
         this.applicationHideReadOnlyFiles.setSelected(this.applicationSettings.getState().isHideReadOnlyFiles());
         this.applicationShowReadingInsteadOfEditing.setSelected(this.applicationSettings.getState().isShowReadingInsteadOfWriting());
-        this.applicationShowIDEWhenNoProjectIsAvailable.setSelected(this.applicationSettings.getState().isShowIDEWhenNoProjectIsAvailable());
+        this.applicationShowIDEWhenNoProjectIsAvailable.setSelected(this.applicationSettings
+                .getState()
+                .isShowIDEWhenNoProjectIsAvailable());
         this.applicationHideAfterPeriodOfInactivity.setSelected(this.applicationSettings.getState().isHideAfterPeriodOfInactivity());
         this.applicationInactivityTimeout.setValue(this.applicationSettings.getState().getInactivityTimeout(TimeUnit.MINUTES));
         this.applicationResetOpenTimeAfterInactivity.setSelected(this.applicationSettings.getState().isResetOpenTimeAfterInactivity());
-        this.applicationExperimentalWindowListenerEnabled.setSelected(this.applicationSettings.getState().isExperimentalWindowListenerEnabled());
+        this.applicationExperimentalWindowListenerEnabled.setSelected(this.applicationSettings
+                .getState()
+                .isExperimentalWindowListenerEnabled());
         this.applicationDebugLoggingEnabled.setSelected(this.applicationSettings.getState().isDebugLoggingEnabled());
         this.applicationDebugLogFolder.setText(this.applicationSettings.getState().getDebugLogFolder());
         this.applicationShowFiles.setSelected(this.applicationSettings.getState().isShowFiles());
         this.applicationShowElapsedTime.setSelected(this.applicationSettings.getState().isShowElapsedTime());
         this.applicationForceBigIDEIcon.setSelected(this.applicationSettings.getState().isForceBigIDEIcon());
+        this.setTheme(this.applicationSettings.getState().getTheme());
 
         this.updateButtons();
     }
@@ -220,7 +246,8 @@ public class DiscordIntegrationSettingsPanel
         this.applicationShowFileExtensions.setEnabled(this.applicationShowFiles.isSelected());
         this.applicationHideReadOnlyFiles.setEnabled(this.applicationShowFiles.isSelected());
 
-        this.applicationShowReadingInsteadOfEditing.setEnabled(this.applicationShowFiles.isSelected() && !this.applicationHideReadOnlyFiles.isSelected());
+        this.applicationShowReadingInsteadOfEditing.setEnabled(
+                this.applicationShowFiles.isSelected() && !this.applicationHideReadOnlyFiles.isSelected());
 
         this.applicationDebugLogFolder.setEnabled(this.applicationDebugLoggingEnabled.isSelected());
 
@@ -305,11 +332,31 @@ public class DiscordIntegrationSettingsPanel
 
     private void createUIComponents()
     {
-        Long value = 1L;
-        Long minimum = 1L;
-        Long maximum = TimeUnit.MINUTES.convert(1, TimeUnit.DAYS);
-        Long stepSize = 1L;
+        Long timeoutValue = 1L;
+        Long timeoutMin = 1L;
+        Long timeoutMax = TimeUnit.MINUTES.convert(1, TimeUnit.DAYS);
+        Long timeoutStepSize = 1L;
 
-        this.applicationInactivityTimeout = new JSpinner(new SpinnerNumberModel(value, minimum, maximum, stepSize));
+        this.applicationInactivityTimeout = new JSpinner(new SpinnerNumberModel(timeoutValue, timeoutMin, timeoutMax, timeoutStepSize));
+    }
+
+    @NotNull
+    public SortedMap<String, Theme> getThemes()
+    {
+        return ThemeLoader.getInstance().getThemes();
+    }
+
+    @NotNull
+    public Theme getThemeById(@NotNull String name)
+    {
+        return Optional.ofNullable(getThemes().get(name))
+                .orElse(getThemes().get("Classic"));
+    }
+
+    public void setTheme(@NotNull Theme theme)
+    {
+        this.applicationTheme = theme;
+
+        this.applicationThemeLabel.setText(theme.getName());
     }
 }

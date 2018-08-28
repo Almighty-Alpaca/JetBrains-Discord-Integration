@@ -1,3 +1,6 @@
+## development
+- Add support for themes
+
 ## v0.9.0 - More settings & languages, less bugs
 - Added F# (#43)
 - Added additional C# file extensions (#43)

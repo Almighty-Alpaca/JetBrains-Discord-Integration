@@ -139,9 +139,4 @@ public class PresenceRenderContext implements Serializable
     {
         return GSON.toJson(this);
     }
-
-    public boolean isEmpty()
-    {
-        return instance == null;
-    }
 }

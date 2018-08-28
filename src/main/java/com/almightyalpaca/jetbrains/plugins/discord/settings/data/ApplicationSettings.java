@@ -15,6 +15,8 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data;
 
+import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
@@ -51,4 +53,7 @@ public interface ApplicationSettings extends Settings
     boolean isShowElapsedTime();
 
     boolean isForceBigIDEIcon();
+
+    @NotNull
+    Theme getTheme();
 }

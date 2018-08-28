@@ -95,7 +95,7 @@ public class RPC
             if (RPC.initialized)
             {
                 RPC.delayedPresenceRunner = new Thread(() -> {
-                    while (!Thread.currentThread().isInterrupted())
+                    while (!Thread.currentThread().isInterrupted() && RPC.initialized)
                     {
                         try
                         {
@@ -160,9 +160,13 @@ public class RPC
         {
             RPC.initialized = false;
 
+            LockSupport.unpark(RPC.delayedPresenceRunner);
+
             DiscordRPC.INSTANCE.Discord_ClearPresence();
 
             DiscordRPC.INSTANCE.Discord_Shutdown();
+
+            RPC.presence = null;
         }
     }
 

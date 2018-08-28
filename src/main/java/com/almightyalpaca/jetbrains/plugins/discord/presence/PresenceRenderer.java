@@ -21,6 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.Icon;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +39,7 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
     {
         LOG.trace("DiscordRichPresence#apply({})", context);
 
-        if (context.isEmpty())
+        if (context.getInstance() == null)
             return null;
 
         InstanceInfo instance = context.getInstance();
@@ -49,6 +51,8 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
         if (instance != null)
         {
             InstanceInfo.DistributionInfo distribution = instance.getDistribution();
+
+            Theme theme = instance.getSettings().getTheme();
 
             if (project != null)
             {
@@ -63,41 +67,63 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                 }
                 else if (file != null && instance.getSettings().isShowFiles())
                 {
-                    presence.state = (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") + (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
+                    presence.state =
+                            (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") +
+                            (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
-                    final String languageKey = file.getAssetName(instance.getSettings().isShowUnknownImageFile()) + "-large";
-                    final String languageText = file.getLanguageName();
+                    Icon language = theme.matchLanguage(file.getName(), file.getFirstLine());
 
-                    final String ideKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-small";
-                    final String ideText = "Using " + distribution.getName() + " version " + distribution.getVersion();
+                    if (language == null)
+                        if (instance.getSettings().isShowUnknownImageFile())
+                            language = Icon.UNKNOWN;
+                        else
+                            language = Icon.EMPTY;
 
-                    if (instance.getSettings().isForceBigIDEIcon())
+
+                    Icon ide = theme.matchApplication(distribution.getCode());
+
+                    if (ide == null)
+                        if (instance.getSettings().isShowUnknownImageIDE())
+                            ide = Icon.UNKNOWN;
+                        else
+                            ide = Icon.EMPTY;
+
+                    if (language.equals(Icon.EMPTY) || instance.getSettings().isForceBigIDEIcon())
                     {
-                        presence.largeImageKey = ideKey;
-                        presence.largeImageText = ideText;
+                        presence.largeImageKey = ide.getAssetKey();
+                        presence.largeImageText =  ide.getName();
 
-                        presence.smallImageKey = languageKey;
-                        presence.smallImageText = languageText;
+                        presence.smallImageKey = language.getAssetKey();
+                        presence.smallImageText = language.getName();
                     }
                     else
                     {
-                        presence.largeImageKey = languageKey;
-                        presence.largeImageText = languageText;
+                        presence.largeImageKey = language.getAssetKey();
+                        presence.largeImageText = language.getName();
 
-                        presence.smallImageKey = ideKey;
-                        presence.smallImageText = ideText;
+                        presence.smallImageKey = ide.getAssetKey();
+                        presence.smallImageText =  ide.getName();
                     }
                 }
             }
 
-            if (presence.largeImageKey == null || presence.largeImageKey.equals("none-large"))
-            {
-                presence.largeImageKey = distribution.getAssetName(instance.getSettings().isShowUnknownImageIDE()) + "-large";
-                presence.largeImageText = "Using " + distribution.getName() + " version " + distribution.getVersion();
-
-                presence.smallImageKey = null;
-                presence.smallImageText = null;
-            }
+//            if (presence.largeImageKey == null || presence.largeImageKey.isEmpty())
+//            {
+//
+//                Icon ide = theme.matchApplication(distribution.getCode());
+//
+//                if (ide == null)
+//                    if (instance.getSettings().isShowUnknownImageIDE())
+//                        ide = Icon.UNKNOWN;
+//                    else
+//                        ide = Icon.EMPTY;
+//
+//                presence.largeImageKey = ide.getAssetKey();
+//                presence.largeImageText = ide.getName();
+//
+//                presence.smallImageKey = null;
+//                presence.smallImageText = null;
+//            }
         }
 
         return presence;

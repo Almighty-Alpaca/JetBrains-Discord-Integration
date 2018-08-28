@@ -15,11 +15,12 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 
-import com.almightyalpaca.jetbrains.plugins.discord.JetBrainsDiscordIntegration;
 import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
+import com.almightyalpaca.jetbrains.plugins.discord.themes.ThemeLoader;
 import com.google.gson.Gson;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,6 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     public static final long INACTIVITY_TIMEOUT_MIN_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.MINUTES);
     public static final long INACTIVITY_TIMEOUT_MAX_VALUE = INACTIVITY_TIMEOUT_TIME_UNIT.convert(1, TimeUnit.DAYS);
 
-    private static final long serialVersionUID = JetBrainsDiscordIntegration.PROTOCOL_VERSION;
     @NotNull
     private static final Gson GSON = new Gson();
     @NotNull
@@ -73,6 +73,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     private boolean showElapsedTime = true;
     @Attribute
     private boolean forceBigIDEIcon = false;
+    @Attribute
+    @NotNull
+    private String theme = "Classic";
 
     {
         try
@@ -262,6 +265,23 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
 
     @NotNull
     @Override
+    public Theme getTheme()
+    {
+        Theme theme = ThemeLoader.getInstance().getThemes().get(this.theme);
+
+        if (theme == null)
+            theme =  ThemeLoader.getInstance().getThemes().get("classic");
+
+        return theme;
+    }
+
+    public void setTheme(@Nullable Theme theme)
+    {
+        this.theme = theme == null ? "classic" : theme.getId();
+    }
+
+    @NotNull
+    @Override
     public String toString()
     {
         return GSON.toJson(this);
@@ -289,7 +309,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 && this.isDebugLoggingEnabled() == that.isDebugLoggingEnabled()
                 && Objects.equals(this.getDebugLogFolder(), that.getDebugLogFolder())
                 && this.isShowFiles() == that.isShowFiles()
-                && this.isShowElapsedTime() == that.isShowElapsedTime();
+                && this.isShowElapsedTime() == that.isShowElapsedTime()
+                && this.isForceBigIDEIcon() == that.isForceBigIDEIcon()
+                && Objects.equals(this.getTheme(), that.getTheme());
         // @formatter:on
     }
 
@@ -311,7 +333,9 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
                 this.isDebugLoggingEnabled(),
                 this.getDebugLogFolder(),
                 this.isShowFiles(),
-                this.isShowElapsedTime());
+                this.isShowElapsedTime(),
+                this.isForceBigIDEIcon(),
+                this.getTheme());
         // @formatter:on
     }
 }
