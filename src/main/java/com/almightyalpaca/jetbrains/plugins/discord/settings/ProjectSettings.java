@@ -15,7 +15,6 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings;
 
-import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage.ProjectSettingsStorage;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -25,23 +24,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
-@State(name = "DiscordIntegrationProjectSettings", storages = @Storage("discord.xml"))
-public class DiscordIntegrationProjectSettings implements PersistentStateComponent<ProjectSettingsStorage>, SettingsProvider<ProjectSettings>
+@State(name = "ProjectSettings", storages = @Storage("discord.xml"))
+public class ProjectSettings implements PersistentStateComponent<ProjectSettingsStorage>, SettingsProvider<com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings>
 {
     @NotNull
     private final Project project;
     @NotNull
     private final ProjectSettingsStorage state = new ProjectSettingsStorage();
 
-    public DiscordIntegrationProjectSettings(@NotNull Project project)
+    public ProjectSettings(@NotNull Project project)
     {
         this.project = project;
     }
 
     @NotNull
-    public static DiscordIntegrationProjectSettings getInstance(@NotNull Project project)
+    public static ProjectSettings getInstance(@NotNull Project project)
     {
-        return ServiceManager.getService(project, DiscordIntegrationProjectSettings.class);
+        return ServiceManager.getService(project, ProjectSettings.class);
     }
 
     @NotNull
@@ -59,7 +58,7 @@ public class DiscordIntegrationProjectSettings implements PersistentStateCompone
 
     @NotNull
     @Override
-    public ProjectSettings getSettings()
+    public com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings getSettings()
     {
         return this.state;
     }

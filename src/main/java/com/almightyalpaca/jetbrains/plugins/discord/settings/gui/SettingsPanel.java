@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.almightyalpaca.jetbrains.plugins.discord.settings;
+package com.almightyalpaca.jetbrains.plugins.discord.settings.gui;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Debug;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.gui.themes.ThemeChooser;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.ThemeLoader;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -49,13 +52,13 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
-public class DiscordIntegrationSettingsPanel
+public class SettingsPanel
 {
     @NotNull
-    private static final Logger LOG = LoggerFactory.getLogger(DiscordIntegrationApplicationComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationComponent.class);
 
-    private final DiscordIntegrationApplicationSettings applicationSettings;
-    private final DiscordIntegrationProjectSettings projectSettings;
+    private final ApplicationSettings applicationSettings;
+    private final ProjectSettings projectSettings;
     private JPanel panelRoot;
     private JPanel panelProject;
     private JBCheckBox projectEnabled;
@@ -86,7 +89,7 @@ public class DiscordIntegrationSettingsPanel
     private JButton applicationThemeButton;
     private JBLabel applicationThemeLabel;
 
-    public DiscordIntegrationSettingsPanel(DiscordIntegrationApplicationSettings applicationSettings, DiscordIntegrationProjectSettings projectSettings)
+    public SettingsPanel(ApplicationSettings applicationSettings, ProjectSettings projectSettings)
     {
         this.applicationSettings = applicationSettings;
         this.projectSettings = projectSettings;
@@ -353,10 +356,15 @@ public class DiscordIntegrationSettingsPanel
                 .orElse(getThemes().get("Classic"));
     }
 
+    public Theme getTheme()
+    {
+        return this.applicationTheme;
+    }
+
     public void setTheme(@NotNull Theme theme)
     {
         this.applicationTheme = theme;
 
-        this.applicationThemeLabel.setText(theme.getName());
+        this.applicationThemeLabel.setText("<html><b>" + theme.getName() + "</b></html>");
     }
 }

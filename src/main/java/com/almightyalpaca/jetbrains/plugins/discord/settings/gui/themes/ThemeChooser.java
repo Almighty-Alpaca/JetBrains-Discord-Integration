@@ -1,5 +1,6 @@
-package com.almightyalpaca.jetbrains.plugins.discord.settings;
+package com.almightyalpaca.jetbrains.plugins.discord.settings.gui.themes;
 
+import com.almightyalpaca.jetbrains.plugins.discord.settings.gui.SettingsPanel;
 import com.almightyalpaca.jetbrains.plugins.discord.swing.ModifiedFlowLayout;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.Icon;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
@@ -9,10 +10,8 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.ui.components.panels.StatelessCardLayout;
 import com.intellij.util.ui.JBImageIcon;
 import com.intellij.util.ui.JBUI;
-import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -31,9 +29,9 @@ public class ThemeChooser extends DialogWrapper
 {
     private static final int COLLUM_WIDTH = 64;
     @NotNull
-    private final DiscordIntegrationSettingsPanel settingsPanel;
+    private final SettingsPanel settingsPanel;
 
-    public ThemeChooser(@NotNull DiscordIntegrationSettingsPanel settingsPanel)
+    public ThemeChooser(@NotNull SettingsPanel settingsPanel)
     {
         super(settingsPanel.getRootPanel(), false);
 
@@ -65,18 +63,6 @@ public class ThemeChooser extends DialogWrapper
             tabbedPane.addTab(theme.getName(), new ThemePanel(theme));
 
         return tabbedPane;
-    }
-
-    void openLink(String link)
-    {
-        try
-        {
-            Desktop.getDesktop().browse(URI.create(link));
-        }
-        catch (IOException e1)
-        {
-            e1.printStackTrace();
-        }
     }
 
     private class ThemePanel extends JBPanel<ThemePanel>
@@ -125,39 +111,10 @@ public class ThemeChooser extends DialogWrapper
 
             JBPanel<JBPanel> bottomPanel = new JBPanel<>();
             bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-            add(bottomPanel, BorderLayout.SOUTH);
-
-            JTextPane textPane = new JTextPane();
-            textPane.setAlignmentX(JButton.LEFT_ALIGNMENT);
-            textPane.setAlignmentY(JButton.TOP_ALIGNMENT);
-            textPane.setBorder(JBUI.Borders.emptyTop(20));
-            textPane.setEditable(false);
-            textPane.setContentType("text/html");
-            textPane.setText(new MarkdownProcessor().markdown(theme.getDescription()));
-            textPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-            bottomPanel.add(textPane);
-
-            textPane.addHyperlinkListener(e -> openLink(e.getURL().toString()));
-
-            JButton githubButton = new JButton("Missing an icon?");
-            githubButton.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-            githubButton.setAlignmentY(JButton.BOTTOM_ALIGNMENT);
-            githubButton.setPreferredSize(new Dimension(100, 50));
-            bottomPanel.add(StatelessCardLayout.wrap(githubButton));
-
-            githubButton.addActionListener(e -> openLink("https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration-Icons/issues/new"));
-
-            JButton selectButton = new JButton("Select");
-            selectButton.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-            selectButton.setAlignmentY(JButton.BOTTOM_ALIGNMENT);
-            selectButton.setPreferredSize(new Dimension(100, 50));
-            bottomPanel.add(StatelessCardLayout.wrap(selectButton));
-
-            selectButton.addActionListener(e -> {
+            add(new BottomPanel(theme.getDescription(), settingsPanel.getTheme().equals(this.theme), () -> {
                 ThemeChooser.this.settingsPanel.setTheme(this.theme);
-
                 ThemeChooser.this.close(DialogWrapper.OK_EXIT_CODE);
-            });
+            }).getRootPanel(), BorderLayout.SOUTH);
         }
 
         private void addIcon(JPanel parent, Path themeBasePath, String assetKey, String tooltip)
@@ -168,7 +125,7 @@ public class ThemeChooser extends DialogWrapper
                 BufferedImage image = ImageIO.read(Files.newInputStream(iconFile));
 
                 @SuppressWarnings("SuspiciousNameCombination") // icons are known to be a square
-                Image scaledImage = image.getScaledInstance(COLLUM_WIDTH, COLLUM_WIDTH, Image.SCALE_FAST);
+                        Image scaledImage = image.getScaledInstance(COLLUM_WIDTH, COLLUM_WIDTH, Image.SCALE_FAST);
 
                 JBLabel label = new JBLabel(new JBImageIcon(scaledImage));
                 label.setBorder(JBUI.Borders.empty(10));

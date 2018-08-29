@@ -17,7 +17,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.components;
 
 import com.almightyalpaca.jetbrains.plugins.discord.data.FileInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,10 +28,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DiscordIntegrationProjectComponent implements ProjectComponent
+public class ProjectComponent implements com.intellij.openapi.components.ProjectComponent
 {
     @NotNull
-    private final DiscordIntegrationApplicationComponent applicationComponent;
+    private final ApplicationComponent applicationComponent;
     @NotNull
     private final Project project;
     @NotNull
@@ -40,19 +39,19 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
     @Nullable
     private ProjectInfo projectInfo;
 
-    public DiscordIntegrationProjectComponent(@NotNull Project project)
+    public ProjectComponent(@NotNull Project project)
     {
         this.project = project;
 
-        this.applicationComponent = DiscordIntegrationApplicationComponent.getInstance();
+        this.applicationComponent = ApplicationComponent.getInstance();
         this.files = new HashMap<>();
     }
 
     @Nullable
     @Contract(pure = true, value = "null -> null; _ -> _")
-    public static DiscordIntegrationProjectComponent getInstance(@Nullable Project project)
+    public static ProjectComponent getInstance(@Nullable Project project)
     {
-        return project != null ? project.getComponent(DiscordIntegrationProjectComponent.class) : null;
+        return project != null ? project.getComponent(ProjectComponent.class) : null;
     }
 
     @NotNull
@@ -131,7 +130,7 @@ public class DiscordIntegrationProjectComponent implements ProjectComponent
     @Override
     public String getComponentName()
     {
-        return DiscordIntegrationApplicationComponent.class.getSimpleName();
+        return ApplicationComponent.class.getSimpleName();
     }
 
     public void fileUpdateName(VirtualFile file)

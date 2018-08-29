@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
@@ -41,7 +41,7 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
     @NotNull
     private static final Gson GSON = new Gson();
     @NotNull
-    private static final Logger LOG = LoggerFactory.getLogger(DiscordIntegrationApplicationComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationComponent.class);
 
     @Attribute
     private boolean showUnknownImageIDE = true;

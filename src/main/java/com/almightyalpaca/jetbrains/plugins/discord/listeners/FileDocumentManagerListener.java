@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.editor.Document;
@@ -46,7 +46,7 @@ public class FileDocumentManagerListener implements com.intellij.openapi.fileEdi
         for (Editor editor : editors)
         {
             Project project = editor.getProject();
-            DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+            ProjectComponent component = ProjectComponent.getInstance(project);
 
             if (component != null)
                 component.updateTimeAccessed(documentManager.getFile(document));

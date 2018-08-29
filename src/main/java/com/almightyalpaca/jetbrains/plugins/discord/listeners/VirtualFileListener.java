@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -43,7 +43,7 @@ public class VirtualFileListener implements com.intellij.openapi.vfs.VirtualFile
             {
                 Project project = editor.getProject();
 
-                DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+                ProjectComponent component = ProjectComponent.getInstance(project);
 
                 if (component != null && component.getFiles().containsKey(file))
                 {

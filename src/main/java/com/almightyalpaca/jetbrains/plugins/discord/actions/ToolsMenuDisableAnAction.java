@@ -15,12 +15,12 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.actions;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
-import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable;
-import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.storage.ProjectSettingsStorage;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -83,8 +83,8 @@ public class ToolsMenuDisableAnAction extends AnAction
         if (project == null)
             return;
 
-        DiscordIntegrationApplicationComponent applicationComponent = DiscordIntegrationApplicationComponent.getInstance();
-        DiscordIntegrationProjectComponent projectComponent = DiscordIntegrationProjectComponent.getInstance(project);
+        ApplicationComponent applicationComponent = ApplicationComponent.getInstance();
+        ProjectComponent projectComponent = ProjectComponent.getInstance(project);
 
         InstanceInfo instanceInfo = applicationComponent.getInstanceInfo();
 
@@ -92,14 +92,14 @@ public class ToolsMenuDisableAnAction extends AnAction
         {
             ProjectInfo projectInfo = projectComponent.getProjectInfo();
 
-            ProjectSettingsStorage settings = DiscordIntegrationProjectSettings.getInstance(project).getState();
+            ProjectSettingsStorage settings = ProjectSettings.getInstance(project).getState();
             settings.setEnabled(!settings.isEnabled());
 
             applicationComponent.updateData(data -> data.projectSetSettings(System.currentTimeMillis(), instanceInfo, projectInfo, settings));
 
             update(e);
 
-            DiscordIntegrationProjectConfigurable.getInstance(project).reset();
+            ProjectConfigurable.getInstance(project).reset();
         }
     }
 
@@ -111,6 +111,6 @@ public class ToolsMenuDisableAnAction extends AnAction
         if (project == null)
             return;
 
-        configurePresentation(e.getPresentation(), DiscordIntegrationProjectSettings.getInstance(project).getSettings().isEnabled());
+        configurePresentation(e.getPresentation(), ProjectSettings.getInstance(project).getSettings().isEnabled());
     }
 }

@@ -1,6 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.utils;
 
-import com.almightyalpaca.jetbrains.plugins.discord.notifications.DiscordIntegrationErrorNotification;
+import com.almightyalpaca.jetbrains.plugins.discord.notifications.ErrorNotification;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class FileUtil
         {
             e.printStackTrace();
 
-            Notifications.Bus.notify(new DiscordIntegrationErrorNotification(e.getMessage()));
+            Notifications.Bus.notify(new ErrorNotification(e.getMessage()));
         }
 
         return "";

@@ -15,7 +15,6 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.notifications;
 
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.IconLoader;
@@ -24,16 +23,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DiscordIntegrationNotification extends Notification
+public class Notification extends com.intellij.notification.Notification
 {
     public static final Icon ICON = IconLoader.getIcon("/icons/discord/logo/blurple.png");
 
-    public DiscordIntegrationNotification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type)
+    public Notification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type)
     {
         this(groupDisplayId, title, subtitle, content, type, null);
     }
 
-    public DiscordIntegrationNotification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type, @Nullable NotificationListener listener)
+    public Notification(@NotNull String groupDisplayId, @Nullable String title, @Nullable String subtitle, @Nullable String content, @NotNull NotificationType type, @Nullable NotificationListener listener)
     {
         super(groupDisplayId, ICON, title, subtitle, content, type, listener);
     }

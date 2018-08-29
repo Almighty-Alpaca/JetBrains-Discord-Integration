@@ -15,8 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
-import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings;
-import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings;
 import com.google.gson.Gson;
 import com.intellij.openapi.application.ApplicationInfo;
 import org.jetbrains.annotations.NotNull;
@@ -40,28 +39,28 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     @NotNull
     private final String id;
     @NotNull
-    private ApplicationSettings settings;
+    private com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings;
     private long timeAccessed;
     private long timeOpened;
     @Nullable
     private String connectedApplication = null;
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
+    public InstanceInfo(@NotNull String id, @NotNull com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened)
     {
         this(id, settings, distributionCode, distributionVersion, timeOpened, timeOpened);
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened, long timeAccessed)
+    public InstanceInfo(@NotNull String id, @NotNull com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings, @NotNull String distributionCode, @NotNull String distributionVersion, long timeOpened, long timeAccessed)
     {
         this(id, settings, new DistributionInfo(distributionCode, distributionVersion), timeOpened, timeAccessed);
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
+    public InstanceInfo(@NotNull String id, @NotNull com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed)
     {
         this(id, settings, distribution, timeOpened, timeAccessed, new HashMap<>());
     }
 
-    public InstanceInfo(@NotNull String id, @NotNull ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull Map<String, ProjectInfo> projects)
+    public InstanceInfo(@NotNull String id, @NotNull com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings, @NotNull DistributionInfo distribution, long timeOpened, long timeAccessed, @NotNull Map<String, ProjectInfo> projects)
     {
         this.id = id;
         this.settings = settings;
@@ -73,7 +72,7 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
 
     public InstanceInfo(@NotNull String id, @NotNull ApplicationInfo info)
     {
-        this(id, DiscordIntegrationApplicationSettings.getInstance().getSettings(), info
+        this(id, ApplicationSettings.getInstance().getSettings(), info
                 .getBuild()
                 .getProductCode(), info.getFullVersion(), System.currentTimeMillis());
     }
@@ -122,12 +121,12 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
     }
 
     @NotNull
-    public ApplicationSettings getSettings()
+    public com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings getSettings()
     {
         return this.settings;
     }
 
-    void setSettings(@NotNull ApplicationSettings settings)
+    void setSettings(@NotNull com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings settings)
     {
         this.settings = settings;
     }

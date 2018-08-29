@@ -16,7 +16,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -36,7 +36,7 @@ public class FileEditorManagerListener implements com.intellij.openapi.fileEdito
         LOG.trace("FileEditorManagerListener#fileOpened({}, {})", source, file);
 
         Project project = source.getProject();
-        DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+        ProjectComponent component = ProjectComponent.getInstance(project);
 
         if (component != null)
             component.fileUpdateTimeAccessed(file);
@@ -48,7 +48,7 @@ public class FileEditorManagerListener implements com.intellij.openapi.fileEdito
         LOG.trace("FileEditorManagerListener#fileClosed({}, {})", source, file);
 
         Project project = source.getProject();
-        DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+        ProjectComponent component = ProjectComponent.getInstance(project);
 
         if (component != null)
             component.fileRemove(file);
@@ -60,7 +60,7 @@ public class FileEditorManagerListener implements com.intellij.openapi.fileEdito
         LOG.trace("FileEditorManagerListener#selectionChanged({})", event);
 
         Project project = event.getManager().getProject();
-        DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+        ProjectComponent component = ProjectComponent.getInstance(project);
 
         if (component != null)
             component.fileUpdateTimeAccessed(event.getNewFile());

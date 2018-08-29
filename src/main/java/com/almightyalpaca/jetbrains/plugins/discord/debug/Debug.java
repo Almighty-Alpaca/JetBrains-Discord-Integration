@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.debug;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
-import com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Debug
 {
     @NotNull
-    private static final DiscordIntegrationApplicationSettings SETTINGS = DiscordIntegrationApplicationSettings.getInstance();
+    private static final ApplicationSettings SETTINGS = ApplicationSettings.getInstance();
     @NotNull
     private static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").withZone(ZoneId.systemDefault()).withLocale(Locale.getDefault());
     @NotNull
@@ -62,7 +62,7 @@ public class Debug
 
     public static void printDebugInfo(@Nullable String folder)
     {
-        log("forced debug data dump", Level.TRACE, Objects.toString(DiscordIntegrationApplicationComponent.getInstance().getInstanceInfo()));
+        log("forced debug data dump", Level.TRACE, Objects.toString(ApplicationComponent.getInstance().getInstanceInfo()));
     }
 
     public enum Level

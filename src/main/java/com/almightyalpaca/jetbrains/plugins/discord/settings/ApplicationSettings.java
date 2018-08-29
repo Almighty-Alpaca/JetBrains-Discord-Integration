@@ -24,23 +24,23 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
-@State(name = "DiscordIntegrationApplicationSettings", storages = @Storage("discord.xml"))
-public class DiscordIntegrationApplicationSettings implements PersistentStateComponent<ApplicationSettingsStorage>, SettingsProvider<ApplicationSettingsStorage>
+@State(name = "ApplicationSettings", storages = @Storage("discord.xml"))
+public class ApplicationSettings implements PersistentStateComponent<ApplicationSettingsStorage>, SettingsProvider<ApplicationSettingsStorage>
 {
     @NotNull
     private final Application application;
     @NotNull
     private final ApplicationSettingsStorage state = new ApplicationSettingsStorage();
 
-    public DiscordIntegrationApplicationSettings(@NotNull Application application)
+    public ApplicationSettings(@NotNull Application application)
     {
         this.application = application;
     }
 
     @NotNull
-    public static DiscordIntegrationApplicationSettings getInstance()
+    public static ApplicationSettings getInstance()
     {
-        return ServiceManager.getService(DiscordIntegrationApplicationSettings.class);
+        return ServiceManager.getService(ApplicationSettings.class);
     }
 
     @NotNull

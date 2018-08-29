@@ -23,19 +23,19 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
-                             instance="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
+                             instance="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable"/>
         <projectService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectConfigurable"/>
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable"/>
         <applicationService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationApplicationSettings"/>
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings"/>
         <projectService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.DiscordIntegrationProjectSettings"/>
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectSettings"/>
     </extensions>
 
     <application-components>
         <component>
             <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent
+                com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent
             </implementation-class>
         </component>
     </application-components>
@@ -43,7 +43,7 @@
     <project-components>
         <component>
             <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent
+                com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent
             </implementation-class>
         </component>
     </project-components>

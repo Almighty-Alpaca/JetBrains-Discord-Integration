@@ -15,7 +15,7 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.listeners;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
@@ -37,7 +37,7 @@ public class EditorMouseListener implements com.intellij.openapi.editor.event.Ed
         FileDocumentManager documentManager = FileDocumentManager.getInstance();
 
         Project project = event.getEditor().getProject();
-        DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(project);
+        ProjectComponent component = ProjectComponent.getInstance(project);
 
         if (component != null)
             component.updateTimeAccessed(documentManager.getFile(event.getEditor().getDocument()));

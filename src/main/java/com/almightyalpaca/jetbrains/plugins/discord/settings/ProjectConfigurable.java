@@ -15,10 +15,11 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.settings;
 
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationApplicationComponent;
-import com.almightyalpaca.jetbrains.plugins.discord.components.DiscordIntegrationProjectComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationComponent;
+import com.almightyalpaca.jetbrains.plugins.discord.components.ProjectComponent;
 import com.almightyalpaca.jetbrains.plugins.discord.data.InstanceInfo;
 import com.almightyalpaca.jetbrains.plugins.discord.data.ProjectInfo;
+import com.almightyalpaca.jetbrains.plugins.discord.settings.gui.SettingsPanel;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -28,30 +29,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DiscordIntegrationProjectConfigurable implements SearchableConfigurable
+public class ProjectConfigurable implements SearchableConfigurable
 {
-    private final DiscordIntegrationApplicationComponent applicationComponent = DiscordIntegrationApplicationComponent.getInstance();
+    private final ApplicationComponent applicationComponent = ApplicationComponent.getInstance();
 
     @NotNull
     private final Project project;
     @NotNull
-    private final DiscordIntegrationApplicationSettings settingsProviderApplication;
+    private final ApplicationSettings settingsProviderApplication;
     @NotNull
-    private final DiscordIntegrationProjectSettings settingsProviderProject;
+    private final ProjectSettings settingsProviderProject;
     @Nullable
-    private DiscordIntegrationSettingsPanel panel;
+    private SettingsPanel panel;
 
-    public DiscordIntegrationProjectConfigurable(@NotNull Project project)
+    public ProjectConfigurable(@NotNull Project project)
     {
         this.project = project;
 
-        this.settingsProviderApplication = DiscordIntegrationApplicationSettings.getInstance();
-        this.settingsProviderProject = DiscordIntegrationProjectSettings.getInstance(project);
+        this.settingsProviderApplication = ApplicationSettings.getInstance();
+        this.settingsProviderProject = ProjectSettings.getInstance(project);
     }
 
-    public static DiscordIntegrationProjectConfigurable getInstance(@NotNull Project project)
+    public static ProjectConfigurable getInstance(@NotNull Project project)
     {
-        return ServiceManager.getService(project, DiscordIntegrationProjectConfigurable.class);
+        return ServiceManager.getService(project, ProjectConfigurable.class);
     }
 
     @NotNull
@@ -80,7 +81,7 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
     public JComponent createComponent()
     {
         if (this.panel == null)
-            this.panel = new DiscordIntegrationSettingsPanel(this.settingsProviderApplication, this.settingsProviderProject);
+            this.panel = new SettingsPanel(this.settingsProviderApplication, this.settingsProviderProject);
 
         return this.panel.getRootPanel();
     }
@@ -99,7 +100,7 @@ public class DiscordIntegrationProjectConfigurable implements SearchableConfigur
             this.panel.apply();
 
             InstanceInfo instance = this.applicationComponent.getInstanceInfo();
-            DiscordIntegrationProjectComponent component = DiscordIntegrationProjectComponent.getInstance(this.settingsProviderProject.getProject());
+            ProjectComponent component = ProjectComponent.getInstance(this.settingsProviderProject.getProject());
 
             if (component != null)
             {
