@@ -49,7 +49,7 @@ public class Icon
                         Pair::getKey,
                         Collectors.mapping(
                                 Pair::getValue,
-                                Collectors.toSet())));
+                                Collectors.toCollection(LinkedHashSet::new))));
 
         return new Icon(name, assetKey, matchers);
     }
