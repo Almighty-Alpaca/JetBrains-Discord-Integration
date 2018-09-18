@@ -5,7 +5,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.swing.ModifiedFlowLayout;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.Icon;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.Theme;
 import com.almightyalpaca.jetbrains.plugins.discord.themes.ThemeLoader;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
@@ -27,7 +29,19 @@ import java.util.stream.Collectors;
 
 public class ThemeChooser extends DialogWrapper
 {
-    private static final int COLLUM_WIDTH = 64;
+    private static final int ICON_SIZE = 64;
+    private static final int BORDER_SIZE = 10;
+    private static final ImageIcon DEFAULT_ICON;
+
+    static
+    {
+        BufferedImage image = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.setBackground(JBColor.foreground());
+
+        DEFAULT_ICON = new ImageIcon(image);
+    }
+
     @NotNull
     private final SettingsPanel settingsPanel;
 
@@ -119,23 +133,30 @@ public class ThemeChooser extends DialogWrapper
 
         private void addIcon(JPanel parent, Path themeBasePath, String assetKey, String tooltip)
         {
-            try
-            {
-                Path iconFile = themeBasePath.resolve(assetKey + "_low.png");
-                BufferedImage image = ImageIO.read(Files.newInputStream(iconFile));
+            JBLabel label = new JBLabel();
+            label.setIcon(DEFAULT_ICON);
+            label.setPreferredSize(new Dimension(ICON_SIZE + BORDER_SIZE * 2, ICON_SIZE + BORDER_SIZE * 2));
 
-                @SuppressWarnings("SuspiciousNameCombination") // icons are known to be a square
-                        Image scaledImage = image.getScaledInstance(COLLUM_WIDTH, COLLUM_WIDTH, Image.SCALE_FAST);
+            label.setBorder(JBUI.Borders.empty(BORDER_SIZE));
+            label.setToolTipText(tooltip);
+            parent.add(label);
 
-                JBLabel label = new JBLabel(new JBImageIcon(scaledImage));
-                label.setBorder(JBUI.Borders.empty(10));
-                label.setToolTipText(tooltip);
-                parent.add(label);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                try
+                {
+                    Path iconFile = themeBasePath.resolve(assetKey + "_low.png");
+                    BufferedImage image = ImageIO.read(Files.newInputStream(iconFile));
+
+                    Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_FAST);
+
+                    label.setIcon(new JBImageIcon(scaledImage));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            });
+
         }
     }
 }
