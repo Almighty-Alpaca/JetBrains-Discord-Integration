@@ -4,6 +4,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.utils.DesktopUtils;
 import com.petebevin.markdown.MarkdownProcessor;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 
 public class BottomPanel
 {
@@ -21,7 +22,10 @@ public class BottomPanel
 
         missingAnIconButton.addActionListener(e -> DesktopUtils.openLinkInBrowser("https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration-Icons/issues/new"));
         selectButton.addActionListener(e -> selectCallback.run());
-        descriptionPane.addHyperlinkListener(e -> DesktopUtils.openLinkInBrowser(e.getURL().toString()));
+        descriptionPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+                DesktopUtils.openLinkInBrowser(e.getURL().toString());
+        });
     }
 
     public JPanel getRootPanel()
