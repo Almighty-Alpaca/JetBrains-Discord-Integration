@@ -100,28 +100,31 @@ public class ThemeChooser extends DialogWrapper
             filePanel.setLayout(langPanelLayout);
             scrollPane.getViewport().add(filePanel);
 
-            Path themeBasePath = ThemeLoader.getInstance().getIconBaseFolder().resolve(this.theme.getId());
 
-            this.theme.getIcons().stream()
-                    .collect(Collectors.groupingBy(Icon::getAssetKey, TreeMap::new, Collectors.toSet())).entrySet().stream()
-                    .sorted(Comparator.comparing((Map.Entry<String, Set<Icon>> entry) ->
-                            entry.getValue().stream()
-                                    .findAny()
-                                    .orElseThrow(IllegalStateException::new)
-                                    .getMatchers("code")
-                                    .isEmpty())
-                            .reversed()
-                            .thenComparing(Map.Entry::getKey))
-                    .forEach(entry ->
-                            addIcon(filePanel,
-                                    themeBasePath,
-                                    entry.getKey(),
-                                    entry.getValue().stream()
-                                            .map(Icon::getName)
-                                            .distinct()
-                                            .sorted()
-                                            .collect(Collectors.joining("\n"))
-                            ));
+            ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                Path themeBasePath = ThemeLoader.getInstance().getIconBaseFolder().resolve(this.theme.getId());
+
+                this.theme.getIcons().stream()
+                        .collect(Collectors.groupingBy(Icon::getAssetKey, TreeMap::new, Collectors.toSet())).entrySet().stream()
+                        .sorted(Comparator.comparing((Map.Entry<String, Set<Icon>> entry) ->
+                                entry.getValue().stream()
+                                        .findAny()
+                                        .orElseThrow(IllegalStateException::new)
+                                        .getMatchers("code")
+                                        .isEmpty())
+                                .reversed()
+                                .thenComparing(Map.Entry::getKey))
+                        .forEach(entry ->
+                                addIcon(filePanel,
+                                        themeBasePath,
+                                        entry.getKey(),
+                                        entry.getValue().stream()
+                                                .map(Icon::getName)
+                                                .distinct()
+                                                .sorted()
+                                                .collect(Collectors.joining("\n"))
+                                ));
+            });
 
             JBPanel<JBPanel> bottomPanel = new JBPanel<>();
             bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -147,7 +150,7 @@ public class ThemeChooser extends DialogWrapper
                     Path iconFile = themeBasePath.resolve(assetKey + "_low.png");
                     BufferedImage image = ImageIO.read(Files.newInputStream(iconFile));
 
-                    Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_FAST);
+                    Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 
                     label.setIcon(new JBImageIcon(scaledImage));
                 }
