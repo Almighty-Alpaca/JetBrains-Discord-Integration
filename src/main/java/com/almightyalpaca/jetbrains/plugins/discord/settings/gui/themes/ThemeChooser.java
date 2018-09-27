@@ -22,8 +22,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,31 +98,26 @@ public class ThemeChooser extends DialogWrapper
             filePanel.setLayout(langPanelLayout);
             scrollPane.getViewport().add(filePanel);
 
-
-            ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                Path themeBasePath = ThemeLoader.getInstance().getIconBaseFolder().resolve(this.theme.getId());
-
-                this.theme.getIcons().stream()
-                        .collect(Collectors.groupingBy(Icon::getAssetKey, TreeMap::new, Collectors.toSet())).entrySet().stream()
-                        .sorted(Comparator.comparing((Map.Entry<String, Set<Icon>> entry) ->
-                                entry.getValue().stream()
-                                        .findAny()
-                                        .orElseThrow(IllegalStateException::new)
-                                        .getMatchers("code")
-                                        .isEmpty())
-                                .reversed()
-                                .thenComparing(Map.Entry::getKey))
-                        .forEach(entry ->
-                                addIcon(filePanel,
-                                        themeBasePath,
-                                        entry.getKey(),
-                                        entry.getValue().stream()
-                                                .map(Icon::getName)
-                                                .distinct()
-                                                .sorted()
-                                                .collect(Collectors.joining("\n"))
-                                ));
-            });
+            ApplicationManager.getApplication().executeOnPooledThread(() ->
+                    this.theme.getIcons().stream()
+                            .collect(Collectors.groupingBy(Icon::getAssetKey, TreeMap::new, Collectors.toSet())).entrySet().stream()
+                            .sorted(Comparator.comparing((Map.Entry<String, Set<Icon>> entry) ->
+                                    entry.getValue().stream()
+                                            .findAny()
+                                            .orElseThrow(IllegalStateException::new)
+                                            .getMatchers("code")
+                                            .isEmpty())
+                                    .reversed()
+                                    .thenComparing(Map.Entry::getKey))
+                            .forEach(entry ->
+                                    addIcon(filePanel,
+                                            entry.getKey(),
+                                            entry.getValue().stream()
+                                                    .map(Icon::getName)
+                                                    .distinct()
+                                                    .sorted()
+                                                    .collect(Collectors.joining("\n"))
+                                    )));
 
             JBPanel<JBPanel> bottomPanel = new JBPanel<>();
             bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -134,7 +127,7 @@ public class ThemeChooser extends DialogWrapper
             }).getRootPanel(), BorderLayout.SOUTH);
         }
 
-        private void addIcon(JPanel parent, Path themeBasePath, String assetKey, String tooltip)
+        private void addIcon(JPanel parent, String assetKey, String tooltip)
         {
             JBLabel label = new JBLabel();
             label.setIcon(DEFAULT_ICON);
@@ -147,8 +140,7 @@ public class ThemeChooser extends DialogWrapper
             ApplicationManager.getApplication().executeOnPooledThread(() -> {
                 try
                 {
-                    Path iconFile = themeBasePath.resolve(assetKey + "_low.png");
-                    BufferedImage image = ImageIO.read(Files.newInputStream(iconFile));
+                    BufferedImage image = ImageIO.read(ThemeLoader.getInstance().getIcon(theme.getId(), assetKey));
 
                     Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 

@@ -15,7 +15,7 @@
  */
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.3.7'
+    id 'org.jetbrains.intellij' version '0.3.11'
     id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
@@ -52,12 +52,6 @@ dependencies {
     compile group: 'club.minnced', name: 'Java-DiscordRPC', version: 'v2.0.1'
 
     compile group: 'org.jgroups', name: 'jgroups', version: '4.0.13.Final'
-
-    compile(group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.0.2.201807311906-r') {
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'com.jcraft'
-        exclude group: 'org.slf4j'
-    }
 }
 
 patchPluginXml {
