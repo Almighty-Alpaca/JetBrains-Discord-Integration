@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -50,8 +49,9 @@ public class ThemeLoader
         try
         {
             URL_LATEST_GITHUB_RELEASE = new URL("https://api.github.com/repos/Almighty-Alpaca/JetBrains-Discord-Integration-Icons/releases/latest");
+            Files.createDirectories(TEMP_FOLDER);
         }
-        catch (MalformedURLException e)
+        catch (IOException e)
         {
             throw new RuntimeException(e);
         }
@@ -79,7 +79,7 @@ public class ThemeLoader
     }
 
     @NotNull
-    private SortedMap<String, Theme> loadThemes() throws IOException
+    private SortedMap<String, Theme> loadThemes()
     {
         ZipFile zip = this.getIconZip();
 
