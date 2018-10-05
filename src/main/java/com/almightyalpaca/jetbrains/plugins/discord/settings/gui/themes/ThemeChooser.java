@@ -137,21 +137,22 @@ public class ThemeChooser extends DialogWrapper
             label.setToolTipText(tooltip);
             parent.add(label);
 
-            ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                try
-                {
-                    BufferedImage image = ImageIO.read(ThemeLoader.getInstance().getIcon(theme.getId(), assetKey));
+            ApplicationManager.getApplication().executeOnPooledThread(() -> setIcon(label, assetKey));
+        }
 
-                    Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
+        private void setIcon(JBLabel label, String assetKey)
+        {
+            try
+            {
+                BufferedImage image = ImageIO.read(ThemeLoader.getInstance().getIcon(theme.getId(), assetKey));
 
-                    label.setIcon(new JBImageIcon(scaledImage));
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            });
+                Image scaledImage = image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 
+                label.setIcon(new JBImageIcon(scaledImage));
+            }
+            catch (IOException ignored)
+            {
+            }
         }
     }
 }

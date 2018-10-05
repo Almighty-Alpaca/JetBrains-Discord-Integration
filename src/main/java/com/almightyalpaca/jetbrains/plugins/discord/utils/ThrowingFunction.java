@@ -21,8 +21,8 @@ public interface ThrowingFunction<T, R> extends Function<T, R>
      * Applies this function to the given argument.
      *
      * @param t the function argument
-     * @throws Exception abitrary Exception
      * @return the function result
+     * @throws Exception abitrary Exception
      */
     R applyThrowing(T t) throws Exception;
 }

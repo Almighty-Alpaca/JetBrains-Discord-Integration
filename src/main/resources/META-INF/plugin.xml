@@ -24,12 +24,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable groupId="tools" groupWeight="150" displayName="Discord" id="discord"
                              instance="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable"/>
-        <projectService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable"/>
-        <applicationService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings"/>
-        <projectService
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectSettings"/>
+        <projectService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectConfigurable"/>
+        <applicationService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings"/>
+        <projectService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.settings.ProjectSettings"/>
     </extensions>
 
     <application-components>

@@ -60,7 +60,7 @@ public class ThemeLoader
     @NotNull
     private final SortedMap<String, Theme> themes;
 
-    private ThemeLoader() throws IOException
+    private ThemeLoader()
     {
         this.themes = Collections.unmodifiableSortedMap(loadThemes());
     }
@@ -161,28 +161,19 @@ public class ThemeLoader
     public static class Singleton
     {
         @NotNull
-        private static final ThemeLoader instance;
+        private static final ThemeLoader INSTANCE;
 
         static
         {
-            try
-            {
-                instance = new ThemeLoader();
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            INSTANCE = new ThemeLoader();
         }
 
-        protected Singleton()
-        {
-        }
+        protected Singleton() {}
 
         @NotNull
         public static ThemeLoader getInstance()
         {
-            return instance;
+            return INSTANCE;
         }
     }
 }

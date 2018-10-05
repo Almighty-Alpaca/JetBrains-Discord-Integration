@@ -270,7 +270,7 @@ public class ApplicationSettingsStorage extends SettingsStorage implements Appli
         Theme theme = ThemeLoader.getInstance().getThemes().get(this.theme);
 
         if (theme == null)
-            theme =  ThemeLoader.getInstance().getThemes().get("classic");
+            theme = ThemeLoader.getInstance().getThemes().get("classic");
 
         return theme;
     }

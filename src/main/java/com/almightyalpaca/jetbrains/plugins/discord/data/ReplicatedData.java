@@ -455,7 +455,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
     {
         LOG.trace("ReplicatedData#fileSetFirstLine({}, {}, {}, {}, {})", timestamp, instance, project, file, firstLine);
 
-        if (timestamp < 0 || instance == null || project == null || file == null|| firstLine == null)
+        if (timestamp < 0 || instance == null || project == null || file == null || firstLine == null)
             return;
 
         this._fileSetFirstLine(timestamp, instance.getId(), project.getId(), file.getId(), firstLine);
@@ -502,8 +502,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
             // @formatter:off
             if (instance.getSettings().isHideAfterPeriodOfInactivity()
                     && instance.getSettings().isResetOpenTimeAfterInactivity()
-                    && instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
-                        < System.currentTimeMillis())
+                    && instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) < System.currentTimeMillis())
                 // @formatter:on
                 instance.setTimeOpened(timeAccessed);
 
@@ -528,8 +527,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 // @formatter:off
                 if (instance.getSettings().isHideAfterPeriodOfInactivity()
                         && instance.getSettings().isResetOpenTimeAfterInactivity()
-                        && project.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
-                            < System.currentTimeMillis())
+                        && project.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) < System.currentTimeMillis())
                     // @formatter:on
                     project.setTimeOpened(timeAccessed);
 
@@ -558,8 +556,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 // @formatter:off
                 if (instance.getSettings().isHideAfterPeriodOfInactivity()
                         && instance.getSettings().isResetOpenTimeAfterInactivity()
-                        && file.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS)
-                            < System.currentTimeMillis())
+                        && file.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) < System.currentTimeMillis())
                     // @formatter:on
                     file.setTimeOpened(timeAccessed);
 

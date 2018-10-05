@@ -143,11 +143,11 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
             return false;
         FileInfo fileInfo = (FileInfo) o;
         return isReadOnly() == fileInfo.isReadOnly() &&
-               getTimeAccessed() == fileInfo.getTimeAccessed() &&
-               getTimeOpened() == fileInfo.getTimeOpened() &&
-               Objects.equals(getId(), fileInfo.getId()) &&
-               Objects.equals(getName(), fileInfo.getName()) &&
-               Objects.equals(getFirstLine(), fileInfo.getFirstLine());
+                getTimeAccessed() == fileInfo.getTimeAccessed() &&
+                getTimeOpened() == fileInfo.getTimeOpened() &&
+                Objects.equals(getId(), fileInfo.getId()) &&
+                Objects.equals(getName(), fileInfo.getName()) &&
+                Objects.equals(getFirstLine(), fileInfo.getFirstLine());
     }
 
     @Override

@@ -96,7 +96,7 @@ public class Icon
             return false;
         Icon icon = (Icon) o;
         return Objects.equals(getName(), icon.getName()) &&
-               Objects.equals(getAssetKey(), icon.getAssetKey());
+                Objects.equals(getAssetKey(), icon.getAssetKey());
     }
 
     @Override
