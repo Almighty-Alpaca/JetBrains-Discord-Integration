@@ -69,7 +69,7 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                 {
                     presence.state =
                             (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") +
-                            (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
+                                    (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
                     Icon language = theme.matchLanguage(file.getName(), file.getFirstLine());
 
@@ -91,7 +91,7 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                     if (language.equals(Icon.EMPTY) || instance.getSettings().isForceBigIDEIcon())
                     {
                         presence.largeImageKey = ide.getAssetKey();
-                        presence.largeImageText =  ide.getName();
+                        presence.largeImageText = ide.getName();
 
                         presence.smallImageKey = language.getAssetKey();
                         presence.smallImageText = language.getName();
@@ -102,28 +102,27 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                         presence.largeImageText = language.getName();
 
                         presence.smallImageKey = ide.getAssetKey();
-                        presence.smallImageText =  ide.getName();
+                        presence.smallImageText = ide.getName();
                     }
                 }
             }
 
-//            if (presence.largeImageKey == null || presence.largeImageKey.isEmpty())
-//            {
-//
-//                Icon ide = theme.matchApplication(distribution.getCode());
-//
-//                if (ide == null)
-//                    if (instance.getSettings().isShowUnknownImageIDE())
-//                        ide = Icon.UNKNOWN;
-//                    else
-//                        ide = Icon.EMPTY;
-//
-//                presence.largeImageKey = ide.getAssetKey();
-//                presence.largeImageText = ide.getName();
-//
-//                presence.smallImageKey = null;
-//                presence.smallImageText = null;
-//            }
+            if (presence.largeImageKey == null || presence.largeImageKey.isEmpty())
+            {
+                Icon ide = theme.matchApplication(distribution.getCode());
+
+                if (ide == null)
+                    if (instance.getSettings().isShowUnknownImageIDE())
+                        ide = Icon.UNKNOWN;
+                    else
+                        ide = Icon.EMPTY;
+
+                presence.largeImageKey = ide.getAssetKey();
+                presence.largeImageText = ide.getName();
+
+                presence.smallImageKey = null;
+                presence.smallImageText = null;
+            }
         }
 
         return presence;
