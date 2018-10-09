@@ -48,7 +48,7 @@ There is a [dedicated Discord server](https://discord.gg/SvuyuMP) for the JetBra
 
 #### ...or why not join the JetBrains community server
 
-There is also a main [JetBrains community Discord server](https://discord.gg/qV23GXh) where many users of JetBrains product hang out alongside some of the JetBrains team.
+There is also a main [JetBrains community Discord server](https://discord.gg/qV23GXh) where many users of JetBrains products hang out alongside some of the JetBrains team.
 
 [![JetBrains Community Discord Server](https://discordapp.com/api/guilds/433980600391696384/embed.png?style=banner2)](https://discord.gg/qV23GXh)
 
