@@ -18,11 +18,11 @@
 
 ## Installation...
 
-### ...from the JetBrains Plugin Repository
+### ...from the JetBrains Plugin Repository (this is what you want to do)
 
 Open your IDE, go to Settings > Plugins > Browse repositories... > Search for "Discord" and select this plugin (be sure to select the right one :stuck_out_tongue:)
 
-### ...from source
+#### ...or from source
 
 For Windows run the following lines in your terminal
 ```bash
@@ -33,6 +33,25 @@ cd JetBrains-Discord-Integration
 (On linux you probably need to make `gradlew` executable before the last step using `chmod +x gradlew`)
 
 Then open your IDE, go to Settings > Plugins > Install plugin from disk... > Navigate to the folder you cloned the source to > then to `build/distributions/` and select `JetBrains-Discord-Integration-X.X.X.zip`
+
+## Support...
+
+### ...using GitHub issues
+
+For support with this plugin, please make use of the GitHub issues by submitting a new issue when you experience any issues with the plugin. Please check whether someone has reported your issue already before creating your own report. Please include as much detail as possible in your issue and how to reproduce it if possible.
+
+### ...or by joining the plugin Discord server
+
+There is a [dedicated Discord server](https://discord.gg/SvuyuMP) for the JetBrains Discord Integration Plugin where we provide support and have many of the users of the plugin chilling out.
+
+[![JetBrains Discord Integration Plugin Server](https://discordapp.com/api/guilds/464395429392678912/embed.png?style=banner2)](https://discord.gg/SvuyuMP)
+
+#### ...or why not join the JetBrains community server
+
+There is also a main [JetBrains community Discord server](https://discord.gg/qV23GXh) where many users of JetBrains product hang out alongside some of the JetBrains team.
+
+[![JetBrains Community Discord Server](https://discordapp.com/api/guilds/433980600391696384/embed.png?style=banner2)](https://discord.gg/qV23GXh)
+
 
 ## License
 
