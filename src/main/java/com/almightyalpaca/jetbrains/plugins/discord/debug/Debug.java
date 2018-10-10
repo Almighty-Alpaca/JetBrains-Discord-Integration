@@ -4,7 +4,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.components.ApplicationCompon
 import com.almightyalpaca.jetbrains.plugins.discord.settings.ApplicationSettings;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +23,10 @@ public class Debug
     @NotNull
     private static final ApplicationSettings SETTINGS = ApplicationSettings.getInstance();
     @NotNull
-    private static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").withZone(ZoneId.systemDefault()).withLocale(Locale.getDefault());
+    private static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd_HH-mm-ss")
+            .withZone(ZoneId.systemDefault())
+            .withLocale(Locale.getDefault());
     @NotNull
     private static final String PRODUCT_CODE = ApplicationInfo.getInstance().getBuild().getProductCode();
     private static final long START_TIME = ApplicationManager.getApplication().getStartTime();
@@ -45,11 +47,14 @@ public class Debug
         {
             try
             {
-                Path path = Paths.get(folder == null ? SETTINGS.getSettings().getDebugLogFolder() : folder, PRODUCT_CODE + "-" + FILE_NAME_FORMATTER.format(Instant.ofEpochMilli(START_TIME)) + ".log");
+                Path path = Paths.get(folder == null
+                                ? SETTINGS.getSettings().getDebugLogFolder()
+                                : folder,
+                        PRODUCT_CODE + "-" + FILE_NAME_FORMATTER.format(Instant.ofEpochMilli(START_TIME)) + ".log");
 
                 Files.createDirectories(path.getParent());
 
-                String line = StringUtils.leftPad(name, 100) + ": " + level.getName() + " - " + message + System.lineSeparator();
+                String line = String.format("%100s", ": " + level.getName() + " - " + message) + System.lineSeparator();
 
                 Files.write(path, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
             }
@@ -77,7 +82,7 @@ public class Debug
 
         Level(String name)
         {
-            this.name = StringUtils.leftPad(name, 5);
+            this.name = String.format("%5s", name);
         }
 
         public String getName()

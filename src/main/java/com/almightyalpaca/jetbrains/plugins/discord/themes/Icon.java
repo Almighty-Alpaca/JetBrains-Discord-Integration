@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
+import com.almightyalpaca.jetbrains.plugins.discord.utils.Pair;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,9 +46,9 @@ public class Icon
                         .stream(entry.getValue().getAsJsonArray().spliterator(), false)
                         .map(jsonElement -> Pair.of(entry.getKey().toLowerCase(), Matcher.fromJson(jsonElement.getAsJsonObject()))))
                 .collect(Collectors.groupingBy(
-                        Pair::getKey,
+                        Pair::getLeft,
                         Collectors.mapping(
-                                Pair::getValue,
+                                Pair::getRight,
                                 Collectors.toCollection(LinkedHashSet::new))));
 
         return new Icon(name, assetKey, matchers);

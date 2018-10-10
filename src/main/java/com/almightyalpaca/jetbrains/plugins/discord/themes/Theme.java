@@ -1,9 +1,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
+import com.almightyalpaca.jetbrains.plugins.discord.utils.Pair;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,7 +103,7 @@ public class Theme implements Comparable<Theme>
     {
         return values.stream()
                 .map(p -> entities.stream()
-                        .filter(e -> e.matches(p.getKey(), p.getValue()))
+                        .filter(e -> e.matches(p.getLeft(), p.getRight()))
                         .findFirst()
                         .orElse(null))
                 .filter(Objects::nonNull)

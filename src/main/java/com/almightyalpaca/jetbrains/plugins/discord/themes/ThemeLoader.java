@@ -1,13 +1,13 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FileUtil;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FilenameUtils;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.Predicates;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.ThrowingFunction;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -87,7 +88,7 @@ public class ThemeLoader
 
         return zip.stream()
                 .filter(Predicates.negate(ZipEntry::isDirectory))
-                .filter(entry -> StringUtils.endsWithIgnoreCase(entry.getName(), ".json"))
+                .filter(entry -> entry.getName().toLowerCase().endsWith(".json"))
                 .map((ThrowingFunction<ZipEntry, Theme>) entry -> Theme.fromJson(
                         FilenameUtils.getBaseName(entry.getName()),
                         parser.parse(new InputStreamReader(zip.getInputStream(entry)))
@@ -128,7 +129,7 @@ public class ThemeLoader
 
                 String currentVersion = LATEST_GITHUB_RELEASE.get("tag_name").getAsString().trim();
 
-                if (!Files.exists(ICON_FILE) || !StringUtils.equalsIgnoreCase(localVersion, currentVersion))
+                if (!Files.exists(ICON_FILE) || !Objects.equals(localVersion.toLowerCase(), currentVersion.toLowerCase()))
                 {
                     JsonArray assets = LATEST_GITHUB_RELEASE.get("assets").getAsJsonArray();
 

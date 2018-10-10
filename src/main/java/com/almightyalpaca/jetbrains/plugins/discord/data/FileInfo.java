@@ -16,9 +16,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
 import com.almightyalpaca.jetbrains.plugins.discord.utils.FileUtil;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FilenameUtils;
 import com.google.gson.Gson;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,11 +143,11 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
             return false;
         FileInfo fileInfo = (FileInfo) o;
         return isReadOnly() == fileInfo.isReadOnly() &&
-                getTimeAccessed() == fileInfo.getTimeAccessed() &&
-                getTimeOpened() == fileInfo.getTimeOpened() &&
-                Objects.equals(getId(), fileInfo.getId()) &&
-                Objects.equals(getName(), fileInfo.getName()) &&
-                Objects.equals(getFirstLine(), fileInfo.getFirstLine());
+               getTimeAccessed() == fileInfo.getTimeAccessed() &&
+               getTimeOpened() == fileInfo.getTimeOpened() &&
+               Objects.equals(getId(), fileInfo.getId()) &&
+               Objects.equals(getName(), fileInfo.getName()) &&
+               Objects.equals(getFirstLine(), fileInfo.getFirstLine());
     }
 
     @Override
