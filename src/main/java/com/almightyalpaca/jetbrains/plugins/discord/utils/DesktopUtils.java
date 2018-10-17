@@ -19,7 +19,7 @@ public class DesktopUtils
         {
             e.printStackTrace();
 
-            Notifications.Bus.notify(new ErrorNotification(e.getMessage()));
+            Notifications.Bus.notify(new ErrorNotification("Failed to open link", e.getMessage()));
         }
     }
 }

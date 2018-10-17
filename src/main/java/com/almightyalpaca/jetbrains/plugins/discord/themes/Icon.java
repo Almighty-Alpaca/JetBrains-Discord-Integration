@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
-import com.almightyalpaca.jetbrains.plugins.discord.utils.Pair;
 import com.google.gson.JsonObject;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,11 +44,11 @@ public class Icon
         Map<String, Set<Matcher>> matchers = matcherObject.entrySet().stream()
                 .flatMap(entry -> StreamSupport
                         .stream(entry.getValue().getAsJsonArray().spliterator(), false)
-                        .map(jsonElement -> Pair.of(entry.getKey().toLowerCase(), Matcher.fromJson(jsonElement.getAsJsonObject()))))
+                        .map(jsonElement -> new Pair<>(entry.getKey().toLowerCase(), Matcher.fromJson(jsonElement.getAsJsonObject()))))
                 .collect(Collectors.groupingBy(
-                        Pair::getLeft,
+                        p -> p.getFirst(),
                         Collectors.mapping(
-                                Pair::getRight,
+                                p -> p.getSecond(),
                                 Collectors.toCollection(LinkedHashSet::new))));
 
         return new Icon(name, assetKey, matchers);
@@ -96,7 +96,7 @@ public class Icon
             return false;
         Icon icon = (Icon) o;
         return Objects.equals(getName(), icon.getName()) &&
-                Objects.equals(getAssetKey(), icon.getAssetKey());
+               Objects.equals(getAssetKey(), icon.getAssetKey());
     }
 
     @Override

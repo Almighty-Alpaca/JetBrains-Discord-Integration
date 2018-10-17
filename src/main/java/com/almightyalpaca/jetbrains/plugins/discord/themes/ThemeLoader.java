@@ -1,6 +1,5 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
-import com.almightyalpaca.jetbrains.plugins.discord.utils.FileUtil;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.FilenameUtils;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.Predicates;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.ThrowingFunction;

@@ -15,9 +15,11 @@
  */
 package com.almightyalpaca.jetbrains.plugins.discord.data;
 
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FileType;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.FileUtil;
 import com.almightyalpaca.jetbrains.plugins.discord.utils.FilenameUtils;
 import com.google.gson.Gson;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,26 +37,26 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     @NotNull
     private final String name;
     @NotNull
-    private String firstLine;
+    private Pair<FileType, String> content;
     private boolean readOnly;
     private long timeAccessed;
     private long timeOpened;
 
     public FileInfo(@NotNull VirtualFile file)
     {
-        this(file.getPath(), file.getName(), FileUtil.readFirstLine(file), !file.isWritable(), System.currentTimeMillis());
+        this(file.getPath(), file.getName(), FileUtil.readFile(file), !file.isWritable(), System.currentTimeMillis());
     }
 
-    public FileInfo(@NotNull String id, @NotNull String name, @NotNull String firstLine, boolean readOnly, long timeOpened)
+    public FileInfo(@NotNull String id, @NotNull String name, @NotNull Pair<FileType, String> content, boolean readOnly, long timeOpened)
     {
-        this(id, name, firstLine, readOnly, timeOpened, timeOpened);
+        this(id, name, content, readOnly, timeOpened, timeOpened);
     }
 
-    public FileInfo(@NotNull String id, @NotNull String name, @NotNull String firstLine, boolean readOnly, long timeOpened, long timeAccessed)
+    public FileInfo(@NotNull String id, @NotNull String name, @NotNull Pair<FileType, String> content, boolean readOnly, long timeOpened, long timeAccessed)
     {
         this.id = id;
         this.name = name;
-        this.firstLine = firstLine;
+        this.content = content;
         this.readOnly = readOnly;
         this.timeOpened = timeOpened;
         this.timeAccessed = timeAccessed;
@@ -96,14 +98,14 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     }
 
     @NotNull
-    public String getFirstLine()
+    public Pair<FileType, String> getContent()
     {
-        return firstLine;
+        return content;
     }
 
-    void setFirstLine(@NotNull String firstLine)
+    void setContent(@NotNull Pair<FileType, String> content)
     {
-        this.firstLine = firstLine;
+        this.content = content;
     }
 
     public boolean isReadOnly()
@@ -147,13 +149,13 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
                getTimeOpened() == fileInfo.getTimeOpened() &&
                Objects.equals(getId(), fileInfo.getId()) &&
                Objects.equals(getName(), fileInfo.getName()) &&
-               Objects.equals(getFirstLine(), fileInfo.getFirstLine());
+               Objects.equals(getContent(), fileInfo.getContent());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getId(), getName(), getFirstLine(), isReadOnly(), getTimeAccessed(), getTimeOpened());
+        return Objects.hash(getId(), getName(), getContent(), isReadOnly(), getTimeAccessed(), getTimeOpened());
     }
 
     @NotNull

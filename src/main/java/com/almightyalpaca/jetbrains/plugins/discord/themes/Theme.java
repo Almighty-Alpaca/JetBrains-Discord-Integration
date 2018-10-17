@@ -1,9 +1,10 @@
 package com.almightyalpaca.jetbrains.plugins.discord.themes;
 
-import com.almightyalpaca.jetbrains.plugins.discord.utils.Pair;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FileType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,17 +84,22 @@ public class Theme implements Comparable<Theme>
     public Icon matchApplication(@NotNull String code)
     {
         List<Pair<String, String>> values = Collections.singletonList(
-                Pair.of("code", code));
+                new Pair<>("code", code));
 
         return findMatch(this.getIcons(), values);
     }
 
     @Nullable
-    public Icon matchLanguage(@NotNull String filename, @NotNull String firstLine)
+    public Icon matchLanguage(@NotNull String filename, @NotNull Pair<FileType, String> content)
     {
-        List<Pair<String, String>> values = Arrays.asList(
-                Pair.of("filename", filename),
-                Pair.of("firstLine", firstLine));
+        List<Pair<String, String>> values = new ArrayList<>();
+
+        values.add(new Pair<>("filename", filename));
+
+        if (content.getFirst() == FileType.TEXT)
+            new Pair<>("firstLine", content);
+        else
+            new Pair<>("magicNumber", content);
 
         return findMatch(this.getIcons(), values);
     }
@@ -103,7 +109,7 @@ public class Theme implements Comparable<Theme>
     {
         return values.stream()
                 .map(p -> entities.stream()
-                        .filter(e -> e.matches(p.getLeft(), p.getRight()))
+                        .filter(e -> e.matches(p.getFirst(), p.getSecond()))
                         .findFirst()
                         .orElse(null))
                 .filter(Objects::nonNull)

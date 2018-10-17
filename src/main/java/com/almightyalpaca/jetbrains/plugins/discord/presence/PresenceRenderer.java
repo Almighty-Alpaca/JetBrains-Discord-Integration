@@ -69,9 +69,9 @@ public class PresenceRenderer implements Function<PresenceRenderContext, Discord
                 {
                     presence.state =
                             (file.isReadOnly() && instance.getSettings().isShowReadingInsteadOfWriting() ? "Reading " : "Editing ") +
-                                    (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
+                            (instance.getSettings().isShowFileExtensions() ? file.getName() : file.getBaseName());
 
-                    Icon language = theme.matchLanguage(file.getName(), file.getFirstLine());
+                    Icon language = theme.matchLanguage(file.getName(), file.getContent());
 
                     if (language == null)
                         if (instance.getSettings().isShowUnknownImageFile())

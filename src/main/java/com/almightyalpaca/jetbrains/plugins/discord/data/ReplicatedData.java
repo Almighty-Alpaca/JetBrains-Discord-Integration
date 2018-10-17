@@ -19,6 +19,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.debug.Logger;
 import com.almightyalpaca.jetbrains.plugins.discord.debug.LoggerFactory;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ApplicationSettings;
 import com.almightyalpaca.jetbrains.plugins.discord.settings.data.ProjectSettings;
+import com.almightyalpaca.jetbrains.plugins.discord.utils.FileType;
 import com.google.gson.Gson;
 import com.intellij.openapi.util.Pair;
 import gnu.trove.TIntObjectHashMap;
@@ -451,23 +452,23 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         }
     }
 
-    public void fileSetFirstLine(long timestamp, @Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable FileInfo file, @Nullable String firstLine)
+    public void fileSetFirstLine(long timestamp, @Nullable InstanceInfo instance, @Nullable ProjectInfo project, @Nullable FileInfo file, @Nullable Pair<FileType, String> content)
     {
-        LOG.trace("ReplicatedData#fileSetFirstLine({}, {}, {}, {}, {})", timestamp, instance, project, file, firstLine);
+        LOG.trace("ReplicatedData#fileSetFirstLine({}, {}, {}, {}, {})", timestamp, instance, project, file, content);
 
-        if (timestamp < 0 || instance == null || project == null || file == null || firstLine == null)
+        if (timestamp < 0 || instance == null || project == null || file == null || content == null)
             return;
 
-        this._fileSetFirstLine(timestamp, instance.getId(), project.getId(), file.getId(), firstLine);
+        this._fileSetContent(timestamp, instance.getId(), project.getId(), file.getId(), content);
 
         try
         {
-            MethodCall call = new MethodCall(FILE_SET_FIRST_LINE, timestamp, instance.getId(), project.getId(), file.getId(), firstLine);
+            MethodCall call = new MethodCall(FILE_SET_FIRST_LINE, timestamp, instance.getId(), project.getId(), file.getId(), content);
             this.dispatcher.callRemoteMethods(getTargets(), call, this.call_options);
         }
         catch (Exception e)
         {
-            throw new RuntimeException("fileSetFirstLine(" + timestamp + ", " + instance + ", " + project + ", " + file + ", " + firstLine + ") failed", e);
+            throw new RuntimeException("fileSetContent(" + timestamp + ", " + instance + ", " + project + ", " + file + ", " + content + ") failed", e);
         }
     }
 
@@ -723,9 +724,9 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
         notifyListeners(Notifier.Type.FILE_UPDATE);
     }
 
-    protected void _fileSetFirstLine(long timestamp, @NotNull String instanceId, @NotNull String projectId, @NotNull String fileId, @NotNull String firstLine)
+    protected void _fileSetContent(long timestamp, @NotNull String instanceId, @NotNull String projectId, @NotNull String fileId, @NotNull Pair<FileType, String> content)
     {
-        LOG.trace("ReplicatedData#_fileSetFirstLine({}, {}, {}, {}, {})", timestamp, instanceId, projectId, fileId, firstLine);
+        LOG.trace("ReplicatedData#_fileSetContent({}, {}, {}, {}, {})", timestamp, instanceId, projectId, fileId, content);
 
         InstanceInfo instance = this.instances.get(instanceId);
 
@@ -738,7 +739,7 @@ public class ReplicatedData implements MembershipListener, StateListener, Closea
                 FileInfo file = project.getFiles().get(fileId);
 
                 if (file != null)
-                    file.setFirstLine(firstLine);
+                    file.setContent(content);
             }
         }
 

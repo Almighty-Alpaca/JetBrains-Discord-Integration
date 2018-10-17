@@ -21,11 +21,10 @@ import org.jetbrains.annotations.NotNull;
 public class ErrorNotification extends Notification
 {
     public static final String GROUP_DISPLAY_ID = "Discord Integration RPC error";
-    public static final String TITLE = "Plugins received an unexpected RPC error";
     public static final NotificationType TYPE = NotificationType.ERROR;
 
-    public ErrorNotification(@NotNull String content)
+    public ErrorNotification(@NotNull String title, @NotNull String content)
     {
-        super(GROUP_DISPLAY_ID, TITLE, null, content, TYPE);
+        super(GROUP_DISPLAY_ID, title, null, content, TYPE);
     }
 }

@@ -178,7 +178,10 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
         {
             if (this.visibleAreaListener == null)
             {
-                EditorFactory.getInstance().getEventMulticaster().addVisibleAreaListener(this.visibleAreaListener = new VisibleAreaListener());
+                EditorFactory
+                        .getInstance()
+                        .getEventMulticaster()
+                        .addVisibleAreaListener(this.visibleAreaListener = new VisibleAreaListener());
             }
         }
         else
@@ -254,14 +257,14 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
     {
         LOG.trace("ApplicationComponent#rpcError({}, {})", code, text);
 
-        Notifications.Bus.notify(new ErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
+        Notifications.Bus.notify(new ErrorNotification("Unexpected RPC error", code + " / " + text));
     }
 
     private void rpcDisconnected(int code, @Nullable String text)
     {
         LOG.trace("ApplicationComponent#rpcDisconnected({}, {})", code, text);
 
-        Notifications.Bus.notify(new ErrorNotification("The plugin has received an unexpected RPC error.\nCode: " + code + " / " + text));
+        Notifications.Bus.notify(new ErrorNotification("Unexpected RPC disconnect", code + " / " + text));
     }
 
     private void rpcReady(DiscordUser user)
@@ -274,7 +277,8 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
     {
         LOG.trace("ApplicationComponent#dataUpdated({})", type);
         LOG.trace("ApplicationComponent#dataUpdated()#this.instanceInfo = {}", this.instanceInfo);
-        LOG.trace("ApplicationComponent#dataUpdated()#this.instanceInfo.isHasRpcConnection() = {}", this.instanceInfo != null ? this.instanceInfo.getConnectedApplication() : null);
+        LOG.trace("ApplicationComponent#dataUpdated()#this.instanceInfo.isHasRpcConnection() = {}",
+                this.instanceInfo != null ? this.instanceInfo.getConnectedApplication() : null);
 
         if (this.instanceInfo != null && this.instanceInfo.getConnectedApplication() == null)
             checkRpcConnection(null);
@@ -292,14 +296,19 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
         checkRpcConnection(renderContext);
 
         LOG.trace("ApplicationComponent#presenceUpdated()#instance = {}", instance);
-        LOG.trace("ApplicationComponent#presenceUpdated()#instance.getSettings().isHideAfterPeriodOfInactivity() = {}", instance != null && instance.getSettings().isHideAfterPeriodOfInactivity());
+        LOG.trace("ApplicationComponent#presenceUpdated()#instance.getSettings().isHideAfterPeriodOfInactivity() = {}",
+                instance != null && instance.getSettings().isHideAfterPeriodOfInactivity());
 
         if (instance != null && instance.getSettings().isHideAfterPeriodOfInactivity())
         {
-            long delay = TimeUnit.NANOSECONDS.convert(instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            long delay = TimeUnit.NANOSECONDS.convert(
+                    instance.getTimeAccessed() + instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) -
+                    System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 
             LOG.trace("ApplicationComponent#presenceUpdated()#instance.getTimeAccessed() = {}", instance.getTimeAccessed());
-            LOG.trace("ApplicationComponent#presenceUpdated()#instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) = {}", instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS));
+            LOG.trace("ApplicationComponent#presenceUpdated()#instance.getSettings().getInactivityTimeout(TimeUnit.MILLISECONDS) = {}", instance
+                    .getSettings()
+                    .getInactivityTimeout(TimeUnit.MILLISECONDS));
             LOG.trace("ApplicationComponent#presenceUpdated()#System.currentTimeMillis() = {}", System.currentTimeMillis());
             LOG.trace("ApplicationComponent#presenceUpdated()#delay = {}", delay);
 

@@ -15,7 +15,7 @@
  */
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.3.11'
+    id 'org.jetbrains.intellij' version '0.3.12'
     id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
@@ -25,7 +25,7 @@ import java.awt.*
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.almightyalpaca.jetbrains.plugins.discord'
-version = '1.0.0-alpha'
+version = '1.0.0-beta'
 
 ext {
     github = 'https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/'

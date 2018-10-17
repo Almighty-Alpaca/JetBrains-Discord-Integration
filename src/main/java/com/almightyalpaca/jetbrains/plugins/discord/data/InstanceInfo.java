@@ -205,8 +205,8 @@ public class InstanceInfo implements Serializable, Comparable<InstanceInfo>
         public boolean equals(Object o)
         {
             return o instanceof DistributionInfo
-                    && this.code.equals(((DistributionInfo) o).code) &&
-                    this.version.equals(((DistributionInfo) o).version);
+                   && this.code.equals(((DistributionInfo) o).code) &&
+                   this.version.equals(((DistributionInfo) o).version);
         }
 
         @NotNull

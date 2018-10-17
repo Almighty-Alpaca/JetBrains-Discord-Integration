@@ -52,7 +52,6 @@ public class ModifiedFlowLayout extends FlowLayout
                     found_one = true;
                     Dimension d = c.getPreferredSize();
                     minx = Math.min(minx, d.width);
-                    miny = Math.min(miny, d.height);
                 }
             }
             if (found_one)
