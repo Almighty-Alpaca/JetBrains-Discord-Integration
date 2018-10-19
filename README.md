@@ -27,7 +27,7 @@ Go to the [GitHub relase page](/releases/latest) and grab the latest `JetBrains-
 
 #### ...or from source
 
-As this project uses Gradle it's very easy to compile yourself. Be aware though that depending yon your this make take a bit as it needs download the sources for IntelliJ first.
+As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this make take a bit as it needs download the sources for IntelliJ first.
 Open your favourite terminal and execute the following commands:
 ```bash
 git clone https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration.git
@@ -42,21 +42,21 @@ To install the zip file follow the steps from the [previous install method](#fro
 
 ## Support...
 
-### ...or by joining the plugin Discord server
+### ...by joining the plugin Discord server
 
-There is a [dedicated Discord server](https://discord.gg/SvuyuMP) for the JetBrains Discord Integration Plugin where we provide support and have many of the users of the plugin chilling out.
+There is a [dedicated Discord server](https://discord.gg/SvuyuMP) for the JetBrains Discord Integration Plugin where we provide support for the plugin and have many of the users of the plugin chilling out.
 
 [![JetBrains Discord Integration Plugin Server](https://discordapp.com/api/guilds/464395429392678912/embed.png?style=banner3)](https://discord.gg/SvuyuMP)
 
 ### ...using GitHub issues
 
-For feature requests and bug reports, please make use of the GitHub issues by submitting a new issue. Please check whether someone has reported your issue already before creating your own report. To request new icons go to the [JetBrains Discord Integration Icons](https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration-Icons) repository open an issue there instead. Please include as much detail as possible in your issue and how to reproduce it if possible.
+For feature requests and bug reports, please make use of the GitHub issues by submitting a new issue. Please check whether someone has reported your issue already before creating your own report. To request new icons go to the [JetBrains Discord Integration Icons](https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration-Icons) repository and open an issue there instead. Please include as much detail as possible in your issue and how to reproduce it if possible and relevant.
 
 #### ...or why not join the JetBrains community server
 
-If you have questions regarding an IDE or another JetBRains product feel free to join the [JetBrains community Discord server](https://discord.gg/9ut9sqD) where many users of JetBrains products hang out alongside some of the JetBrains team.
+If you have questions regarding any JetBrains IDE or other JetBrains products and projects feel free to join the [JetBrains community Discord server](https://discord.gg/9ut9sqD) where many users of JetBrains hang out alongside some of the JetBrains team.
 
-[![JetBrains Community Discord Server](https://discordapp.com/api/guilds/433980600391696384/embed.png?style=banner2)](https://discord.gg/qV23GXh)
+[![JetBrains Community Discord Server](https://discordapp.com/api/guilds/433980600391696384/embed.png?style=banner2)](https://discord.gg/9ut9sqD)
 
 
 ## License
