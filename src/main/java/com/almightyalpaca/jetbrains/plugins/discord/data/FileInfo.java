@@ -184,6 +184,7 @@ public class FileInfo implements Serializable, Comparable<FileInfo>
     {
         C("C", "c", "c", "h"),
         CEYLON("Ceylon", "ceylon", "ceylon"),
+        CLOJURE("Clojure", "clojure", "clj"),
         CMAKE("CMake", "cmake", "CMakeLists.txt"),
         COFFEESCRIPT("CoffeeScript", "coffeescript", "coffee", "litcoffee"),
         CPP("C++", "cpp", "cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx"),
