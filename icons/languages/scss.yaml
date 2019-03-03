@@ -1,0 +1,6 @@
+name: Scss
+asset: scss
+parent: css
+match:
+  extension:
+    equals: .scss

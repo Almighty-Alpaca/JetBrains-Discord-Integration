@@ -1,0 +1,7 @@
+name: Text
+asset: text
+parent: default
+match:
+  extension:
+    equals:
+      - .txt

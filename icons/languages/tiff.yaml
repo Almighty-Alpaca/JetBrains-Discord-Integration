@@ -1,0 +1,8 @@
+name: TIFF
+asset: tiff
+parent: image
+match:
+  extension:
+    equals:
+      - .tif
+      - .tiff

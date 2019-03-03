@@ -1,0 +1,8 @@
+name: Delphi
+asset: delphi
+parent: text
+match:
+  extension:
+    equals:
+      - .dfm
+      - .dpr

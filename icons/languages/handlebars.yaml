@@ -1,0 +1,8 @@
+name: Handlebars.js
+asset: handlebars
+parent: javascript
+match:
+  extension:
+    equals:
+      - .hbs
+      - .handlebars

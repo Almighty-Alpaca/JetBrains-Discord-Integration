@@ -1,0 +1,6 @@
+name: CSS
+asset: css
+parent: text
+match:
+  extension:
+    equals: .css

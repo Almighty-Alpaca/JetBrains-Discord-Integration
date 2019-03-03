@@ -1,0 +1,6 @@
+name: Binary
+asset: binary
+parent: default
+match:
+  extension:
+    equals: .bin

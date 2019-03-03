@@ -1,0 +1,6 @@
+name: Boo
+asset: boo
+parent: text
+match:
+  extension:
+    equals: .boo

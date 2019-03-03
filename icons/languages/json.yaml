@@ -1,0 +1,7 @@
+name: JSON
+asset: json
+parent: text
+match:
+  extension:
+    equals:
+      - .json

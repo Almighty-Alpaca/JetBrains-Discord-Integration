@@ -1,0 +1,6 @@
+name: PHP
+asset: php
+parent: text
+match:
+  extension:
+    equals: .php

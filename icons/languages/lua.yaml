@@ -1,0 +1,6 @@
+name: Lua
+asset: lua
+parent: text
+match:
+  extension:
+    equals: .lua

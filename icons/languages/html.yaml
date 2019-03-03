@@ -1,0 +1,8 @@
+name: HTML
+asset: html
+parent: text
+match:
+  extension:
+    equals:
+      - .html
+      - .htm

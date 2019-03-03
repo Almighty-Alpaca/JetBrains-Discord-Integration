@@ -1,0 +1,24 @@
+name: Git
+asset: git
+parent: text
+match:
+  path:
+    startsWith:
+      - .git/
+flavors:
+  - name: Git Submodules
+    match:
+      name:
+        equals: .gitmodules
+  - name: Git Ignore
+    match:
+      name:
+        equals: .gitignore
+  - name: Git Attributes
+    match:
+      name:
+        equals: .gitattributes
+  - name: Git Mail Map
+    match:
+      name:
+        equals: .mailmap

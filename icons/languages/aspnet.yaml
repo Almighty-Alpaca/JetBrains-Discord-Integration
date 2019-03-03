@@ -1,0 +1,13 @@
+name: ASP.net
+asset: asp
+parent: text
+match:
+  extension:
+    equals:
+      - .asp
+      - .asax
+      - .ascx
+      - .ashx
+      - .asmx
+      - .aspx
+      - .axd

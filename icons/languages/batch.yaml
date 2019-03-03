@@ -1,0 +1,9 @@
+name: Batch
+asset: batch
+parent: text
+match:
+  extension:
+    equals:
+      - .bat
+      - .cmd
+      - .btm

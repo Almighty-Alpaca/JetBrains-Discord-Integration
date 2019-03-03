@@ -1,0 +1,6 @@
+name: Go
+asset: go
+parent: text
+match:
+  extension:
+    equals: .go

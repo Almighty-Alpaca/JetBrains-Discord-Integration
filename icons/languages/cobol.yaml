@@ -1,0 +1,11 @@
+name: COBOL
+asset: cobol
+parent: text
+match:
+  extension:
+    equals:
+      - .cob
+      - .ccp
+      - .cbl
+      - .cobol
+      - .cpy

@@ -1,0 +1,12 @@
+name: CoffeeScript
+asset: coffeescript
+parent: javascript
+match:
+  extension:
+    equals:
+      - .coffee
+      - .cjsx
+      - .coffee.ecr
+      - .coffee.erb
+      - .litcoffee
+      - .iced

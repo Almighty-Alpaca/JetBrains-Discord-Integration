@@ -1,0 +1,8 @@
+name: Scala
+asset: scala
+parent: text
+match:
+  extension:
+    equals:
+      - .scala
+      - .sc

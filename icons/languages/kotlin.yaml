@@ -1,0 +1,13 @@
+name: Kotlin
+asset: kotlin
+parent: text
+match:
+  extension:
+    equals: .kt
+flavors:
+  - name: Kotlin Script
+    match:
+      extension:
+        equals: .kts
+
+# .ktm

@@ -1,0 +1,10 @@
+name: Haskell
+asset: haskell
+parent: text
+match:
+  extension:
+    equals:
+      - .hs
+      - .hsc
+      - .c2hs
+      - .lhs

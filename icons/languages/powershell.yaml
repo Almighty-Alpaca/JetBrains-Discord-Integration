@@ -1,0 +1,13 @@
+name: PowerShell
+asset: powershell
+parent: text
+match:
+  extension:
+    equals:
+      - .ps1
+      - .ps1xml
+      - .psc1
+      - .psd1
+      - .psm1
+      - .pssc
+      - .cdxml

@@ -1,0 +1,6 @@
+name: Common Lisp
+asset: commonlisp
+parent: text
+match:
+  extension:
+    equals: .cl

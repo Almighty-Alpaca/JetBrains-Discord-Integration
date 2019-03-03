@@ -1,0 +1,6 @@
+name: Rust
+asset: rust
+parent: text
+match:
+  extension:
+    equals: .rs

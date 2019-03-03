@@ -1,0 +1,7 @@
+name: AspectJ
+asset: aspectj
+parent: java
+match:
+  extension:
+    equals:
+      - .aj

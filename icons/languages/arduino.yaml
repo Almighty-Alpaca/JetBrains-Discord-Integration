@@ -1,0 +1,6 @@
+name: Arduino
+asset: arduino
+parent: text
+match:
+  extension:
+    equals: .ino

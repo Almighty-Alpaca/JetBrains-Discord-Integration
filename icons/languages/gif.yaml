@@ -1,0 +1,6 @@
+name: GIF
+asset: gif
+parent: image
+match:
+  extension:
+    equals: .gif

@@ -1,0 +1,10 @@
+name: BibTeX
+asset: bibtex
+parent: tex
+match:
+  extensions:
+    equals:
+      - .cbx
+      - .bbx
+      - .bib
+      - .bst

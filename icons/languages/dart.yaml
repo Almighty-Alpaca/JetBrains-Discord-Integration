@@ -1,0 +1,6 @@
+name: Dart
+asset: dart
+parent: text
+match:
+  extension:
+    equals: .dart

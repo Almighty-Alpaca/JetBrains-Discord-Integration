@@ -1,0 +1,13 @@
+name: Lisp
+asset: lisp
+parent: text
+match:
+  extension:
+    equals:
+      - .lsp
+      - .lisp
+      - .l
+      - .nl
+      - .ny
+      - .podsl
+      - .sexp

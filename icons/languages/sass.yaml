@@ -1,0 +1,6 @@
+name: Sass
+asset: sass
+parent: css
+match:
+  extension:
+    equals: .sass

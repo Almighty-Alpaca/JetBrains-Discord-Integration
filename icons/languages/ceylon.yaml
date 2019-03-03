@@ -1,0 +1,6 @@
+name: Ceylon
+asset: ceylon
+parent: text
+match:
+  extension:
+    equals: .ceylon

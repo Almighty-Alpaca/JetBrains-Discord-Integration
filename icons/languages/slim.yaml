@@ -1,0 +1,6 @@
+name: Slim
+asset: slim
+parent: ruby
+match:
+  extension:
+    equals: .slim

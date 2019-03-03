@@ -1,0 +1,6 @@
+name: Shell
+asset: shell
+parent: text
+match:
+  extension:
+    equals: .sh

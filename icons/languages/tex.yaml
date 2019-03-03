@@ -1,0 +1,32 @@
+name: TeX
+asset: tex
+parent: text
+match:
+  extensions:
+    equals:
+      - .tex
+      - .ltx
+      - .aux
+      - .sty
+      - .dtx
+      - .cls
+      - .ins
+      - .lbx
+      - .mkiv
+      - .mkvi
+      - .mkii
+      - .texi
+  name:
+    equals:
+      - hyphen.cs
+      - hyphenex.cs
+      - hyphen.den
+      - hyphenex.den
+      - hyphen.det
+      - hyphenex.det
+      - hyphen.fr
+      - hyphenex.fr
+      - hyphen.sv
+      - hyphenex.sv
+      - hyphen.us
+      - hyphenex.us

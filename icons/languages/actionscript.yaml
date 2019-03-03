@@ -1,0 +1,10 @@
+name: ActionScript
+asset: actionscript
+parent: text
+match:
+  extension:
+    equals:
+      - .swf
+      - .as
+      - .jsfl
+      - .swc

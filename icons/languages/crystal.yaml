@@ -1,0 +1,8 @@
+name: Crystal
+asset: crystal
+parent: text
+match:
+  extension:
+    equals:
+      - .cr
+      - .ecr

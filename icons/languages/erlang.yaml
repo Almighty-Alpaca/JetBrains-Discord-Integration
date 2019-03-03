@@ -1,0 +1,17 @@
+name: Erlang
+asset: erlang
+parent: text
+match:
+  name:
+    equals:
+      - Emakefile
+      - rebar.config.lock
+      - rebar.lock
+  extension:
+    equals:
+      - .erl
+      - .beam
+      - .hrl
+      - .xrl
+      - .yrl
+      - .app.src

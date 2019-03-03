@@ -1,0 +1,6 @@
+name: PNG
+asset: png
+parent: image
+match:
+  extension:
+    equals: .png

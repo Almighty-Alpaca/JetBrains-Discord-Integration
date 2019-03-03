@@ -1,0 +1,6 @@
+name: Twig
+asset: twig
+parent: php
+match:
+  extension:
+    equals: .twig

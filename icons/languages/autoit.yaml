@@ -1,0 +1,6 @@
+name: AutoIt
+asset: autoit
+parent: text
+match:
+  extension:
+    equals: .au3

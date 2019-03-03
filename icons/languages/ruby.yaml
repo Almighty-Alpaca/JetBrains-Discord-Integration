@@ -1,0 +1,6 @@
+name: Ruby
+asset: ruby
+parent: text
+match:
+  extension:
+    equals: .rb

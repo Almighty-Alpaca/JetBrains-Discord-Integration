@@ -1,0 +1,9 @@
+name: Ada
+asset: bower
+parent: text
+match:
+  name:
+    equals:
+      - .bowerrc
+      - bower.json
+      - Bowerfile

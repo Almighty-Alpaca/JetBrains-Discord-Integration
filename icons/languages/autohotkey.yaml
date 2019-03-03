@@ -1,0 +1,8 @@
+name: AutoHotkey
+asset: autohotkey
+parent: text
+match:
+  extension:
+    equals:
+      - .ahk
+      - .ahkl

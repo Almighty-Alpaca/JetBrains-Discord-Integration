@@ -1,0 +1,6 @@
+name: Swift
+asset: swift
+parent: text
+match:
+  extension:
+    equals: .swift

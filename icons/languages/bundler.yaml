@@ -1,0 +1,8 @@
+name: Bundler
+asset: bundler
+parent: ruby
+match:
+  name:
+    equals:
+      - Gemfile
+      - Gemfile.lock

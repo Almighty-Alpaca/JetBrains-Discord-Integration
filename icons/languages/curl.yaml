@@ -1,0 +1,6 @@
+name: cURL
+asset: curl
+parent: text
+match:
+  extension:
+    equals: .curlrc

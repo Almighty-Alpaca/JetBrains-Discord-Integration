@@ -1,0 +1,6 @@
+name: Assembly
+asset: assembly
+parent: text
+match:
+  extension:
+    equals: .asm

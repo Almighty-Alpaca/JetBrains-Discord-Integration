@@ -1,0 +1,13 @@
+name: Elixir
+asset: elixir
+parent: erlang
+match:
+  name:
+    equals:
+      - mix.exs
+      - mix.lock
+  extension:
+    equals:
+      - .ex
+      - .exs
+      - .eex

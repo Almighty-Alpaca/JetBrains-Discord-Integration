@@ -1,0 +1,6 @@
+name: PDF
+asset: pdf
+parent: binary
+match:
+  extension:
+    equals: .pdf

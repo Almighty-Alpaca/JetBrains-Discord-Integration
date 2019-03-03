@@ -1,0 +1,9 @@
+name: Ada
+asset: ada
+parent: text
+match:
+  extension:
+    equals:
+      - .ada
+      - .adb
+      - .ads

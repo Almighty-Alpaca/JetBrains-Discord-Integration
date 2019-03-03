@@ -1,0 +1,19 @@
+name: JPEG
+asset: jpeg
+parent: image
+match:
+  extension:
+    equals:
+      - .jpg
+      - .jpeg
+      - .jif
+      - .jfif
+flavors:
+  - name: JPEG 2000
+    match:
+      extension:
+        equals:
+          - .jp2
+          - .jpx
+          - .j2k
+          - .j2c

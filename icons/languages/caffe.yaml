@@ -1,0 +1,6 @@
+name: Caffe
+asset: caffe
+parent: python
+match:
+  extension:
+    equals: .caffemodel

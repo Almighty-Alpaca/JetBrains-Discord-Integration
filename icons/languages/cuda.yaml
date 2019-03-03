@@ -1,0 +1,8 @@
+name: CUDA
+asset: cuda
+parent: nvidia
+match:
+  extension:
+    equals:
+      - .cu
+      - .cuh

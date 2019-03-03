@@ -1,0 +1,8 @@
+name: jQuery
+asset: jquery
+parent: javascript
+match:
+  extension:
+    equals:
+      - .jquery.js
+      - .jquery.min.js

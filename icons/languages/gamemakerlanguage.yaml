@@ -1,0 +1,6 @@
+name: GameMaker Language
+asset: gamemakerlanguage
+parent: text
+match:
+  extension:
+    equals: .gml

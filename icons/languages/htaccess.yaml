@@ -1,0 +1,7 @@
+name: .htaccess
+asset: htaccess
+parent: apache
+match:
+  name:
+    equals:
+      - .htaccess

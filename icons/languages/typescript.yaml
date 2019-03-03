@@ -1,0 +1,8 @@
+name: TypeScript
+asset: typescript
+parent: text
+match:
+  extension:
+    equals:
+      - .ts
+      - .tslint

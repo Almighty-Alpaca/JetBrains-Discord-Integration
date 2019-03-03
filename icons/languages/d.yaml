@@ -1,0 +1,9 @@
+name: "D\u200b"
+asset: d
+parent: text
+match:
+  extension:
+    equals:
+      - .d
+      - .dd
+      - .di

@@ -1,0 +1,13 @@
+name: Unity
+asset: unity
+parent: csharp
+match:
+  extensions:
+    equals:
+      - .anim
+      - .asset
+      - .mat
+      - .meta
+      - .prefab
+      - .unity
+      - .unityproj

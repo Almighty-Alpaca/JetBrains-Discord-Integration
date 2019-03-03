@@ -1,0 +1,8 @@
+name: "C\u200b"
+asset: c
+parent: text
+match:
+  extension:
+    equals:
+      - .c
+      - .h

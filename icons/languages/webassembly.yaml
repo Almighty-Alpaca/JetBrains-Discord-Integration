@@ -1,0 +1,9 @@
+name: WebAssembly
+asset: webassembly
+parent: text
+match:
+  extension:
+    equals:
+      - .wasm
+      - .wat
+      - .wast

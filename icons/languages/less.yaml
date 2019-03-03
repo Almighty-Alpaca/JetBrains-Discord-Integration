@@ -1,0 +1,6 @@
+name: Less
+asset: less
+parent: css
+match:
+  extension:
+    equals: .less

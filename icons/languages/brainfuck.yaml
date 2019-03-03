@@ -1,0 +1,8 @@
+name: Brainfuck
+asset: brainfuck
+parent: text
+match:
+  extension:
+    equals:
+      - .b
+      - .bf

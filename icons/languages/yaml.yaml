@@ -1,0 +1,8 @@
+name: YAML
+asset: yaml
+parent: text
+match:
+  extension:
+    equals:
+      - .yaml
+      - .yml

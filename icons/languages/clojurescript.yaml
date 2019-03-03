@@ -1,0 +1,8 @@
+name: ClojureScript
+asset: clojurescript
+parent: text
+match:
+  extension:
+    equals:
+      - .cljs
+      - .cljscm

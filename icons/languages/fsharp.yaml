@@ -1,0 +1,9 @@
+name: F#
+asset: fsharp
+parent: text
+match:
+  extension:
+    equals:
+      - .fs
+      - .fsx
+      - .fsi

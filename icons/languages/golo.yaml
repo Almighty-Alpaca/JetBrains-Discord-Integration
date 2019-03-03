@@ -1,0 +1,6 @@
+name: Golo
+asset: golo
+parent: text
+match:
+  extension:
+    equals: .golo

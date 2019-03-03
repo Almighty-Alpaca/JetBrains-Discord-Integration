@@ -1,0 +1,14 @@
+name: C++
+asset: cpp
+parent: text
+match:
+  extension:
+    equals:
+      - .cpp
+      - .c++
+      - .cc
+      - .cxx
+      - .hpp
+      - .h++
+      - .hh
+      - .hxx

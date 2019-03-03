@@ -1,0 +1,6 @@
+name: SQL
+asset: sql
+parent: text
+match:
+  extension:
+    equals: .sql
