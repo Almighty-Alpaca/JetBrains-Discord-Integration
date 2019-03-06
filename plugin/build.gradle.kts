@@ -17,7 +17,8 @@ intellij {
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks.withType<RunIdeTask> {
-    environment["REPOSITORY"] = rootProject.projectDir.absolutePath
+    environment["ICONS"] = rootProject.projectDir.absolutePath
+//    environment["ICONS"] = "Almighty-Alpaca/JetBrains-Discord-Integration:rewrite"
 }
 
 dependencies {

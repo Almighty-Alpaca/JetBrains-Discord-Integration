@@ -41,9 +41,11 @@ class AppComponentImpl : AppComponent, CoroutineScope {
 
     // TODO: get sources from github
     private val provider: SourceProvider? by failingLazy<SourceProvider?>(null) {
-        when (val repository = System.getenv("REPOSITORY")) {
-            null -> GitHubSourceProvider("Almighty-Alpaca/JetBrains-Discord-Integration")
-            else -> FileSourceProvider(Paths.get(repository))
+        val icons = System.getenv("ICONS")
+        when {
+            icons == null -> GitHubSourceProvider("Almighty-Alpaca/JetBrains-Discord-Integration")
+            icons.matches(Regex("[\\d\\w-]+\\/[\\d\\w-]+:[\\d\\w-\\/]+")) -> GitHubSourceProvider(icons)
+            else -> FileSourceProvider(Paths.get(icons))
         }
     }
 
