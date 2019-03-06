@@ -4,6 +4,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.app.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.app.utils.isReadOnly
 import com.almightyalpaca.jetbrains.plugins.shared.utils.map
 import com.intellij.openapi.vfs.VirtualFile
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.OffsetDateTime
 
@@ -20,16 +21,20 @@ class ProjectDataBuilder(var path: Path, var name: String, val openedAt: OffsetD
     private val files = mutableMapOf(*files.map { (k, v) -> k to v.builder() }.toTypedArray())
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
-        file?.let { files.computeIfAbsent(file) { file -> FileDataBuilder(file.filePath, file.isReadOnly) }.builder() }
+        if (file != null && isValid(file))
+            files.computeIfAbsent(file) { file -> FileDataBuilder(file.filePath, file.isReadOnly) }.builder()
     }
 
     fun update(file: VirtualFile?, builder: FileDataBuilder.() -> Unit) {
-        file?.let { files[file]?.builder() }
+        if (file != null && isValid(file))
+            files[file]?.builder()
     }
 
     infix fun remove(file: VirtualFile?) {
         file?.let { files.remove(file) }
     }
+
+    private fun isValid(file: VirtualFile) = Files.isRegularFile(file.filePath)
 
     operator fun contains(file: VirtualFile?) = file != null && file in files
 
