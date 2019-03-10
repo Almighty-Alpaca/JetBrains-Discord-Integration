@@ -139,8 +139,8 @@ private fun getLocalFiles(): Set<Pair<Path, String>> {
     val themes = Files.list(base.resolve("themes"))
 
     return Stream.concat(languages, themes)
-        .filter { p -> Files.isRegularFile(p) }
-        .filter { p -> p.name.endsWith(".yaml") }
-        .map { p -> p to FilenameUtils.separatorsToUnix(base.relativize(p).toString()) }
-        .toSet()
+            .filter { p -> Files.isRegularFile(p) }
+            .filter { p -> p.name.endsWith(".yaml") }
+            .map { p -> p to FilenameUtils.separatorsToUnix(base.relativize(p).toString()) }
+            .toSet()
 }

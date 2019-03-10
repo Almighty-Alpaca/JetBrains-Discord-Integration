@@ -19,12 +19,10 @@ class RichPresenceRenderer(context: RichPresenceRenderContext) : RichPresenceRen
                 if (file == null) {
                     setLargeImage("application", application.version)
                 } else {
-                    setState(
-                        when (file.readOnly) {
-                            true -> "Reading ${file.name}"
-                            false -> "Editing ${file.name}"
-                        }
-                    )
+                    setState(when (file.readOnly) {
+                        true -> "Reading ${file.name}"
+                        false -> "Editing ${file.name}"
+                    })
 
                     val icon = file.icon
                     setLargeImage(icon.asset, icon.name)

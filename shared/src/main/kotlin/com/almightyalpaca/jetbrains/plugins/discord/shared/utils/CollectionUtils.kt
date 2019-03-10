@@ -18,8 +18,7 @@ inline fun <K, V, N> Map<K, V>.map(mapper: (K, V) -> Pair<K, N>): Map<K, N> {
     return map
 }
 
-inline fun <K, V> Map(size: Int, init: (index: Int) -> Pair<K, V>): Map<K, V> =
-    MutableMap(size, init)
+inline fun <K, V> Map(size: Int, init: (index: Int) -> Pair<K, V>): Map<K, V> = MutableMap(size, init)
 
 inline fun <K, V> MutableMap(size: Int, init: (index: Int) -> Pair<K, V>): MutableMap<K, V> {
     val map = LinkedHashMap<K, V>(size)
@@ -27,8 +26,7 @@ inline fun <K, V> MutableMap(size: Int, init: (index: Int) -> Pair<K, V>): Mutab
     return map
 }
 
-inline fun <T> Set(size: Int, init: (index: Int) -> T): Set<T> =
-    MutableSet(size, init)
+inline fun <T> Set(size: Int, init: (index: Int) -> T): Set<T> = MutableSet(size, init)
 
 inline fun <T> MutableSet(size: Int, init: (index: Int) -> T): MutableSet<T> {
     val set = LinkedHashSet<T>(size)
@@ -38,19 +36,15 @@ inline fun <T> MutableSet(size: Int, init: (index: Int) -> T): MutableSet<T> {
 
 fun <K, V> Map<K, V>.stream() = entries.stream()
 
-fun <K, V> lazyMap(factory: (K) -> V?): LazyMutableMap<K, V> =
-    LazyMutableMapImpl(mutableMapOf(), factory)
+fun <K, V> lazyMap(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(mutableMapOf(), factory)
 
-fun <K, V> lazyMap(map: MutableMap<K, V>, factory: (K) -> V?): LazyMutableMap<K, V> =
-    LazyMutableMapImpl(map, factory)
+fun <K, V> lazyMap(map: MutableMap<K, V>, factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(map, factory)
 
-fun <K, V> MutableMap<K, V>.lazy(factory: (K) -> V?): LazyMutableMap<K, V> =
-    LazyMutableMapImpl(this, factory)
+fun <K, V> MutableMap<K, V>.lazy(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(this, factory)
 
 interface LazyMutableMap<K, V> : MutableMap<K, V>
 
-private class LazyMutableMapImpl<K, V>(val map: MutableMap<K, V>, val factory: (K) -> V?) : LazyMutableMap<K, V>,
-    MutableMap<K, V> by map {
+private class LazyMutableMapImpl<K, V>(val map: MutableMap<K, V>, val factory: (K) -> V?) : LazyMutableMap<K, V>, MutableMap<K, V> by map {
     override fun get(key: K) = map.compute(key) { _, value -> value ?: factory.invoke(key) }
 }
 

@@ -21,24 +21,24 @@ private fun calculateLanguages(directory: Path): LanguageSourceSet {
     val mapper = ObjectMapper(YAMLFactory())
 
     return Files.list(directory.resolve("icons/languages"))
-        .filter { p -> p.extension.toLowerCase() == "yaml" }
-        .map { p ->
-            val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-            SourceProvider.Source(p.baseName.toLowerCase(), node)
-        }
-        .map { p -> p.id to p }
-        .toMap()
+            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .map { p ->
+                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
+                SourceProvider.Source(p.baseName.toLowerCase(), node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
 }
 
 private fun calculateThemes(directory: Path): ThemeSourceSet {
     val mapper = ObjectMapper(YAMLFactory())
 
     return Files.list(directory.resolve("icons/themes"))
-        .filter { p -> p.extension.toLowerCase() == "yaml" }
-        .map { p ->
-            val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-            SourceProvider.Source(p.baseName.toLowerCase(), node)
-        }
-        .map { p -> p.id to p }
-        .toMap()
+            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .map { p ->
+                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
+                SourceProvider.Source(p.baseName.toLowerCase(), node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
 }

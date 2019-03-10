@@ -31,9 +31,9 @@ subprojects {
                 componentSelection {
                     all {
                         sequenceOf("alpha", "beta", "rc", "cr", "m", "preview")
-                            .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-_]*", RegexOption.IGNORE_CASE) }
-                            .any { regex -> regex.matches(candidate.version) }
-                            .let { if (it) reject("Release candidate") }
+                                .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-_]*", RegexOption.IGNORE_CASE) }
+                                .any { regex -> regex.matches(candidate.version) }
+                                .let { if (it) reject("Release candidate") }
                     }
                 }
             }

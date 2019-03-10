@@ -22,7 +22,7 @@ class ApplicationData(val id: String, val version: String, val openedAt: OffsetD
 
         val DEFAULT by lazy {
             com.intellij.openapi.application.ApplicationInfo.getInstance()
-                .run { ApplicationData(build.productCode, fullVersion) }
+                    .run { ApplicationData(build.productCode, fullVersion) }
         }
     }
 

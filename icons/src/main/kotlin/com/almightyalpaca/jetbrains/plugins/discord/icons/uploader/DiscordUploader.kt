@@ -189,9 +189,9 @@ private fun getAssetUrl(appId: Long, iconId: Long?) = URL("https://cdn.discordap
 private fun CoroutineScope.getLocalIconsAsync(appCode: String, theme: String) = async(Dispatchers.IO) {
     val application = Stream.of("application" to Paths.get("applications/$appCode.png"))
     val icons = Files.list(Paths.get("themes/$theme"))
-        .filter { p -> Files.isRegularFile(p) }
-        .filter { p -> p.name.endsWith(".png") }
-        .map { p -> p.name.substring(0, p.name.length - 4) to p }
+            .filter { p -> Files.isRegularFile(p) }
+            .filter { p -> p.name.endsWith(".png") }
+            .map { p -> p.name.substring(0, p.name.length - 4) to p }
 
     Stream.concat(application, icons).toMap()
 }

@@ -36,8 +36,8 @@ tasks {
 
         doLast {
             val files = project.file("build/graphs").listFiles()
-                .filter { f -> f.isFile }
-                .map { f -> f.nameWithoutExtension }
+                    .filter { f -> f.isFile }
+                    .map { f -> f.nameWithoutExtension }
             for (file in files) {
                 exec {
                     workingDir = file("build/graphs")

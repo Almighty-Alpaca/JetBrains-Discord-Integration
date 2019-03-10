@@ -19,17 +19,16 @@ fun LanguageSourceSet.toLanguageMap(): LanguageMap {
 }
 
 private fun LanguageSourceSet.createLanguage(
-    languages: MutableMap<String, Language>,
-    id: String,
-    source: JsonNode = this.getValue(id).node,
-    baseName: String? = null,
-    baseAsset: String? = null,
-    baseParent: Language? = null
-): Language =
-    languages[id] ?: when (id) {
-        "default" -> createDefaultLanguage(languages, source)
-        else -> createSimpleLanguage(languages, id, source, baseName, baseAsset, baseParent)
-    }
+        languages: MutableMap<String, Language>,
+        id: String,
+        source: JsonNode = this.getValue(id).node,
+        baseName: String? = null,
+        baseAsset: String? = null,
+        baseParent: Language? = null
+): Language = languages[id] ?: when (id) {
+    "default" -> createDefaultLanguage(languages, source)
+    else -> createSimpleLanguage(languages, id, source, baseName, baseAsset, baseParent)
+}
 
 private fun LanguageSourceSet.createDefaultLanguage(languages: MutableMap<String, Language>, source: JsonNode): Language {
     val name: String = source["name"]?.textValue()!!
@@ -43,12 +42,12 @@ private fun LanguageSourceSet.createDefaultLanguage(languages: MutableMap<String
 }
 
 private fun LanguageSourceSet.createSimpleLanguage(
-    languages: MutableMap<String, Language>,
-    id: String,
-    source: JsonNode,
-    baseName: String? = null,
-    baseAsset: String? = null,
-    baseParent: Language? = null
+        languages: MutableMap<String, Language>,
+        id: String,
+        source: JsonNode,
+        baseName: String? = null,
+        baseAsset: String? = null,
+        baseParent: Language? = null
 ): Language {
     val name: String = source["name"]?.textValue() ?: baseName!!
     val asset: String? = source["asset"]?.textValue() ?: baseAsset

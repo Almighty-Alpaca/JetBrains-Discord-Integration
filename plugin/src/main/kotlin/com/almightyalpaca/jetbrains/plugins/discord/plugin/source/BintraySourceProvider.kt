@@ -36,16 +36,16 @@ class BintraySourceProvider(location: String) : SourceProvider {
         val threadPool = Executors.newCachedThreadPool()
 
         val client = OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .cache(cache)
-            .connectionPool(connectionPool)
-            .dispatcher(Dispatcher(threadPool).apply {
-                maxRequests = 150
-                maxRequestsPerHost = 150
-            })
-            .build()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .cache(cache)
+                .connectionPool(connectionPool)
+                .dispatcher(Dispatcher(threadPool).apply {
+                    maxRequests = 150
+                    maxRequestsPerHost = 150
+                })
+                .build()
 
         val (user, repository, `package`) = location.split('/', limit = 3)
 
@@ -71,9 +71,9 @@ class BintraySourceProvider(location: String) : SourceProvider {
                         throw e
                     }
                 }
-                    .map { async -> async.await() }
-                    .map { p -> p.id to p }
-                    .toMap()
+                        .map { async -> async.await() }
+                        .map { p -> p.id to p }
+                        .toMap()
             }
 
             println(languages)
@@ -92,9 +92,9 @@ class BintraySourceProvider(location: String) : SourceProvider {
                         throw e
                     }
                 }
-                    .map { async -> async.await() }
-                    .map { p -> p.id to p }
-                    .toMap()
+                        .map { async -> async.await() }
+                        .map { p -> p.id to p }
+                        .toMap()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -109,50 +109,50 @@ class BintraySourceProvider(location: String) : SourceProvider {
 }
 
 private suspend fun <T> OkHttpClient.get(url: String, handler: (ResponseBody) -> T) =
-    suspendCancellableCoroutine<T> { continuation ->
-        val request = Request.Builder()
-            .get()
-            .url(url)
-            .build()
+        suspendCancellableCoroutine<T> { continuation ->
+            val request = Request.Builder()
+                    .get()
+                    .url(url)
+                    .build()
 
-        val call = newCall(request)
+            val call = newCall(request)
 
-        call.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                continuation.resumeWithException(RuntimeException(e))
-            }
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(RuntimeException(e))
+                }
 
-            override fun onResponse(call: Call, response: Response) {
-                when (response.code()) {
-                    in 200..299 -> when (val body = response.body()) {
-                        null -> {
-                            response.close()
-                            continuation.resumeWithException(RuntimeException())
+                override fun onResponse(call: Call, response: Response) {
+                    when (response.code()) {
+                        in 200..299 -> when (val body = response.body()) {
+                            null -> {
+                                response.close()
+                                continuation.resumeWithException(RuntimeException())
+                            }
+                            else -> body.use { continuation.resume(handler(body)) }
                         }
-                        else -> body.use { continuation.resume(handler(body)) }
-                    }
-                    else -> {
-                        response.close()
-                        continuation.resumeWithException(RuntimeException("${response.code()}"))
+                        else -> {
+                            response.close()
+                            continuation.resumeWithException(RuntimeException("${response.code()}"))
+                        }
                     }
                 }
-            }
-        })
-    }
+            })
+        }
 
 private suspend fun OkHttpClient.getLatestVersion(user: String, repository: String, `package`: String) =
-    get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
-        ObjectMapper().readTree(body.byteStream())
-            .get("name")
-            .asText()
-    }
+        get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
+            ObjectMapper().readTree(body.byteStream())
+                    .get("name")
+                    .asText()
+        }
 
 private suspend fun OkHttpClient.getFiles(user: String, repository: String, `package`: String, version: String) =
-    get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/$version/files") { body ->
-        ObjectMapper().readTree(body.byteStream())
-            .map { node -> node["path"].asText() }
-            .map { path -> path.substring(`package`.length + 1 + version.length + 1) }
-    }
+        get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/$version/files") { body ->
+            ObjectMapper().readTree(body.byteStream())
+                    .map { node -> node["path"].asText() }
+                    .map { path -> path.substring(`package`.length + 1 + version.length + 1) }
+        }
 
 private suspend fun <T> OkHttpClient.getFile(user: String, repository: String, `package`: String, version: String, path: String, handler: (ResponseBody) -> T) =
-    get("https://dl.bintray.com/$user/$repository/$`package`/$version/$path", handler)
+        get("https://dl.bintray.com/$user/$repository/$`package`/$version/$path", handler)

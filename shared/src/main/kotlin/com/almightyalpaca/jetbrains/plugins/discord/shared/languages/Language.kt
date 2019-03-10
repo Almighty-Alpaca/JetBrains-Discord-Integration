@@ -12,7 +12,7 @@ sealed class Language(val id: String, val name: String, val parent: Language?, v
         get() = matchers.isNotEmpty()
 
     class Simple(id: String, name: String, parent: Language?, asset: String?, matchers: Map<Matcher.Target, Matcher>, val flavors: Set<Language>) :
-        Language(id, name, parent, asset, matchers) {
+            Language(id, name, parent, asset, matchers) {
         override val assets: Iterable<String> by lazy { concat(asset, parent?.assets) }
         override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? {
             val matcher = matchers[target]
@@ -62,8 +62,7 @@ class LanguageMap(languages: Map<String, Language>) : DelegateCollection<Languag
 }
 
 data class LanguageMatch(val name: String, val assets: Iterable<String>) {
-    fun findIcon(icons: IconSet) = Icon(icons.appId, name, assets.find { asset -> asset in icons }
-        ?: throw RuntimeException())
+    fun findIcon(icons: IconSet) = Icon(icons.appId, name, assets.find { asset -> asset in icons } ?: throw RuntimeException())
 }
 
 data class Icon(val appId: Long, val name: String, val asset: String)
