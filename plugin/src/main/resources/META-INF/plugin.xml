@@ -10,10 +10,10 @@
     <application-components>
         <component>
             <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.app.components.AppComponent
+                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
             </interface-class>
             <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.app.components.impl.AppComponentImpl
+                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ApplicationComponentImpl
             </implementation-class>
         </component>
     </application-components>
@@ -21,27 +21,27 @@
     <project-components>
         <component>
             <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.app.components.ProjectComponent
+                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ProjectComponent
             </interface-class>
             <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.app.components.impl.ProjectComponentImpl
+                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ProjectComponentImpl
             </implementation-class>
         </component>
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.app.settings.PluginSettings"
-                        serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.app.settings.impl.PluginSettingsImpl"/>
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.app.settings.AppSettings"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.app.settings.impl.AppSettingsImpl"/>
+        <projectService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.PluginSettings"
+                        serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.PluginSettingsImpl"/>
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.AppSettings"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.AppSettingsImpl"/>
 
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.app.rpc.RichPresenceService"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.app.rpc.impl.RichPresenceServiceImpl"/>
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
 
         <projectConfigurable groupId="tools"
                              groupWeight="200"
                              displayName="Discord"
                              id="discord"
-                             instance="com.almightyalpaca.jetbrains.plugins.discord.app.settings.DiscordConfigurable"/>
+                             instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.DiscordConfigurable"/>
     </extensions>
 </idea-plugin>

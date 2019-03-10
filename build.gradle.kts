@@ -42,7 +42,5 @@ subprojects {
     val secrets = rootProject.file("secrets.gradle.kts")
     if (secrets.exists()) {
         apply(from = secrets)
-
-        // project.extra["DISCORD_TOKEN"] as String?
     }
 }

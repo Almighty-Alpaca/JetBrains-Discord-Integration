@@ -18,6 +18,7 @@ dependencies {
     compile(group = "org.apache.commons", name = "commons-text", version = "1.6")
 
     compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.1.3")
+    compile(group = "io.ktor", name = "ktor-client-auth", version = "1.1.3")
 }
 
 tasks {
@@ -71,16 +72,36 @@ tasks {
         dependsOn(validate)
     }
 
-    if (project.extra.has("DISCORD_TOKEN")) {
-        val `upload` by registering(JavaExec::class) task@{
+    if (project.extra.has("DISCORD_TOKEN") && project.extra.has("BINTRAY_KEY")) {
+        val `upload-icons` by registering(JavaExec::class) task@{
+            group = "icons"
+
+            dependsOn(`validate-icons`)
+
+            sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+            main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
+
+            environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
+        }
+
+        val `upload-languages` by registering(JavaExec::class) task@{
+            group = "icons"
+
+            dependsOn(`validate-languages`)
+
+            sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+            main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
+
+            environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
+        }
+
+        val upload by registering task@{
             group = "icons"
 
             dependsOn(validate)
 
-            sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-            main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.UploaderKt"
-
-            environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
+            dependsOn(`upload-languages`)
+            dependsOn(`upload-icons`)
         }
     }
 }

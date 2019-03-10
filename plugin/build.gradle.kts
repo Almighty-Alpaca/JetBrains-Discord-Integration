@@ -17,8 +17,9 @@ intellij {
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks.withType<RunIdeTask> {
-    environment["ICONS"] = rootProject.projectDir.absolutePath
-//    environment["ICONS"] = "Almighty-Alpaca/JetBrains-Discord-Integration:rewrite"
+    environment["ICONS"] = "local:${rootProject.projectDir.absolutePath}"
+//    environment["ICONS"] = "github:Almighty-Alpaca/JetBrains-Discord-Integration:rewrite"
+//    environment["ICONS"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
 }
 
 dependencies {
@@ -38,8 +39,6 @@ dependencies {
         exclude(group = "commons-io", module = "commons-io")
         exclude(group = "org.apache.commons", module = "commons-lang3")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
-
-        exclude(group = "com.google.guava", module = "guava")
     }
 
     testCompile(kotlin("stdlib-jdk8"))
@@ -65,7 +64,4 @@ dependencies {
     }
 
     compile(group = "com.squareup.okhttp3", name = "okhttp-urlconnection", version = "3.13.1")
-
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.4.0")
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.4.0")
 }
