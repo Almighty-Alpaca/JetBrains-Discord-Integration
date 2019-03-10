@@ -4,11 +4,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceData
-import com.almightyalpaca.jetbrains.plugins.shared.languages.Icon
-import com.almightyalpaca.jetbrains.plugins.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.themes.Theme
-import com.almightyalpaca.jetbrains.plugins.shared.themes.ThemeMap
-import com.almightyalpaca.jetbrains.plugins.shared.themes.icons.IconSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.Icon
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.icons.IconSet
 
 interface RichPresenceRenderContext {
     val theme: Theme

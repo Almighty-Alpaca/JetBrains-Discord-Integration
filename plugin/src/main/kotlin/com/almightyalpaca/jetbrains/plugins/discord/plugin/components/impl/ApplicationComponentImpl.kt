@@ -10,13 +10,12 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceServi
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.getContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.BintraySourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.FileSourceProvider
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.GitHubSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.failingLazy
-import com.almightyalpaca.jetbrains.plugins.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.source.SourceProvider
-import com.almightyalpaca.jetbrains.plugins.shared.source.toLanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.source.toThemeMap
-import com.almightyalpaca.jetbrains.plugins.shared.themes.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.SourceProvider
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toLanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.ThemeMap
 import com.intellij.AppTopics
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
@@ -44,7 +43,7 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
         val icons: String? = System.getenv("ICONS")
         val (platform, location) = icons?.split(':', limit = 2) ?: listOf("", "")
         when (platform.toLowerCase()) {
-            "github" -> GitHubSourceProvider(location)
+//            "github" -> GitHubSourceProvider(location)
             "bintray" -> BintraySourceProvider(location)
             "local" -> FileSourceProvider(Paths.get(location))
             else -> BintraySourceProvider("almightyalpaca/JetBrains-Discord-Integration/Icons")

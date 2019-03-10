@@ -2,9 +2,9 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
-import com.almightyalpaca.jetbrains.plugins.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.source.toLanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toLanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 

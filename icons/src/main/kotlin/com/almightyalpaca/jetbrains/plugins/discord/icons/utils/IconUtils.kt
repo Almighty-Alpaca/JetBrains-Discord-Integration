@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.utils
 
-import com.almightyalpaca.jetbrains.plugins.shared.utils.name
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import java.nio.file.Files
 import java.nio.file.Paths
 

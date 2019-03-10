@@ -1,10 +1,10 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
-import com.almightyalpaca.jetbrains.plugins.shared.languages.FieldProvider
-import com.almightyalpaca.jetbrains.plugins.shared.languages.matchers.Matcher
-import com.almightyalpaca.jetbrains.plugins.shared.utils.name
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.FieldProvider
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.matchers.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import org.apache.commons.io.FilenameUtils
 import java.nio.file.Path
 import java.time.OffsetDateTime

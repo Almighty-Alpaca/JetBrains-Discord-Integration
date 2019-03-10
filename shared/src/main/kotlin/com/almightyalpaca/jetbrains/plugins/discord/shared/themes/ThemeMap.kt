@@ -1,7 +1,7 @@
-package com.almightyalpaca.jetbrains.plugins.shared.themes
+package com.almightyalpaca.jetbrains.plugins.discord.shared.themes
 
-import com.almightyalpaca.jetbrains.plugins.shared.utils.DelegateMap
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.DelegateMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 
 class ThemeMap(themes: Set<Theme>, defaultTheme: Theme) : DelegateMap<String, Theme>(generateBackingMap(themes, defaultTheme)) {
     override fun get(key: String): Theme = map.getValue(key)

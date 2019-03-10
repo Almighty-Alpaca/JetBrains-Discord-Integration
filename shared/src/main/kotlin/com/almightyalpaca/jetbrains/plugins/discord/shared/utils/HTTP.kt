@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.shared.utils
+package com.almightyalpaca.jetbrains.plugins.discord.shared.utils
 
 import java.io.InputStream
 import java.net.HttpURLConnection

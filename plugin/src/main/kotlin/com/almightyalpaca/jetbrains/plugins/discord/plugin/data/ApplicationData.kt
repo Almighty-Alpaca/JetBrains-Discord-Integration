@@ -1,9 +1,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
-import com.almightyalpaca.jetbrains.plugins.shared.themes.Theme
-import com.almightyalpaca.jetbrains.plugins.shared.themes.icons.IconSet
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.icons.IconSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.project.Project
 import java.nio.file.Path

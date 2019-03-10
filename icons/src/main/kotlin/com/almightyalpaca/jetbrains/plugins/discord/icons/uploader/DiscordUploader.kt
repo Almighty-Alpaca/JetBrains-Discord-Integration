@@ -1,11 +1,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.uploader
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
-import com.almightyalpaca.jetbrains.plugins.shared.source.toThemeMap
-import com.almightyalpaca.jetbrains.plugins.shared.themes.Theme
-import com.almightyalpaca.jetbrains.plugins.shared.utils.Map
-import com.almightyalpaca.jetbrains.plugins.shared.utils.name
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Map
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory

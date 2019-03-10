@@ -1,8 +1,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source
 
-import com.almightyalpaca.jetbrains.plugins.shared.source.LanguageSourceSet
-import com.almightyalpaca.jetbrains.plugins.shared.source.SourceProvider
-import com.almightyalpaca.jetbrains.plugins.shared.source.ThemeSourceSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageSourceSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.SourceProvider
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeSourceSet
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory

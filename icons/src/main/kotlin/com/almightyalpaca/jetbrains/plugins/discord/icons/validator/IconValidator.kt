@@ -2,7 +2,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
-import com.almightyalpaca.jetbrains.plugins.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO

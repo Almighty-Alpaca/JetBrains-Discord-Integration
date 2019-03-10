@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.uploader
 
-import com.almightyalpaca.jetbrains.plugins.shared.utils.name
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.ktor.client.HttpClient

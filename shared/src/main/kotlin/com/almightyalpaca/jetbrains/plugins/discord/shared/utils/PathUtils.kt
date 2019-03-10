@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.shared.utils
+package com.almightyalpaca.jetbrains.plugins.discord.shared.utils
 
 import org.apache.commons.io.FilenameUtils
 import java.nio.file.Path

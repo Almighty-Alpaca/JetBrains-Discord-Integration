@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.shared.languages.matchers
+package com.almightyalpaca.jetbrains.plugins.discord.shared.languages.matchers
 
 sealed class Matcher {
     abstract fun matches(field: String): Boolean

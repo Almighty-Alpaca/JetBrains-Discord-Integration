@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.shared.source
+package com.almightyalpaca.jetbrains.plugins.discord.shared.source
 
 import com.fasterxml.jackson.databind.JsonNode
 

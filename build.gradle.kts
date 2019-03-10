@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.3.21" apply false
     id("org.jetbrains.intellij") version "0.4.3" apply false
     id("com.github.ben-manes.versions") version "0.20.0" apply false
+    id("com.github.johnrengelman.shadow") version "5.0.0" apply false
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"

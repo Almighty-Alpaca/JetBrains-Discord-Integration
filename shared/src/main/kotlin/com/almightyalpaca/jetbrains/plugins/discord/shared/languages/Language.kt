@@ -1,9 +1,9 @@
-package com.almightyalpaca.jetbrains.plugins.shared.languages
+package com.almightyalpaca.jetbrains.plugins.discord.shared.languages
 
-import com.almightyalpaca.jetbrains.plugins.shared.languages.matchers.Matcher
-import com.almightyalpaca.jetbrains.plugins.shared.themes.icons.IconSet
-import com.almightyalpaca.jetbrains.plugins.shared.utils.DelegateCollection
-import com.almightyalpaca.jetbrains.plugins.shared.utils.concat
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.matchers.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.icons.IconSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.DelegateCollection
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.concat
 
 sealed class Language(val id: String, val name: String, val parent: Language?, val asset: String?, val matchers: Map<Matcher.Target, Matcher>) {
     abstract fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch?
@@ -62,7 +62,8 @@ class LanguageMap(languages: Map<String, Language>) : DelegateCollection<Languag
 }
 
 data class LanguageMatch(val name: String, val assets: Iterable<String>) {
-    fun findIcon(icons: IconSet) = Icon(icons.appId, name, assets.find { asset -> asset in icons } ?: throw RuntimeException())
+    fun findIcon(icons: IconSet) = Icon(icons.appId, name, assets.find { asset -> asset in icons }
+        ?: throw RuntimeException())
 }
 
 data class Icon(val appId: Long, val name: String, val asset: String)

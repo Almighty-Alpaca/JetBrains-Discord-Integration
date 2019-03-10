@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.shared.utils
+package com.almightyalpaca.jetbrains.plugins.discord.shared.utils
 
 inline fun <T, K, V> Iterable<T>.toMap(mapper: (T) -> Pair<K, V>) = iterator().toMap(mapper)
 

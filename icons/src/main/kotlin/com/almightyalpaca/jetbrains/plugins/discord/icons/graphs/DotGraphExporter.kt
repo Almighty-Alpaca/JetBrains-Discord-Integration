@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.graphs
 
-import com.almightyalpaca.jetbrains.plugins.shared.languages.Language
-import com.almightyalpaca.jetbrains.plugins.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.Language
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
 import org.apache.commons.text.StringEscapeUtils
 import java.io.PrintWriter
 import java.io.Writer

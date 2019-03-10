@@ -1,9 +1,9 @@
-package com.almightyalpaca.jetbrains.plugins.shared.source
+package com.almightyalpaca.jetbrains.plugins.discord.shared.source
 
-import com.almightyalpaca.jetbrains.plugins.shared.themes.Theme
-import com.almightyalpaca.jetbrains.plugins.shared.themes.ThemeMap
-import com.almightyalpaca.jetbrains.plugins.shared.utils.stream
-import com.almightyalpaca.jetbrains.plugins.shared.utils.toMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.stream
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
 
 fun ThemeSourceSet.toThemeMap(): ThemeMap {

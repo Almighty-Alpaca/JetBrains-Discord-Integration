@@ -1,8 +1,8 @@
-package com.almightyalpaca.jetbrains.plugins.shared.themes.icons
+package com.almightyalpaca.jetbrains.plugins.discord.shared.themes.icons
 
-import com.almightyalpaca.jetbrains.plugins.shared.utils.DelegateSet
-import com.almightyalpaca.jetbrains.plugins.shared.utils.HTTP
-import com.almightyalpaca.jetbrains.plugins.shared.utils.Set
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.DelegateSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.HTTP
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Set
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode

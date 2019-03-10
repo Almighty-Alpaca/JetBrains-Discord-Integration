@@ -2,7 +2,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
-import com.almightyalpaca.jetbrains.plugins.shared.utils.map
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.vfs.VirtualFile
 import java.nio.file.Files
 import java.nio.file.Path

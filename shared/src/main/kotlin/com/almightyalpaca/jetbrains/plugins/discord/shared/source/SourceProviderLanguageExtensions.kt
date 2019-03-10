@@ -1,9 +1,9 @@
-package com.almightyalpaca.jetbrains.plugins.shared.source
+package com.almightyalpaca.jetbrains.plugins.discord.shared.source
 
-import com.almightyalpaca.jetbrains.plugins.shared.languages.Language
-import com.almightyalpaca.jetbrains.plugins.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.shared.languages.matchers.Matcher
-import com.almightyalpaca.jetbrains.plugins.shared.utils.Set
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.Language
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.matchers.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Set
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import java.util.*
