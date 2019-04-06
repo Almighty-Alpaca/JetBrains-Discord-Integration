@@ -1,0 +1,111 @@
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection
+
+import club.minnced.discord.rpc.DiscordEventHandlers
+import club.minnced.discord.rpc.DiscordEventHandlers.OnReady
+import club.minnced.discord.rpc.DiscordRPC
+import club.minnced.discord.rpc.DiscordRichPresence
+import club.minnced.discord.rpc.DiscordUser
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
+import kotlinx.coroutines.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.coroutines.CoroutineContext
+
+private var connected: AtomicReference<NativeRPCConnection?> = AtomicReference(null)
+
+class NativeRPCConnection(override val appId: Long, private val userCallback: (User) -> Unit) : DiscordEventHandlers(), RPCConnection, CoroutineScope {
+    private val parentJob = SupervisorJob()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + parentJob
+
+    private var updateJob: Job? = null
+
+    private lateinit var callbackRunner: ScheduledExecutorService
+
+    init {
+        ready = OnReady { user -> userCallback(User.fromLibraryObject(user)) }
+    }
+
+    // TODO: handle rpc connection failure
+    @Synchronized
+    override fun connect() {
+        Logger.Level.TRACE { "RPCConnection($appId)#connect()" }
+
+        if (!connected.compareAndSet(null, this)) {
+            throw Exception("There can only be one connected RPC connection")
+        }
+
+        DiscordRPC.INSTANCE.Discord_Initialize(appId.toString(), this, false, null)
+
+        callbackRunner = Executors.newSingleThreadScheduledExecutor()
+        callbackRunner.scheduleAtFixedRate(DiscordRPC.INSTANCE::Discord_RunCallbacks, 2, 2, TimeUnit.SECONDS)
+    }
+
+    @Synchronized
+    override fun send(presence: RichPresence?) {
+        Logger.Level.TRACE { "RPCConnection($appId)#send()" }
+
+        if (connected.get() != this) {
+            throw Exception("RPC connection not connected")
+        }
+
+        updateJob?.cancel()
+
+        updateJob = launch {
+            delay(UPDATE_DELAY)
+
+            when (presence) {
+                null -> DiscordRPC.INSTANCE.Discord_ClearPresence()
+                else -> DiscordRPC.INSTANCE.Discord_UpdatePresence(presence.toLibraryObject())
+            }
+        }
+    }
+
+    @Synchronized
+    override fun disconnect() {
+        Logger.Level.TRACE { "RPCConnection($appId)#disconnect()" }
+
+        if (connected.get() != this) {
+            throw Exception("RPC connection not connected")
+        }
+
+        parentJob.cancel()
+        callbackRunner.shutdownNow()
+        DiscordRPC.INSTANCE.Discord_Shutdown()
+
+        connected.set(null)
+    }
+
+    companion object : Logging()
+}
+
+private fun User.Companion.fromLibraryObject(user: DiscordUser): User = User.Normal(user.username, user.discriminator, user.userId.toLong(), user.avatar)
+
+private fun RichPresence.toLibraryObject() = DiscordRichPresence().apply {
+    this@toLibraryObject.state?.let { state = it }
+    this@toLibraryObject.details?.let { details = it }
+    this@toLibraryObject.startTimestamp?.toInstant()?.toEpochMilli()?.let { startTimestamp = it }
+    this@toLibraryObject.endTimestamp?.toInstant()?.toEpochMilli()?.let { endTimestamp = it }
+    this@toLibraryObject.largeImage?.key?.let { largeImageKey = it }
+    this@toLibraryObject.largeImage?.text?.let { largeImageText = it }
+    this@toLibraryObject.smallImage?.key?.let { smallImageKey = it }
+    this@toLibraryObject.smallImage?.text?.let { smallImageText = it }
+    this@toLibraryObject.partyId?.let { partyId = it }
+    this@toLibraryObject.partySize.let { partySize = it }
+    this@toLibraryObject.partyMax.let { partyMax = it }
+    this@toLibraryObject.matchSecret?.let { matchSecret = it }
+    this@toLibraryObject.joinSecret?.let { joinSecret = it }
+    this@toLibraryObject.spectateSecret?.let { spectateSecret = it }
+    this@toLibraryObject.instance.let {
+        instance = when (it) {
+            false -> 0
+            true -> 1
+        }
+    }
+    this@toLibraryObject.state?.let { state = it }
+}

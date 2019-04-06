@@ -12,7 +12,7 @@ group = "com.almightyalpaca.jetbrains.plugins.discord"
 version = "1.0.0-SNAPSHOT"
 
 subprojects {
-    group = rootProject.group.toString() + project.name
+    group = rootProject.group.toString() + "." + project.name.toLowerCase()
     version = rootProject.version
 
     repositories {

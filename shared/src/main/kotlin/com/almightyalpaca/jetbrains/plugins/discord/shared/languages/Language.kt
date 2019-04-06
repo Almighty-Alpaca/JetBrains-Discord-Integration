@@ -37,14 +37,16 @@ sealed class Language(val id: String, val name: String, val parent: Language?, v
     }
 }
 
-typealias FieldProvider = (Matcher.Target) -> Collection<String>
+interface FieldProvider {
+    fun getField(target: Matcher.Target): Collection<String>
+}
 
 class LanguageMap(languages: Map<String, Language>) : DelegateCollection<Language>(languages.values) {
     val default: Language.Default = languages["default"] as Language.Default
 
     fun findLanguage(provider: FieldProvider): LanguageMatch {
         for (target in Matcher.Target.values()) {
-            val fields = provider(target)
+            val fields = provider.getField(target)
             for (language in this) {
                 val match = language.findMatch(target, fields)
                 if (match != null) {

@@ -4,10 +4,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.Applicatio
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationDataBuilder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.getContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.renderType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.BintraySourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.failingLazy
@@ -39,10 +40,12 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
 
     private var updateJob: Job? = null
 
-    private val provider: SourceProvider? by failingLazy<SourceProvider?>(null) {
+    private val provider: SourceProvider
+
+    init {
         val icons: String? = System.getenv("ICONS")
         val (platform, location) = icons?.split(':', limit = 2) ?: listOf("", "")
-        when (platform.toLowerCase()) {
+        provider = when (platform.toLowerCase()) {
 //            "github" -> GitHubSourceProvider(location)
             "bintray" -> BintraySourceProvider(location)
             "local" -> FileSourceProvider(Paths.get(location))
@@ -51,30 +54,38 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
     }
 
     // TODO: better error handling for download failures
-    private val languages: LanguageMap by failingLazy(LanguageMap.EMPTY) { provider!!.languages.toLanguageMap() }
-    private val themes: ThemeMap by failingLazy(ThemeMap.EMPTY) { provider!!.themes.toThemeMap() }
+    override val languages: LanguageMap by failingLazy(LanguageMap.EMPTY) { provider.languages.toLanguageMap() }
+    override val themes: ThemeMap by failingLazy(ThemeMap.EMPTY) { provider.themes.toThemeMap() }
 
-    private var applicationData: ApplicationData = ApplicationData.EMPTY
+    override var data: ApplicationData = ApplicationData.DEFAULT
         @Synchronized
-        set(value) {
-            Logger.Level.TRACE { "ApplicationComponentImpl#setAppData($value)" }
-
+        private set(value) {
             field = value
 
-            updateJob?.cancel()
-
-            updateJob = launch {
-                Logger.Level.TRACE { "ApplicationComponentImpl#setAppData()\$async start" }
-
-                RichPresenceService.instance.update(applicationData.getContext(languages, themes).render())
-
-                Logger.Level.TRACE { "ApplicationComponentImpl#setAppData()\$async end" }
-            }
-            updateJob?.start()
+            update()
         }
 
+    @Synchronized
+    override fun update() {
+        updateJob?.cancel()
+
+        updateJob = launch {
+            val context = RenderContext(themes, languages, data, Renderer.Mode.NORMAL)
+            val renderer = context.renderType.createRenderer(context)
+            val presence = renderer.render()
+
+            RichPresenceService.instance.update(presence)
+
+            updateJob = launch {
+                delay(20 * 1000)
+
+                update()
+            }
+        }
+    }
+
     override fun initComponent() {
-        applicationData = ApplicationData.DEFAULT
+        data = ApplicationData.DEFAULT
 
         connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, FileDocumentManagerListener())
         connection.subscribe(FileEditorManagerListener.TOPIC, FileEditorManagerListener())
@@ -106,11 +117,11 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
 
     @Synchronized
     override fun app(builder: ApplicationDataBuilder.() -> Unit) {
-        val applicationDataBuilder = applicationData.builder()
+        val applicationDataBuilder = data.builder()
 
         applicationDataBuilder.builder()
 
-        applicationData = applicationDataBuilder.build()
+        data = applicationDataBuilder.build()
     }
 
     companion object : Logging()

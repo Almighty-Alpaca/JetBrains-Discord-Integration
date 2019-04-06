@@ -35,7 +35,7 @@ git clone https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration.git
 cd JetBrains-Discord-Integration
 # The next line is only neccesary on linux to make the gradle wrapper executable
 chmod +x gradlew
-./gradlew build
+./gradlew buildPlugin
 ```
 The plugin zip will be generated under `plugin/build/distributions/JetBrains-Discord-Integration-Plugin-X.X.X.zip`.
 

@@ -11,5 +11,5 @@ dependencies {
 
     compile(group = "org.kohsuke", name = "github-api", version = "1.95")
 
-    compile(group = "com.squareup.okhttp3", name = "okhttp-urlconnection", version = "3.13.1")
+    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.0")
 }

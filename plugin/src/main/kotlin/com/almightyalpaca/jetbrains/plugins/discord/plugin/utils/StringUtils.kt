@@ -7,3 +7,11 @@ fun CharSequence.find(char: Char, ignoreCase: Boolean = false): IntStream = IntS
 
 fun CharSequence.find(sequence: CharSequence, ignoreCase: Boolean = false): IntStream = IntStream.range(0, length)
         .filter { i -> startsWith(sequence, i, ignoreCase) }
+
+fun String.limit(limit: Int, dots: Boolean = false) = when (length <= limit) {
+    true -> this
+    false -> when (dots) {
+        true -> "${substring(0, limit - 3)}..."
+        false -> substring(0, 128)
+    }
+}

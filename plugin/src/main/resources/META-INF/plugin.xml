@@ -3,7 +3,7 @@
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
-    <idea-version since-build="145"/>
+    <idea-version since-build="191"/>
 
     <depends>com.intellij.modules.lang</depends>
 
@@ -30,18 +30,24 @@
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.PluginSettings"
-                        serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.PluginSettingsImpl"/>
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.AppSettings"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.AppSettingsImpl"/>
+        <projectService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings"
+                        serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ProjectSettingsImpl"/>
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ApplicationSettingsImpl"/>
 
         <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
                             serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
 
-        <projectConfigurable groupId="tools"
+        <applicationConfigurable groupId="tools"
+                                 groupWeight="200"
+                                 displayName="Discord"
+                                 id="discord-application"
+                                 instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationConfigurable"/>
+
+        <projectConfigurable groupId="discord-application"
                              groupWeight="200"
-                             displayName="Discord"
-                             id="discord"
-                             instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.DiscordConfigurable"/>
+                             displayName="Project"
+                             id="discord-project"
+                             instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectConfigurable"/>
     </extensions>
 </idea-plugin>
