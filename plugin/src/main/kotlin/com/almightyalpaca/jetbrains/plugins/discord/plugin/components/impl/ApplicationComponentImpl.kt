@@ -9,14 +9,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceServi
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.renderType
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.BintraySourceProvider
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.FileSourceProvider
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.failingLazy
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.SourceProvider
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toLanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.BintraySource
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import com.intellij.AppTopics
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
@@ -40,22 +37,23 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
 
     private var updateJob: Job? = null
 
-    private val provider: SourceProvider
+    private val source: Source
 
     init {
         val icons: String? = System.getenv("ICONS")
         val (platform, location) = icons?.split(':', limit = 2) ?: listOf("", "")
-        provider = when (platform.toLowerCase()) {
-//            "github" -> GitHubSourceProvider(location)
-            "bintray" -> BintraySourceProvider(location)
-            "local" -> FileSourceProvider(Paths.get(location))
-            else -> BintraySourceProvider("almightyalpaca/JetBrains-Discord-Integration/Icons")
+        source = when (platform.toLowerCase()) {
+            "bintray" -> BintraySource(location)
+            "local" -> LocalSource(Paths.get(location))
+            else -> BintraySource("almightyalpaca/JetBrains-Discord-Integration/Icons")
         }
     }
 
     // TODO: better error handling for download failures
-    override val languages: LanguageMap by failingLazy(LanguageMap.EMPTY) { provider.languages.toLanguageMap() }
-    override val themes: ThemeMap by failingLazy(ThemeMap.EMPTY) { provider.themes.toThemeMap() }
+    override val languages: LanguageMap?
+        get() = source.getLanguagesOrNull()
+    override val themes: ThemeMap?
+        get() = source.getThemesOrNull()
 
     override var data: ApplicationData = ApplicationData.DEFAULT
         @Synchronized

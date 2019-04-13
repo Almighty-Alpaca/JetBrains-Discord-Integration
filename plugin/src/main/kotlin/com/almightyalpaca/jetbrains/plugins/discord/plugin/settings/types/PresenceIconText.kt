@@ -7,19 +7,21 @@ typealias IconTextValue = SimpleValue<PresenceIconText>
 
 enum class PresenceIconText(val description: String) {
     APPLICATION_VERSION("Application Version") {
-        override fun get(context: RenderContext) = context.application.version.toResult()
+        override fun RenderContext.getResult() = application.version.toResult()
     },
     FILE_LANGUAGE("File Language") {
-        override fun get(context: RenderContext) = context.match?.name.toResult()
+        override fun RenderContext.getResult() = match?.name.toResult()
     },
     // CUSTOM("Custom") {
     //     override fun get(context: RenderContext) = Result.Custom
     // },
     NONE("None") {
-        override fun get(context: RenderContext) = Result.Empty
+        override fun RenderContext.getResult() = Result.Empty
     };
 
-    abstract fun get(context: RenderContext): Result
+    protected abstract fun RenderContext.getResult(): Result
+
+    fun get(context: RenderContext) = context.run { getResult() }
 
     override fun toString() = description
 

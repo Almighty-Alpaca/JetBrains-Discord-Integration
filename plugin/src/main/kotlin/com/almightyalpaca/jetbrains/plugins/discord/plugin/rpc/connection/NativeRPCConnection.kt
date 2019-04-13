@@ -2,6 +2,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection
 
 import club.minnced.discord.rpc.DiscordEventHandlers
 import club.minnced.discord.rpc.DiscordEventHandlers.OnReady
+import club.minnced.discord.rpc.DiscordEventHandlers.OnStatus
 import club.minnced.discord.rpc.DiscordRPC
 import club.minnced.discord.rpc.DiscordRichPresence
 import club.minnced.discord.rpc.DiscordUser
@@ -16,10 +17,10 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
-private var connected: AtomicReference<NativeRPCConnection?> = AtomicReference(null)
+private var CONNECTED: AtomicReference<NativeRPCConnection?> = AtomicReference(null)
 
 class NativeRPCConnection(override val appId: Long, private val userCallback: (User) -> Unit) : DiscordEventHandlers(), RPCConnection, CoroutineScope {
-    private val parentJob = SupervisorJob()
+    private val parentJob: Job = SupervisorJob()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + parentJob
 
@@ -28,15 +29,23 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
     private lateinit var callbackRunner: ScheduledExecutorService
 
     init {
-        ready = OnReady { user -> userCallback(User.fromLibraryObject(user)) }
+        ready = OnReady { user ->
+            running = true
+            userCallback(User.fromLibraryObject(user))
+        }
+        disconnected = OnStatus { _, _ ->
+            running = false
+        }
     }
 
-    // TODO: handle rpc connection failure
+    override var running: Boolean = false
+        get() = field && CONNECTED.get() == this
+
     @Synchronized
     override fun connect() {
-        Logger.Level.TRACE { "RPCConnection($appId)#connect()" }
+        Logger.Level.TRACE { "NativeRPCConnection($appId)#connect()" }
 
-        if (!connected.compareAndSet(null, this)) {
+        if (!CONNECTED.compareAndSet(null, this)) {
             throw Exception("There can only be one connected RPC connection")
         }
 
@@ -48,10 +57,10 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun send(presence: RichPresence?) {
-        Logger.Level.TRACE { "RPCConnection($appId)#send()" }
+        Logger.Level.TRACE { "NativeRPCConnection($appId)#send()" }
 
-        if (connected.get() != this) {
-            throw Exception("RPC connection not connected")
+        if (CONNECTED.get() != this) {
+            return
         }
 
         updateJob?.cancel()
@@ -68,9 +77,9 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun disconnect() {
-        Logger.Level.TRACE { "RPCConnection($appId)#disconnect()" }
+        Logger.Level.TRACE { "NativeRPCConnection($appId)#disconnect()" }
 
-        if (connected.get() != this) {
+        if (CONNECTED.get() != this) {
             throw Exception("RPC connection not connected")
         }
 
@@ -78,7 +87,7 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
         callbackRunner.shutdownNow()
         DiscordRPC.INSTANCE.Discord_Shutdown()
 
-        connected.set(null)
+        CONNECTED.set(null)
     }
 
     companion object : Logging()

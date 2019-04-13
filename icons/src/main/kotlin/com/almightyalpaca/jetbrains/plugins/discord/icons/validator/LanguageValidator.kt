@@ -1,17 +1,15 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toLanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 fun main() {
-    val provider = FileSourceProvider(Paths.get("../"))
-    val languages = provider.languages.toLanguageMap()
-    val themes = provider.themes.toThemeMap()
+    val provider = LocalSource(Paths.get("../"))
+    val languages = provider.getLanguages()
+    val themes = provider.getThemes()
 
     var violation = false
 
@@ -29,10 +27,10 @@ private fun validate(languages: LanguageMap, theme: String, icons: Set<String>):
     var violation = false
 
     for (language in languages) {
-        if (language.isMatching && language.assets.none { asset -> asset in icons }) {
+        if (language.matchers.isNotEmpty() && language.assetIds.none { asset -> asset in icons }) {
             violation = true
 
-            println("No icon for ${language.name} found in $theme! Hierarchy: ${language.assets.joinToString(separator = " > ")}")
+            println("No icon for ${language.name} found in $theme! Hierarchy: ${language.assetIds.joinToString(separator = " > ")}")
         }
     }
 

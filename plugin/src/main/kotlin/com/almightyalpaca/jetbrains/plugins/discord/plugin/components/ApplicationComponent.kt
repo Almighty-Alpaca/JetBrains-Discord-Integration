@@ -3,13 +3,14 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.components
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationDataBuilder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Application
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeMap
 import com.intellij.openapi.components.BaseComponent
 
 interface ApplicationComponent : BaseComponent {
-    val languages: LanguageMap
-    val themes: ThemeMap
+    val languages: LanguageMap?
+    val themes: ThemeMap?
+
     val data: ApplicationData
 
     fun app(builder: ApplicationDataBuilder.() -> Unit)

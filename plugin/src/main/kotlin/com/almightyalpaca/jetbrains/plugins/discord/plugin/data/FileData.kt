@@ -2,8 +2,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.FieldProvider
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.matchers.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
+import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import com.intellij.openapi.project.Project

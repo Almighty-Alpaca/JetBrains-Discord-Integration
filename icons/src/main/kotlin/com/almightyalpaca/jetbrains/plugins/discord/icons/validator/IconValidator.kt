@@ -1,16 +1,15 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 fun main() {
-    val provider = FileSourceProvider(Paths.get("../"))
-    val themes = provider.themes.toThemeMap()
+    val source = LocalSource(Paths.get("../"))
+    val themes = source.getThemes()
 
     var violation = false
 

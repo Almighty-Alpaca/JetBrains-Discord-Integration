@@ -8,32 +8,34 @@ typealias LineValue = SimpleValue<PresenceLine>
 
 enum class PresenceLine(val description: String) {
     NONE("Empty") {
-        override fun get(context: RenderContext) = Result.Empty
+        override fun RenderContext.getResult() = Result.Empty
     },
     PROJECT_DESCRIPTION("Project Description") {
-        override fun get(context: RenderContext) = context.run { project?.platformProject?.settings?.description?.getValue().toResult() }
+        override fun RenderContext.getResult() = run { project?.platformProject?.settings?.description?.getValue().toResult() }
     },
     PROJECT_NAME("Project Name") {
-        override fun get(context: RenderContext) = context.project?.name.toResult()
+        override fun RenderContext.getResult() = project?.name.toResult()
     },
     PROJECT_NAME_DESCRIPTION("Project Name - Description") {
-        override fun get(context: RenderContext): Result {
-            val project = context.project ?: return Result.Empty
+        override fun RenderContext.getResult(): Result {
+            val project = project ?: return Result.Empty
 
-            return when (val description = context.run { project.platformProject.settings.description.getValue() }) {
+            return when (val description = run { project.platformProject.settings.description.getValue() }) {
                 "" -> project.name.toResult()
                 else -> "${project.name} - $description".toResult()
             }
         }
     },
     FILE_NAME("File Name") {
-        override fun get(context: RenderContext) = context.file?.name.toResult()
+        override fun RenderContext.getResult() = file?.name.toResult()
     },
     CUSTOM("Custom") {
-        override fun get(context: RenderContext) = Result.Custom
+        override fun RenderContext.getResult() = Result.Custom
     };
 
-    abstract fun get(context: RenderContext): Result
+    protected abstract fun RenderContext.getResult(): Result
+
+    fun get(context: RenderContext) = context.run { getResult() }
 
     override fun toString() = description
 

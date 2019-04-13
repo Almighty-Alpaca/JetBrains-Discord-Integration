@@ -40,7 +40,7 @@ abstract class Renderer(private val context: RenderContext) {
                                             smallIcon: IconValue?,
                                             smallIconText: IconTextValue?,
                                             startTimestamp: TimeValue?): RichPresence {
-        return RichPresence(context.icons.appId) presence@{
+        return RichPresence(context.icons?.applicationId) presence@{
             this@presence.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceLine.Result.Empty -> null
                 PresenceLine.Result.Custom -> detailsCustom?.getValue()
@@ -60,23 +60,23 @@ abstract class Renderer(private val context: RenderContext) {
 
             this@presence.largeImage = when (val icon = largeIcon?.getValue()?.get(context)) {
                 null, PresenceIcon.Result.Empty -> null
-                is PresenceIcon.Result.String -> {
+                is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
                         null, PresenceIconText.Result.Empty -> null
                         is PresenceIconText.Result.String -> text.value
                     }
-                    RichPresence.Icon(icon.value, caption)
+                    RichPresence.Image(icon.value, caption)
                 }
             }
 
             this@presence.smallImage = when (val icon = smallIcon?.getValue()?.get(context)) {
                 null, PresenceIcon.Result.Empty -> null
-                is PresenceIcon.Result.String -> {
+                is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {
                         null, PresenceIconText.Result.Empty -> null
                         is PresenceIconText.Result.String -> text.value
                     }
-                    RichPresence.Icon(icon.value, caption)
+                    RichPresence.Image(icon.value, caption)
                 }
             }
         }
@@ -94,7 +94,7 @@ abstract class Renderer(private val context: RenderContext) {
     }
 }
 
-val RenderContext.renderType
+inline val RenderContext.renderType
     get() = when {
         project == null -> Renderer.Type.APPLICATION
         file == null -> Renderer.Type.PROJECT

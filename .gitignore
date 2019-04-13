@@ -135,3 +135,5 @@ gradle-app.setting
 ### Project Files ###
 
 secrets.gradle.kts
+
+.sandbox/

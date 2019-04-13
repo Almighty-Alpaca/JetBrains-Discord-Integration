@@ -12,20 +12,14 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.green
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.greenTranslucent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent60
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent80
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.lang3.time.DurationFormatUtils
 import java.awt.Color
 import java.awt.Font
 import java.awt.FontMetrics
 import java.awt.image.BufferedImage
-import java.net.URL
 import java.time.Duration
 import java.time.OffsetDateTime
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User as RPCUser
-
-data class ModifiedImage(val modified: Boolean, val image: BufferedImage)
 
 class PreviewRenderer {
     private val user = User()
@@ -93,12 +87,22 @@ class PreviewRenderer {
 
     private inner class User {
         private var lastUser: RPCUser? = null
+        private var lastAvatarEmpty = true
 
         fun draw(image: BufferedImage, force: Boolean): Boolean {
             val user = RichPresenceService.instance.user
 
+            val avatar = when {
+                user != lastUser -> {
+                    lastAvatarEmpty = true
+                    getAvatar(user, 90)
+                }
+                lastAvatarEmpty -> getAvatar(user,90)
+                else -> null
+            }
+
             var modified = false
-            if (force || user != lastUser) {
+            if (force || user != lastUser || (lastAvatarEmpty && avatar != null)) {
                 modified = true
 
                 image.withGraphics {
@@ -110,7 +114,7 @@ class PreviewRenderer {
 
                         // Avatar
                         color = Color.red
-                        drawImage(getAvatar(user), mid - 45, 0, null)
+                        drawImage(avatar, mid - 45, 0, null)
 
                         // Online indicator
                         color = blurple
@@ -137,6 +141,10 @@ class PreviewRenderer {
                         font = font16Regular
                         drawString(tag, mid - textWidth / 2 + nameWidth, 100 + font16BoldBaseline + (font16BoldBaseline - font16RegularBaseline) / 2)
                     }
+                }
+
+                if (avatar != null) {
+                    lastAvatarEmpty = false
                 }
 
                 lastUser = user
@@ -215,12 +223,12 @@ class PreviewRenderer {
 
                 if (force || lastLargeKey != largeKey || lastSmallKey != smallKey) {
                     val large = if (lastLargeKey != largeKey) {
-                        presence.largeImage?.key?.let { key -> getIconURL(presence.appId, key, 60).getImage().toScaledImage(60) }
+                        presence.largeImage?.asset?.getImage(60)?.toScaledImage(60)
                     } else {
                         lastLarge
                     }
                     val small = if (lastSmallKey != smallKey) {
-                        presence.smallImage?.key?.let { key -> getIconURL(presence.appId, key, 20).getImage().toScaledImage(20) }
+                        presence.smallImage?.asset?.getImage(20)?.toScaledImage(20)
                     } else {
                         lastSmall
                     }
@@ -305,7 +313,7 @@ class PreviewRenderer {
                             return if (line.isNullOrBlank()) {
                                 true to true
                             } else {
-                                val lineCut = limitStringWidth(line, font14MediumMetrics, image.width - (indentation + 3 + 10))
+                                val lineCut = line.limitStringWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
 
                                 font = font14Medium
                                 color = whiteTranslucent80
@@ -350,7 +358,7 @@ class PreviewRenderer {
                             return if (line.isNullOrBlank()) {
                                 true to true
                             } else {
-                                val lineCut = limitStringWidth(line, font14MediumMetrics, image.width - (indentation + 3 + 10))
+                                val lineCut = line.limitStringWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
 
                                 font = font14Medium
                                 color = whiteTranslucent80
@@ -415,33 +423,4 @@ class PreviewRenderer {
             }
         }
     }
-}
-
-fun limitStringWidth(string: String, font: FontMetrics, limit: Int): String {
-    when (font.stringWidth(string) <= limit) {
-        true -> return string
-        false -> {
-            val pointsWidth = font.stringWidth("...")
-            val limitCut = limit - pointsWidth
-
-            for (i in string.length downTo 0) {
-                val lineTemp = string.substring(0, i)
-                if (font.stringWidth(lineTemp) <= limitCut)
-                    return "$lineTemp..."
-            }
-
-            return "..."
-        }
-    }
-}
-
-private fun getIconId(appId: Long, name: String): Long = URL("https://discordapp.com/api/oauth2/applications/$appId/assets").get { inputStream ->
-    ObjectMapper().readTree(inputStream)
-            .map { node -> node as ObjectNode }
-            .first { node -> node["name"].asText() == name }["id"].asLong()
-}
-
-fun getIconURL(appId: Long, name: String, size: Int?) = when (size) {
-    null -> URL("https://cdn.discordapp.com/app-assets/$appId/${getIconId(appId, name)}.png")
-    else -> URL("https://cdn.discordapp.com/app-assets/$appId/${getIconId(appId, name)}.png?size=${size.roundToNextPowerOfTwo()}")
 }

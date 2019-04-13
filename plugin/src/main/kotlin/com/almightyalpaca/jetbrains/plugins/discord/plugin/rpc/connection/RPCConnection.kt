@@ -7,7 +7,10 @@ const val UPDATE_DELAY = 2000L
 interface RPCConnection {
     val appId: Long
 
+    val running: Boolean
+
     fun connect()
-    fun send(presence: RichPresence?)
     fun disconnect()
+
+    fun send(presence: RichPresence?)
 }

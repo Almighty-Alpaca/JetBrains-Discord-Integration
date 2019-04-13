@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.graphs
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.Language
-import com.almightyalpaca.jetbrains.plugins.discord.shared.languages.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Language
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
 import org.apache.commons.text.StringEscapeUtils
 import java.io.PrintWriter
 import java.io.Writer
@@ -54,15 +54,15 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
         writer.write(intend)
         writer.write("${id.escapeDot()} [ label=\"{${name.escapeDot()}|")
 
-        when (val asset = assets.firstOrNull()) {
+        when (val assetId = assetIds.firstOrNull()) {
             null -> writer.write("")
-            in icons -> writer.write(asset)
-            else -> writer.write("$asset*")
+            in icons -> writer.write(assetId)
+            else -> writer.write("$assetId*")
         }
 
         writer.write("}\"")
 
-        if (matchers.isNotEmpty() && assets.none { asset -> asset in icons })
+        if (matchers.isNotEmpty() && assetIds.none { assetId -> assetId in icons })
             writer.write(", color=red")
 
         writer.write(" ];")

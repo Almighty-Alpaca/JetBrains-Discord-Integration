@@ -1,8 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.uploader
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Map
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
@@ -60,8 +59,8 @@ suspend fun main() {
         runBlocking {
             val token = System.getenv("DISCORD_TOKEN")!!
 
-            val provider = FileSourceProvider(Paths.get("../"))
-            val themes = provider.themes.toThemeMap()
+            val source = LocalSource(Paths.get("../"))
+            val themes = source.getThemes()
 
             for (theme in themes.values) {
                 val changes = calculateChangesAsync(client, theme)
@@ -133,7 +132,7 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
     supervisorScope {
         val changes = Collections.newSetFromMap<DiscordChange>(ConcurrentHashMap())
 
-        for (application in theme.applicationIds) {
+        for (application in theme.applications) {
             val appCode = application.key
             val appId = application.value
 

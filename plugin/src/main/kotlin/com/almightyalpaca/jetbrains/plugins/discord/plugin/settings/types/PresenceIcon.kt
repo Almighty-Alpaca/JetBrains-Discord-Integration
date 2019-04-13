@@ -7,19 +7,20 @@ typealias IconValue = SimpleValue<PresenceIcon>
 
 enum class PresenceIcon(val description: String) {
     APPLICATION("Application") {
-        private val result = "application".toResult()
-        override fun get(context: RenderContext) = result
+        override fun RenderContext.getResult() = icons?.getAsset("application").toResult()
     },
     FILE("File") {
-        override fun get(context: RenderContext): Result {
-            return context.match?.findIcon(context.icons)?.asset.toResult()
+        override fun RenderContext.getResult(): Result {
+            return icons?.let { icons -> match?.findIcon(icons) }?.asset.toResult()
         }
     },
     NONE("None") {
-        override fun get(context: RenderContext) = Result.Empty
+        override fun RenderContext.getResult() = Result.Empty
     };
 
-    abstract fun get(context: RenderContext): Result
+    protected abstract fun RenderContext.getResult(): Result
+
+    fun get(context: RenderContext) = context.run { getResult() }
 
     override fun toString() = description
 
@@ -35,13 +36,13 @@ enum class PresenceIcon(val description: String) {
         val File = APPLICATION to arrayOf(APPLICATION, FILE, NONE)
     }
 
-    fun String?.toResult() = when (this) {
+    fun com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset?.toResult() = when (this) {
         null -> Result.Empty
-        else -> Result.String(this)
+        else -> Result.Asset(this)
     }
 
     sealed class Result {
         object Empty : Result()
-        data class String(val value: kotlin.String) : Result()
+        data class Asset(val value: com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset) : Result()
     }
 }

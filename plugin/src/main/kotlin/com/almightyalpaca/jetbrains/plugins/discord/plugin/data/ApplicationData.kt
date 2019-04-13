@@ -1,7 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.themes.icons.IconSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.intellij.openapi.project.Project
 import java.time.OffsetDateTime
@@ -44,4 +44,4 @@ class ApplicationDataBuilder(var id: String, var version: String, val openedAt: 
     fun build() = ApplicationData(id, version, openedAt, projects.values.map(ProjectDataBuilder::build))
 }
 
-operator fun Theme.get(app: ApplicationData): IconSet = applications[app.id]!!
+fun Theme.getIconSet(app: ApplicationData): IconSet? = getIconSet(app.id)

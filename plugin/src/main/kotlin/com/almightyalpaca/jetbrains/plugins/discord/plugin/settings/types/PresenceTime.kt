@@ -8,19 +8,21 @@ typealias TimeValue = SimpleValue<PresenceTime>
 
 enum class PresenceTime(val description: String) {
     APPLICATION("Application") {
-        override fun get(context: RenderContext) = context.application.openedAt.toResult()
+        override fun RenderContext.getResult() = application.openedAt.toResult()
     },
     PROJECT("Project") {
-        override fun get(context: RenderContext) = context.project?.openedAt.toResult()
+        override fun RenderContext.getResult() = project?.openedAt.toResult()
     },
     FILE("File") {
-        override fun get(context: RenderContext) = context.file?.openedAt.toResult()
+        override fun RenderContext.getResult() = file?.openedAt.toResult()
     },
     HIDE("Hide") {
-        override fun get(context: RenderContext) = Result.Empty
+        override fun RenderContext.getResult() = Result.Empty
     };
 
-    abstract fun get(context: RenderContext): Result
+    protected abstract fun RenderContext.getResult(): Result
+
+    fun get(context: RenderContext) = context.run { getResult() }
 
     override fun toString() = description
 

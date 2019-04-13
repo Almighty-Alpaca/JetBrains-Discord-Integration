@@ -1,17 +1,15 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.graphs
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.FileSourceProvider
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toLanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.toThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import java.nio.file.Files
 import java.nio.file.Paths
 
 fun main() {
-    val provider = FileSourceProvider(Paths.get("../"))
+    val source = LocalSource(Paths.get("../"))
 
-    val languages = provider.languages.toLanguageMap()
-    val themes = provider.themes.toThemeMap()
+    val languages = source.getLanguages()
+    val themes = source.getThemes()
 
     val graphs = Paths.get("build/graphs/")
     Files.createDirectories(graphs)

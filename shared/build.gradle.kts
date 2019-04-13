@@ -4,12 +4,10 @@ plugins {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
+    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.0")
+
     compile(group = "commons-io", name = "commons-io", version = "2.6")
-    compile(group = "commons-collections", name = "commons-collections", version = "3.2.2")
 
+    compile(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.8")
     compile(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.9.8")
-
-    compile(group = "org.kohsuke", name = "github-api", version = "1.95")
-
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.0")
 }

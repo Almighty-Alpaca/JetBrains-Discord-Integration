@@ -4,6 +4,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
 import java.awt.*
 import java.awt.Color
+import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
 import java.net.URL
 import javax.imageio.ImageIO
@@ -55,13 +56,14 @@ fun BufferedImage.toRoundImage(): Image {
     return image
 }
 
-fun getAvatar(user: User): Image {
-    val raw = user.avatarUrl.getImage()
-    val scaled = raw.toScaledImage(90, 90)
-    return scaled.toRoundImage()
+fun getAvatar(user: User, size: Int): Image? {
+    val raw = user.getAvatar(size)
+    val scaled = raw?.toScaledImage(size)
+    return scaled?.toRoundImage()
 }
 
-fun URL.getImage(): BufferedImage = get { stream -> ImageIO.read(stream) }
+fun URL.getImage(): BufferedImage? = get { stream -> ImageIO.read(stream) }
+
 inline fun BufferedImage.withGraphics(block: Graphics2D.() -> Unit) = with(createGraphics()) {
     setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -89,15 +91,15 @@ inline fun Graphics2D.withTranslation(x: Number, y: Number, block: () -> Unit) {
 }
 
 fun roundRectangle(
-        x: kotlin.Double,
-        y: kotlin.Double,
-        width: kotlin.Double,
-        height: kotlin.Double,
-        radiusTopLeft: kotlin.Double = 0.0,
-        radiusTopRight: kotlin.Double = 0.0,
-        radiusBottomRight: kotlin.Double = 0.0,
-        radiusBottomLeft: kotlin.Double = 0.0
-) = java.awt.geom.Path2D.Double().apply {
+        x: Double,
+        y: Double,
+        width: Double,
+        height: Double,
+        radiusTopLeft: Double = 0.0,
+        radiusTopRight: Double = 0.0,
+        radiusBottomRight: Double = 0.0,
+        radiusBottomLeft: Double = 0.0
+) = Path2D.Double().apply {
     moveTo(x + radiusTopLeft, y)
     lineTo(x + width - radiusTopRight, y)
     curveTo(x + width, y, x + width, y, x + width, y + radiusTopRight)

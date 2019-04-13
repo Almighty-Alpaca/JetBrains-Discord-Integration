@@ -36,23 +36,17 @@ inline fun <T> MutableSet(size: Int, init: (index: Int) -> T): MutableSet<T> {
 
 fun <K, V> Map<K, V>.stream() = entries.stream()
 
-fun <K, V> lazyMap(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(mutableMapOf(), factory)
-
-fun <K, V> lazyMap(map: MutableMap<K, V>, factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(map, factory)
-
-fun <K, V> MutableMap<K, V>.lazy(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(this, factory)
-
-interface LazyMutableMap<K, V> : MutableMap<K, V>
-
-private class LazyMutableMapImpl<K, V>(val map: MutableMap<K, V>, val factory: (K) -> V?) : LazyMutableMap<K, V>, MutableMap<K, V> by map {
-    override fun get(key: K) = map.compute(key) { _, value -> value ?: factory.invoke(key) }
-}
-
-abstract class DelegateMap<K, V>(protected val map: Map<K, V>) : Map<K, V> by map
-
-abstract class DelegateCollection<T>(protected val collection: Collection<T>) : Collection<T> by collection
-
-abstract class DelegateSet<T>(protected val set: Set<T>) : Set<T> by set
+//fun <K, V> lazyMap(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(mutableMapOf(), factory)
+//
+//fun <K, V> lazyMap(map: MutableMap<K, V>, factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(map, factory)
+//
+//fun <K, V> MutableMap<K, V>.lazy(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(this, factory)
+//
+//interface LazyMutableMap<K, V> : MutableMap<K, V>
+//
+//private class LazyMutableMapImpl<K, V>(val map: MutableMap<K, V>, val factory: (K) -> V?) : LazyMutableMap<K, V>, MutableMap<K, V> by map {
+//    override fun get(key: K) = map.compute(key) { _, value -> value ?: factory.invoke(key) }
+//}
 
 fun <T> concat(element: T?, collection: Iterable<T>?): List<T> {
     val result = ArrayList<T>()
