@@ -4,3 +4,11 @@ parent: text
 match:
   extension:
     equals: .rb
+
+# TODO: Ruby
+# .watchr
+# (?i)\\.(rb|ru|ruby|erb|gemspec|god|mspec|pluginspec|podspec|rabl|rake|opal)$
+# (?i)^\\.?(irbrc|gemrc|pryrc|ruby-(gemset|version))$
+# ^(Appraisals|(Rake|[bB]uild|Cap|Danger|Deliver|Fast|Guard|Jar|Maven|Pod|Puppet|Snap)file(\\.lock)?)$/
+# (?i)\\.(jbuilder|rbuild|rb[wx]|builder)$
+# ^rails$/

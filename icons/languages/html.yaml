@@ -6,3 +6,29 @@ match:
     equals:
       - .html
       - .htm
+
+# TODO: HTML
+# .cshtml
+# .gohtml
+# .html.eex
+# .jsp
+# .kit
+# .latte
+# .phtml
+# .shtml
+# .scaml
+# .swig
+# .vash
+# .xht
+# .dtml
+# .pug
+# .jade
+# .ejs
+# .haml
+# .hamlc
+# .haml.deface
+# .soy
+# (?i)\\.x?html?$
+# (?i)\\.html?\\.ecr$
+# (?i)\\.(html?\\.erb(\\.deface)?|rhtml)$
+# (?i)\\.(hbs|handlebars|(mu)?stache)$

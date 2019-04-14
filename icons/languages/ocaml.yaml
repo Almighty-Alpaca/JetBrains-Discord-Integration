@@ -1,0 +1,13 @@
+name: OCaml
+asset: ocaml
+parent: text
+match:
+  extension:
+    equals:
+      - .ml
+      - .mli
+      - .eliom
+      - .eliomi
+      - .ml4
+      - .mlll
+      - .mlly

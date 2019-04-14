@@ -1,0 +1,10 @@
+name: "R\u200b"
+asset: r
+parent: text
+match:
+  extension:
+    equals:
+      - .r
+      - .rd
+      - .rsx
+      - .Rprofile

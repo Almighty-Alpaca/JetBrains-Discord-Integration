@@ -1,0 +1,10 @@
+name: Objective-C
+asset: objectivec
+parent: text
+match:
+  extension:
+    equals:
+      - .pch
+      - .x
+      - .m
+      - .mm

@@ -1,0 +1,6 @@
+name: SVG
+asset: svg
+parent: image
+match:
+  extension:
+    equals: .svg

@@ -1,0 +1,8 @@
+name: Stylus
+asset: stylus
+parent: css
+match:
+  extension:
+    equals:
+      - .styl
+      - .stylus

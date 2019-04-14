@@ -1,0 +1,9 @@
+name: Pascal
+asset: pascal
+parent: text
+match:
+  extension:
+    equals:
+      - .lpr
+      - .pas
+      - .pascal

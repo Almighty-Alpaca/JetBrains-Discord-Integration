@@ -1,0 +1,6 @@
+name: Toml
+asset: toml
+parent: text
+match:
+  extension:
+    equals: .toml

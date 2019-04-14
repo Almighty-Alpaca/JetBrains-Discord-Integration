@@ -1,0 +1,8 @@
+name: /RegExp?/
+asset: regex
+parent: text
+match:
+  extension:
+    equals:
+      - .regex
+      - .regexp

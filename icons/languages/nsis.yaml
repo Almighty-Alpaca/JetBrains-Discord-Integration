@@ -1,0 +1,8 @@
+name: NSIS
+asset: nsis
+parent: text
+match:
+  extension:
+    equals:
+      - .nsi
+      - .nsh

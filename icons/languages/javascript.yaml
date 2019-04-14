@@ -16,3 +16,20 @@ flavors:
           - .min.js
           - .min.es6
           - .min.es
+
+# TODO: JavaScript
+# .js
+# ._js
+# .jsb
+# .jsm
+# .jss
+# .es6
+# .es
+# .mjs
+# .sjs
+# .ssjs
+# .xsjs
+# .xsjslib
+# .dust
+# .js.ecr
+# .js.erb

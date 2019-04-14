@@ -5,10 +5,10 @@ match:
   extension:
     equals:
       - .cs
-      - .csx
 flavors:
   - name: C# Script
     match:
       extension:
         equals:
+          - .csx
           - .csscript

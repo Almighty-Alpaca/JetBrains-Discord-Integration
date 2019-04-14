@@ -3,4 +3,7 @@ asset: lua
 parent: text
 match:
   extension:
-    equals: .lua
+    equals:
+      - .lua
+      - .pd_lua
+      - .wlua

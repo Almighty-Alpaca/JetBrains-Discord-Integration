@@ -1,0 +1,9 @@
+name: Prolog
+asset: prolog
+parent: text
+match:
+  extension:
+    equals:
+      - .pro
+      - .prolog
+      - .yap

@@ -1,0 +1,9 @@
+name: Scheme
+asset: scheme
+parent: text
+match:
+  extension:
+    equals:
+      - .scm
+      - .sld
+      - .sps

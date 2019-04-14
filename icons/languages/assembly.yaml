@@ -4,3 +4,16 @@ parent: text
 match:
   extension:
     equals: .asm
+
+# TODO: Assembly
+# .agc
+# .ko
+# .lst
+# .d-objdump
+# .swp
+# .DS_Store
+# (?i)\\.(l?a|[ls]?o|out|s|a51|asm|axf|elf|prx|puff|z80)$
+# (?i)\\.((c([+px]{2}?)?-?)?objdump|bsdiff|bin|dat|pak|pdb)$
+# (?i)\\.gcode|\\.gco
+# (?i)\\.rpy[bc]$
+# (?i)\\.py[co]$

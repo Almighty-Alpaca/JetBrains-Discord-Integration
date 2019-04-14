@@ -1,0 +1,10 @@
+name: RSS
+asset: rss
+parent: xml
+match:
+  extension:
+    equals:
+      - .r
+      - .rd
+      - .rsx
+      - .Rprofile

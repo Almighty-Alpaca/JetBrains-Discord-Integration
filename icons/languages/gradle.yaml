@@ -16,17 +16,17 @@ flavors:
       extension:
         equals: .gradle.kts
   - name: Gradle Wrapper
-    parent: batch
-    match:
-      name:
-        equals:
-          - gradlew.bat
-  - name: Gradle Wrapper
-    parent: shell
-    match:
-      name:
-        equals:
-          - gradlew
+    flavors:
+      - parent: shell
+        match:
+          name:
+            equals:
+              - gradlew
+      - parent: batch
+        match:
+          name:
+            equals:
+              - gradlew.bat
   - name: Gradle Properties
     match:
       name:

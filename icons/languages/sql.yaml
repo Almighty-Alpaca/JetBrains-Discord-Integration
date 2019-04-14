@@ -3,4 +3,15 @@ asset: sql
 parent: text
 match:
   extension:
-    equals: .sql
+    equals:
+      - .sql
+      - .mysql
+
+# TODO: SQL
+# .ddl
+# .udf
+# .hql
+# .viw
+# .prc
+# .cql
+# .db2

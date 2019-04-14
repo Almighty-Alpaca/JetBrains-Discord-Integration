@@ -3,4 +3,6 @@ asset: rust
 parent: text
 match:
   extension:
-    equals: .rs
+    equals:
+      - .rs
+      - .rslib

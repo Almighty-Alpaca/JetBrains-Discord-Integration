@@ -1,0 +1,12 @@
+name: LLVM
+asset: llvm
+parent: text
+match:
+  extension:
+    equals:
+      - .ll
+      - .clang-format
+      - .clang-tidy
+  name:
+    equals:
+      - ubsan.blacklist

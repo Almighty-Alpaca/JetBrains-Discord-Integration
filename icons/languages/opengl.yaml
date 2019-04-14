@@ -1,0 +1,24 @@
+name: OpenGL
+asset: opengl
+parent: text
+match:
+  name:
+    equals:
+      - GLSL
+      - GLslang
+  extension:
+    equals:
+      - .glsl
+      - .glslv
+      - .gsh
+      - .gshader
+      - .vert
+      - .vrx
+      - .vertex
+      - .vsh
+      - .vshader
+      - .frg
+      - .frag
+      - .fp
+      - .fsh
+      - .fshader

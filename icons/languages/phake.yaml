@@ -1,0 +1,6 @@
+name: Phake
+asset: phake
+parent: php
+match:
+  name:
+    equals: Phakefile

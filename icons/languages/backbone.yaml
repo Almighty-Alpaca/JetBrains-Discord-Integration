@@ -7,3 +7,5 @@ match:
       - backbone.js
       - backbone.min.js
       - backbone-min.js
+      - backbone.dev.js
+      - backbone-dev.js

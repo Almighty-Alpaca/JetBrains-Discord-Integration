@@ -1,0 +1,6 @@
+name: Processing
+asset: processing
+parent: text
+match:
+  extension:
+    equals: .pde

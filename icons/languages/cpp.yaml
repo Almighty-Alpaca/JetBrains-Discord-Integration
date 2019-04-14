@@ -12,3 +12,15 @@ match:
       - .h++
       - .hh
       - .hxx
+
+# TODO: C++
+# .cats
+# .idc
+# .w
+# .nc
+# .upc
+# .xpm
+# (?i)\\.c[+px]{2}$|\\.cc$
+# (?i)\\.h[+px]{2}$
+# (?i)\\.[it]pp$
+# (?i)\\.(tcc|inl)$

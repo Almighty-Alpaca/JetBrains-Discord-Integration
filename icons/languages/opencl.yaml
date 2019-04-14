@@ -1,0 +1,6 @@
+name: OpenCL
+asset: opencl
+parent: text
+match:
+  extension:
+    equals: .opencl

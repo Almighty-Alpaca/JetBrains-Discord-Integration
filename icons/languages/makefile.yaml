@@ -1,0 +1,27 @@
+name: Makefile
+asset: makefile
+parent: text
+match:
+  extension:
+    equals:
+      - .am
+      - .bb
+      - .mms
+      - .mmk
+      - .pri
+      - .mk
+      - .mak
+      - .make
+      - .pri
+  name:
+    equals:
+      - Makefile
+      - mk.config
+      - BSDmakefile
+      - GNUmakefile
+      - makefile.sco
+      - Kbuild
+      - mkfile
+      - .qmake
+      - qmake
+      - DEPS

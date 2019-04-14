@@ -43,3 +43,24 @@ match:
 # *.pyt - Python declaration file
 # *.xpy - Unknown
 # *.ipynb - Jupyter Notebook file
+
+# .py
+# .ipy
+# .isolate
+# .pep
+# .gyp
+# .gypi
+# .pyde
+# .pyp
+# .pyt
+# .py3
+# .pyi
+# .pyw
+# .tac
+# .wsgi
+# .xpy
+# .rpy
+# (?i)\\.?(pypirc|pythonrc|python-venv)$
+# ^(SConstruct|SConscript)$/
+# ^(Snakefile|WATCHLISTS)$/
+# ^wscript$/

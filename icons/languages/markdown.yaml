@@ -6,3 +6,10 @@ match:
     equals:
       - .md
       - .markdown
+      - .mdown
+      - .mkd
+      - .mkdown
+      - .mdwn
+      - .rmd
+      - .ron
+      - .pmw

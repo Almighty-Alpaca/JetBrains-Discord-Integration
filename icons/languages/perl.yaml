@@ -1,0 +1,26 @@
+name: Perl
+asset: perl
+parent: text
+match:
+  extension:
+    equals:
+      - .pl
+      - .pm
+      - .t
+      - .pod
+
+# TODO: Perl
+# .al
+# .ph
+# .plx
+# .pm
+# .pl6
+# .6pm
+# .nqp
+# .p6l
+# .pod6
+# (?i)\\.p(er)?l$
+# (?i)\\.(psgi|xs)$
+# (?i)\\.[tp]6$|\\.6pl$
+# (?i)\\.(pm6|p6m)$
+# ^Rexfile$/

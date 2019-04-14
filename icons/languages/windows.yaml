@@ -1,0 +1,19 @@
+name: Windows
+parent: microsoft
+asset: windows
+flavors:
+  - name: Windows Executable
+    match:
+      extension:
+        equals:
+          - .exe
+          - .com
+  - name: Windows Installer Package
+    match:
+      extension:
+        equals: .msi
+  - name: Registry Entry
+    asset: registry
+    match:
+      extension:
+        equals: .reg

@@ -1,0 +1,64 @@
+name: Angular
+asset: angular
+parent: typescript
+match:
+  extension:
+    equals:
+      - .ng.html
+      - .ng.js
+      - .ng-template
+flavors:
+  - name: Angular CLI
+    match:
+      name:
+        equals:
+          - angular.json
+          - angular-cli.json
+  - name: Angular Module
+    match:
+      extension:
+        equals:
+          - .module.ts
+          - .module.js
+  - name: Angular Component
+    match:
+      extension:
+        equals:
+          - .component.ts
+          - .component.js
+  - name: Angular Directive
+    match:
+      extension:
+        equals:
+          - .directive.ts
+          - .directive.js
+  - name: Angular Guard
+    match:
+      extension:
+        equals:
+          - .guard.ts
+          - .guard.js
+  - name: Angular Service
+    match:
+      extension:
+        equals:
+          - .service.ts
+          - .service.js
+  - name: Angular Pipe
+    match:
+      extension:
+        equals:
+          - .pipe.ts
+          - .pipe.js
+  - name: Angular Routing
+    match:
+      extension:
+        equals:
+          - .routing.ts
+          - .routing.js
+  - name: Angular Resolver
+    match:
+      extension:
+        equals:
+          - .resolver.ts
+          - .resolver.js

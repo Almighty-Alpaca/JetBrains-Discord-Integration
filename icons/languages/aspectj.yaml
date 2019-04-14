@@ -3,5 +3,4 @@ asset: aspectj
 parent: java
 match:
   extension:
-    equals:
-      - .aj
+    equals: .aj

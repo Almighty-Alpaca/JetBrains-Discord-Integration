@@ -1,0 +1,11 @@
+name: ROBLOX
+asset: roblox
+flavors:
+  - parent: lua
+    match:
+      extension:
+        equals: .rbxs
+  - parent: xml
+    match:
+      extension:
+        equals: .rbxm

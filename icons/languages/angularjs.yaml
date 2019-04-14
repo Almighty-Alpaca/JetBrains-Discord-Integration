@@ -1,0 +1,8 @@
+name: AngularJS
+asset: angular
+parent: javascript
+match:
+  name:
+    equals:
+      - angular.js
+      - angular.min.js
