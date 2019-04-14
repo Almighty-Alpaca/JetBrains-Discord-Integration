@@ -5,6 +5,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.boxLayoutPanel
 import com.intellij.ui.JBIntSpinner
 import javax.swing.JSpinner
+import javax.swing.SpinnerNumberModel
 
 fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#") = OptionProviderImpl(this, IntSpinnerOption(description, initialValue, step, minValue, maxValue, format))
 fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#") = spinner(description, initialValue, range.start, range.endInclusive, step, format)
@@ -13,7 +14,8 @@ class IntSpinnerOption(description: String, initialValue: Int, private val step:
     override fun transformValue(value: Int) = value.coerceIn(minValue, maxValue)
 
     override val componentImpl by lazy {
-        JBIntSpinner(currentValue, minValue, maxValue, step).apply spinner@{
+        JBIntSpinner(currentValue, minValue, maxValue).apply spinner@{
+            model = SpinnerNumberModel(currentValue, minValue, maxValue, step)
             editor = JSpinner.NumberEditor(this@spinner, format)
         }
     }

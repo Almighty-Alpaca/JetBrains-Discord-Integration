@@ -11,7 +11,8 @@ plugins {
 
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "191.5849.21"
+    version = "2018.1"
+    // version = "191.5849.21"
 
     downloadSources = true
 
@@ -20,15 +21,30 @@ configure<IntelliJPluginExtension> {
     sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
 
     // For testing with custom themes
-     setPlugins("com.chrisrm.idea.MaterialThemeUI:3.9.1")
+    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.9.1")
+}
+
+dependencies {
+    compile(kotlin("stdlib-jdk8"))
+    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.0")
+
+    compile(project(":shared")) {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
+
+    compile(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
+
+    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.1")
+
+    compile(group = "org.apache.commons", name = "commons-lang3", version = "3.8.1")
 }
 
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks {
     withType<RunIdeTask> {
-        //        environment["ICONS"] = "local:${rootProject.projectDir.absolutePath}"
-//        environment["ICONS"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
+        // environment["ICONS"] = "local:${rootProject.projectDir.absolutePath}"
+        // environment["ICONS"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
     }
 
     prepareSandbox task@{
@@ -72,16 +88,4 @@ tasks {
         prefix("com.fasterxml.jackson.annotation")
         prefix("club.minnced.discord.rpc")
     }
-}
-
-dependencies {
-    compile(project(":shared")) {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-    }
-
-    compile(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
-
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.1")
-
-    compile(group = "org.apache.commons", name = "commons-lang3", version = "3.8.1")
 }

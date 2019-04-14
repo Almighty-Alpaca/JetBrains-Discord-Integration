@@ -3,7 +3,7 @@
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
-    <idea-version since-build="191"/>
+    <idea-version since-build="181"/>
 
     <depends>com.intellij.modules.lang</depends>
 
