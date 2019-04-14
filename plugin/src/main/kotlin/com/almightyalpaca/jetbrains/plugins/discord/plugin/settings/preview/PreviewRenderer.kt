@@ -97,7 +97,7 @@ class PreviewRenderer {
                     lastAvatarEmpty = true
                     getAvatar(user, 90)
                 }
-                lastAvatarEmpty -> getAvatar(user,90)
+                lastAvatarEmpty -> getAvatar(user, 90)
                 else -> null
             }
 
@@ -336,7 +336,7 @@ class PreviewRenderer {
                 fun draw(image: BufferedImage, presence: RichPresence, imagesEmpty: Boolean, detailsEmpty: Boolean, force: Boolean): Pair<Boolean, Boolean> {
                     val line = presence.state
 
-                    if (force || lastImagesEmpty != imagesEmpty || lastLine != line) {
+                    if (force || lastImagesEmpty != imagesEmpty || lastDetailsEmpty != detailsEmpty || lastLine != line) {
                         lastLine = line
 
                         image.withGraphics {
@@ -381,7 +381,7 @@ class PreviewRenderer {
                     val time = presence.startTimestamp
                     val timeNow = OffsetDateTime.now()
 
-                    if (force || lastTime != time || lastTimeNow != timeNow) {
+                    if (force || lastTime != time || lastTimeNow != timeNow || lastImagesEmpty != imagesEmpty || lastDetailsEmpty != detailsEmpty || lastStateEmpty != stateEmpty) {
                         lastTime = time
                         lastTimeNow = timeNow
 
