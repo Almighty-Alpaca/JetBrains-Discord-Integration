@@ -198,7 +198,7 @@ class PreviewRenderer {
 
                     font = font14Bold
                     color = whiteTranslucent80
-                    drawString("IntelliJ IDEA Community", indentation + 3, sectionStart + font14BoldBaseline)
+                    drawString(ApplicationComponent.instance.data.name, indentation + 3, sectionStart + font14BoldBaseline)
                 }
             }
 
