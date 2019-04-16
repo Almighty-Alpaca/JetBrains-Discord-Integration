@@ -41,7 +41,7 @@ interface Language {
         override val parent: Language? get() = null
         override val matchers: Map<Matcher.Target, Matcher> get() = emptyMap()
         override val assetIds: Iterable<String> get() = listOf(assetId)
-        override fun findMatch(target: Matcher.Target, fields: Collection<String>) = null
+        override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? = null
 
         override val assetId: String
     }

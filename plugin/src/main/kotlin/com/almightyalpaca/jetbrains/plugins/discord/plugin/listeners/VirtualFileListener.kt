@@ -81,7 +81,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
                     update(editor.project) {
                         update(file) {
                             path = file.filePath
-                            accessedAt = OffsetDateTime.now() // TODO
+                            accessedAt = OffsetDateTime.now()
                         }
                     }
                 }

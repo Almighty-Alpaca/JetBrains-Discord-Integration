@@ -216,7 +216,6 @@ class PreviewRenderer {
             private var lastSmall: BufferedImage? = null
             private var lastSmallKey: String? = null
 
-            // TODO: render image text
             fun draw(image: BufferedImage, presence: RichPresence, force: Boolean): Pair<Boolean, Boolean> {
                 val largeKey = presence.largeImage?.key
                 val smallKey = presence.smallImage?.key
@@ -269,7 +268,6 @@ class PreviewRenderer {
             }
         }
 
-        // TODO: fix remove space if details or state is empty
         private inner class Text {
             private val details = Details()
             private val state = State()

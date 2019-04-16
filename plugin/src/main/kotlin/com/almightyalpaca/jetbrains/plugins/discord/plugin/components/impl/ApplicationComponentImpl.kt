@@ -49,7 +49,6 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
         }
     }
 
-    // TODO: better error handling for download failures
     override val languages: LanguageMap?
         get() = source.getLanguagesOrNull()
     override val themes: ThemeMap?

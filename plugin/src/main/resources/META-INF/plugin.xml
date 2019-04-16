@@ -9,12 +9,12 @@
 
     <application-components>
         <component>
-            <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ApplicationComponentImpl
-            </implementation-class>
+            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent</interface-class>
+            <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ApplicationComponentImpl</implementation-class>
+        </component>
+        <component>
+            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent</interface-class>
+            <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.impl.DiagnoseComponentImpl</implementation-class>
         </component>
     </application-components>
 

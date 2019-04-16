@@ -31,6 +31,7 @@ sealed class Matcher {
 
     class Any(matchers: Set<Matcher>) : Combining(matchers, { s -> any { m -> m.matches(s) } })
 
+    // TODO: text/binary as catch-all
     enum class Target(val id: String) {
         EXTENSION("extension"),
         NAME("name"),

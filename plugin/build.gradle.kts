@@ -56,7 +56,7 @@ tasks {
     }
 
     buildSearchableOptions {
-        enabled = false // TODO: re-enable buildSearchableOptions (disabled for faster compilation)
+        enabled = false // TODO: re-enable buildSearchableOptions before release (disabled for faster compilation)
     }
 
     fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)

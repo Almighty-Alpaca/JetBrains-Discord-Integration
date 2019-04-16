@@ -12,7 +12,6 @@ abstract class Renderer(private val context: RenderContext) {
 
     abstract fun RenderContext.forceRender(): RichPresence
 
-    // TODO: implement timeout
     private fun RenderContext.needsRender(): Boolean {
         if (settings.hide.getValue())
             return false
