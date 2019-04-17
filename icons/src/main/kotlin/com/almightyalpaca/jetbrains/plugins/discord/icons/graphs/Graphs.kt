@@ -6,7 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 fun main() {
-    val source = LocalSource(Paths.get("../"))
+    val source = LocalSource(Paths.get("../"), retry = false)
 
     val languages = source.getLanguages()
     val themes = source.getThemes()

@@ -7,6 +7,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.intellij.openapi.project.Project
 
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, OptionHolderImpl() {
-    override val hide by check("Hide Rich Presence for this project", false)
+    override val hide by check("Hide this project in Rich Presence", false)
     override val description by text("Project description", "")
 }

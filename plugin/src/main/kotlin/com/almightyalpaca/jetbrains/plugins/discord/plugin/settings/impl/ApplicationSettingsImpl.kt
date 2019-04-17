@@ -9,7 +9,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.Presen
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.PresenceTime
 
 class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
-    override val hide by check("Hide Rich Presence completely", false)
+    override val hide by check("Disable Rich Presence", false)
 
     private val timeoutToggle by toggleable<Boolean>()
     override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)

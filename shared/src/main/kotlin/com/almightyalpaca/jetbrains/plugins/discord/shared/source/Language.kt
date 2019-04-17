@@ -10,39 +10,20 @@ interface Language {
     val assetId: String?
     val matchers: Map<Matcher.Target, Matcher>
     val match: LanguageMatch
-
-    fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch?
     val assetIds: Iterable<String>
 
-    interface Simple : Language {
-        val flavors: Set<Language>
+    fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? {
+        val matcher = matchers[target]
+        if (matcher != null)
+            if (fields.any { f -> matcher.matches(f) })
+                return match
 
-        override val assetIds: Iterable<String>
-            get() = concat(assetId, parent?.assetIds)
-
-        override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? {
-            val matcher = matchers[target]
-            if (matcher != null)
-                if (fields.any { f -> matcher.matches(f) })
-                    return match
-
-            for (flavor in flavors) {
-                val flavorMatch = flavor.findMatch(target, fields)
-                if (flavorMatch != null)
-                    return flavorMatch
-            }
-
-            return null
-        }
+        return null
     }
 
-    interface Default : Language {
-        override val id: String get() = "default"
-        override val parent: Language? get() = null
-        override val matchers: Map<Matcher.Target, Matcher> get() = emptyMap()
-        override val assetIds: Iterable<String> get() = listOf(assetId)
-        override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? = null
+    interface Simple : Language {    }
 
+    interface Default : Language {
         override val assetId: String
     }
 }

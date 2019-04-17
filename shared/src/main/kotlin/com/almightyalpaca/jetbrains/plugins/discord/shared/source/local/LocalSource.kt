@@ -11,7 +11,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
-class LocalSource(location: Path) : Source, CoroutineScope {
+class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScope {
     private val parentJob: Job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext
@@ -22,8 +22,15 @@ class LocalSource(location: Path) : Source, CoroutineScope {
     internal val pathThemes = path.resolve("themes")
     internal val pathApplications = path.resolve("applications")
 
-    private val languageJob: Deferred<LanguageMap> = retryAsync { readLanguages() }
-    private val themeJob: Deferred<ThemeMap> = retryAsync { readThemes() }
+    private val languageJob: Deferred<LanguageMap> = when (retry) {
+        true -> retryAsync { readLanguages() }
+        false -> async { readLanguages() }
+    }
+
+    private val themeJob: Deferred<ThemeMap> = when (retry) {
+        true -> retryAsync { readThemes() }
+        false -> async { readThemes() }
+    }
 
     override fun getLanguages(): LanguageMap = languageJob.asCompletableFuture().get()
     override fun getThemes(): ThemeMap = themeJob.asCompletableFuture().get()

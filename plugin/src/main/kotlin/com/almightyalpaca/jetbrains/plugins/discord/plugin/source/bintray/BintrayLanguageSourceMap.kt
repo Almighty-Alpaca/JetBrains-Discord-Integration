@@ -11,5 +11,5 @@ class BintrayLanguageSourceMap(map: Map<String, LanguageSource>) : AbstractLangu
 
     override fun createDefaultLanguage(name: String, assetId: String): Language.Default = BintrayLanguage.Default(name, assetId)
 
-    override fun createSimpleLanguage(id: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>, flavors: Set<Language>): Language.Simple = BintrayLanguage.Simple(id, name, parent, assetId, matchers, flavors)
+    override fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>): Language.Simple = BintrayLanguage.Simple(fileId, name, parent, assetId, matchers)
 }

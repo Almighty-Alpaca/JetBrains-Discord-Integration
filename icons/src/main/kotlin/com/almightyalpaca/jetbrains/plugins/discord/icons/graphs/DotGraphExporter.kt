@@ -17,7 +17,8 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
         languages.default.writeVertex(writer, edges)
 
         for (language in languages) {
-            language.writeVertex(writer, edges)
+            if (!language.id.contains('/'))
+                language.writeVertex(writer, edges)
         }
 
         for (edge in edges)
@@ -42,8 +43,9 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
     }
 
     private fun Language.writeVertex(writer: PrintWriter, edges: MutableCollection<Pair<Language, Language>>, intend: String = INDENT) {
-        if (this is Language.Simple && this.flavors.isNotEmpty())
-            writeVertexGroup(writer, edges, intend)
+        val flavors = languages.filter { lang -> lang.id.startsWith("$id/") }
+        if (this is Language.Simple && flavors.isNotEmpty())
+            writeVertexGroup(writer, edges, flavors, intend)
         else
             writeVertexBasic(writer, intend)
 
@@ -52,7 +54,7 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
 
     private fun Language.writeVertexBasic(writer: PrintWriter, intend: String = INDENT) {
         writer.write(intend)
-        writer.write("${id.escapeDot()} [ label=\"{${name.escapeDot()}|")
+        writer.write(""""${id.escapeDot()}" [ label="{${name.escapeDot()}|""")
 
         when (val assetId = assetIds.firstOrNull()) {
             null -> writer.write("")
@@ -69,8 +71,8 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
         writer.println()
     }
 
-    private fun Language.Simple.writeVertexGroup(writer: PrintWriter, edges: MutableCollection<Pair<Language, Language>>, intend: String = INDENT) {
-        writer.println("${intend}subgraph cluster_$id {")
+    private fun Language.Simple.writeVertexGroup(writer: PrintWriter, edges: MutableCollection<Pair<Language, Language>>, flavors: List<Language>, intend: String = INDENT) {
+        writer.println("""${intend}subgraph "cluster_${id.escapeDot()}" {""")
         writer.println("$intend${INDENT}edge [")
         writer.println("$intend${DOUBLE_INDENT}style = dashed")
         writer.println("$intend$INDENT]")
@@ -86,7 +88,7 @@ class DotGraphExporter(private val languages: LanguageMap, private val icons: Se
     }
 
     private fun Pair<Language, Language>.writeEdge(writer: PrintWriter, intend: String = INDENT) {
-        writer.println("$intend${first.id.escapeDot()} -> ${second.id.escapeDot()};")
+        writer.println("""$intend"${first.id.escapeDot()}" -> "${second.id.escapeDot()}";""")
     }
 
     private fun String.escapeDot() = StringEscapeUtils.escapeHtml4(this)

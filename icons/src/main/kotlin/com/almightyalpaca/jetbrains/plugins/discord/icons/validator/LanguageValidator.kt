@@ -7,7 +7,7 @@ import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 fun main() {
-    val provider = LocalSource(Paths.get("../"))
+    val provider = LocalSource(Paths.get("../"), retry = false)
     val languages = provider.getLanguages()
     val themes = provider.getThemes()
 

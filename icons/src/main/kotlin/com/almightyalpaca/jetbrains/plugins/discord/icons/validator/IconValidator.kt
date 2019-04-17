@@ -8,7 +8,7 @@ import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 fun main() {
-    val source = LocalSource(Paths.get("../"))
+    val source = LocalSource(Paths.get("../"), retry = false)
     val themes = source.getThemes()
 
     var violation = false

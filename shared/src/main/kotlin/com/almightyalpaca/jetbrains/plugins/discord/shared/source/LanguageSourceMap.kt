@@ -9,7 +9,7 @@ import java.util.*
 interface LanguageSourceMap : Map<String, LanguageSource> {
     fun createLanguageMap(languages: Map<String, Language>): LanguageMap
     fun createDefaultLanguage(name: String, assetId: String): Language.Default
-    fun createSimpleLanguage(id: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>, flavors: Set<Language>): Language.Simple
+    fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>): Language.Simple
 
     fun toLanguageMap(): LanguageMap {
         val languages = mutableMapOf<String, Language>()
@@ -21,16 +21,24 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         return createLanguageMap(languages)
     }
 
+    private fun getLanguage(languages: MutableMap<String, Language>, id: String): Language = if (id.contains('/')) {
+        createLanguage(languages, id.substringBefore('/'))
+        languages[id]!!
+    } else {
+        createLanguage(languages, id)
+    }
+
     private fun createLanguage(
             languages: MutableMap<String, Language>,
             id: String,
             source: JsonNode = this.getValue(id).node,
+            baseId: String? = null,
             baseName: String? = null,
             baseAssetId: String? = null,
             baseParent: Language? = null
     ): Language = languages[id] ?: when (id) {
         "default" -> createDefaultLanguage(languages, source)
-        else -> createSimpleLanguage(languages, id, source, baseName, baseAssetId, baseParent)
+        else -> createSimpleLanguage(languages, id, source, baseId, baseName, baseAssetId, baseParent)
     }
 
     private fun createDefaultLanguage(languages: MutableMap<String, Language>, source: JsonNode): Language {
@@ -48,15 +56,18 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
             languages: MutableMap<String, Language>,
             id: String,
             source: JsonNode,
+            baseId: String? = null,
             baseName: String? = null,
             baseAssetId: String? = null,
             baseParent: Language? = null
     ): Language {
+        @Suppress("NAME_SHADOWING")
+        val id: String = (baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)
         val name: String = source["name"]?.textValue() ?: baseName!!
         val assetId: String? = source["asset"]?.textValue() ?: baseAssetId
 
         val parentId: String? = source["parent"]?.textValue()
-        val parent = parentId?.let { languages[parentId] ?: createLanguage(languages, parentId) } ?: baseParent
+        val parent = parentId?.let { languages[parentId] ?: getLanguage(languages, parentId) } ?: baseParent
 
         val matchers: Map<Matcher.Target, Matcher> = source["match"]?.let { match ->
             EnumMap<Matcher.Target, Matcher>(Matcher.Target::class.java).apply {
@@ -69,18 +80,20 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
             }
         } ?: emptyMap()
 
-        val flavors: Set<Language> = (source["flavors"] as ArrayNode?)?.run {
+
+        val language = createSimpleLanguage(id, name, parent, assetId, matchers)
+        languages[id] = language
+
+        (source["flavors"] as ArrayNode?)?.run {
             when {
-                isNull -> emptySet()
-                isObject -> setOf(createLanguage(languages, "$id\$1", this, name, assetId, parent))
-                isArray -> Set(size()) { i -> createLanguage(languages, "$id$i", this[i], name, assetId, parent) }
+                isObject -> createLanguage(languages, "1", this, id, name, assetId, parent)
+                isArray -> repeat(size()) { i ->
+                    val language = createLanguage(languages, "$i", this[i], id, name, assetId, parent)
+                    language.id to language
+                }
                 else -> throw RuntimeException()
             }
-        } ?: emptySet()
-
-        val language = createSimpleLanguage(id, name, parent, assetId, matchers, flavors)
-
-        languages[id] = language
+        }
 
         return language
     }

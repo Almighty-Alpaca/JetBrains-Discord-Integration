@@ -6,7 +6,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractLanguage
 
 object BintrayLanguage {
-    class Simple(id: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>, flavors: Set<Language>) : AbstractLanguage.Simple(id, name, parent, assetId, matchers, flavors) {
+    class Simple(id: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>) : AbstractLanguage.Simple(id, name, parent, assetId, matchers) {
         override val match: LanguageMatch = BintrayLanguageMatch(name, assetIds)
     }
 

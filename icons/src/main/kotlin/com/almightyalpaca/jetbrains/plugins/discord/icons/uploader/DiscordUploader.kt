@@ -59,7 +59,7 @@ suspend fun main() {
         runBlocking {
             val token = System.getenv("DISCORD_TOKEN")!!
 
-            val source = LocalSource(Paths.get("../"))
+            val source = LocalSource(Paths.get("../"), retry = false)
             val themes = source.getThemes()
 
             for (theme in themes.values) {

@@ -5,35 +5,17 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Language
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.concat
 
-sealed class AbstractLanguage(override val id: String, override val name: String, override val assetId: String?) : Language {
-    abstract override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch?
+sealed class AbstractLanguage(final override val id: String, final override val name: String) : Language {
+    abstract class Simple(id: String, name: String, final override val parent: Language?, final override val assetId: String?, final override val matchers: Map<Matcher.Target, Matcher>)
+        : AbstractLanguage(id, name), Language.Simple {
 
-    abstract class Simple(id: String, name: String, override val parent: Language?, assetId: String?, override val matchers: Map<Matcher.Target, Matcher>, override val flavors: Set<Language>)
-        : AbstractLanguage(id, name, assetId), Language.Simple {
-
-        override val assetIds: Iterable<String>
-            get() = concat(assetId, parent?.assetIds)
-
-        override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? {
-            val matcher = matchers[target]
-            if (matcher != null)
-                if (fields.any { f -> matcher.matches(f) })
-                    return match
-
-            for (flavor in flavors) {
-                val flavorMatch = flavor.findMatch(target, fields)
-                if (flavorMatch != null)
-                    return flavorMatch
-            }
-
-            return null
-        }
+        override val assetIds: Iterable<String> = concat(assetId, parent?.assetIds)
     }
 
-    abstract class Default(name: String, override val assetId: String) : AbstractLanguage("default", name, assetId), Language.Default {
-        override val id: String = "default"
-        override val assetIds = listOf(assetId)
-
-        override fun findMatch(target: Matcher.Target, fields: Collection<String>) = null
+    abstract class Default(name: String, final override val assetId: String) : AbstractLanguage("default", name), Language.Default {
+        final override val assetIds: Iterable<String> = listOf(assetId)
+        final override val parent: Language? = null
+        final override val matchers: Map<Matcher.Target, Matcher> get() = emptyMap()
+        final override fun findMatch(target: Matcher.Target, fields: Collection<String>): LanguageMatch? = null
     }
 }
