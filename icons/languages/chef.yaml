@@ -1,0 +1,10 @@
+name: Aurelia
+asset: aurelia
+parent: javascript
+match:
+  name:
+    equals:
+      - aurelia.js
+      - aureliafile.js
+      - aurelia.json
+      - aureliafile.json

@@ -1,0 +1,6 @@
+name: Gulp
+asset: gulp
+parent: javascript
+match:
+  name:
+    equals: gulpfile.js

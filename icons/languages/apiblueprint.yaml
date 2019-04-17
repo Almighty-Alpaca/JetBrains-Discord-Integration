@@ -1,0 +1,6 @@
+name: API Blueprint
+asset: apiblueprint
+parent: markdown
+match:
+  extension:
+    equals: .apib

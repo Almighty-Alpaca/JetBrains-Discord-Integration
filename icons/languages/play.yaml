@@ -1,0 +1,6 @@
+name: Play
+asset: play
+parent: java
+match:
+  extension:
+    equals: .play

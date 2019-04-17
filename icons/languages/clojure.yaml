@@ -9,3 +9,5 @@ match:
       - .cljc
       - .cljx
       - .hic
+      - .cljs
+      - .clojure

@@ -1,0 +1,8 @@
+name: HAML
+asset: haml
+parent: text
+match:
+  extension:
+    equals:
+      - .hh
+      - .hhconfig

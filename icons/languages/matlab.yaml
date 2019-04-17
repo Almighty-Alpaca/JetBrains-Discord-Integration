@@ -1,0 +1,6 @@
+name: Matlab
+asset: matlab
+parent: text
+match:
+  extension:
+    equals: .matlab

@@ -17,3 +17,10 @@ match:
       - .php8
       - .php9
       - .php_cs
+      - .phtml
+flavors:
+  - name: PHP Archive
+    parent: archive
+    match:
+      extension:
+        equals: .phar

@@ -1,0 +1,6 @@
+name: Spring
+asset: spring
+parent: java
+match:
+  extension:
+    equals: .spring

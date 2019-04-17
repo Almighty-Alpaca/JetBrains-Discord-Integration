@@ -1,0 +1,6 @@
+name: EditorConfig
+asset: editorconfig
+parent: text
+match:
+  extension:
+    equals: .editorconfig

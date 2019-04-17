@@ -1,0 +1,7 @@
+name: XAML
+asset: xaml
+parent: xaml
+match:
+  extension:
+    equals:
+      - .xaml

@@ -1,0 +1,8 @@
+name: Babel
+asset: babel
+parent: javascript
+match:
+  extension:
+    equals:
+      - .babelrc
+      - .babelrc.json

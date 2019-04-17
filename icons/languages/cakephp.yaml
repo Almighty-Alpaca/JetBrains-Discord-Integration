@@ -1,0 +1,6 @@
+name: CakePHP
+asset: cakephp
+parent: php
+match:
+  extension:
+    equals: .cake

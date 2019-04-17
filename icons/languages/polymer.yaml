@@ -1,0 +1,6 @@
+name: Polymer
+asset: polymer
+parent: json
+match:
+  name:
+    equals: polymer.json

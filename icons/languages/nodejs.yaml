@@ -1,0 +1,7 @@
+name: Node.js
+asset: nodejs
+flavors:
+  - id: text
+    parent: text
+  - id: javascript
+    parent: javascript

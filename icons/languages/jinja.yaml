@@ -1,0 +1,9 @@
+name: Jinja
+asset: jinja
+parent: text
+match:
+  extension:
+    equals:
+      - .jinja
+      - .j2
+      - .jnj

@@ -11,3 +11,4 @@ match:
       - .ex
       - .exs
       - .eex
+      - .elixir

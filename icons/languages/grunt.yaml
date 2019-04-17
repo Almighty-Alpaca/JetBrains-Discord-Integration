@@ -1,0 +1,6 @@
+name: Grunt
+asset: grunt
+parent: text
+match:
+  name:
+    equals: Gruntfile

@@ -22,3 +22,11 @@ flavors:
     match:
       name:
         equals: .mailmap
+  - name: Git Diff
+    match:
+      extension:
+        equals: .diff
+  - name: Git Patch
+    match:
+      extension:
+        equals: .patch

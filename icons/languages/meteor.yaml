@@ -1,0 +1,6 @@
+name: Meteor
+asset: meteor
+parent: javascript
+match:
+  extension:
+    equals: .meteor

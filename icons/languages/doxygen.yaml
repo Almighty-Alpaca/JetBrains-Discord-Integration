@@ -1,0 +1,6 @@
+name: Doxygen
+asset: doxygen
+parent: text
+match:
+  name:
+    equals: Doxyfile

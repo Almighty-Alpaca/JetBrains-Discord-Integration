@@ -1,0 +1,8 @@
+name: Julia
+asset: julia
+parent: text
+match:
+  extension:
+    equals:
+      - .julia
+      - .jl

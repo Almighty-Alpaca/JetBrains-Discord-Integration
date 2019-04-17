@@ -1,0 +1,6 @@
+name: Sublime
+asset: sublime
+parent: text
+match:
+  extension:
+    equals: .sublime

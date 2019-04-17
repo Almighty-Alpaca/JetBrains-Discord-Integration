@@ -1,0 +1,6 @@
+name: PList
+asset: plist
+parent: text
+match:
+  extension:
+    equals: .plist

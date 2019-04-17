@@ -1,0 +1,6 @@
+name: Emacs
+asset: emacs
+parent: text
+match:
+  extension:
+    equals: .emacs

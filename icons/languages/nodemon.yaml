@@ -1,0 +1,6 @@
+name: Nodemon
+asset: nodemon
+parent: nodejs/text
+match:
+  extension:
+    equals: .nodemon

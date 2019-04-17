@@ -1,0 +1,7 @@
+name: Mustache
+asset: mustache
+parent: text
+match:
+  extension:
+    equals:
+      - .mustache

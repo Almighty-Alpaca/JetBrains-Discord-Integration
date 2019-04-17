@@ -1,0 +1,6 @@
+name: SO
+asset: so
+parent: lib
+match:
+  extension:
+    equals: .so

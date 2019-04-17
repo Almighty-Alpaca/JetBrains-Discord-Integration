@@ -1,0 +1,6 @@
+name: CircleCI
+asset: circleci
+parent: yaml
+match:
+  name:
+    equals: circle.yml

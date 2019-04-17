@@ -1,0 +1,7 @@
+name: Jupyter Notebook
+asset: jupyter
+parent: text
+match:
+  extension:
+    equals:
+      - .ipynb

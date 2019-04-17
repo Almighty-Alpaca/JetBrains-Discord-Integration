@@ -3,4 +3,6 @@ asset: vue
 parent: javascript
 match:
   extension:
-    equals: .vue
+    equals:
+      - .vue
+      - .vuex

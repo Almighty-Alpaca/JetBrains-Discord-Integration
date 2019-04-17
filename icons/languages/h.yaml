@@ -1,0 +1,8 @@
+name: H
+asset: h
+parent: text
+match:
+  extension:
+    equals:
+      - .h
+      - .objh

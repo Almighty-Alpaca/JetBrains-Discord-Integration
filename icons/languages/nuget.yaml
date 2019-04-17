@@ -1,0 +1,6 @@
+name: NuGet
+asset: nuget
+parent: xml
+match:
+  extension:
+    equals: .nuspec

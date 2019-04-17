@@ -1,0 +1,6 @@
+name: Appveyor
+asset: appveyor
+parent: yaml
+match:
+  name:
+    equals: appveyor.yml

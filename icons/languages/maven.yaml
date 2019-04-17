@@ -1,0 +1,6 @@
+name: Maven
+asset: maven
+parent: xml
+match:
+  name:
+    equals: pom.xml

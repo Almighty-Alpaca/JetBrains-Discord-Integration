@@ -1,0 +1,6 @@
+name: DLL
+asset: dll
+parent: lib
+match:
+  extension:
+    equals: .dll

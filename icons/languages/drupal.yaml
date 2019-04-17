@@ -1,0 +1,6 @@
+name: Drupal
+asset: drupal
+parent: php
+match:
+  extension:
+    equals: .drupal

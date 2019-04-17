@@ -1,0 +1,8 @@
+name: Haxe
+asset: haxe
+parent: text
+match:
+  extension:
+    equals:
+      - .haxe
+      - .hx

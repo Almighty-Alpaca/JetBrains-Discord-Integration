@@ -1,0 +1,7 @@
+name: NVM
+asset: mvm
+parent: nodejs/text
+match:
+  name:
+    equals:
+      - .mvmrc

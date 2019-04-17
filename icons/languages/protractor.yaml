@@ -1,0 +1,8 @@
+name: Protractor
+asset: protractor
+parent: typescript
+match:
+  name:
+    equals:
+      - protractor.js
+      - protractor.json

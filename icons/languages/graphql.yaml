@@ -1,0 +1,8 @@
+name: GraphQL
+asset: graphql
+parent: text
+match:
+  extension:
+    equals:
+      - .gql
+      - .graphql

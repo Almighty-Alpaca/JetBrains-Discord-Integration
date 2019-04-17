@@ -3,5 +3,4 @@ asset: htaccess
 parent: apache
 match:
   name:
-    equals:
-      - .htaccess
+    equals: .htaccess

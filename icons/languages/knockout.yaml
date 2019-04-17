@@ -1,0 +1,8 @@
+name: Knockout
+asset: knockout
+parent: javascript
+match:
+  extension:
+    equals:
+      - .knockout
+      - .ko

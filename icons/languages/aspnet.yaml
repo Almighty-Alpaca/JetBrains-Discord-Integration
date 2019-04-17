@@ -5,9 +5,11 @@ match:
   extension:
     equals:
       - .asp
+      - .aspx
+      - .asa
       - .asax
       - .ascx
       - .ashx
       - .asmx
-      - .aspx
       - .axd
+      - .cshtml

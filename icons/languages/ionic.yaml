@@ -1,0 +1,6 @@
+name: Iconic
+asset: ionic
+parent: typescript
+match:
+  name:
+    equals: .ionic.config

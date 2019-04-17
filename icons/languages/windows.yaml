@@ -3,16 +3,19 @@ parent: microsoft
 asset: windows
 flavors:
   - name: Windows Executable
+    parent: microsoft/binary
     match:
       extension:
         equals:
           - .exe
           - .com
   - name: Windows Installer Package
+    parent: microsoft/binary
     match:
       extension:
         equals: .msi
   - name: Registry Entry
+    parent: microsoft/text
     asset: registry
     match:
       extension:

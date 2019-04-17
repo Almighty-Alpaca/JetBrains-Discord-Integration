@@ -1,0 +1,9 @@
+name: XML
+asset: xml
+parent: text
+match:
+  extension:
+    equals:
+      - .xml
+      - .cxml
+      - .fxml

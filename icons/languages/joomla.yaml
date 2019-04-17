@@ -1,0 +1,6 @@
+name: Joomla
+asset: joomla
+parent: php
+match:
+  extension:
+    equals: .smarty

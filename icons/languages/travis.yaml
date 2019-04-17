@@ -1,0 +1,6 @@
+name: Travis
+asset: travis
+parent: yaml
+match:
+  name:
+    equals: .travis.yml

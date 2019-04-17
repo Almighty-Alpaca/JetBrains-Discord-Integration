@@ -1,0 +1,10 @@
+name: Mathematica
+asset: mathematica
+parent: text
+match:
+  extension:
+    equals:
+      - .nb
+      - .ma
+      - .mb
+      - .cdf

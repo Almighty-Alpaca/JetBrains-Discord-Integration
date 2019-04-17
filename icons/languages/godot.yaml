@@ -1,0 +1,6 @@
+name: Godot
+asset: godot
+parent: text
+match:
+  extension:
+    equals: .gd

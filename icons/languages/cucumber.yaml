@@ -1,0 +1,6 @@
+name: Cucumber
+asset: cucumber
+parent: text
+match:
+  extension:
+    equals: .feature

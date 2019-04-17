@@ -1,0 +1,8 @@
+name: Blade
+asset: blade
+parent: php
+match:
+  name:
+    equals:
+      - .blade
+      - .blade.php

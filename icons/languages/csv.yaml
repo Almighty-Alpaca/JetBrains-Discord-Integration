@@ -1,0 +1,6 @@
+name: CSV
+asset: csv
+parent: table
+match:
+  extension:
+    equals: .csv

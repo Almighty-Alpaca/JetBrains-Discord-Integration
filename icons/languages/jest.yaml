@@ -1,0 +1,6 @@
+name: Jest
+asset: jest
+parent: javascript
+match:
+  name:
+    equals: jest.config.js

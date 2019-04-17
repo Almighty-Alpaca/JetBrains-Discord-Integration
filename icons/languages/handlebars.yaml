@@ -6,3 +6,4 @@ match:
     equals:
       - .hbs
       - .handlebars
+      - .hamlbars

@@ -4,6 +4,7 @@ parent: text
 match:
   extension:
     equals:
+      - .perl
       - .pl
       - .pm
       - .t

@@ -1,0 +1,6 @@
+name: Mercurial
+asset: mercurial
+parent: text
+match:
+  extension:
+    equals: .hg

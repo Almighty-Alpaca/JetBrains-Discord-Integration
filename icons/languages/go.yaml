@@ -4,3 +4,7 @@ parent: text
 match:
   extension:
     equals: .go
+flavors:
+  - name: Go Template
+    match:
+      extension: .gohtml

@@ -12,12 +12,14 @@ match:
       - ukx
       - uz
       - upkg
+      - uc
       - upl
       - obj
       - asc
       - lwo
 flavor:
   - name: UnrealScript
+    id: sript
     match:
       extension:
         equals: .uc

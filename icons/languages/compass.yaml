@@ -1,0 +1,6 @@
+name: Compass
+asset: compass
+parent: ruby
+match:
+  name:
+    equals: config.rb

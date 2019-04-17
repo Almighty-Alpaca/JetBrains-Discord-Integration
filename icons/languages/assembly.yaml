@@ -3,7 +3,9 @@ asset: assembly
 parent: text
 match:
   extension:
-    equals: .asm
+    equals:
+      - .asm
+      - .s
 
 # TODO: Assembly
 # .agc

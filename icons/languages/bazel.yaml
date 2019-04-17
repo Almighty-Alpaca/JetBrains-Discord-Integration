@@ -1,0 +1,6 @@
+name: Bazel
+asset: bazel
+parent: text
+match:
+  extension:
+    equals: .bzl

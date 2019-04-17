@@ -1,0 +1,6 @@
+name: Composer
+asset: composer
+parent: json
+match:
+  name:
+    equals: composer.json

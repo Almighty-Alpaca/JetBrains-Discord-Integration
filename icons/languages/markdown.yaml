@@ -13,3 +13,4 @@ match:
       - .rmd
       - .ron
       - .pmw
+      - .mson

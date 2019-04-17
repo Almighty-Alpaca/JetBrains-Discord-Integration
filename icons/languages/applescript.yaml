@@ -1,0 +1,6 @@
+name: AppleScript
+asset: applescript
+parent: apple/text
+match:
+  extension:
+    equals: .applescript

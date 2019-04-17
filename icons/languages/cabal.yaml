@@ -1,0 +1,8 @@
+name: Cabal
+asset: cabal
+parent: haskell
+match:
+  extension:
+    equals: .cabal
+  name:
+    equals: cabal.project

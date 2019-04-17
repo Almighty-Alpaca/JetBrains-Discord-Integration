@@ -3,4 +3,6 @@ asset: hack
 parent: php
 match:
   extension:
-    equals: .hh
+    equals:
+      - .hh
+      - .hhconfig

@@ -1,0 +1,8 @@
+name: Fish
+asset: fish
+parent: shell
+match:
+  extension:
+    equals:
+      - .fish
+      - .fishrc

@@ -1,0 +1,6 @@
+name: Ansible
+asset: ansible
+parent: yaml
+match:
+  name:
+    equals: site.yml

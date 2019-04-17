@@ -1,0 +1,8 @@
+name: Flow
+asset: flow
+parent: javascript
+match:
+  extension:
+    equals:
+      - .flow
+      - .flowconfig

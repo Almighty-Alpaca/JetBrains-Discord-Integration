@@ -4,6 +4,7 @@ parent: text
 match:
   extension:
     equals:
+      - .python
       - .py
       - .py3
       - .pyc

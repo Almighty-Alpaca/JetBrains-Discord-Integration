@@ -1,0 +1,15 @@
+name: README
+asset: readme
+parent: text
+match:
+  name:
+    equals: README
+flavors:
+  - parent: markdown
+    match:
+      name:
+        equals: README.md
+  - parent: restructuredtext
+    match:
+      name:
+        equals: README.rst

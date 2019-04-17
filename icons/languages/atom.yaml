@@ -1,0 +1,6 @@
+name: Atom
+asset: atom
+parent: text
+match:
+  extension:
+    equals: .atom

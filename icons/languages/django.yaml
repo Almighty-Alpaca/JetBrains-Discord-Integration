@@ -1,0 +1,6 @@
+name: Django
+asset: django
+parent: python
+match:
+  extension:
+    equals: .flake8

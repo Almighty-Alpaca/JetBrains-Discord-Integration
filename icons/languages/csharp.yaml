@@ -5,6 +5,7 @@ match:
   extension:
     equals:
       - .cs
+      - .csproj
 flavors:
   - name: C# Script
     match:

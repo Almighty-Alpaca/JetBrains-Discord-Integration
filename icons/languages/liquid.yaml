@@ -1,0 +1,6 @@
+name: Liquid
+asset: liquid
+parent: html
+match:
+  extension:
+    equals: .liquid

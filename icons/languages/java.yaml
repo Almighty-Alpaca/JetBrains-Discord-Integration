@@ -7,6 +7,12 @@ match:
       - .java
       - .jar
 flavors:
+  - name: Java Class
+    parent: binary
+    match:
+      extension:
+        equals:
+          - .class
   - name: Java Server Pages
     match:
       extension:
@@ -16,3 +22,7 @@ flavors:
           - .jsf
           - .war
           - .ear
+  - name: Java Bean
+    match:
+      name:
+        endsWith: Bean.java

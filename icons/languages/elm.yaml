@@ -1,0 +1,6 @@
+name: Elm
+asset: elm
+parent: text
+match:
+  extension:
+    equals: .elm

@@ -1,0 +1,13 @@
+name: Android
+asset: android
+flavors:
+  - name: Android Manifest
+    parent: xml
+    match:
+      name:
+        equals: AndroidManifest.xml
+  - name: Android Package
+    parent: archive
+    match:
+      extension:
+        equals: .apk

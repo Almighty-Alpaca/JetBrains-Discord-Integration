@@ -1,0 +1,8 @@
+name: Graphviz
+asset: graphviz
+parent: text
+match:
+  extension:
+    equals:
+      - .dot
+      - .graphviz

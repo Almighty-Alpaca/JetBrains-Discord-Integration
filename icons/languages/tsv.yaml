@@ -1,0 +1,6 @@
+name: TSV
+asset: tsv
+parent: table
+match:
+  extension:
+    equals: .tsv

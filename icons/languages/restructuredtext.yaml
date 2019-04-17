@@ -1,0 +1,7 @@
+name: reStructuredText
+asset: restructuredtext
+parent: text
+match:
+  extension:
+    equals:
+      - .rst

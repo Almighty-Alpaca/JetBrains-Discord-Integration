@@ -4,6 +4,9 @@ parent: text
 match:
   extension:
     equals:
+      - .ocaml
+      - .ocamllex
+      - .ocamlyacc
       - .ml
       - .mli
       - .eliom

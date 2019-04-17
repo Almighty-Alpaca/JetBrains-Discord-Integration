@@ -8,4 +8,6 @@ match:
       - .grt
       - .gtpl
       - .gsp
+      - .gv
       - .gvy
+      - .gdsl

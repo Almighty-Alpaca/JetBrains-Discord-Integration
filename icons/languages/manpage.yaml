@@ -1,0 +1,6 @@
+name: Manpage
+asset: manpage
+parent: text
+match:
+  extension:
+    equals: .man

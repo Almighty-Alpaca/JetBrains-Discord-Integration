@@ -1,0 +1,6 @@
+name: Mocha
+asset: mocha
+parent: javascript
+match:
+  extension:
+    equals: mocha.opts

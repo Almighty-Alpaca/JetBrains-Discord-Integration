@@ -1,0 +1,7 @@
+name: Apple
+asset: apple
+flavors:
+  - id: binary
+    parent: binary
+  - id: text
+    parent: text

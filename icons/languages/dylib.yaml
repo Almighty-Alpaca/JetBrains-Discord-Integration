@@ -1,0 +1,6 @@
+name: Dylib
+asset: dylib
+parent: lib
+match:
+  extension:
+    equals: .dylib

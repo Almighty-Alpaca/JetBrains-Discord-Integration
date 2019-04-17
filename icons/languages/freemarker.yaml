@@ -1,0 +1,8 @@
+name: FreeMarker
+asset: freemarker
+parent: apache
+match:
+  extension:
+    equals:
+      - .ftl
+      - .freemarker

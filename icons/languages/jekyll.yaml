@@ -1,0 +1,12 @@
+name: Jekyll
+asset: jekyll
+parent: text
+flavors:
+  - parent: yaml
+    match:
+      file:
+        equals: _config.yaml
+  - parent: toml
+    match:
+      file:
+        equals: _config.toml

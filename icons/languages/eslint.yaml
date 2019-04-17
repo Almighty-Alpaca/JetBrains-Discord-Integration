@@ -1,0 +1,7 @@
+name: ESLint
+asset: eslint
+parent: javascript
+match:
+  name:
+    startsWith: .eslintrc
+    equals: .eslintignore

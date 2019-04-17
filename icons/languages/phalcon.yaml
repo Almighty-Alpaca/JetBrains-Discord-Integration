@@ -1,0 +1,6 @@
+name: Phalcon
+asset: phalcon
+parent: php
+match:
+  extension:
+    equals: .volt

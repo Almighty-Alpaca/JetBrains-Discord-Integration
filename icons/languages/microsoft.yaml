@@ -1,5 +1,7 @@
 name: Microsoft
 asset: microsoft
-parent: text
-
-# TODO: resolvable flavor ids
+flavors:
+  - id: binary
+    parent: binary
+  - id: text
+    parent: text

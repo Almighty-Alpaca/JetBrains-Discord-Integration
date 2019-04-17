@@ -1,0 +1,8 @@
+name: Browserslist
+asset: browserslist
+parent: json
+match:
+  name:
+    equals:
+      - .browserslist
+      - .browserslistrc
