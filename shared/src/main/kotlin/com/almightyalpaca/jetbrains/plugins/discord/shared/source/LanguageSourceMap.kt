@@ -23,7 +23,7 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
 
     private fun getLanguage(languages: MutableMap<String, Language>, id: String): Language = if (id.contains('/')) {
         createLanguage(languages, id.substringBefore('/'))
-        languages[id]!!
+        languages[id] ?: throw Exception("Missing language")
     } else {
         createLanguage(languages, id)
     }
@@ -36,14 +36,18 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
             baseName: String? = null,
             baseAssetId: String? = null,
             baseParent: Language? = null
-    ): Language = languages[id] ?: when (id) {
-        "default" -> createDefaultLanguage(languages, source)
-        else -> createSimpleLanguage(languages, id, source, baseId, baseName, baseAssetId, baseParent)
+    ): Language = languages[id] ?: try {
+        when (id) {
+            "default" -> createDefaultLanguage(languages, source)
+            else -> createSimpleLanguage(languages, id, source, baseId, baseName, baseAssetId, baseParent)
+        }
+    } catch (e: Exception) {
+        throw Exception("Error while parsing ${(baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)}", e)
     }
 
     private fun createDefaultLanguage(languages: MutableMap<String, Language>, source: JsonNode): Language {
-        val name: String = source["name"]?.textValue()!!
-        val assetId: String = source["asset"]?.textValue()!!
+        val name: String = source["name"]?.textValue() ?: throw Exception("Missing name")
+        val assetId: String = source["asset"]?.textValue()?: throw Exception("Missing asset")
 
         val language = createDefaultLanguage(name, assetId)
 
@@ -63,7 +67,7 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
     ): Language {
         @Suppress("NAME_SHADOWING")
         val id: String = (baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)
-        val name: String = source["name"]?.textValue() ?: baseName!!
+        val name: String = source["name"]?.textValue() ?: baseName ?: throw Exception("Missing name")
         val assetId: String? = source["asset"]?.textValue() ?: baseAssetId
 
         val parentId: String? = source["parent"]?.textValue()
@@ -79,7 +83,6 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
                 }
             }
         } ?: emptyMap()
-
 
         val language = createSimpleLanguage(id, name, parent, assetId, matchers)
         languages[id] = language

@@ -1,6 +1,6 @@
 name: XAML
 asset: xaml
-parent: xaml
+parent: xml
 match:
   extension:
     equals:

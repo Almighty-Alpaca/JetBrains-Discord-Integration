@@ -7,4 +7,5 @@ match:
 flavors:
   - name: Go Template
     match:
-      extension: .gohtml
+      extension:
+        equals: .gohtml
