@@ -1,0 +1,16 @@
+name: PostCSS
+asset: postcss
+parent: css
+match:
+  extension:
+    equals:
+      - .pcss
+      - .postcss
+flavor:
+  - name: PostCSS Config
+    parent: javascript
+    match:
+      extension:
+        equals:
+          - .postcssrc.js
+          - postcss.config.js

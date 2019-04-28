@@ -70,6 +70,20 @@ tasks {
         dependsOn(`validate-icons`)
     }
 
+
+    val `find-unused-icons` by registering(JavaExec::class) task@{
+        group = "icons"
+
+        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+        main = "com.almightyalpaca.jetbrains.plugins.discord.icons.find.UnusedIconFinderKt"
+    }
+
+    val find by registering task@{
+        group = "icons"
+
+        dependsOn(`find-unused-icons`)
+    }
+
     test {
         dependsOn(validate)
     }
