@@ -3,10 +3,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 
-fun main() {
+fun main() = runBlocking {
     val provider = LocalSource(Paths.get("../"), retry = false)
     val languages = provider.getLanguages()
     val themes = provider.getThemes()

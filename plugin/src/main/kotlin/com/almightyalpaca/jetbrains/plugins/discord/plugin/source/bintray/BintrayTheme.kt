@@ -2,7 +2,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalIconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Set
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
 import com.fasterxml.jackson.databind.ObjectMapper

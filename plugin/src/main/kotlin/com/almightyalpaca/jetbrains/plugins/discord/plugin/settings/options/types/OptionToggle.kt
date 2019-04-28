@@ -3,9 +3,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
 import org.jdom.Element
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import javax.swing.Box
-import javax.swing.BoxLayout
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
@@ -35,18 +37,43 @@ class OptionToggle<T> : Option<Toggle<T>>(""), Toggle.Provider<T> {
 
     override val component by lazy {
         JPanel().apply panel@{
-            layout = BoxLayout(this@panel, BoxLayout.X_AXIS)
+            layout = GridBagLayout()
 
             val toggleComponent = toggle.second.component
             val optionComponent = option.second.component
 
             toggle.second.addChangeListener { value -> option.second.isComponentEnabled = toggle.third(value) }
 
-            add(toggleComponent)
-            add(Box.createHorizontalStrut(20))
-            add(optionComponent)
+            add(toggleComponent, GridBagConstraints {
+                gridx = 0
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+            })
 
-            add(Box.createHorizontalGlue())
+//            add(Box.createHorizontalStrut(20))
+
+            add(optionComponent, GridBagConstraints {
+                ipadx = 20
+                gridx = 1
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+            })
+
+            add(Box.createHorizontalGlue(), GridBagConstraints {
+                gridx = 2
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+                fill = GridBagConstraints.HORIZONTAL
+                weightx = 1.0
+            })
+
+//            add(Box.createHorizontalGlue())
         }
     }
     override var isComponentEnabled: Boolean = true

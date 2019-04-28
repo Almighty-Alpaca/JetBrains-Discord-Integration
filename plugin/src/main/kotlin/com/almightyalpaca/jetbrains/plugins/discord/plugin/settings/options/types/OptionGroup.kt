@@ -3,9 +3,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
 import com.intellij.ui.IdeBorderFactory
 import org.jdom.Element
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import java.awt.Insets
+import javax.swing.Box
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 import kotlin.math.roundToInt
@@ -21,15 +25,24 @@ class OptionGroup(description: String) : Option<Group>(description), OptionHolde
 
     override val component by lazy {
         JPanel().apply panel@{
-            layout = BoxLayout(this@panel, BoxLayout.Y_AXIS)
+            layout = GridBagLayout()
 
+            var y = 0
             for (option in options.values) {
-                add(option.component)
+                add(option.component, GridBagConstraints {
+                    gridx = 0
+                    gridy = y++
+                    gridwidth = 1
+                    gridheight = 1
+                    anchor = GridBagConstraints.NORTHWEST
+                    fill = GridBagConstraints.HORIZONTAL
+                    weightx = 1.0
+                })
             }
 
             val fontHeight = getFontMetrics(font).height
 
-            if (description.isNotEmpty())
+            if (description.isNotBlank())
                 border = IdeBorderFactory.createTitledBorder(description, false, Insets((fontHeight * 1.5).roundToInt(), 0, fontHeight, 0))
         }
     }

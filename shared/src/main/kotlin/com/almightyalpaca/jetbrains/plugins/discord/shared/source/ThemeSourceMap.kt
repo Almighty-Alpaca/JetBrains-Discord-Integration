@@ -10,9 +10,9 @@ interface ThemeSourceMap : Map<String, ThemeSource> {
 
     fun toThemeMap(): ThemeMap {
         val themes = stream()
-                .filter { (key, _) -> key != "default" }
-                .map { (key, value) -> key to value.asTheme() }
-                .toMap()
+            .filter { (key, _) -> key != "default" }
+            .map { (key, value) -> key to value.asTheme() }
+            .toMap()
 
         val defaultTheme = themes.getValue(this.getValue("default").node.textValue())
 

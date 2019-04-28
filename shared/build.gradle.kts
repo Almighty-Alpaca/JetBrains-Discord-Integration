@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
-    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.0")
+    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.1")
 
     compile(group = "commons-io", name = "commons-io", version = "2.6")
 

@@ -4,10 +4,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.Opti
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.IntValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.IconTextValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.IconValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.LineValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.TimeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconTextValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.LineValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TimeValue
 import com.intellij.openapi.components.ServiceManager
 
 interface ApplicationSettings : OptionHolder {
@@ -45,6 +46,8 @@ interface ApplicationSettings : OptionHolder {
     val fileIconSmall: IconValue
     val fileIconSmallText: IconTextValue
     val fileTime: TimeValue
+
+    val theme: ThemeValue
 }
 
 val settings: ApplicationSettings

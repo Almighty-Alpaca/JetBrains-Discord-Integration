@@ -10,9 +10,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderCo
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.renderType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.BintraySource
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeMap
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import com.intellij.AppTopics
 import com.intellij.openapi.application.ApplicationManager
@@ -37,7 +35,7 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
 
     private var updateJob: Job? = null
 
-    private val source: Source
+    override val source: Source
 
     init {
         val icons: String? = System.getenv("ICONS")
@@ -48,11 +46,6 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
             else -> BintraySource("almightyalpaca/JetBrains-Discord-Integration/Icons")
         }
     }
-
-    override val languages: LanguageMap?
-        get() = source.getLanguagesOrNull()
-    override val themes: ThemeMap?
-        get() = source.getThemesOrNull()
 
     override var data: ApplicationData = ApplicationData.DEFAULT
         @Synchronized
@@ -67,7 +60,7 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
         updateJob?.cancel()
 
         updateJob = launch {
-            val context = RenderContext(themes, languages, data, Renderer.Mode.NORMAL)
+            val context = RenderContext(source, data, Renderer.Mode.NORMAL)
             val renderer = context.renderType.createRenderer(context)
             val presence = renderer.render()
 

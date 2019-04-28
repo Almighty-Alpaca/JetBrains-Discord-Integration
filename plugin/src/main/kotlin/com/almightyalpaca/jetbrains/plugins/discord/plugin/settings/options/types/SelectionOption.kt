@@ -2,14 +2,19 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.boxLayoutPanel
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import javax.swing.Box
 import javax.swing.JComboBox
+import javax.swing.JPanel
 
 fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>) = selection(description, values.first, values.second)
 
-fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>) = OptionProviderImpl(this, EnumSelectionOption(description, initialValue, values))
+fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>) = OptionProviderImpl(this, SelectionOption(description, initialValue, values))
 
-class EnumSelectionOption<T : Enum<T>>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) {
+class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) {
     init {
         if (initialValue !in values)
             throw Exception("initialValue is not an allowed currentValue")
@@ -20,7 +25,38 @@ class EnumSelectionOption<T : Enum<T>>(description: String, initialValue: T, pri
             selectedItem = currentValue
         }
     }
-    override val component by lazy { boxLayoutPanel(label(description), componentImpl) }
+
+    override val component by lazy {
+        JPanel().apply {
+            layout = GridBagLayout()
+
+            add(label(description), GridBagConstraints {
+                gridx = 0
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+            })
+
+            add(componentImpl, GridBagConstraints {
+                gridx = 1
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+            })
+
+            add(Box.createHorizontalGlue(), GridBagConstraints {
+                gridx = 2
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.WEST
+                fill = GridBagConstraints.HORIZONTAL
+                weightx = 1.0
+            })
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     override val componentValue: T

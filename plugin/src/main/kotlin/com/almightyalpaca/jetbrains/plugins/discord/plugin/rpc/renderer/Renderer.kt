@@ -3,7 +3,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import java.time.Duration
 import java.time.OffsetDateTime
 
@@ -30,15 +30,17 @@ abstract class Renderer(private val context: RenderContext) {
         false -> null
     }
 
-    protected fun RenderContext.forceRender(details: LineValue?,
-                                            detailsCustom: StringValue?,
-                                            state: LineValue?,
-                                            stateCustom: StringValue?,
-                                            largeIcon: IconValue?,
-                                            largeIconText: IconTextValue?,
-                                            smallIcon: IconValue?,
-                                            smallIconText: IconTextValue?,
-                                            startTimestamp: TimeValue?): RichPresence {
+    protected fun RenderContext.forceRender(
+        details: LineValue?,
+        detailsCustom: StringValue?,
+        state: LineValue?,
+        stateCustom: StringValue?,
+        largeIcon: IconValue?,
+        largeIconText: IconTextValue?,
+        smallIcon: IconValue?,
+        smallIconText: IconTextValue?,
+        startTimestamp: TimeValue?
+    ): RichPresence {
         return RichPresence(context.icons?.applicationId) presence@{
             this@presence.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceLine.Result.Empty -> null

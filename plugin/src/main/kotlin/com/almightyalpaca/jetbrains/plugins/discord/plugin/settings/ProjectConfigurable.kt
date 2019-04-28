@@ -3,7 +3,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.util.ui.components.BorderLayoutPanel
 
 class ProjectConfigurable(val project: Project) : SearchableConfigurable {
     private val settings = project.settings
@@ -24,7 +23,7 @@ class ProjectConfigurable(val project: Project) : SearchableConfigurable {
         settings.reset()
     }
 
-    override fun createComponent() = BorderLayoutPanel().addToCenter(settings.component)
+    override fun createComponent() = settings.component
 
     override fun getHelpTopic(): String? = null
 }

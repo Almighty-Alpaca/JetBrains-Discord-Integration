@@ -1,12 +1,14 @@
 package com.almightyalpaca.jetbrains.plugins.discord.shared.source.local
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.*
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.*
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.baseName
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.extension
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.retryAsync
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import kotlinx.coroutines.*
-import kotlinx.coroutines.future.asCompletableFuture
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
@@ -32,23 +34,20 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
         false -> async { readThemes() }
     }
 
-    override fun getLanguages(): LanguageMap = languageJob.asCompletableFuture().get()
-    override fun getThemes(): ThemeMap = themeJob.asCompletableFuture().get()
-
-    override fun getLanguagesOrNull(): LanguageMap? = languageJob.getCompletedOrNull()
-    override fun getThemesOrNull(): ThemeMap? = themeJob.getCompletedOrNull()
+    override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
+    override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
 
     private fun readLanguages(): LanguageMap {
         val mapper = ObjectMapper(YAMLFactory())
 
         val map = Files.list(pathLanguages)
-                .filter { p -> p.extension.toLowerCase() == "yaml" }
-                .map { p ->
-                    val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-                    LanguageSource(p.baseName.toLowerCase(), node)
-                }
-                .map { p -> p.id to p }
-                .toMap()
+            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .map { p ->
+                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
+                LanguageSource(p.baseName.toLowerCase(), node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
 
         return LocalLanguageSourceMap(this, map).toLanguageMap()
     }
@@ -57,13 +56,13 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
         val mapper = ObjectMapper(YAMLFactory())
 
         val map = Files.list(pathThemes)
-                .filter { p -> p.extension.toLowerCase() == "yaml" }
-                .map { p ->
-                    val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-                    ThemeSource(p.baseName.toLowerCase(), node)
-                }
-                .map { p -> p.id to p }
-                .toMap()
+            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .map { p ->
+                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
+                ThemeSource(p.baseName.toLowerCase(), node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
 
         return LocalThemeSourceMap(this, map).toThemeMap()
     }

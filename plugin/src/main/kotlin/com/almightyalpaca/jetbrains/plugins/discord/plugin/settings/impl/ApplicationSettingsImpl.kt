@@ -3,10 +3,10 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.PresenceIcon
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.PresenceIconText
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.PresenceLine
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.types.PresenceTime
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIcon
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIconText
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceLine
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceTime
 
 class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
     override val hide by check("Disable Rich Presence", false)
@@ -25,11 +25,11 @@ class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
 
     private val applicationDetailsToggle by applicationTab.toggleable<PresenceLine>()
     override val applicationDetails by applicationDetailsToggle.toggle { it == PresenceLine.CUSTOM }.selection("First line", PresenceLine.Application1)
-    override val applicationDetailsCustom by applicationDetailsToggle.option.text("Custom", "")
+    override val applicationDetailsCustom by applicationDetailsToggle.option.text("Custom", "", 128)
 
     private val applicationStateToggle by applicationTab.toggleable<PresenceLine>()
     override val applicationState by applicationStateToggle.toggle { it == PresenceLine.CUSTOM }.selection("Second line", PresenceLine.Application2)
-    override val applicationStateCustom by applicationStateToggle.option.text("Custom", "")
+    override val applicationStateCustom by applicationStateToggle.option.text("Custom", "", 128)
 
     private val applicationIconLargeToggle by applicationTab.toggleable<PresenceIcon>()
     override val applicationIconLarge by applicationIconLargeToggle.disableOn(PresenceIcon.NONE).selection("Large icon", PresenceIcon.Large.Application)
@@ -47,11 +47,11 @@ class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
 
     private val projectDetailsToggle by projectTab.toggleable<PresenceLine>()
     override val projectDetails by projectDetailsToggle.enableOn(PresenceLine.CUSTOM).selection("First line", PresenceLine.Project1)
-    override val projectDetailsCustom by projectDetailsToggle.option.text("Custom", "")
+    override val projectDetailsCustom by projectDetailsToggle.option.text("Custom", "", 128)
 
     private val projectStateToggle by projectTab.toggleable<PresenceLine>()
     override val projectState by projectStateToggle.enableOn(PresenceLine.CUSTOM).selection("Second line", PresenceLine.Project2)
-    override val projectStateCustom by projectStateToggle.option.text("Custom", "")
+    override val projectStateCustom by projectStateToggle.option.text("Custom", "", 128)
 
     private val projectIconLargeToggle by projectTab.toggleable<PresenceIcon>()
     override val projectIconLarge by projectIconLargeToggle.disableOn(PresenceIcon.NONE).selection("Large icon", PresenceIcon.Large.Project)
@@ -69,11 +69,11 @@ class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
 
     private val fileDetailsToggle by fileTab.toggleable<PresenceLine>()
     override val fileDetails by fileDetailsToggle.enableOn(PresenceLine.CUSTOM).selection("First line", PresenceLine.File1)
-    override val fileDetailsCustom by fileDetailsToggle.option.text("Custom", "")
+    override val fileDetailsCustom by fileDetailsToggle.option.text("Custom", "", 128)
 
     private val fileStateToggle by fileTab.toggleable<PresenceLine>()
     override val fileState by fileStateToggle.enableOn(PresenceLine.CUSTOM).selection("Second line", PresenceLine.File2)
-    override val fileStateCustom by fileStateToggle.option.text("Custom", "")
+    override val fileStateCustom by fileStateToggle.option.text("Custom", "", 128)
 
     private val fileIconLargeToggle by fileTab.toggleable<PresenceIcon>()
     override val fileIconLarge by fileIconLargeToggle.disableOn(PresenceIcon.NONE).selection("Large icon", PresenceIcon.Large.File)
@@ -84,4 +84,6 @@ class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
     override val fileIconSmallText by fileIconSmallToggle.option.selection("Text", PresenceIconText.Small.File)
 
     override val fileTime by fileTab.selection("Show elapsed time", PresenceTime.File)
+
+    override val theme by themeChooser("Theme")
 }

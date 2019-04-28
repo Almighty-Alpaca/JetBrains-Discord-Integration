@@ -9,7 +9,8 @@ import kotlin.reflect.KProperty
 abstract class SimpleOption<T>(description: String, val initialValue: T) : Option<T>(description), SimpleValue.Provider<T> {
     var currentValue = initialValue
 
-    private val value = SimpleValue(this)
+    @Suppress("LeakingThis")
+    private val value = SimpleValueImpl(this)
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T> = value
 
     protected open fun transformValue(value: T): T = value
@@ -42,14 +43,20 @@ abstract class SimpleOption<T>(description: String, val initialValue: T) : Optio
     open fun readString(string: String): Unit = throw Exception()
 }
 
-class SimpleValue<T>(private val option: SimpleOption<T>) : Value() {
-    fun get() = option.currentValue
-    fun getComponent() = option.componentValue
-    fun set(value: T) {
-        option.currentValue = value
-    }
+abstract class SimpleValue<T> : Value() {
+    abstract fun get(): T
+    abstract fun getComponent(): T
+    abstract fun set(value: T)
 
     interface Provider<T> : Value.Provider {
         override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T>
+    }
+}
+
+private class SimpleValueImpl<T>(private val option: SimpleOption<T>) : SimpleValue<T>() {
+    override fun get() = option.currentValue
+    override fun getComponent() = option.componentValue
+    override fun set(value: T) {
+        option.currentValue = value
     }
 }

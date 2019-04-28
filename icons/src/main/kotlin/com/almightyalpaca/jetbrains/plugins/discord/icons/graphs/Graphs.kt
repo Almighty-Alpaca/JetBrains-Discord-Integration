@@ -2,10 +2,12 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.graphs
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Paths
 
-fun main() {
+@Suppress("BlockingMethodInNonBlockingContext")
+fun main() = runBlocking {
     val source = LocalSource(Paths.get("../"), retry = false)
 
     val languages = source.getLanguages()

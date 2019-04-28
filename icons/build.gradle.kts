@@ -8,6 +8,7 @@ group = "com.almightyalpaca.jetbrains.plugins.discord.icons"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
+    mavenCentral()
     jcenter()
     maven { url = URI("https://kotlin.bintray.com/kotlinx") }
 }
@@ -17,8 +18,9 @@ dependencies {
 
     compile(group = "org.apache.commons", name = "commons-text", version = "1.6")
 
-    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.1.3")
-    compile(group = "io.ktor", name = "ktor-client-auth", version = "1.1.3")
+    compile(group = "io.ktor", name = "ktor-client-core", version = "1.1.4")
+    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.1.4")
+    compile(group = "io.ktor", name = "ktor-client-auth", version = "1.1.4")
 }
 
 tasks {
@@ -36,8 +38,8 @@ tasks {
 
         doLast {
             val files = project.file("build/graphs").listFiles()
-                    .filter { f -> f.isFile }
-                    .map { f -> f.nameWithoutExtension }
+                .filter { f -> f.isFile }
+                .map { f -> f.nameWithoutExtension }
             for (file in files) {
                 exec {
                     workingDir = file("build/graphs")
@@ -76,7 +78,7 @@ tasks {
         val `upload-icons` by registering(JavaExec::class) task@{
             group = "icons"
 
-            dependsOn(`validate-icons`)
+//            dependsOn(`validate-icons`)
 
             sourceSets.main.configure { this@task.classpath = runtimeClasspath }
             main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
@@ -87,7 +89,7 @@ tasks {
         val `upload-languages` by registering(JavaExec::class) task@{
             group = "icons"
 
-            dependsOn(`validate-languages`)
+//            dependsOn(`validate-languages`)
 
             sourceSets.main.configure { this@task.classpath = runtimeClasspath }
             main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
@@ -98,7 +100,7 @@ tasks {
         val upload by registering task@{
             group = "icons"
 
-            dependsOn(validate)
+//            dependsOn(validate)
 
             dependsOn(`upload-languages`)
             dependsOn(`upload-icons`)

@@ -2,14 +2,15 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.boxLayoutPanel
 import com.intellij.ui.components.JBCheckBox
+import javax.swing.JComponent
 
 fun OptionCreator<in Boolean>.check(description: String, initialValue: Boolean) = OptionProviderImpl(this, CheckOption(description, initialValue))
 
 class CheckOption(description: String, initialValue: Boolean) : SimpleOption<Boolean>(description, initialValue) {
     override val componentImpl by lazy { JBCheckBox(description, currentValue) }
-    override val component by lazy { boxLayoutPanel(componentImpl) }
+    override val component: JComponent
+        get() = componentImpl
 
     override val componentValue: Boolean
         get() = componentImpl.isSelected

@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.preview
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
 import kotlinx.coroutines.*

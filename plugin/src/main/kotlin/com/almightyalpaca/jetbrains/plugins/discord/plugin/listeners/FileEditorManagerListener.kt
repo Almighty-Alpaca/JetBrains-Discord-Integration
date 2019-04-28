@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
 import java.time.OffsetDateTime
 
-class FileEditorManagerListener : com.intellij.openapi.fileEditor.FileEditorManagerListener {
+class FileEditorManagerListener : FileEditorManagerListener {
 
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         Logger.Level.TRACE { "FileEditorManagerListener#fileOpened($source, $file)" }
@@ -52,6 +52,6 @@ class FileEditorManagerListener : com.intellij.openapi.fileEditor.FileEditorMana
 
     companion object : Logging() {
         inline val TOPIC: Topic<FileEditorManagerListener>
-            get() = com.intellij.openapi.fileEditor.FileEditorManagerListener.FILE_EDITOR_MANAGER
+            get() = FileEditorManagerListener.FILE_EDITOR_MANAGER
     }
 }

@@ -1,4 +1,4 @@
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.preview
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
@@ -76,7 +76,7 @@ class PreviewRenderer {
     @Synchronized
     fun draw(force: Boolean = false): ModifiedImage {
         val component = ApplicationComponent.instance
-        val context = RenderContext(component.themes, component.languages, component.data, Renderer.Mode.PREVIEW)
+        val context = RenderContext(component.source, component.data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
         val presence = renderer.forceRender()
 
@@ -214,19 +214,19 @@ class PreviewRenderer {
             private var lastLarge: BufferedImage? = null
             private var lastLargeKey: String? = null
             private var lastSmall: BufferedImage? = null
-            private var lastSmallKey: String? = null
-
+            private var lastAppId: Long? = null
             fun draw(image: BufferedImage, presence: RichPresence, force: Boolean): Pair<Boolean, Boolean> {
                 val largeKey = presence.largeImage?.key
                 val smallKey = presence.smallImage?.key
+                val appId = presence.appId
 
-                if (force || lastLargeKey != largeKey || lastSmallKey != smallKey) {
-                    val large = if (lastLargeKey != largeKey) {
+                if (force || lastLargeKey != largeKey || lastSmallKey != smallKey || lastAppId != appId) {
+                    val large = if (lastLargeKey != largeKey || lastAppId != appId) {
                         presence.largeImage?.asset?.getImage(60)?.toScaledImage(60)
                     } else {
                         lastLarge
                     }
-                    val small = if (lastSmallKey != smallKey) {
+                    val small = if (lastSmallKey != smallKey || lastAppId != appId) {
                         presence.smallImage?.asset?.getImage(20)?.toScaledImage(20)
                     } else {
                         lastSmall
@@ -236,6 +236,7 @@ class PreviewRenderer {
                     lastLargeKey = largeKey
                     lastSmall = small
                     lastSmallKey = smallKey
+                    lastAppId = appId
 
                     image.withGraphics {
                         val sectionStart = (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8
@@ -266,6 +267,8 @@ class PreviewRenderer {
 
                 return false to (lastLarge == null)
             }
+
+            private var lastSmallKey: String? = null
         }
 
         private inner class Text {

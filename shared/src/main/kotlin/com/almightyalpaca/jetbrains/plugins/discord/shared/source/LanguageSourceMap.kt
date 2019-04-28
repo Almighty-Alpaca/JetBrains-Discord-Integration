@@ -29,13 +29,13 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
     }
 
     private fun createLanguage(
-            languages: MutableMap<String, Language>,
-            id: String,
-            source: JsonNode = this.getValue(id).node,
-            baseId: String? = null,
-            baseName: String? = null,
-            baseAssetId: String? = null,
-            baseParent: Language? = null
+        languages: MutableMap<String, Language>,
+        id: String,
+        source: JsonNode = this.getValue(id).node,
+        baseId: String? = null,
+        baseName: String? = null,
+        baseAssetId: String? = null,
+        baseParent: Language? = null
     ): Language = languages[id] ?: try {
         when (id) {
             "default" -> createDefaultLanguage(languages, source)
@@ -47,7 +47,7 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
 
     private fun createDefaultLanguage(languages: MutableMap<String, Language>, source: JsonNode): Language {
         val name: String = source["name"]?.textValue() ?: throw Exception("Missing name")
-        val assetId: String = source["asset"]?.textValue()?: throw Exception("Missing asset")
+        val assetId: String = source["asset"]?.textValue() ?: throw Exception("Missing asset")
 
         val language = createDefaultLanguage(name, assetId)
 
@@ -57,13 +57,13 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
     }
 
     private fun createSimpleLanguage(
-            languages: MutableMap<String, Language>,
-            id: String,
-            source: JsonNode,
-            baseId: String? = null,
-            baseName: String? = null,
-            baseAssetId: String? = null,
-            baseParent: Language? = null
+        languages: MutableMap<String, Language>,
+        id: String,
+        source: JsonNode,
+        baseId: String? = null,
+        baseName: String? = null,
+        baseAssetId: String? = null,
+        baseParent: Language? = null
     ): Language {
         @Suppress("NAME_SHADOWING")
         val id: String = (baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)
@@ -91,8 +91,8 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
             when {
                 isObject -> createLanguage(languages, "1", this, id, name, assetId, parent)
                 isArray -> repeat(size()) { i ->
-                    val language = createLanguage(languages, "$i", this[i], id, name, assetId, parent)
-                    language.id to language
+                    val flavor = createLanguage(languages, "$i", this[i], id, name, assetId, parent)
+                    flavor.id to flavor
                 }
                 else -> throw RuntimeException()
             }

@@ -27,7 +27,7 @@ class ApplicationConfigurable : SearchableConfigurable {
         settings.reset()
     }
 
-    override fun createComponent() = BorderLayoutPanel().addToCenter(JPanel().apply panel@{
+    override fun createComponent() = JPanel().apply panel@{
         layout = BoxLayout(this@panel, BoxLayout.Y_AXIS)
 
         val diagnose = DiagnoseComponent.instance
@@ -43,8 +43,8 @@ class ApplicationConfigurable : SearchableConfigurable {
             }
         }
 
-        add(BorderLayoutPanel().addToCenter(settings.component))
-    })
+        add(settings.component)
+    }
 
     override fun getHelpTopic(): String? = null
 }

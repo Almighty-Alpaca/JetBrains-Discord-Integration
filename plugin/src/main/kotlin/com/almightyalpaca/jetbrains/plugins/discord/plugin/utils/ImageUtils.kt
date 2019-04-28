@@ -91,14 +91,14 @@ inline fun Graphics2D.withTranslation(x: Number, y: Number, block: () -> Unit) {
 }
 
 fun roundRectangle(
-        x: Double,
-        y: Double,
-        width: Double,
-        height: Double,
-        radiusTopLeft: Double = 0.0,
-        radiusTopRight: Double = 0.0,
-        radiusBottomRight: Double = 0.0,
-        radiusBottomLeft: Double = 0.0
+    x: Double,
+    y: Double,
+    width: Double,
+    height: Double,
+    radiusTopLeft: Double = 0.0,
+    radiusTopRight: Double = 0.0,
+    radiusBottomRight: Double = 0.0,
+    radiusBottomLeft: Double = 0.0
 ) = Path2D.Double().apply {
     moveTo(x + radiusTopLeft, y)
     lineTo(x + width - radiusTopRight, y)

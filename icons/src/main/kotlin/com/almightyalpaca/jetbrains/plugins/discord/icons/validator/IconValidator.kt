@@ -2,12 +2,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.validator
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
-fun main() {
+fun main() = runBlocking {
     val source = LocalSource(Paths.get("../"), retry = false)
     val themes = source.getThemes()
 

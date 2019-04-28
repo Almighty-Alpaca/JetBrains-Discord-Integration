@@ -33,8 +33,8 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
         process.waitFor()
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
-                    .filter { line -> line.contains("discord", true) }
-                    .joinToString("\n")
+                .filter { line -> line.contains("discord", true) }
+                .joinToString("\n")
         }
 
         if (lines.isBlank()) {
@@ -49,23 +49,25 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
 
     private fun readDiscordWindows(): DiagnoseComponent.Discord {
         val browsers = arrayOf(
-                "chrome.exe",
-                "firefox.exe",
-                "ApplicationFrameHost.exe", // Microsoft Edge
-                "opera.exe",
-                "iexplore.exe")
+            "chrome.exe",
+            "firefox.exe",
+            "ApplicationFrameHost.exe", // Microsoft Edge
+            "opera.exe",
+            "iexplore.exe"
+        )
 
         val discord = arrayOf(
-                "Discord.exe",
-                "DiscordPTB.exe",
-                "DiscordCanary.exe",
-                "DiscordDevelopment.exe")
+            "Discord.exe",
+            "DiscordPTB.exe",
+            "DiscordCanary.exe",
+            "DiscordDevelopment.exe"
+        )
 
         val process = Runtime.getRuntime().exec("""tasklist /V /fi "SESSIONNAME eq Console"""")
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
-                    .filter { line -> line.contains("discord", true) }
-                    .toList()
+                .filter { line -> line.contains("discord", true) }
+                .toList()
         }
 
         if (lines.isEmpty()) {

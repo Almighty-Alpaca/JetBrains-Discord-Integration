@@ -3,13 +3,15 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview.JPreview
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.preview.JPreview
 import com.intellij.util.ui.JBUI
 import org.jdom.Element
 import java.awt.Dimension
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import javax.swing.Box
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -24,7 +26,6 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs> {
     val value = Preview(this)
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
 
-
     override fun set(key: String, option: Option<out Tabs>) {
         if (this@OptionPreview::tabsOption.isInitialized)
             throw Exception("tabs have already been set")
@@ -35,7 +36,16 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs> {
 
     override val component by lazy {
         JPanel().apply panel@{
-            layout = BoxLayout(this@panel, BoxLayout.X_AXIS)
+            // layout = BoxLayout(this@panel, BoxLayout.X_AXIS)
+            layout = GridBagLayout()
+
+            val previewGbc = GridBagConstraints().apply {
+                gridx = 0
+                gridy = 0
+                gridwidth = 1
+                gridheight = 2
+                anchor = GridBagConstraints.NORTHWEST
+            }
 
             val previewImpl = JPreview()
 
@@ -43,19 +53,22 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs> {
                 layout = BoxLayout(this@innerPanel, BoxLayout.Y_AXIS)
 
                 add(previewImpl)
-                add(Box.Filler(Dimension(0, 0), Dimension(10, Integer.MAX_VALUE), Dimension(10, Integer.MAX_VALUE)))
+                add(Box.Filler(Dimension(0, 0), Dimension(10, 0), Dimension(10, Integer.MAX_VALUE)))
 
                 border = JBUI.Borders.empty(10, 25)
             }
-            add(preview)
+            add(preview, previewGbc)
 
-            val other = JPanel().apply innerPanel@{
-                layout = BoxLayout(this@innerPanel, BoxLayout.Y_AXIS)
-
-                add(tabsOption.component)
-                add(Box.Filler(Dimension(0, 0), Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE), Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)))
+            val tabsGbc = GridBagConstraints().apply {
+                gridx = 1
+                gridy = 0
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.NORTHWEST
+                fill = GridBagConstraints.HORIZONTAL
+                weightx = 1.0
             }
-            add(other)
+            add(tabsOption.component, tabsGbc)
 
             tabsOption.addChangeListener { tabs ->
                 previewImpl.type = when (val selected = tabs.selected) {

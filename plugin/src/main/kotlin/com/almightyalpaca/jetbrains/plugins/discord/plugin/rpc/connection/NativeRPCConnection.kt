@@ -116,5 +116,4 @@ private fun RichPresence.toLibraryObject() = DiscordRichPresence().apply {
             true -> 1
         }
     }
-    this@toLibraryObject.state?.let { state = it }
 }

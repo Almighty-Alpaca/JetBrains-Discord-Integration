@@ -10,20 +10,20 @@ import java.time.OffsetDateTime
 import javax.imageio.ImageIO
 
 class RichPresence(
-        val appId: Long?,
-        state: String? = null,
-        details: String? = null,
-        var startTimestamp: OffsetDateTime? = null,
-        var endTimestamp: OffsetDateTime? = null,
-        var largeImage: Image? = null,
-        var smallImage: Image? = null,
-        partyId: String? = null,
-        var partySize: Int = 0,
-        var partyMax: Int = 0,
-        matchSecret: String? = null,
-        joinSecret: String? = null,
-        spectateSecret: String? = null,
-        var instance: Boolean = false
+    val appId: Long?,
+    state: String? = null,
+    details: String? = null,
+    var startTimestamp: OffsetDateTime? = null,
+    var endTimestamp: OffsetDateTime? = null,
+    var largeImage: Image? = null,
+    var smallImage: Image? = null,
+    partyId: String? = null,
+    var partySize: Int = 0,
+    var partyMax: Int = 0,
+    matchSecret: String? = null,
+    joinSecret: String? = null,
+    spectateSecret: String? = null,
+    var instance: Boolean = false
 ) {
     constructor(appId: Long?, initializer: RichPresence.() -> Unit) : this(appId) {
         initializer()

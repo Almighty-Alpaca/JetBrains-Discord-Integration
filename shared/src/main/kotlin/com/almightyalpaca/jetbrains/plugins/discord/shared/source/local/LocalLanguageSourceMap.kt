@@ -11,5 +11,6 @@ class LocalLanguageSourceMap(private val source: LocalSource, map: Map<String, L
 
     override fun createDefaultLanguage(name: String, assetId: String): Language.Default = LocalLanguage.Default(source, name, assetId)
 
-    override fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>): Language.Simple = LocalLanguage.Simple(source, fileId, name, parent, assetId, matchers)
+    override fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>): Language.Simple =
+        LocalLanguage.Simple(source, fileId, name, parent, assetId, matchers)
 }

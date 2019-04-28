@@ -14,7 +14,8 @@ import kotlinx.coroutines.SupervisorJob
 import java.net.URL
 import kotlin.coroutines.CoroutineContext
 
-class BintrayIconSet(private val source: BintraySource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationCode: String) : AbstractIconSet(theme, applicationId, icons, applicationCode), CoroutineScope {
+class BintrayIconSet(private val source: BintraySource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationCode: String) :
+    AbstractIconSet(theme, applicationId, icons, applicationCode), CoroutineScope {
     private val parentJob: Job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext
@@ -31,9 +32,9 @@ class BintrayIconSet(private val source: BintraySource, theme: Theme, applicatio
         null -> null
         else -> URL("https://discordapp.com/api/oauth2/applications/$applicationId/assets").get { inputStream ->
             ObjectMapper().readTree(inputStream)
-                    .map { node -> node as ObjectNode }
-                    .map { node -> node["name"].asText() to node["id"].asLong() }
-                    .toMap()
+                .map { node -> node as ObjectNode }
+                .map { node -> node["name"].asText() to node["id"].asLong() }
+                .toMap()
         }
     }
 }

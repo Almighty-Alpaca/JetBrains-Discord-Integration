@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.*
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.getCompletedOrNull
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
@@ -48,16 +47,16 @@ class BintraySource(location: String) : Source, CoroutineScope {
         val threadPool = Executors.newCachedThreadPool()
 
         client = OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .cache(cache)
-                .connectionPool(connectionPool)
-                .dispatcher(Dispatcher(threadPool).apply {
-                    maxRequests = 150
-                    maxRequestsPerHost = 150
-                })
-                .build()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .cache(cache)
+            .connectionPool(connectionPool)
+            .dispatcher(Dispatcher(threadPool).apply {
+                maxRequests = 150
+                maxRequestsPerHost = 150
+            })
+            .build()
     }
 
     private val versionJob: Deferred<String> = retryAsync { readVersion() }
@@ -65,16 +64,13 @@ class BintraySource(location: String) : Source, CoroutineScope {
     private val languageJob: Deferred<LanguageMap> = retryAsync { readLanguages() }
     private val themeJob: Deferred<ThemeMap> = retryAsync { readThemes() }
 
-    override fun getLanguages(): LanguageMap = languageJob.asCompletableFuture().get()
-    override fun getThemes(): ThemeMap = themeJob.asCompletableFuture().get()
-
-    override fun getLanguagesOrNull(): LanguageMap? = languageJob.getCompletedOrNull()
-    override fun getThemesOrNull(): ThemeMap? = themeJob.getCompletedOrNull()
+    override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
+    override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
 
     private suspend fun readVersion() = get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
         ObjectMapper().readTree(body.byteStream())
-                .get("name")
-                .asText()
+            .get("name")
+            .asText()
     }
 
     private suspend fun readFiles(): Collection<String> {
@@ -82,8 +78,8 @@ class BintraySource(location: String) : Source, CoroutineScope {
 
         return get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/$version/files") { body ->
             ObjectMapper().readTree(body.byteStream())
-                    .map { node -> node["path"].asText() }
-                    .map { path -> path.substring(`package`.length + 1 + version.length + 1) }
+                .map { node -> node["path"].asText() }
+                .map { path -> path.substring(`package`.length + 1 + version.length + 1) }
         }
     }
 
@@ -96,17 +92,17 @@ class BintraySource(location: String) : Source, CoroutineScope {
         val languageFiles = files.filter { path -> path.startsWith("languages") }
 
         val map = languageFiles.stream()
-                .map { path ->
-                    async {
-                        getFile(user, repository, `package`, version, path) { body ->
-                            val node: JsonNode = mapper.readTree(body.string())
-                            LanguageSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
-                        }
+            .map { path ->
+                async {
+                    getFile(user, repository, `package`, version, path) { body ->
+                        val node: JsonNode = mapper.readTree(body.string())
+                        LanguageSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
                     }
                 }
-                .map { async -> async.asCompletableFuture().get() }
-                .map { p -> p.id to p }
-                .toMap()
+            }
+            .map { async -> async.asCompletableFuture().get() }
+            .map { p -> p.id to p }
+            .toMap()
 
         BintrayLanguageSourceMap(map).toLanguageMap()
     }
@@ -121,54 +117,54 @@ class BintraySource(location: String) : Source, CoroutineScope {
         val languageFiles = files.filter { path -> path.startsWith("themes") }
 
         val map = languageFiles.stream()
-                .map { path ->
-                    async {
-                        getFile(user, repository, `package`, version, path) { body ->
-                            val node: JsonNode = mapper.readTree(body.string())
-                            ThemeSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
-                        }
+            .map { path ->
+                async {
+                    getFile(user, repository, `package`, version, path) { body ->
+                        val node: JsonNode = mapper.readTree(body.string())
+                        ThemeSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
                     }
                 }
-                .map { async -> async.asCompletableFuture().get() }
-                .map { p -> p.id to p }
-                .toMap()
+            }
+            .map { async -> async.asCompletableFuture().get() }
+            .map { p -> p.id to p }
+            .toMap()
 
         BintrayThemeSourceMap(this@BintraySource, map).toThemeMap()
     }
 
     private suspend fun <T> get(url: String, handler: (ResponseBody) -> T) =
-            suspendCancellableCoroutine<T> { continuation ->
-                val request = Request.Builder()
-                        .get()
-                        .url(url)
-                        .build()
+        suspendCancellableCoroutine<T> { continuation ->
+            val request = Request.Builder()
+                .get()
+                .url(url)
+                .build()
 
-                val call = client.newCall(request)
+            val call = client.newCall(request)
 
-                call.enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        continuation.resumeWithException(RuntimeException(e))
-                    }
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(RuntimeException(e))
+                }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        when (response.code()) {
-                            in 200..299 -> when (val body = response.body()) {
-                                null -> {
-                                    response.close()
-                                    continuation.resumeWithException(RuntimeException())
-                                }
-                                else -> body.use { continuation.resume(handler(body)) }
-                            }
-                            else -> {
+                override fun onResponse(call: Call, response: Response) {
+                    when (response.code()) {
+                        in 200..299 -> when (val body = response.body()) {
+                            null -> {
                                 response.close()
-                                continuation.resumeWithException(RuntimeException("${response.code()}"))
+                                continuation.resumeWithException(RuntimeException())
                             }
+                            else -> body.use { continuation.resume(handler(body)) }
+                        }
+                        else -> {
+                            response.close()
+                            continuation.resumeWithException(RuntimeException("${response.code()}"))
                         }
                     }
-                })
-            }
+                }
+            })
+        }
 
     private suspend fun <T> getFile(user: String, repository: String, `package`: String, version: String, path: String, handler: (ResponseBody) -> T) =
-            get("https://dl.bintray.com/$user/$repository/$`package`/$version/$path", handler)
+        get("https://dl.bintray.com/$user/$repository/$`package`/$version/$path", handler)
 
 }

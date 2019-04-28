@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.shared.source
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.concat
 
 interface Language {
     val id: String
@@ -21,7 +20,7 @@ interface Language {
         return null
     }
 
-    interface Simple : Language {    }
+    interface Simple : Language
 
     interface Default : Language {
         override val assetId: String

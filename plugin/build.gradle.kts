@@ -11,8 +11,8 @@ plugins {
 
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "2018.1"
-    // version = "191.5849.21"
+    // version = "2018.1"
+    version = "191.5849.21"
 
     downloadSources = true
 
@@ -26,7 +26,7 @@ configure<IntelliJPluginExtension> {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
-    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.0")
+    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.1")
 
     compile(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
@@ -36,14 +36,14 @@ dependencies {
 
     compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.14.1")
 
-    compile(group = "org.apache.commons", name = "commons-lang3", version = "3.8.1")
+    compile(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
 
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks {
     withType<RunIdeTask> {
-        // environment["ICONS"] = "local:${rootProject.projectDir.absolutePath}"
+        environment["ICONS"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
         // environment["ICONS"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
     }
 

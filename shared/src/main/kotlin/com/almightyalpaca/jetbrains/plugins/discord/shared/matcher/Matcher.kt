@@ -21,8 +21,8 @@ sealed class Matcher {
     }
 
     abstract class Combining(
-            private val matchers: Set<Matcher>,
-            private val matcher: Set<Matcher>.(String) -> Boolean
+        private val matchers: Set<Matcher>,
+        private val matcher: Set<Matcher>.(String) -> Boolean
     ) : Matcher() {
         override fun matches(field: String) = matchers.matcher(field)
     }

@@ -4,27 +4,45 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.imp
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.Option
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
 import com.intellij.openapi.util.JDOMExternalizable
 import org.jdom.Element
-import java.awt.Dimension
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import javax.swing.Box
-import javax.swing.BoxLayout
 import javax.swing.JPanel
 
 @Suppress("DEPRECATION")
-open class OptionHolderImpl(outer: Boolean = true) : OptionHolder, JDOMExternalizable {
+open class OptionHolderImpl : OptionHolder, JDOMExternalizable {
     override val options = LinkedHashMap<String, Option<*>>()
 
     override val component by lazy {
         JPanel().apply panel@{
-            layout = BoxLayout(this@panel, BoxLayout.Y_AXIS)
+            layout = GridBagLayout()
 
+            var y = 0
             for (option in options.values) {
-                add(option.component)
+                add(option.component, GridBagConstraints {
+                    gridx = 0
+                    gridy = y++
+                    gridwidth = 1
+                    gridheight = 1
+                    anchor = GridBagConstraints.NORTHWEST
+                    fill = GridBagConstraints.HORIZONTAL
+                    weightx = 1.0
+                })
             }
 
-            if (outer)
-                add(Box.Filler(Dimension(0, 0), Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE), Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)))
+            add(Box.createVerticalGlue(), GridBagConstraints {
+                gridx = 1
+                gridy = y++
+                gridwidth = 1
+                gridheight = 1
+                anchor = GridBagConstraints.NORTHWEST
+                fill = GridBagConstraints.BOTH
+                weightx = 1.0
+                weighty = 1.0
+            })
         }
     }
 

@@ -19,8 +19,8 @@ class OptionTabs : Option<Tabs>(""), Tabs.Provider {
     override val component by lazy {
         JBTabbedPane().apply panel@{
             tabs.asSequence()
-                    .sortedBy { (_, tab) -> tab.index }
-                    .forEach { (name, tab) -> addTab(name, tab.component) }
+                .sortedBy { (_, tab) -> tab.index }
+                .forEach { (name, tab) -> addTab(name, tab.component) }
         }
     }
 
@@ -82,7 +82,7 @@ class Tabs(private val option: OptionTabs) : Value() {
     }
 }
 
-class Tab(val index: Int) : OptionHolderImpl(false) {
+class Tab(val index: Int) : OptionHolderImpl() {
     operator fun invoke(block: Tab.() -> Unit): Tab {
         block()
         return this
