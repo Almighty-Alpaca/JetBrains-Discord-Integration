@@ -9,9 +9,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconT
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.LineValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TimeValue
+import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
+import org.jdom.Element
 
-interface ApplicationSettings : OptionHolder {
+interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder {
     val hide: BooleanValue
 
     val timeoutEnabled: BooleanValue

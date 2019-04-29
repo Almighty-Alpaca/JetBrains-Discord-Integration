@@ -1,14 +1,17 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionHolderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIcon
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIconText
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceLine
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceTime
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 
-class ApplicationSettingsImpl : ApplicationSettings, OptionHolderImpl() {
+@State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
+class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
     override val hide by check("Disable Rich Presence", false)
 
     private val timeoutToggle by toggleable<Boolean>()

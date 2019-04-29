@@ -5,7 +5,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.imp
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.Option
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
-import com.intellij.openapi.util.JDOMExternalizable
 import org.jdom.Element
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -13,7 +12,7 @@ import javax.swing.Box
 import javax.swing.JPanel
 
 @Suppress("DEPRECATION")
-open class OptionHolderImpl : OptionHolder, JDOMExternalizable {
+open class OptionHolderImpl : OptionHolder {
     override val options = LinkedHashMap<String, Option<*>>()
 
     override val component by lazy {
@@ -46,13 +45,13 @@ open class OptionHolderImpl : OptionHolder, JDOMExternalizable {
         }
     }
 
-    override fun readExternal(element: Element) {
+    fun readExternal(element: Element) {
         for ((key, option) in options) {
             option.readXml(element, key)
         }
     }
 
-    override fun writeExternal(element: Element) {
+    fun writeExternal(element: Element) {
         for ((key, option) in options) {
             if (!option.isDefault) {
                 option.writeXml(element, key)
