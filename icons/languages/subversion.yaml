@@ -1,0 +1,6 @@
+name: Subversion
+asset: subversion
+parent: text
+match:
+  extension:
+    equals: .svn

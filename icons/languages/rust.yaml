@@ -4,5 +4,6 @@ parent: text
 match:
   extension:
     equals:
+      - .rust
       - .rs
       - .rslib

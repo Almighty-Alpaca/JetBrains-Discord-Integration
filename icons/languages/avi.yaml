@@ -1,0 +1,6 @@
+name: AVI
+asset: avi
+parent: video
+match:
+  extension:
+    equals: .avi

@@ -1,0 +1,6 @@
+name: FLAC
+asset: flac
+parent: audio
+match:
+  extension:
+    equals: .flac

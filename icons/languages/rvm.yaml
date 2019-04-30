@@ -1,0 +1,6 @@
+name: RVM
+asset: rvm
+parent: ruby
+match:
+  name:
+    equals: .rvmrc

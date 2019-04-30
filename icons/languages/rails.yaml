@@ -1,0 +1,6 @@
+name: Rails
+asset: rails
+parent: ruby
+match:
+  extension:
+    equals: .rails

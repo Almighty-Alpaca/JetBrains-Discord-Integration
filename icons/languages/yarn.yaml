@@ -1,0 +1,10 @@
+name: Yarn
+asset: yarn
+parent: nodejs/text
+match:
+  name:
+    equals:
+      - yarn.lock
+      - .yarnrc
+      - process.env
+      - .yarnclean

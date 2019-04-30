@@ -1,0 +1,6 @@
+name: Windows Media Audio
+asset: wma
+parent: audio
+match:
+  extension:
+    equals: .wma

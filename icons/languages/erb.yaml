@@ -1,0 +1,8 @@
+name: ERB
+asset: erb
+parent: ruby
+match:
+  extension:
+    equals:
+      - .erb
+      - .ru

@@ -1,0 +1,6 @@
+name: Rollup
+asset: rollup
+parent: javascript
+match:
+  name:
+    equals: rollup.config.js

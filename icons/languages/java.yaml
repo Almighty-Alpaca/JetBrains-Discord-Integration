@@ -26,3 +26,11 @@ flavors:
     match:
       name:
         endsWith: Bean.java
+  - name: Java Test
+    match:
+      name:
+        endsWith: Test.java
+  - name: Java Properties
+    match:
+      extension:
+        equals: .properties

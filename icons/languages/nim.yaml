@@ -1,0 +1,6 @@
+name: Nim
+asset: nim
+parent: text
+match:
+  extension:
+    equals: .nim

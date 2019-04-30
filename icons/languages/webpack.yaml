@@ -1,0 +1,27 @@
+name: Webpack
+asset: webpack
+flavor:
+  - parent: javascript
+    match:
+      name:
+        equals:
+          - webpack.common.js
+          - webpack.common.es
+          - webpack.common.es6
+          - webpack.config.js
+          - webpack.config.es
+          - webpack.config.es6
+          - webpack.dev.js
+          - webpack.dev.es
+          - webpack.dev.es6
+          - webpack.prod.js
+          - webpack.prod.es
+          - webpack.prod.es6
+  - parent: coffeescript
+    match:
+      name:
+        equals:
+          - webpack.common.coffee
+          - webpack.config.coffee
+          - webpack.dev.coffee
+          - webpack.prod.coffee

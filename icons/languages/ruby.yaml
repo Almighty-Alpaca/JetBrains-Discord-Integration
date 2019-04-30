@@ -4,6 +4,13 @@ parent: text
 match:
   extension:
     equals: .rb
+flavors:
+  - name: Ruby Test
+    match:
+      extension:
+        equals:
+          - .test.rb
+          - .spec.rb
 
 # TODO: Ruby
 # .watchr

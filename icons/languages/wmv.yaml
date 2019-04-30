@@ -1,0 +1,6 @@
+name: Windows Media Video
+asset: wmv
+parent: video
+match:
+  extension:
+    equals: .wmv

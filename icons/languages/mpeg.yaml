@@ -1,0 +1,12 @@
+name: MPEG
+asset: mpeg
+parent: video
+match:
+  extension:
+    equals:
+      - .mpg
+      - .mp2
+      - .mpeg
+      - .mpe
+      - .mpv
+      - .m2v

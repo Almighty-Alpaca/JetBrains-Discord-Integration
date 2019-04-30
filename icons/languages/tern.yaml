@@ -1,0 +1,8 @@
+name: Tern
+asset: tern
+parent: javascript
+match:
+  name:
+    equals:
+      - .tern-config
+      - .tern-project

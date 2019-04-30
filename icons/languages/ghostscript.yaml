@@ -1,0 +1,6 @@
+name: GhostScript
+asset: ghostscript
+parent: text
+match:
+  extension:
+    equals: .ghostscript

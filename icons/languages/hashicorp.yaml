@@ -1,6 +1,0 @@
-name: Hashicorp
-asset: hashicorp
-parent: text
-match:
-  extension:
-    equals: .hcl

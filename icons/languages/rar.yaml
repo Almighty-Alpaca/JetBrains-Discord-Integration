@@ -1,0 +1,6 @@
+name: RAR 
+asset: rar
+parent: archive
+match:
+  extension:
+    equals: .rar

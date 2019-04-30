@@ -1,0 +1,9 @@
+name: MP4
+asset: mp4
+parent: video
+match:
+  extension:
+    equals:
+      - .mp4
+      - .m4p
+      - .m4v

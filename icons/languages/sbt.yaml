@@ -1,0 +1,6 @@
+name: sbt
+asset: sbt
+parent: scala
+match:
+  extension:
+    equals: .sbt

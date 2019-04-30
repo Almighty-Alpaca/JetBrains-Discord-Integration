@@ -1,0 +1,9 @@
+name: Ogg
+asset: ogg
+parent: audio
+match:
+  extension:
+    equals:
+      - .ogg
+      - .oga
+      - .mogg

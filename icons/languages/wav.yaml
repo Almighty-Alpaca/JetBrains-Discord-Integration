@@ -1,0 +1,8 @@
+name: WAV
+asset: wav
+parent: audio
+match:
+  extension:
+    equals:
+      - .wav
+      - .wave

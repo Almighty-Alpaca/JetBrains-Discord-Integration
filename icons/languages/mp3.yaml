@@ -1,0 +1,6 @@
+name: MP3
+asset: mp3
+parent: audio
+match:
+  extension:
+    equals: .mp3

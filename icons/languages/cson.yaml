@@ -1,0 +1,7 @@
+name: CSON
+asset: cson
+parent: text
+match:
+  extension:
+    equals:
+      - .cson

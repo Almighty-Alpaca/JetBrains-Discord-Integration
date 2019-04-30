@@ -1,4 +1,4 @@
-name: Javascript
+name: JavaScript
 asset: javascript
 parent: text
 match:
@@ -9,13 +9,23 @@ match:
       - .es
       - .feature
 flavors:
-  - name: Javascript Minified
+  - name: JavaScript Minified
     match:
       extension:
         equals:
           - .min.js
           - .min.es6
           - .min.es
+  - name: JavaScript Test
+    match:
+      extension:
+        equals:
+          - .test.js
+          - .test.es6
+          - .test.es
+          - .spec.js
+          - .spec.es6
+          - .spec.es
 
 # TODO: JavaScript
 # .js

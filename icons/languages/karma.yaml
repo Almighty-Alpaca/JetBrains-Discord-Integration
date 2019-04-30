@@ -3,13 +3,13 @@ asset: karma
 flavors:
   - parent: javascript
     match:
-      file:
+      name:
         equals: karma.conf.js
   - parent: coffeescript
     match:
-      file:
+      name:
         equals: karma.conf.coffee
   - parent: typescript
     match:
-      file:
+      name:
         equals: karma.conf.ts

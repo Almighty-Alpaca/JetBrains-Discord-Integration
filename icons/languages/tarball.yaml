@@ -1,0 +1,15 @@
+name: Tarball
+asset: tarball
+parent: archive
+match:
+  extension:
+    equals:
+      - .tar.gz
+      - .tgz
+      - .tar.Z
+      - .tar.bz2
+      - .tbz2
+      - .tar.lzma
+      - .tlz
+      - .tar.xz
+      - .txz

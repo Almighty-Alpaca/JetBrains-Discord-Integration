@@ -1,0 +1,8 @@
+name: ReasonML
+asset: reasonml
+parent: text
+match:
+  extension:
+    equals:
+      - .re
+      - .rei

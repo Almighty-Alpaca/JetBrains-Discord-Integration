@@ -1,0 +1,9 @@
+name: Puppet
+asset: puppet
+parent: text
+match:
+  extension:
+    equals:
+      - .puppet
+      - .pp
+      - .epp

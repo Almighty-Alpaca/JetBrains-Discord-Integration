@@ -1,0 +1,6 @@
+name: RSpec
+asset: rspec
+parent: ruby
+match:
+  extension:
+    equals: .rspec

@@ -6,3 +6,10 @@ match:
     equals:
       - .ts
       - .tslint
+flavors:
+  - name: TypeScript Test
+    match:
+      extension:
+        equals:
+          - .test.ts
+          - .spec.ts

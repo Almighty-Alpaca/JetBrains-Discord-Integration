@@ -1,0 +1,6 @@
+name: Textile
+asset: textile
+parent: text
+match:
+  extension:
+    equals: .textile

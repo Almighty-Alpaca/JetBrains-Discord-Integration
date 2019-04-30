@@ -1,0 +1,6 @@
+name: RDoc
+asset: rdoc
+parent: ruby
+match:
+  extension:
+    equals: .rdoc

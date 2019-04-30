@@ -4,9 +4,9 @@ parent: text
 flavors:
   - parent: yaml
     match:
-      file:
+      name:
         equals: _config.yaml
   - parent: toml
     match:
-      file:
+      name:
         equals: _config.toml

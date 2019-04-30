@@ -1,0 +1,24 @@
+name: Stylelint
+asset: stylelint
+parent: text
+match:
+  name:
+    equals: 
+      - .stylelintrc
+flavors:
+  - parent: yaml
+    match:
+      name:
+        equals: 
+          - .stylelintrc.yaml
+          - .stylelintrc.yml
+  - parent: json
+    match:
+      name:
+        equals: .stylelintrc.json
+  - parent: javascript
+    match:
+      name:
+        equals:
+          - stylelint.config.js
+          - .stylelintrc.js

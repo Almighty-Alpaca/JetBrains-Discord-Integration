@@ -1,0 +1,6 @@
+name: HCL
+asset: hcl
+parent: text
+match:
+  extension:
+    equals: .hcl

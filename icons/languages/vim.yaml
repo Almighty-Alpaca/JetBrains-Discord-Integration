@@ -1,0 +1,10 @@
+name: Vim
+asset: vim
+parent: text
+match:
+  extension:
+    equals:
+      - .vim
+      - .viml
+      - .vimrc
+      - .gvimrc

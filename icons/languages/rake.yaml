@@ -1,0 +1,8 @@
+name: Rake
+asset: rake
+parent: ruby
+match:
+  name:
+    equals: Rakefile
+  extension:
+    equals: .rake

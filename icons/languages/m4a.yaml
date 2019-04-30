@@ -1,0 +1,6 @@
+name: M4A
+asset: m4a
+parent: audio
+match:
+  extension:
+    equals: .m4a

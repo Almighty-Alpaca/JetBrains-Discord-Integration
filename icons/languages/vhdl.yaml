@@ -1,0 +1,6 @@
+name: VHDL
+asset: vhdl
+parent: text
+match:
+  extension:
+    equals: .vhdl

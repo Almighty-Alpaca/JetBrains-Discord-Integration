@@ -1,0 +1,17 @@
+name: Font
+asset: font
+parent: binary
+match:
+  extension:
+    equals:
+      - .ttf
+      - .ttc
+      - .pfb
+      - .pfm
+      - .otf
+      - .dfont
+      - .pfa
+      - .afm
+      - .eot
+      - .woff
+      - .woff2

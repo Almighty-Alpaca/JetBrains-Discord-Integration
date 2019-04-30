@@ -1,0 +1,6 @@
+name: Vagrant
+asset: vagrant
+parent: ruby
+match:
+  name:
+    equals: Vagrantfile

@@ -1,0 +1,6 @@
+name: Riot
+asset: riot
+parent: javascript
+match:
+  extension:
+    equals: .riot

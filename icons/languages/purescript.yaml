@@ -1,0 +1,8 @@
+name: PureScript
+asset: purescript
+parent: javascript
+match:
+  extension:
+    equals:
+      - .purescript
+      - .purs

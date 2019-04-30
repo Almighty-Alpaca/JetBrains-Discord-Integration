@@ -1,0 +1,6 @@
+name: WebM
+asset: webm
+parent: video
+match:
+  extension:
+    equals: .webm

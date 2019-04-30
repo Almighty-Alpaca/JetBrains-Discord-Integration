@@ -4,6 +4,7 @@ parent: text
 match:
   extension:
     equals:
+      - .powershell
       - .ps1
       - .ps1xml
       - .psc1

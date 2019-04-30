@@ -22,6 +22,47 @@ match:
       - .pyt
       - .xpy
       - .ipynb
+flavors:
+  - name: Python Test
+    match:
+      extension:
+        equals:
+          - .test.python
+          - .test.py
+          - .test.py3
+          - .test.pyc
+          - .test.pyo
+          - .test.pyw
+          - .test.pyx
+          - .test.pyd
+          - .test.pxd
+          - .test.pyi
+          - .test.pyz
+          - .test.pywz
+          - .test.rpy
+          - .test.pyde
+          - .test.pyp
+          - .test.pyt
+          - .test.xpy
+          - .test.ipynb
+          - .spec.python
+          - .spec.py
+          - .spec.py3
+          - .spec.pyc
+          - .spec.pyo
+          - .spec.pyw
+          - .spec.pyx
+          - .spec.pyd
+          - .spec.pxd
+          - .spec.pyi
+          - .spec.pyz
+          - .spec.pywz
+          - .spec.rpy
+          - .spec.pyde
+          - .spec.pyp
+          - .spec.pyt
+          - .spec.xpy
+          - .spec.ipynb
 
 # TODO: sort extensions
 #

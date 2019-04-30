@@ -1,0 +1,8 @@
+name: Zip
+asset: zip
+parent: archive
+match:
+  extension:
+    equals:
+      - .zip
+      - .zipx

@@ -1,0 +1,7 @@
+name: JSON5
+asset: json5
+parent: json
+match:
+  extension:
+    equals:
+      - .json5

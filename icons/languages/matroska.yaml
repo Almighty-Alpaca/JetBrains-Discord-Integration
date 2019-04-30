@@ -1,0 +1,6 @@
+name: Matroska
+asset: matroska
+parent: video
+match:
+  extension:
+    equals: .mkv
