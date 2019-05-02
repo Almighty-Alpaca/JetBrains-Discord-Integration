@@ -4,11 +4,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.Opti
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
+import java.awt.Component
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import javax.swing.Box
-import javax.swing.JComboBox
-import javax.swing.JPanel
+import javax.swing.*
 
 fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>) = selection(description, values.first, values.second)
 
@@ -21,7 +20,16 @@ class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private
     }
 
     override val componentImpl by lazy {
-        JComboBox<T>(values).apply {
+        JComboBox<T>(values).apply box@{
+            renderer = object : DefaultListCellRenderer() {
+                override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+
+                    isEnabled = this@box.isEnabled
+
+                    return this
+                }
+            }
             selectedItem = currentValue
         }
     }
