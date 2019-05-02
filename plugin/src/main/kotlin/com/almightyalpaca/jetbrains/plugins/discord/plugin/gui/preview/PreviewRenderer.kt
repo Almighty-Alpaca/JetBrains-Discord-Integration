@@ -107,7 +107,7 @@ class PreviewRenderer {
 
                 image.withGraphics {
                     color = blurple
-                    fill(roundRectangle(0.0, 0.0, 250.0, image.height * 0.6, radiusTopLeft = 5.0, radiusTopRight = 5.0))
+                    fill(roundRectangle(0.0, 0.0, 250.0, image.height * 0.6, 10.0, 10.0))
 
                     withTranslation(10, 20) {
                         val mid = (image.width - 10) / 2
@@ -215,6 +215,7 @@ class PreviewRenderer {
             private var lastLargeKey: String? = null
             private var lastSmall: BufferedImage? = null
             private var lastAppId: Long? = null
+
             fun draw(image: BufferedImage, presence: RichPresence, force: Boolean): Pair<Boolean, Boolean> {
                 val largeKey = presence.largeImage?.key
                 val smallKey = presence.smallImage?.key
@@ -222,12 +223,12 @@ class PreviewRenderer {
 
                 if (force || lastLargeKey != largeKey || lastSmallKey != smallKey || lastAppId != appId) {
                     val large = if (lastLargeKey != largeKey || lastAppId != appId) {
-                        presence.largeImage?.asset?.getImage(60)?.toScaledImage(60)
+                        presence.largeImage?.asset?.getImage(60)?.toScaledImage(60)?.withRoundedCorners(8.0)
                     } else {
                         lastLarge
                     }
                     val small = if (lastSmallKey != smallKey || lastAppId != appId) {
-                        presence.smallImage?.asset?.getImage(20)?.toScaledImage(20)
+                        presence.smallImage?.asset?.getImage(20)?.toScaledImage(20)?.toRoundImage()
                     } else {
                         lastSmall
                     }
@@ -246,14 +247,19 @@ class PreviewRenderer {
                         }
 
                         color = blurple
-                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 5.0))
+                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0))
                         color = darkOverlay
-                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 5.0))
+                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0))
 
                         if (large != null) {
                             drawImage(large, 10, sectionStart, null)
 
                             if (small != null) {
+                                color = blurple
+                                fillArc(10 + 45 - 2, sectionStart + 45 - 2, 24, 24, 0, 360)
+                                color = darkOverlay
+                                fillArc(10 + 45 - 2, sectionStart + 45 - 2, 24, 24, 0, 360)
+
                                 drawImage(small, 10 + 45, sectionStart + 45, null)
                             }
 
@@ -402,9 +408,9 @@ class PreviewRenderer {
                             }
 
                             color = blurple
-                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 5.0))
+                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 10.0))
                             color = darkOverlay
-                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 5.0))
+                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 10.0))
 
                             if (time != null) {
                                 val millis = Duration.between(time, timeNow).toMillis()

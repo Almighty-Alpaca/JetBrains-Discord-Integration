@@ -5,6 +5,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
 import java.awt.*
 import java.awt.Color
 import java.awt.geom.Path2D
+import java.awt.geom.RoundRectangle2D
 import java.awt.image.BufferedImage
 import java.net.URL
 import javax.imageio.ImageIO
@@ -26,34 +27,36 @@ object Roboto {
 
 }
 
-fun BufferedImage.toScaledImage(width: Int, height: Int = width, hints: Int = Image.SCALE_SMOOTH): BufferedImage {
-    val image = createImage(width, height)
-
-    image.withGraphics {
-        drawImage(getScaledInstance(width, height, hints), 0, 0, null)
-    }
-
-    return image
+fun BufferedImage.toScaledImage(width: Int, height: Int = width, hints: Int = Image.SCALE_SMOOTH): BufferedImage = createImage(width, height).withGraphics {
+    drawImage(getScaledInstance(width, height, hints), 0, 0, null)
 }
 
-fun BufferedImage.toRoundImage(): Image {
-    val image = createImage(width, height)
+fun BufferedImage.toRoundImage(): BufferedImage = createImage(width, height).withGraphics {
+    color = Color(0, 0, 0, 0)
+    fillRect(0, 0, width, height)
 
-    image.withGraphics {
-        color = Color(0, 0, 0, 0)
-        fillRect(0, 0, width, height)
+    setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
-        setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    composite = AlphaComposite.Src
+    color = Color.white
+    fillArc(0, 0, width, height, 0, 360)
 
-        composite = AlphaComposite.Src
-        color = Color.white
-        fillArc(0, 0, width, height, 0, 360)
+    composite = AlphaComposite.SrcIn
+    drawImage(this@toRoundImage, 0, 0, null)
+}
 
-        composite = AlphaComposite.SrcAtop
-        drawImage(this@toRoundImage, 0, 0, null)
-    }
+fun BufferedImage.withRoundedCorners(radius: Double): BufferedImage = createImage(width, height).withGraphics g2d@{
+    //    this@g2d.color = Color(0, 0, 0, 0)
+//    this@g2d.fillRect(0, 0, width, height)
 
-    return image
+    setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+
+    composite = AlphaComposite.Src
+    color = Color.white
+    fill(RoundRectangle2D.Double(0.0, 0.0, width.toDouble(), height.toDouble(), radius, radius))
+
+    composite = AlphaComposite.SrcIn
+    drawImage(this@withRoundedCorners, 0, 0, null)
 }
 
 fun getAvatar(user: User, size: Int): Image? {
@@ -64,13 +67,15 @@ fun getAvatar(user: User, size: Int): Image? {
 
 fun URL.getImage(): BufferedImage? = get { stream -> ImageIO.read(stream) }
 
-inline fun BufferedImage.withGraphics(block: Graphics2D.() -> Unit) = with(createGraphics()) {
+inline fun BufferedImage.withGraphics(block: Graphics2D.() -> Unit): BufferedImage = with(createGraphics()) {
     setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
     block()
 
     dispose()
+
+    return this@withGraphics
 }
 
 // TODO: fix image size
