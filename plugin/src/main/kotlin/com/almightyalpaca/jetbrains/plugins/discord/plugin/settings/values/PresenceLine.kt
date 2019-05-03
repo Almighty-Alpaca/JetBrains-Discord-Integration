@@ -8,22 +8,35 @@ typealias LineValue = SimpleValue<PresenceLine>
 
 enum class PresenceLine(val description: String) {
     NONE("Empty") {
-        override fun RenderContext.getResult() = Result.Empty
+        override fun RenderContext.getResult(): Result = Result.Empty
     },
     PROJECT_DESCRIPTION("Project Description") {
-        override fun RenderContext.getResult() = run { project?.platformProject?.settings?.description?.getValue().toResult() }
+        override fun RenderContext.getResult(): Result = project?.platformProject?.settings?.description?.getValue().toResult()
     },
     PROJECT_NAME("Project Name") {
-        override fun RenderContext.getResult() = project?.name.toResult()
+        override fun RenderContext.getResult(): Result {
+            val settings = project?.platformProject?.settings
+
+            return when (settings?.nameOverrideEnabled?.getValue()) {
+                true -> settings.nameOverrideText.getValue()
+                else -> project?.name
+            }.toResult()
+        }
     },
     PROJECT_NAME_DESCRIPTION("Project Name - Description") {
         override fun RenderContext.getResult(): Result {
             val project = project ?: return Result.Empty
 
-            return when (val description = run { project.platformProject.settings.description.getValue() }) {
-                "" -> project.name.toResult()
-                else -> "${project.name} - $description".toResult()
+            val settings = project.platformProject.settings
+            val name = when (settings.nameOverrideEnabled.getValue()) {
+                true -> settings.nameOverrideText.getValue()
+                else -> project.name
             }
+
+            return when (val description = project.platformProject.settings.description.getValue()) {
+                "" -> name
+                else -> "$name - $description"
+            }.toResult()
         }
     },
     FILE_NAME("File Name") {

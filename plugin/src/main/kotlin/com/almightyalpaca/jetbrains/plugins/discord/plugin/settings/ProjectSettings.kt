@@ -12,6 +12,10 @@ interface ProjectSettings : PersistentStateComponent<Element>, OptionHolder {
     val project: Project
 
     val hide: BooleanValue
+
+    val nameOverrideEnabled: BooleanValue
+    val nameOverrideText: StringValue
+
     val description: StringValue
 }
 
