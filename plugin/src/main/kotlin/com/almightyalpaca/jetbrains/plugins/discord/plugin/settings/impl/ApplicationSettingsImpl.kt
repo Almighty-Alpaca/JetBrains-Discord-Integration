@@ -12,7 +12,7 @@ import com.intellij.openapi.components.Storage
 
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
-    override val hide by check("Disable Rich Presence", false)
+    override val hide by check("Hide Rich Presence", false)
 
     private val timeoutToggle by toggleable<Boolean>()
     override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)

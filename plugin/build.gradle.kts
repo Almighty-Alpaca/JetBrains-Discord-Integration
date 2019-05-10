@@ -11,8 +11,8 @@ plugins {
 
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
-    // version = "2018.1"
-    version = "191.5849.21"
+    version = "2018.2"
+    // version = "191.6707.61"
 
     downloadSources = true
 
@@ -20,8 +20,8 @@ configure<IntelliJPluginExtension> {
 
     sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
 
-    // For testing with custom themes
-    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.9.1")
+    // For testing with a custom theme
+    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.9.3.1")
 }
 
 dependencies {
@@ -50,7 +50,7 @@ tasks {
     prepareSandbox task@{
         setLibrariesToIgnore(*configurations.filter { it.isCanBeResolved }.toTypedArray())
 
-        dependsOn("shadowJar")
+        dependsOn(shadowJar)
 
         pluginJar(shadowJar.get().archiveFile)
     }
@@ -62,6 +62,8 @@ tasks {
     fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
 
     shadowJar task@{
+        mergeServiceFiles()
+
         prefix("org.yaml.snakeyaml")
         prefix("org.scijava.nativelib")
         prefix("org.newsclub") {

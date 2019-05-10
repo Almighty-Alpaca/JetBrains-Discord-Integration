@@ -67,8 +67,11 @@ class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private
     }
 
     @Suppress("UNCHECKED_CAST")
-    override val componentValue: T
+    override var componentValue: T
         get() = componentImpl.selectedItem as T
+        set(value) {
+            componentImpl.selectedItem = value
+        }
 
     @Suppress("UNCHECKED_CAST")
     override fun addChangeListener(listener: (T) -> Unit) {

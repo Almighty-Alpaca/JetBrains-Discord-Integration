@@ -11,6 +11,7 @@ abstract class SimpleOption<T>(description: String, val initialValue: T) : Optio
 
     @Suppress("LeakingThis")
     private val value = SimpleValueImpl(this)
+
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T> = value
 
     protected open fun transformValue(value: T): T = value
@@ -26,7 +27,7 @@ abstract class SimpleOption<T>(description: String, val initialValue: T) : Optio
             }
         }
 
-    abstract val componentValue: T
+    abstract var componentValue: T
 
     override val isDefault
         get() = currentValue == initialValue
@@ -48,6 +49,8 @@ abstract class SimpleValue<T> : Value() {
     abstract fun getComponent(): T
     abstract fun set(value: T)
 
+    abstract val description: String
+
     interface Provider<T> : Value.Provider {
         override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T>
     }
@@ -58,5 +61,9 @@ private class SimpleValueImpl<T>(private val option: SimpleOption<T>) : SimpleVa
     override fun getComponent() = option.componentValue
     override fun set(value: T) {
         option.currentValue = value
+        option.componentValue = value
     }
+
+    override val description: String
+        get() = option.description
 }

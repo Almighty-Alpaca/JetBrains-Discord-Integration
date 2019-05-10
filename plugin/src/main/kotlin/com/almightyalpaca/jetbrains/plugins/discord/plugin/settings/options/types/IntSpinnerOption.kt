@@ -56,8 +56,11 @@ class IntSpinnerOption(
         }
     }
 
-    override val componentValue: Int
+    override var componentValue: Int
         get() = componentImpl.number
+        set(value) {
+            componentImpl.number = value
+        }
 
     override fun addChangeListener(listener: (Int) -> Unit) {
         componentImpl.addChangeListener { listener(componentImpl.number) }

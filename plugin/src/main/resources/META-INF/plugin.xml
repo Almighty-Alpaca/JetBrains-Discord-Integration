@@ -16,6 +16,10 @@
             <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent</interface-class>
             <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.impl.DiagnoseComponentImpl</implementation-class>
         </component>
+        <component>
+            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ActionComponent</interface-class>
+            <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.impl.ActionComponentImpl</implementation-class>
+        </component>
     </application-components>
 
     <project-components>

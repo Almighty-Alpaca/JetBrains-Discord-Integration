@@ -19,7 +19,6 @@ abstract class Option<T>(var description: String) : Value.Provider, ComponentPro
 
     abstract fun writeXml(element: Element, key: String)
     abstract fun readXml(element: Element, key: String)
-
 }
 
 abstract class Value {

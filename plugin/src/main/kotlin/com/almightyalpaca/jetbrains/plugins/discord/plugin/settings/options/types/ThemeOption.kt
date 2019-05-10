@@ -132,6 +132,9 @@ class ThemeValue(private val option: ThemeOption) : SimpleValue<String>() {
         option.currentValue = value
     }
 
+    override val description: String
+        get() = option.description
+
     interface Provider : SimpleValue.Provider<String> {
         override fun getValue(thisRef: OptionHolder, property: KProperty<*>): ThemeValue
     }

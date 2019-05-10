@@ -56,8 +56,11 @@ class TextOption(description: String, initialValue: String, private val charLimi
         }
     }
 
-    override val componentValue: String
+    override var componentValue: String
         get() = componentImpl.text
+        set(value) {
+            componentImpl.text = value
+        }
 
     override fun addChangeListener(listener: (String) -> Unit) {
         componentImpl.document.addDocumentListener(object : DocumentListener {

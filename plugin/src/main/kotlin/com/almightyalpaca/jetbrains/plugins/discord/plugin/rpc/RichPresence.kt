@@ -83,7 +83,7 @@ sealed class User {
         override val tag: String? = null
 
         // URL: https://discordapp.com/assets/f78426a064bc9dd24847519259bc42af.png
-        override fun getAvatar(size: Int?): BufferedImage = ImageIO.read(CLYDE::class.java.getResourceAsStream("/images/avatars/clyde.png"))
+        override fun getAvatar(size: Int?): BufferedImage = ImageIO.read(CLYDE::class.java.getResourceAsStream("/images/discord/avatars/clyde.png"))
     }
 
     companion object

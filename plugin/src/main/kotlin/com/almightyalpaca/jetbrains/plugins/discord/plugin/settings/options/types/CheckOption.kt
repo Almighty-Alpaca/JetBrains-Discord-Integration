@@ -12,8 +12,11 @@ class CheckOption(description: String, initialValue: Boolean) : SimpleOption<Boo
     override val component: JComponent
         get() = componentImpl
 
-    override val componentValue: Boolean
+    override var componentValue: Boolean
         get() = componentImpl.isSelected
+        set(value) {
+            componentImpl.isSelected = value
+        }
 
     override fun addChangeListener(listener: (Boolean) -> Unit) {
         componentImpl.addChangeListener { listener(componentImpl.isSelected) }
@@ -38,3 +41,7 @@ class CheckOption(description: String, initialValue: Boolean) : SimpleOption<Boo
 }
 
 typealias BooleanValue = SimpleValue<Boolean>
+
+fun BooleanValue.toggle() {
+    set(!get())
+}
