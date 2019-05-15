@@ -5,16 +5,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.IntValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconTextValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.LineValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TimeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import org.jdom.Element
 
 interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder {
-    val hide: BooleanValue
+    val show: BooleanValue
 
     val timeoutEnabled: BooleanValue
     val timeoutMinutes: IntValue
@@ -50,6 +47,8 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val fileTime: TimeValue
 
     val theme: ThemeValue
+
+    val newProjectShow: NewProjectShowValue
 }
 
 val settings: ApplicationSettings

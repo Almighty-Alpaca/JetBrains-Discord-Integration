@@ -3,16 +3,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIcon
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIconText
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceLine
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceTime
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
-    override val hide by check("Hide Rich Presence", false)
+    override val show by check("Show Rich Presence", true)
 
     private val timeoutToggle by toggleable<Boolean>()
     override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
@@ -89,4 +86,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val fileTime by fileTab.selection("Show elapsed time", PresenceTime.File)
 
     override val theme by themeChooser("Theme")
+
+    private val newProject by group("Settings for new projects")
+    override val newProjectShow by newProject.selection("Show this project in Rich Presence", NewProjectShow.ASK)
 }

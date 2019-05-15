@@ -11,6 +11,8 @@ import javax.swing.*
 
 fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>) = selection(description, values.first, values.second)
 
+inline fun <reified T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T) = selection(description, initialValue, enumValues())
+
 fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>) = OptionProviderImpl(this, SelectionOption(description, initialValue, values))
 
 class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) {

@@ -20,6 +20,10 @@
             <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ActionComponent</interface-class>
             <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.impl.ActionComponentImpl</implementation-class>
         </component>
+        <component>
+            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationComponent</interface-class>
+            <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl.ApplicationNotificationComponentImpl</implementation-class>
+        </component>
     </application-components>
 
     <project-components>
@@ -30,6 +34,10 @@
             <implementation-class>
                 com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ProjectComponentImpl
             </implementation-class>
+        </component>
+        <component>
+            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationComponent</interface-class>
+            <implementation-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl.ProjectNotificationComponentImpl</implementation-class>
         </component>
     </project-components>
 

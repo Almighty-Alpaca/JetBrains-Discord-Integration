@@ -13,7 +13,7 @@ class RenderContext(source: Source, val application: ApplicationData, val mode: 
     val icons: IconSet? = theme?.getIconSet(application)
 
     val project = application.projects.values
-        .filter { p -> !p.platformProject.settings.hide.getValue() }
+        .filter { p -> p.platformProject.settings.show.getValue() }
         .maxBy { p -> p.accessedAt }
     val file = project?.files?.values?.maxBy { f -> f.accessedAt }
 

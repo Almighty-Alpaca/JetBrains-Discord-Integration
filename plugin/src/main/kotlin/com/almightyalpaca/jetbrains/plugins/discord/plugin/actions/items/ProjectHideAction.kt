@@ -16,13 +16,13 @@ class ProjectHideAction : ActionItem {
             hoveredIcon = Icons.DISCORD_BLURPLE
         }
 
-        val visible = ToggleAction.View {
+        val shown = ToggleAction.View {
             text = "Hide project in Rich Presence"
             // description = ""
             icon = Icons.DISCORD_BLURPLE
             hoveredIcon = Icons.DISCORD_WHITE
         }
 
-        addAction(ToggleAction({ project -> project.settings.hide }, hidden, visible))
+        addAction(ToggleAction({ project -> project.settings.show }, shown, hidden))
     }
 }

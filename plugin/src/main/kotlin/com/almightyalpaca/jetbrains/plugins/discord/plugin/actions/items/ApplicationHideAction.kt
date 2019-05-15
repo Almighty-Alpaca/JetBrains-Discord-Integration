@@ -16,13 +16,13 @@ class ApplicationHideAction : ActionItem {
             hoveredIcon = Icons.DISCORD_BLURPLE
         }
 
-        val visible = ToggleAction.View {
+        val shown = ToggleAction.View {
             text = "Hide Rich Presence"
             // description = ""
             icon = Icons.DISCORD_BLURPLE
             hoveredIcon = Icons.DISCORD_WHITE
         }
 
-        addAction(ToggleAction(settings.hide, hidden, visible))
+        addAction(ToggleAction(settings.show, shown, hidden))
     }
 }

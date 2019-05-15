@@ -13,7 +13,7 @@ abstract class Renderer(private val context: RenderContext) {
     abstract fun RenderContext.forceRender(): RichPresence
 
     private fun RenderContext.needsRender(): Boolean {
-        if (settings.hide.getValue())
+        if (!settings.show.getValue())
             return false
 
         val accessedAt = file ?: project ?: application

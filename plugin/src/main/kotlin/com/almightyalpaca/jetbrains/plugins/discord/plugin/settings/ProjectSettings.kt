@@ -11,7 +11,7 @@ import org.jdom.Element
 interface ProjectSettings : PersistentStateComponent<Element>, OptionHolder {
     val project: Project
 
-    val hide: BooleanValue
+    val show: BooleanValue
 
     val nameOverrideEnabled: BooleanValue
     val nameOverrideText: StringValue
