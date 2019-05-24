@@ -1,5 +1,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.shared.utils
 
+import java.util.stream.Stream
+import java.util.stream.StreamSupport
+
 inline fun <T, K, V> Iterable<T>.toMap(mapper: (T) -> Pair<K, V>) = iterator().toMap(mapper)
 
 inline fun <T, K, V> Iterator<T>.toMap(mapper: (T) -> Pair<K, V>): Map<K, V> {
@@ -30,27 +33,24 @@ inline fun <T> Set(size: Int, init: (index: Int) -> T): Set<T> = MutableSet(size
 
 inline fun <T> MutableSet(size: Int, init: (index: Int) -> T): MutableSet<T> {
     val set = LinkedHashSet<T>(size)
+
     repeat(size) { index -> set.add(init(index)) }
+
     return set
 }
 
 fun <K, V> Map<K, V>.stream() = entries.stream()
 
-//fun <K, V> lazyMap(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(mutableMapOf(), factory)
-//
-//fun <K, V> lazyMap(map: MutableMap<K, V>, factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(map, factory)
-//
-//fun <K, V> MutableMap<K, V>.lazy(factory: (K) -> V?): LazyMutableMap<K, V> = LazyMutableMapImpl(this, factory)
-//
-//interface LazyMutableMap<K, V> : MutableMap<K, V>
-//
-//private class LazyMutableMapImpl<K, V>(val map: MutableMap<K, V>, val factory: (K) -> V?) : LazyMutableMap<K, V>, MutableMap<K, V> by map {
-//    override fun get(key: K) = map.compute(key) { _, value -> value ?: factory.invoke(key) }
-//}
-
-fun <T> concat(element: T?, collection: Iterable<T>?): List<T> {
+fun <T> concat(vararg collections: Iterable<T>?): List<T> {
     val result = ArrayList<T>()
-    element?.let { result.add(element) }
-    collection?.let { result.addAll(collection) }
+
+    for (collection in collections) {
+        if (collection != null) {
+            result.addAll(collection)
+        }
+    }
+
     return result
 }
+
+fun <R> Iterable<R>.stream(): Stream<R> = StreamSupport.stream(this.spliterator(), false)

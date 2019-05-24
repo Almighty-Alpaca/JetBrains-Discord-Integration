@@ -8,7 +8,13 @@ import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.project.Project
 import java.time.OffsetDateTime
 
-class ApplicationData(val id: String, val name: String, val version: String, val openedAt: OffsetDateTime = OffsetDateTime.now(), projects: Collection<ProjectData> = emptyList()) : AccessedAt {
+class ApplicationData(
+    val id: String,
+    val name: String,
+    val version: String,
+    val openedAt: OffsetDateTime = OffsetDateTime.now(),
+    projects: Collection<ProjectData> = emptyList()
+) : AccessedAt {
     val projects = projects.toMap { p -> p.platformProject to p }
 
     override val accessedAt: OffsetDateTime

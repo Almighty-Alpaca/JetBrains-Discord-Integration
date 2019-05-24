@@ -29,8 +29,10 @@ subprojects {
     }
 }
 
+defaultTasks = mutableListOf("plugin:buildPlugin")
+
 tasks {
-    "dependencyUpdates"(DependencyUpdatesTask::class) {
+    dependencyUpdates {
         resolutionStrategy {
             componentSelection {
                 all {
@@ -46,5 +48,9 @@ tasks {
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
         gradleVersion = "5.4.1"
+    }
+
+    val clean by registering(Delete::class) {
+        delete.add(project.buildDir)
     }
 }

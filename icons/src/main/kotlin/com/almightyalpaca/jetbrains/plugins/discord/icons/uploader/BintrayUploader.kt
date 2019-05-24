@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.features.BadResponseStatusException
+import io.ktor.client.features.ResponseException
 import io.ktor.client.features.auth.Auth
 import io.ktor.client.features.auth.providers.basic
 import io.ktor.client.request.parameter
@@ -97,8 +97,8 @@ private suspend fun HttpClient.createVersion(user: String, repository: String, `
 
             body = TextContent(ObjectMapper().writeValueAsString(data), ContentType.Application.Json)
         }
-    } catch (e: BadResponseStatusException) {
-        if (e.statusCode.value != 409)
+    } catch (e: ResponseException) {
+        if (e.response.status.value != 409)
             throw e
     }
 }

@@ -11,8 +11,17 @@ import org.apache.commons.io.FilenameUtils
 import java.nio.file.Path
 import java.time.OffsetDateTime
 
-class FileData(val project: Project, val path: Path, var readOnly: Boolean, val openedAt: OffsetDateTime = OffsetDateTime.now(), override val accessedAt: OffsetDateTime = openedAt) : FieldProvider, AccessedAt {
+class FileData(
+    val project: Project,
+    val path: Path,
+    val readOnly: Boolean,
+    val openedAt: OffsetDateTime = OffsetDateTime.now(),
+    override val accessedAt: OffsetDateTime = openedAt
+) : FieldProvider,
+    AccessedAt {
+    /** Path relative to the project directory */
     val relativePath: Path by lazy { project.filePath.relativize(path) }
+    /** Path relative to the project directory in Unix style (aka using forward slashes) */
     val relativePathSane: String by lazy { FilenameUtils.separatorsToUnix(relativePath.toString()) }
     val name: String by lazy { path.name }
     val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
@@ -23,7 +32,6 @@ class FileData(val project: Project, val path: Path, var readOnly: Boolean, val 
         Matcher.Target.NAME -> listOf(name)
         Matcher.Target.BASENAME -> baseNames
         Matcher.Target.PATH -> listOf(relativePathSane)
-        Matcher.Target.CONTENT -> listOf() // TODO: first line/magic bytes
     }
 
     fun builder() = FileDataBuilder(project, path, readOnly, openedAt, accessedAt)

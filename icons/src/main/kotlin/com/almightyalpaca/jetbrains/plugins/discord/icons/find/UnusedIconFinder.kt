@@ -2,6 +2,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.find
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getLocalIcons
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.stream
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import kotlinx.coroutines.runBlocking
 import java.nio.file.Paths
@@ -14,7 +15,7 @@ fun main() = runBlocking {
     val themes = source.getThemes()
 
     val assets = languages.stream()
-        .map { language -> language.assetId }
+        .flatMap { language -> language.assetIds.stream() }
         .filter(Objects::nonNull)
         .toSet()
 

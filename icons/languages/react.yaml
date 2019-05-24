@@ -3,11 +3,13 @@ asset: react
 parent: text
 flavors:
   - name: React TS
+    asset: reactts
     parent: typescript
     match:
       extension:
         equals: .tsx
   - name: React JS
+    asset: reactjs
     parent: javascript
     match:
       extension:

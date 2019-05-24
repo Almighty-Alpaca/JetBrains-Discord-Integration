@@ -8,6 +8,7 @@ match:
       - .csproj
 flavors:
   - name: C# Script
+    asset: csharpscript
     match:
       extension:
         equals:

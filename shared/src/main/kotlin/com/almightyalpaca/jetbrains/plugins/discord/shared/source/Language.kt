@@ -6,7 +6,6 @@ interface Language {
     val id: String
     val name: String
     val parent: Language?
-    val assetId: String?
     val matchers: Map<Matcher.Target, Matcher>
     val match: LanguageMatch
     val assetIds: Iterable<String>
@@ -23,6 +22,6 @@ interface Language {
     interface Simple : Language
 
     interface Default : Language {
-        override val assetId: String
+        val assetId: String
     }
 }

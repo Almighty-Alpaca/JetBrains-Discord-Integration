@@ -9,7 +9,7 @@ import java.util.*
 interface LanguageSourceMap : Map<String, LanguageSource> {
     fun createLanguageMap(languages: Map<String, Language>): LanguageMap
     fun createDefaultLanguage(name: String, assetId: String): Language.Default
-    fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>): Language.Simple
+    fun createSimpleLanguage(fileId: String, name: String, parent: Language?, assetIds: List<String>?, matchers: Map<Matcher.Target, Matcher>): Language.Simple
 
     fun toLanguageMap(): LanguageMap {
         val languages = mutableMapOf<String, Language>()
@@ -34,12 +34,12 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         source: JsonNode = this.getValue(id).node,
         baseId: String? = null,
         baseName: String? = null,
-        baseAssetId: String? = null,
+        baseAssetIds: List<String>? = null,
         baseParent: Language? = null
     ): Language = languages[id] ?: try {
         when (id) {
             "default" -> createDefaultLanguage(languages, source)
-            else -> createSimpleLanguage(languages, id, source, baseId, baseName, baseAssetId, baseParent)
+            else -> createSimpleLanguage(languages, id, source, baseId, baseName, baseAssetIds, baseParent)
         }
     } catch (e: Exception) {
         throw Exception("Error while parsing ${(baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)}", e)
@@ -62,13 +62,15 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         source: JsonNode,
         baseId: String? = null,
         baseName: String? = null,
-        baseAssetId: String? = null,
+        baseAssetIds: List<String>? = null,
         baseParent: Language? = null
     ): Language {
         @Suppress("NAME_SHADOWING")
         val id: String = (baseId?.plus("/") ?: "") + (source["id"]?.textValue() ?: id)
         val name: String = source["name"]?.textValue() ?: baseName ?: throw Exception("Missing name")
-        val assetId: String? = source["asset"]?.textValue() ?: baseAssetId
+        val assetIds: MutableList<String> = mutableListOf()
+        source["asset"]?.let { node -> assetIds.addAll(node.asOrderedStrings()) }
+        baseAssetIds?.let { baseAssets -> assetIds.addAll(baseAssets) }
 
         val parentId: String? = source["parent"]?.textValue()
         val parent = parentId?.let { languages[parentId] ?: getLanguage(languages, parentId) } ?: baseParent
@@ -84,14 +86,14 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
             }
         } ?: emptyMap()
 
-        val language = createSimpleLanguage(id, name, parent, assetId, matchers)
+        val language = createSimpleLanguage(id, name, parent, assetIds, matchers)
         languages[id] = language
 
         (source["flavors"] as ArrayNode?)?.run {
             when {
-                isObject -> createLanguage(languages, "1", this, id, name, assetId, parent)
+                isObject -> createLanguage(languages, "1", this, id, name, assetIds, parent)
                 isArray -> repeat(size()) { i ->
-                    val flavor = createLanguage(languages, "$i", this[i], id, name, assetId, parent)
+                    val flavor = createLanguage(languages, "$i", this[i], id, name, assetIds, parent)
                     flavor.id to flavor
                 }
                 else -> throw RuntimeException()
@@ -99,6 +101,13 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         }
 
         return language
+    }
+
+    private fun JsonNode.asOrderedStrings(): List<String> = when {
+        isNull -> emptyList()
+        isTextual -> listOf(asText())
+        isArray -> List(size()) { i -> this[i].asText() }
+        else -> throw RuntimeException("invalid type")
     }
 
     private fun JsonNode.asMatchers(): Set<Matcher> = when {
@@ -109,11 +118,11 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
     }
 
     private fun JsonNode.asMatcher(): Matcher {
-        this["startsWith"]?.run { return asStartsWith() }
-        this["endsWith"]?.run { return asEndsWith() }
-        this["contains"]?.run { return asContains() }
-        this["equals"]?.run { return asEquals() }
-        this["regex"]?.run { return asRegEx() }
+        this["startsWith"]?.run { return asStartsWithMatcher() }
+        this["endsWith"]?.run { return asEndsWithMatcher() }
+        this["contains"]?.run { return asContainsMatcher() }
+        this["equals"]?.run { return asEqualsMatcher() }
+        this["regex"]?.run { return asRegExMatcher() }
 
         this["any"]?.run { return asAny() }
         this["all"]?.run { return asAll() }
@@ -121,15 +130,15 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         throw RuntimeException("Unknown matcher type")
     }
 
-    private fun JsonNode.asStartsWith() = Matcher.StartsWith(asStrings())
+    private fun JsonNode.asStartsWithMatcher() = Matcher.StartsWith(asStrings())
 
-    private fun JsonNode.asEndsWith() = Matcher.EndsWith(asStrings())
+    private fun JsonNode.asEndsWithMatcher() = Matcher.EndsWith(asStrings())
 
-    private fun JsonNode.asContains() = Matcher.Contains(asStrings())
+    private fun JsonNode.asContainsMatcher() = Matcher.Contains(asStrings())
 
-    private fun JsonNode.asEquals() = Matcher.Equals(asStrings())
+    private fun JsonNode.asEqualsMatcher() = Matcher.Equals(asStrings())
 
-    private fun JsonNode.asRegEx() = Matcher.RegEx(asStrings())
+    private fun JsonNode.asRegExMatcher() = Matcher.RegEx(asStrings())
 
     private fun JsonNode.asStrings(): Set<String> = when {
         isNull -> emptySet()

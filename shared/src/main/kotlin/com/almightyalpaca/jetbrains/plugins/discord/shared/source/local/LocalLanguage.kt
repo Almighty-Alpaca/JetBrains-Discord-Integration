@@ -6,9 +6,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractLanguage
 
 object LocalLanguage {
-    class Simple(source: LocalSource, id: String, name: String, parent: Language?, assetId: String?, matchers: Map<Matcher.Target, Matcher>) :
-        AbstractLanguage.Simple(id, name, parent, assetId, matchers) {
-        override val match: LanguageMatch = LocalLanguageMatch(source, name, assetIds)
+    class Simple(source: LocalSource, id: String, name: String, parent: Language?, assetIds: List<String>?, matchers: Map<Matcher.Target, Matcher>) :
+        AbstractLanguage.Simple(id, name, parent, assetIds, matchers) {
+        override val match: LanguageMatch = LocalLanguageMatch(source, name, this.assetIds)
     }
 
     class Default(source: LocalSource, name: String, assetId: String) : AbstractLanguage.Default(name, assetId) {

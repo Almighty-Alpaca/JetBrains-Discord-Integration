@@ -18,9 +18,9 @@ dependencies {
 
     compile(group = "org.apache.commons", name = "commons-text", version = "1.6")
 
-    compile(group = "io.ktor", name = "ktor-client-core", version = "1.1.4")
-    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.1.4")
-    compile(group = "io.ktor", name = "ktor-client-auth", version = "1.1.4")
+    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.0")
+    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.0")
+    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.0")
 }
 
 tasks {
@@ -70,7 +70,6 @@ tasks {
         dependsOn(`validate-icons`)
     }
 
-
     val `find-unused-icons` by registering(JavaExec::class) task@{
         group = "icons"
 
@@ -92,7 +91,7 @@ tasks {
         val `upload-icons` by registering(JavaExec::class) task@{
             group = "icons"
 
-//            dependsOn(`validate-icons`)
+            dependsOn(`validate-icons`)
 
             sourceSets.main.configure { this@task.classpath = runtimeClasspath }
             main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
@@ -103,7 +102,7 @@ tasks {
         val `upload-languages` by registering(JavaExec::class) task@{
             group = "icons"
 
-//            dependsOn(`validate-languages`)
+            dependsOn(`validate-languages`)
 
             sourceSets.main.configure { this@task.classpath = runtimeClasspath }
             main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
@@ -114,7 +113,7 @@ tasks {
         val upload by registering task@{
             group = "icons"
 
-//            dependsOn(validate)
+            dependsOn(validate)
 
             dependsOn(`upload-languages`)
             dependsOn(`upload-icons`)
