@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="plugin\src\main\resources\META-INF\pluginIcon.svg" alt-text="Test" width="200"/>
+</p>
 <h1 align="center">JetBrains Discord Integration</h1>
 <p align="center">
   <a href="https://plugins.jetbrains.com/plugin/10233">
@@ -24,7 +27,6 @@ Open your IDE, go to Settings > Plugins > Browse repositories... > Search for "D
 
 #### ...from the GitHub release page
 Go to the [GitHub relase page](/releases/latest) and grab the latest `JetBrains-Discord-Integration-X.X.X.zip`. Do not unzip the file. In your IDE go to `Settings > Plugins > Install plugin from disk...` and select the previously downloaded zip file.
-
 #### ...or compile from source
 
 As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this make take a bit as it needs download the sources for IntelliJ first.
