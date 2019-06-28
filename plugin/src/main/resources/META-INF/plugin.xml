@@ -47,6 +47,9 @@
         <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings"
                             serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ApplicationSettingsImpl"/>
 
+        <projectService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationSettings"/>
+        <applicationService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings"/>
+
         <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
                             serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
 

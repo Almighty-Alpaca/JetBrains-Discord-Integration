@@ -38,7 +38,7 @@ class ProjectDataBuilder(var platformProject: Project, var name: String, val ope
     }
 
     infix fun remove(file: VirtualFile?) {
-        file?.let { files.remove(file) }
+        file.let { files.remove(file) }
     }
 
     operator fun contains(file: VirtualFile?) = file != null && file in files

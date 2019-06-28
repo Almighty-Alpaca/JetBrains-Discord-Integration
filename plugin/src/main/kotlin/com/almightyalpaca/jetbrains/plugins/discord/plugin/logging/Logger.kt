@@ -7,7 +7,7 @@ abstract class Logger {
 
     class Impl : Logger() {
         override fun Level.invoke() = true
-        override fun log(o: Any?) = System.out.println(o)
+        override fun log(o: Any?) = println(o)
         override fun log(t: Throwable, o: Any?) {
             log(o)
             t.printStackTrace()

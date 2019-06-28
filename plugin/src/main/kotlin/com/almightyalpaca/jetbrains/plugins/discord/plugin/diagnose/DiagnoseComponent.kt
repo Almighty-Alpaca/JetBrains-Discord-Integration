@@ -1,6 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Application
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.BaseComponent
 import kotlinx.coroutines.Deferred
@@ -26,6 +26,7 @@ interface DiagnoseComponent : BaseComponent {
     // fun reportInternetConnectionChange()
 
     companion object {
-        val instance: DiagnoseComponent by lazy { Application.instance.getComponent(DiagnoseComponent::class.java) }
+        inline val instance: DiagnoseComponent
+            get() = application.getComponent(DiagnoseComponent::class.java)
     }
 }

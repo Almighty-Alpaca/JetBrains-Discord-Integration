@@ -1,6 +1,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
 import com.intellij.openapi.components.ServiceManager
 
 interface RichPresenceService {
@@ -10,6 +11,6 @@ interface RichPresenceService {
 
     companion object : Logging() {
         inline val instance: RichPresenceService
-            get() = ServiceManager.getService(RichPresenceService::class.java)
+            get() = getService(RichPresenceService::class)
     }
 }

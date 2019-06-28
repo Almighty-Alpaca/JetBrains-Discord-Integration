@@ -1,10 +1,9 @@
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.github.ben-manes.versions") version "0.21.0"
-    kotlin("jvm") version "1.3.31" apply false
-    id("org.jetbrains.intellij") version "0.4.8" apply false
+    kotlin("jvm") version "1.3.40" apply false
+    id("org.jetbrains.intellij") version "0.4.9" apply false
     id("com.github.johnrengelman.shadow") version "5.0.0" apply false
 }
 

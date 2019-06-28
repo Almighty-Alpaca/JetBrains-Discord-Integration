@@ -48,7 +48,7 @@ class ApplicationDataBuilder(var id: String, var name: String, var version: Stri
     }
 
     infix fun remove(project: Project?) {
-        project?.let { projects.remove(project) }
+        project.let { projects.remove(project) }
     }
 
     operator fun contains(project: Project?) = project != null && project in projects

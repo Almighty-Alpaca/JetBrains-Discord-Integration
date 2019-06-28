@@ -1,6 +1,8 @@
-## v1.0.0 - Rewrite
-- Brand new codebase
-- Now with multiple icon themes
+## v1.0.0 - Reborn like a phoenix
+- Brand new codebase written in Kotlin
+- Support for multiple icon themes
+- More customizable presence than ever before
+- New language support doesn't require a plugin update anymore
 
 ## v0.9.0 - More settings & languages, less bugs
 - Added F# (#43)

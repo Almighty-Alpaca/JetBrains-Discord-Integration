@@ -15,7 +15,7 @@ fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, minVal
     OptionProviderImpl(this, IntSpinnerOption(description, initialValue, step, minValue, maxValue, format))
 
 fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#") =
-    spinner(description, initialValue, range.start, range.endInclusive, step, format)
+    spinner(description, initialValue, range.first, range.last, step, format)
 
 class IntSpinnerOption(
     description: String,

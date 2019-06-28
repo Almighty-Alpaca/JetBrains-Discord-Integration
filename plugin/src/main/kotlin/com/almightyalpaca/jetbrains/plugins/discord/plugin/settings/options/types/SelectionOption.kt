@@ -22,7 +22,7 @@ class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private
     }
 
     override val componentImpl by lazy {
-        JComboBox<T>(values).apply box@{
+        JComboBox(values).apply box@{
             renderer = object : DefaultListCellRenderer() {
                 override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)

@@ -9,8 +9,6 @@ import org.jdom.Element
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
-import javax.swing.Box
-import javax.swing.BoxLayout
 import javax.swing.JPanel
 import kotlin.math.roundToInt
 import kotlin.reflect.KProperty

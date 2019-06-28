@@ -18,9 +18,9 @@ dependencies {
 
     compile(group = "org.apache.commons", name = "commons-text", version = "1.6")
 
-    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.0")
-    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.0")
-    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.0")
+    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.2")
+    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.2")
+    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.2")
 }
 
 tasks {

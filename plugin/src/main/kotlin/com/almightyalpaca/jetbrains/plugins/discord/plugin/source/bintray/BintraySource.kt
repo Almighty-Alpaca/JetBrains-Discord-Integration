@@ -147,8 +147,8 @@ class BintraySource(location: String) : Source, CoroutineScope {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    when (response.code()) {
-                        in 200..299 -> when (val body = response.body()) {
+                    when (response.code) {
+                        in 200..299 -> when (val body = response.body) {
                             null -> {
                                 response.close()
                                 continuation.resumeWithException(RuntimeException())
@@ -157,7 +157,7 @@ class BintraySource(location: String) : Source, CoroutineScope {
                         }
                         else -> {
                             response.close()
-                            continuation.resumeWithException(RuntimeException("${response.code()}"))
+                            continuation.resumeWithException(RuntimeException("${response.code}"))
                         }
                     }
                 }
