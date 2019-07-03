@@ -20,10 +20,10 @@ object Color {
 }
 
 object Roboto {
-    val regular: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/fonts/roboto/Roboto-Regular.ttf"))
-    val medium: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/fonts/roboto/Roboto-Medium.ttf"))
-    val bold: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/fonts/roboto/Roboto-Bold.ttf"))
-    val black: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/fonts/roboto/Roboto-Black.ttf"))
+    val regular: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Regular.ttf"))
+    val medium: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Medium.ttf"))
+    val bold: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Bold.ttf"))
+    val black: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Black.ttf"))
 
 }
 

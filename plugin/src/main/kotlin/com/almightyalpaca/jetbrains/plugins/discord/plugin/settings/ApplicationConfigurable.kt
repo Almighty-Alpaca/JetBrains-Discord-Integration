@@ -4,7 +4,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.Applicatio
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
 import com.intellij.openapi.options.SearchableConfigurable
-import com.intellij.util.ui.components.BorderLayoutPanel
 import kotlinx.coroutines.future.asCompletableFuture
 import javax.swing.BoxLayout
 import javax.swing.JPanel

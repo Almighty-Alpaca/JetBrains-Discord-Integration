@@ -1,3 +1,5 @@
+import com.palantir.gradle.gitversion.VersionDetails
+import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,10 +7,17 @@ plugins {
     kotlin("jvm") version "1.3.40" apply false
     id("org.jetbrains.intellij") version "0.4.9" apply false
     id("com.github.johnrengelman.shadow") version "5.0.0" apply false
+    id("com.palantir.git-version") version "0.11.0"
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
-version = "1.0.0-SNAPSHOT"
+
+val versionDetails: Closure<VersionDetails> by extra
+val details = versionDetails()
+version = when (details.isCleanTag && details.lastTag.endsWith("1.0.0")) {
+    true -> "1.0.0"
+    false -> "${"1.0.0"}-eap-${details.commitDistance}"
+}
 
 subprojects {
     group = rootProject.group.toString() + "." + project.name.toLowerCase()
@@ -50,6 +59,8 @@ tasks {
     }
 
     val clean by registering(Delete::class) {
+        group = "build"
+
         delete.add(project.buildDir)
     }
 }

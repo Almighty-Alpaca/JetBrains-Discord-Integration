@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -14,7 +13,7 @@ class DocumentListener : com.intellij.openapi.editor.event.DocumentListener, Pro
     override fun beforeDocumentChange(event: DocumentEvent) {}
 
     override fun documentChanged(event: DocumentEvent) {
-        Logger.Level.TRACE { "DocumentListener#documentChanged($event)" }
+        log { "DocumentListener#documentChanged($event)" }
 
         val document = event.document
         val editors = EditorFactory.getInstance().getEditors(document)

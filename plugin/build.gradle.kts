@@ -10,28 +10,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-configure<IntelliJPluginExtension> {
-    // https://www.jetbrains.com/intellij-repository/releases
-    version = "2018.2"
-    // version = "191.7479.19"
-
-    downloadSources = true
-
-    updateSinceUntilBuild = false
-
-    sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
-
-    // For testing with a custom theme
-    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
-}
-
-tasks {
-    patchPluginXml {
-        changeNotes(readInfoFile(rootProject.file("CHANGELOG.md")))
-        pluginDescription(readInfoFile(rootProject.file("DESCRIPTION.md")))
-    }
-}
-
 dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.2")
@@ -47,12 +25,40 @@ dependencies {
     compile(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
 
+val isCI by lazy { System.getenv("CI") != null }
+
+configure<IntelliJPluginExtension> {
+    // https://www.jetbrains.com/intellij-repository/releases
+    version = "2018.2"
+    // version = "191.7479.19"
+
+    downloadSources = !isCI
+
+    updateSinceUntilBuild = false
+
+    sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
+
+    // For testing with a custom theme
+    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
+}
+
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks {
+    patchPluginXml {
+        changeNotes(readInfoFile(rootProject.file("CHANGELOG.md")))
+        pluginDescription(readInfoFile(rootProject.file("DESCRIPTION.md")))
+    }
+
     withType<RunIdeTask> {
         environment["ICONS"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
         // environment["ICONS"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
+    }
+
+    publishPlugin {
+        token(project.extra["JETBRAINS_TOKEN"])
+
+        channels("EAP")
     }
 
     prepareSandbox task@{
@@ -67,8 +73,8 @@ tasks {
         dependsOn(buildPlugin)
     }
 
-    buildSearchableOptions {
-        enabled = false // TODO: re-enable buildSearchableOptions before release (disabled for faster compilation)
+    check {
+        dependsOn(verifyPlugin)
     }
 
     fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
@@ -127,7 +133,7 @@ fun readInfoFile(file: File) = file.readText()
 
     // Replace issue links
     .replace(Regex("\\[([^\\[]+)\\]\\(([^\\)]+)\\)")) { match -> "<a href=\"${match[2]}\">${match[1]}</a>" }
-    .replace(Regex("\\(#([0-9]+)\\)")) { match -> "(<a href=\"${github}/issues/${match[1]}\">#${match[1]}</a>)" }
+    .replace(Regex("\\(#([0-9]+)\\)")) { match -> "(<a href=\"$github/issues/${match[1]}\">#${match[1]}</a>)" }
 
     // Replace inner lists
     .replace(Regex("\r?\n  - (.*)")) { match -> "<li>${match[1]}</li>" }

@@ -1,6 +1,5 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
@@ -49,7 +48,7 @@ class RichPresenceServiceImpl : RichPresenceService, CoroutineScope {
 
     @Synchronized
     fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) {
-        Logger.Level.TRACE { "RichPresenceServiceImpl#update()" }
+        log { "RichPresenceServiceImpl#update()" }
 
         if (!forceUpdate && !forceReconnect && lastPresence == presence)
             return

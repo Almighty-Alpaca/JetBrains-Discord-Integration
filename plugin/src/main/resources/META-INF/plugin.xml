@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.almightyalpaca.jetbrains.plugins.discord</id>
+    <id>com.almightyalpaca.intellij.plugins.discord</id>
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 

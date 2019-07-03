@@ -6,7 +6,6 @@ import club.minnced.discord.rpc.DiscordEventHandlers.OnStatus
 import club.minnced.discord.rpc.DiscordRPC
 import club.minnced.discord.rpc.DiscordRichPresence
 import club.minnced.discord.rpc.DiscordUser
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
@@ -43,7 +42,7 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun connect() {
-        Logger.Level.TRACE { "NativeRPCConnection($appId)#connect()" }
+        log { "NativeRPCConnection($appId)#connect()" }
 
         if (!CONNECTED.compareAndSet(null, this)) {
             throw Exception("There can only be one connected RPC connection")
@@ -57,7 +56,7 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun send(presence: RichPresence?) {
-        Logger.Level.TRACE { "NativeRPCConnection($appId)#send()" }
+        log { "NativeRPCConnection($appId)#send()" }
 
         if (CONNECTED.get() != this) {
             return
@@ -77,7 +76,7 @@ class NativeRPCConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun disconnect() {
-        Logger.Level.TRACE { "NativeRPCConnection($appId)#disconnect()" }
+        log { "NativeRPCConnection($appId)#disconnect()" }
 
         if (CONNECTED.get() != this) {
             throw Exception("RPC connection not connected")

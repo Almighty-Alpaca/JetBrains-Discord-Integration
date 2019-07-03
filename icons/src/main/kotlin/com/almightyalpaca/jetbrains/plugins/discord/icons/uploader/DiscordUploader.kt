@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.UserAgent
+import io.ktor.client.features.defaultRequest
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -39,6 +40,7 @@ import java.util.stream.Stream
 
 @ExperimentalCoroutinesApi
 suspend fun main() {
+    val token = System.getenv("DISCORD_TOKEN")!!
 
     val connectionPool = ConnectionPool(150, 10, TimeUnit.SECONDS)
     val threadPool = Executors.newCachedThreadPool()
@@ -52,23 +54,31 @@ suspend fun main() {
                     maxRequests = 150
                     maxRequestsPerHost = 150
                 })
+
+                callTimeout(60, TimeUnit.SECONDS)
+                connectTimeout(30, TimeUnit.SECONDS)
+                readTimeout(30, TimeUnit.SECONDS)
+                writeTimeout(30, TimeUnit.SECONDS)
             }
         }
         install(UserAgent)
+        defaultRequest {
+            headers["authorization"] = token
+        }
     }.use { client ->
         runBlocking {
-            val token = System.getenv("DISCORD_TOKEN")!!
-
             val source = LocalSource(Paths.get("../"), retry = false)
             val themes = source.getThemes()
 
             for (theme in themes.values) {
+                println("Starting with ${theme.name}")
+
                 val changes = calculateChangesAsync(client, theme)
 
                 supervisorScope {
                     for (change in changes.await()) {
                         if (change is DiscordChange.Delete) {
-                            deleteIcon(client, token, change.appId, change.iconId)
+                            deleteIcon(client, change.appId, change.iconId)
                         }
                     }
                 }
@@ -77,8 +87,8 @@ suspend fun main() {
                     for (change in changes.await()) {
                         if (change is DiscordChange.Override) {
                             coroutineScope {
-                                deleteIcon(client, token, change.appId, change.iconId)
-                                createIcon(client, token, change.appId, change.name, change.source)
+                                deleteIcon(client, change.appId, change.iconId)
+                                createIcon(client, change.appId, change.name, change.source)
                             }
                         }
                     }
@@ -87,7 +97,7 @@ suspend fun main() {
                 supervisorScope {
                     for (change in changes.await()) {
                         if (change is DiscordChange.Create) {
-                            createIcon(client, token, change.appId, change.name, change.source)
+                            createIcon(client, change.appId, change.name, change.source)
                         }
                     }
                 }
@@ -99,10 +109,9 @@ suspend fun main() {
     connectionPool.evictAll()
 }
 
-private fun CoroutineScope.createIcon(client: HttpClient, token: String, appId: Long, name: String, source: Path) = launch {
+private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: String, source: Path) = launch {
     client.post<Unit> {
         url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
-        headers["authorization"] = token
 
         val data = JsonNodeFactory(false).objectNode().apply {
             put("image", "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(source)))
@@ -114,10 +123,9 @@ private fun CoroutineScope.createIcon(client: HttpClient, token: String, appId: 
     }
 }
 
-private fun CoroutineScope.deleteIcon(client: HttpClient, token: String, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
+private fun CoroutineScope.deleteIcon(client: HttpClient, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
     client.delete<Unit> {
         url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
-        headers["authorization"] = token
     }
 }
 
@@ -135,6 +143,8 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
         for (application in theme.applications) {
             val appCode = application.key
             val appId = application.value
+
+            println("Starting with ${theme.name} ($appCode)")
 
             val local = getLocalIconsAsync(appCode, theme.id)
             val discord = getDiscordIconsAsync(client, appId)
@@ -173,6 +183,9 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
 @Suppress("BlockingMethodInNonBlockingContext")
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.contentEqualsAsync(client: HttpClient, local: Path?, remote: URL) = async(Dispatchers.IO) {
+    if (local == null)
+        return@async false
+
     val response = client.get<HttpResponse> {
         url(remote)
     }

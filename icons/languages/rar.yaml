@@ -1,4 +1,4 @@
-name: RAR 
+name: RAR
 asset: rar
 parent: archive
 match:

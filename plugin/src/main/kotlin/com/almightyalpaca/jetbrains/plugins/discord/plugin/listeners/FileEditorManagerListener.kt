@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
@@ -13,7 +12,7 @@ import java.time.OffsetDateTime
 class FileEditorManagerListener : FileEditorManagerListener {
 
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        Logger.Level.TRACE { "FileEditorManagerListener#fileOpened($source, $file)" }
+        log { "FileEditorManagerListener#fileOpened($source, $file)" }
 
         val project = source.project
 
@@ -25,7 +24,7 @@ class FileEditorManagerListener : FileEditorManagerListener {
     }
 
     override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-        Logger.Level.TRACE { "FileEditorManagerListener#fileClosed($source, $file)" }
+        log { "FileEditorManagerListener#fileClosed($source, $file)" }
 
         val project = source.project
 
@@ -37,7 +36,7 @@ class FileEditorManagerListener : FileEditorManagerListener {
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {
-        Logger.Level.TRACE { "FileEditorManagerListener#selectionChanged($event)" }
+        log { "FileEditorManagerListener#selectionChanged($event)" }
 
         val project = event.manager.project
 

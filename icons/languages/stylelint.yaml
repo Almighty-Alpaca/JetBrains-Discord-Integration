@@ -3,13 +3,13 @@ asset: stylelint
 parent: text
 match:
   name:
-    equals: 
+    equals:
       - .stylelintrc
 flavors:
   - parent: yaml
     match:
       name:
-        equals: 
+        equals:
           - .stylelintrc.yaml
           - .stylelintrc.yml
   - parent: json

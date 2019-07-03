@@ -13,6 +13,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.url
+import io.ktor.client.response.HttpResponse
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.content.OutgoingContent
@@ -47,7 +48,7 @@ suspend fun main() {
 
     val key = System.getenv("BINTRAY_KEY")!!
 
-    val version = "Test"
+    val version = "Main"
 
     HttpClient(OkHttp) {
         engine {
@@ -58,6 +59,11 @@ suspend fun main() {
                     maxRequests = 150
                     maxRequestsPerHost = 150
                 })
+
+                callTimeout(60, TimeUnit.SECONDS)
+                connectTimeout(30, TimeUnit.SECONDS)
+                readTimeout(30, TimeUnit.SECONDS)
+                writeTimeout(30, TimeUnit.SECONDS)
             }
         }
         install(Auth) {
@@ -75,7 +81,9 @@ suspend fun main() {
 
             supervisorScope {
                 for ((path, name) in files) {
-                    launch { client.uploadFile(user, repository, `package`, version, name, path) }
+                    launch {
+                        client.uploadFile(user, repository, `package`, version, name, path)
+                    }
                 }
             }
         }
@@ -104,7 +112,7 @@ private suspend fun HttpClient.createVersion(user: String, repository: String, `
 }
 
 private suspend fun HttpClient.uploadFile(user: String, repository: String, `package`: String, version: String, target: String, source: Path) {
-    put<Unit> request@{
+    put<HttpResponse> request@{
         url("https://bintray.com/api/v1/content/$user/$repository/$`package`/$version/$`package`/$version/$target")
         parameter("publish", 1)
         parameter("override", 1)

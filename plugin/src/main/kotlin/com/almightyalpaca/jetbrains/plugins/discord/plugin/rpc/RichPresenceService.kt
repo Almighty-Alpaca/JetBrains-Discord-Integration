@@ -2,7 +2,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
-import com.intellij.openapi.components.ServiceManager
 
 interface RichPresenceService {
     fun update(presence: RichPresence?)

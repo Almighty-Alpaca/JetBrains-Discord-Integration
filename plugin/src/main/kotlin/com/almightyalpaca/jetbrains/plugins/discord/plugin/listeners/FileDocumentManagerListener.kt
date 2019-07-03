@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
@@ -14,7 +13,7 @@ class FileDocumentManagerListener : com.intellij.openapi.fileEditor.FileDocument
     override fun beforeAllDocumentsSaving() {}
 
     override fun beforeDocumentSaving(document: Document) {
-        Logger.Level.TRACE { "FileDocumentManagerListener#beforeDocumentSaving($document)" }
+        log { "FileDocumentManagerListener#beforeDocumentSaving($document)" }
 
         val editors = EditorFactory.getInstance().getEditors(document)
         val file = FileDocumentManager.getInstance().getFile(document)

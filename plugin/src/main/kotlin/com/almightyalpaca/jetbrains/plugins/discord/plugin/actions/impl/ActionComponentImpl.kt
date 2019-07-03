@@ -6,11 +6,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.items.Applica
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.items.ProjectHideAction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.Icons
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.pluginId
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.extensions.PluginId
 
 class ActionComponentImpl : ActionComponent {
     private val manager: ActionManager by lazy(ActionManager::getInstance)

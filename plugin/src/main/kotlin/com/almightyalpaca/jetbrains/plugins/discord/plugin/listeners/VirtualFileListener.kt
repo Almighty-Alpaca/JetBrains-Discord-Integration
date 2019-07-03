@@ -1,7 +1,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logger
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
@@ -12,7 +11,7 @@ import java.time.OffsetDateTime
 
 class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
     override fun propertyChanged(event: VirtualFilePropertyEvent) {
-        Logger.Level.TRACE { "VirtualFileListener#propertyChanged($event)" }
+        log { "VirtualFileListener#propertyChanged($event)" }
 
         val file = event.file
 
@@ -45,7 +44,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
     override fun fileCreated(event: VirtualFileEvent) {}
 
     override fun fileDeleted(event: VirtualFileEvent) {
-        Logger.Level.TRACE { "VirtualFileListener#fileDeleted($event)" }
+        log { "VirtualFileListener#fileDeleted($event)" }
 
         val file = event.file
         val documentManager = FileDocumentManager.getInstance()
@@ -66,7 +65,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
     }
 
     override fun fileMoved(event: VirtualFileMoveEvent) {
-        Logger.Level.TRACE { "VirtualFileListener#fileMoved($event)" }
+        log { "VirtualFileListener#fileMoved($event)" }
 
         val file = event.file
         val documentManager = FileDocumentManager.getInstance()
