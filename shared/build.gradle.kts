@@ -8,6 +8,6 @@ dependencies {
 
     compile(group = "commons-io", name = "commons-io", version = "2.6")
 
-    compile(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9")
+    compile(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9.1")
     compile(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.9.9")
 }

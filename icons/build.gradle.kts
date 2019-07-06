@@ -16,7 +16,7 @@ repositories {
 dependencies {
     compile(project(":shared"))
 
-    compile(group = "org.apache.commons", name = "commons-text", version = "1.6")
+    compile(group = "org.apache.commons", name = "commons-text", version = "1.7")
 
     compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.2")
     compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.2")

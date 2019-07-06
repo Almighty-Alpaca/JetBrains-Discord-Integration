@@ -3,20 +3,21 @@ import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    kotlin("jvm") version "1.3.41" apply false
     id("com.github.ben-manes.versions") version "0.21.0"
-    kotlin("jvm") version "1.3.40" apply false
     id("org.jetbrains.intellij") version "0.4.9" apply false
-    id("com.github.johnrengelman.shadow") version "5.0.0" apply false
+    id("com.github.johnrengelman.shadow") version "5.1.0" apply false
     id("com.palantir.git-version") version "0.11.0"
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
+val version = "1.0.0"
 
-val versionDetails: Closure<VersionDetails> by extra
-val details = versionDetails()
-version = when (details.isCleanTag && details.lastTag.endsWith("1.0.0")) {
-    true -> "1.0.0"
-    false -> "${"1.0.0"}-eap-${details.commitDistance}"
+@Suppress("UNCHECKED_CAST")
+val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
+project.version = when (versionDetails.lastTag.endsWith(version)) {
+    false -> "${"1.0.0"}-eap-${versionDetails.commitDistance}"
+    true -> version
 }
 
 subprojects {
@@ -24,17 +25,33 @@ subprojects {
     version = rootProject.version
 
     repositories {
+        mavenCentral()
         jcenter()
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
     }
 
     val secrets = rootProject.file("secrets.gradle.kts")
     if (secrets.exists()) {
         apply(from = secrets)
     }
+
+    secret("DISCORD_TOKEN")
+    secret("BINTRAY_KEY")
+    secret("JETBRAINS_TOKEN")
+
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+}
+
+fun secret(name: String) {
+    if (project.extra.has(name))
+        return
+
+    val env: String = System.getenv(name) ?: return
+
+    project.extra[name] = env
 }
 
 defaultTasks = mutableListOf("plugin:buildPlugin")
@@ -44,7 +61,7 @@ tasks {
         resolutionStrategy {
             componentSelection {
                 all {
-                    sequenceOf("alpha", "beta", "rc", "cr", "m", "preview")
+                    sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap")
                         .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-_]*", RegexOption.IGNORE_CASE) }
                         .any { regex -> regex.matches(candidate.version) }
                         .let { if (it) reject("Release candidate") }
@@ -55,7 +72,7 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "5.4.1"
+        gradleVersion = "5.5"
     }
 
     val clean by registering(Delete::class) {
