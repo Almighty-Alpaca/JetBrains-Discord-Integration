@@ -1,8 +1,8 @@
 name: Pug
 asset: pug
-parent: javascript
+parent: html
 match:
-  name:
+  extension:
     equals:
       - .pug
       - .jade

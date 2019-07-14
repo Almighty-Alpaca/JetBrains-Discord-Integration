@@ -1,0 +1,6 @@
+name: Rusty Object Notation
+asset: ron
+parent: rust
+match:
+  extension:
+    equals: .ron
