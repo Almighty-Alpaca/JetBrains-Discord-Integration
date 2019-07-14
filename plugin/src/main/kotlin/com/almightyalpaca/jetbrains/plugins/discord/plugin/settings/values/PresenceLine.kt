@@ -40,7 +40,7 @@ enum class PresenceLine(val description: String) {
         }
     },
     FILE_NAME("File Name") {
-        override fun RenderContext.getResult() = file?.name.toResult()
+        override fun RenderContext.getResult() = file?.let { file -> project?.getUniqueName(file.virtualFile) }.toResult()
     },
     CUSTOM("Custom") {
         override fun RenderContext.getResult() = Result.Custom

@@ -4,7 +4,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.UniqueNameBuilder
 import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
 import java.time.OffsetDateTime
 
 class ProjectData(
@@ -14,6 +16,18 @@ class ProjectData(
     files: Map<VirtualFile, FileData> = emptyMap()
 ) : AccessedAt {
     val files = files.toMap()
+
+    private val uniqueNameBuilder = UniqueNameBuilder<VirtualFile>(platformProject.basePath, File.separator, 128)
+
+    init {
+        for ((file, _) in files) {
+            uniqueNameBuilder.addPath(file, file.path)
+        }
+    }
+
+    fun getUniqueName(file: VirtualFile): String {
+        return uniqueNameBuilder.getShortPath(file);
+    }
 
     override val accessedAt: OffsetDateTime
         get() = files.maxBy { it.value.accessedAt }?.value?.accessedAt ?: openedAt
@@ -43,5 +57,5 @@ class ProjectDataBuilder(var platformProject: Project, var name: String, val ope
 
     operator fun contains(file: VirtualFile?) = file != null && file in files
 
-    fun build() = ProjectData(platformProject, name, openedAt, files.map { file, data -> file to data.build() })
+    fun build() = ProjectData(platformProject, name, openedAt, files.map { file, data -> file to data.build(file) })
 }

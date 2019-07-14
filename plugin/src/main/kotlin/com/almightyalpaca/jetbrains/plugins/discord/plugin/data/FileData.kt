@@ -7,11 +7,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FilenameUtils
 import java.nio.file.Path
 import java.time.OffsetDateTime
 
 class FileData(
+    val virtualFile: VirtualFile,
     val project: Project,
     val path: Path,
     val readOnly: Boolean,
@@ -38,5 +40,5 @@ class FileData(
 }
 
 class FileDataBuilder(val project: Project, var path: Path, var readOnly: Boolean, val openedAt: OffsetDateTime = OffsetDateTime.now(), var accessedAt: OffsetDateTime = openedAt) {
-    fun build() = FileData(project, path, readOnly, openedAt, accessedAt)
+    fun build(file: VirtualFile) = FileData(file, project, path, readOnly, openedAt, accessedAt)
 }

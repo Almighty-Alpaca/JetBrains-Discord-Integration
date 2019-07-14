@@ -43,35 +43,35 @@ class PreviewRenderer {
         return@lazy image
     }
 
-    val font16Bold: Font = Roboto.bold.deriveFont(16F)
-    val font16Regular: Font = Roboto.regular.deriveFont(16F)
-    val font14Bold: Font = Roboto.bold.deriveFont(14F)
-    val font14Medium: Font = Roboto.medium.deriveFont(13F)
-    val font11Black: Font = Roboto.black.deriveFont(11F)
+    private val font16Bold: Font = Roboto.bold.deriveFont(16F)
+    private val font16Regular: Font = Roboto.regular.deriveFont(16F)
+    private val font14Bold: Font = Roboto.bold.deriveFont(14F)
+    private val font14Medium: Font = Roboto.medium.deriveFont(13F)
+    private val font11Black: Font = Roboto.black.deriveFont(11F)
 
-    val font16BoldMetrics: FontMetrics = image.graphics.getFontMetrics(font16Bold)
-    val font16RegularMetrics: FontMetrics = image.graphics.getFontMetrics(font16Regular)
-    val font14BoldMetrics: FontMetrics = image.graphics.getFontMetrics(font14Bold)
-    val font14MediumMetrics: FontMetrics = image.graphics.getFontMetrics(font14Medium)
-    val font11BlackMetrics: FontMetrics = image.graphics.getFontMetrics(font11Black)
+    private val font16BoldMetrics: FontMetrics = image.graphics.getFontMetrics(font16Bold)
+    private val font16RegularMetrics: FontMetrics = image.graphics.getFontMetrics(font16Regular)
+    private val font14BoldMetrics: FontMetrics = image.graphics.getFontMetrics(font14Bold)
+    private val font14MediumMetrics: FontMetrics = image.graphics.getFontMetrics(font14Medium)
+    private val font11BlackMetrics: FontMetrics = image.graphics.getFontMetrics(font11Black)
 
-    val font16BoldHeight: Int = font16BoldMetrics.height
-    val font16RegularHeight: Int = font16RegularMetrics.ascent
-    val font14BoldHeight: Int = font14BoldMetrics.height
-    val font14MediumHeight: Int = font14MediumMetrics.height
-    val font11BlackHeight: Int = font11BlackMetrics.height
+    private val font16BoldHeight: Int = font16BoldMetrics.height
+    private val font16RegularHeight: Int = font16RegularMetrics.ascent
+    private val font14BoldHeight: Int = font14BoldMetrics.height
+    private val font14MediumHeight: Int = font14MediumMetrics.height
+    private val font11BlackHeight: Int = font11BlackMetrics.height
 
-    val font16BoldBaseline: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading
-    val font16RegularBaseline: Int = font16RegularMetrics.maxAscent + font16RegularMetrics.leading
-    val font14BoldBaseline: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading
-    val font14MediumBaseline: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading
-    val font11BlackBaseline: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading
+    private val font16BoldBaseline: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading
+    private val font16RegularBaseline: Int = font16RegularMetrics.maxAscent + font16RegularMetrics.leading
+    private val font14BoldBaseline: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading
+    private val font14MediumBaseline: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading
+    private val font11BlackBaseline: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading
 
-    val font16BoldMaxHeight: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading + font16BoldMetrics.maxDescent
-    val font16RegularMaxHeight: Int = font16RegularMetrics.maxAscent + font16RegularMetrics.leading + font16RegularMetrics.maxDescent
-    val font14BoldMaxHeight: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading + font14BoldMetrics.maxDescent
-    val font14MediumMaxHeight: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
-    val font11BlackMaxHeight: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading + font11BlackMetrics.maxDescent
+    private val font16BoldMaxHeight: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading + font16BoldMetrics.maxDescent
+    private val font16RegularMaxHeight: Int = font16RegularMetrics.maxAscent + font16RegularMetrics.leading + font16RegularMetrics.maxDescent
+    private val font14BoldMaxHeight: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading + font14BoldMetrics.maxDescent
+    private val font14MediumMaxHeight: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
+    private val font11BlackMaxHeight: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading + font11BlackMetrics.maxDescent
 
     @Synchronized
     fun draw(force: Boolean = false): ModifiedImage {
