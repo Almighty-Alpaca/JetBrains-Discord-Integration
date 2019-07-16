@@ -9,13 +9,19 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.*
 
-fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>) = selection(description, values.first, values.second)
+fun <T> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>)
+        where T : Enum<T>, T : ToolTipProvider =
+    selection(description, values.first, values.second)
 
-inline fun <reified T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T) = selection(description, initialValue, enumValues())
+inline fun <reified T> OptionCreator<in T>.selection(description: String, initialValue: T)
+        where T : Enum<T>, T : ToolTipProvider =
+    selection(description, initialValue, enumValues())
 
-fun <T : Enum<T>> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>) = OptionProviderImpl(this, SelectionOption(description, initialValue, values))
+fun <T> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>)
+        where T : Enum<T>, T : ToolTipProvider =
+    OptionProviderImpl(this, SelectionOption(description, initialValue, values))
 
-class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) {
+class SelectionOption<T>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) where T : Enum<T>, T : ToolTipProvider {
     init {
         if (initialValue !in values)
             throw Exception("initialValue is not an allowed currentValue")
@@ -28,6 +34,7 @@ class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
 
                     isEnabled = this@box.isEnabled
+                    toolTipText = (value as ToolTipProvider).toolTip
 
                     return this
                 }
@@ -103,4 +110,8 @@ class SelectionOption<T : Enum<T>>(description: String, initialValue: T, private
     override fun readString(string: String) {
         currentValue = values.find { e -> e.name == string } ?: currentValue
     }
+}
+
+interface ToolTipProvider {
+    val toolTip: String?
 }

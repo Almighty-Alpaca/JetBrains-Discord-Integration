@@ -2,11 +2,12 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 typealias LineValue = SimpleValue<PresenceLine>
 
-enum class PresenceLine(val description: String) {
+enum class PresenceLine(val description: String, override val toolTip: String? = null) : ToolTipProvider {
     NONE("Empty") {
         override fun RenderContext.getResult(): Result = Result.Empty
     },
@@ -39,8 +40,11 @@ enum class PresenceLine(val description: String) {
             }.toResult()
         }
     },
-    FILE_NAME("File Name") {
+    FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
         override fun RenderContext.getResult() = file?.let { file -> project?.getUniqueName(file.virtualFile) }.toResult()
+    },
+    FILE_NAME("File Name", "Only shows the file name even when there are multiple open files with the same name") {
+        override fun RenderContext.getResult() = file?.virtualFile?.name.toResult()
     },
     CUSTOM("Custom") {
         override fun RenderContext.getResult() = Result.Custom
@@ -57,8 +61,8 @@ enum class PresenceLine(val description: String) {
         val Application2 = NONE to arrayOf(NONE, CUSTOM)
         val Project1 = PROJECT_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, CUSTOM)
         val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, CUSTOM)
-        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME, CUSTOM)
-        val File2 = FILE_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME, CUSTOM)
+        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME_PATH, FILE_NAME, CUSTOM)
+        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME_PATH, FILE_NAME, CUSTOM)
     }
 
     fun String?.toResult() = when (this) {
