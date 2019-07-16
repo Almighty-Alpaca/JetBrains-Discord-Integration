@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017-2019 Aljoscha Grebe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import com.palantir.gradle.gitversion.VersionDetails
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -8,6 +24,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.4.9" apply false
     id("com.github.johnrengelman.shadow") version "5.1.0" apply false
     id("com.palantir.git-version") version "0.11.0"
+    id("com.github.hierynomus.license") version "0.15.0"
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
@@ -54,7 +71,7 @@ fun secret(name: String) {
     project.extra[name] = env
 }
 
-defaultTasks = mutableListOf("plugin:buildPlugin")
+defaultTasks = mutableListOf("default")
 
 tasks {
     dependencyUpdates {
@@ -72,12 +89,23 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "5.5"
+        gradleVersion = "5.5.1"
     }
 
     val clean by registering(Delete::class) {
         group = "build"
 
         delete.add(project.buildDir)
+    }
+
+    create("default") {
+        val buildPlugin = project.tasks.getByPath("plugin:buildPlugin") as Zip
+
+        dependsOn(buildPlugin)
+
+        copy {
+            from(buildPlugin.outputs)
+            into(".")
+        }
     }
 }

@@ -1,8 +1,24 @@
+/*
+ * Copyright 2017-2019 Aljoscha Grebe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Set
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.setWith
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -31,7 +47,7 @@ class BintrayTheme(private val source: BintraySource, id: String, name: String, 
     private fun getIcons(appId: Long): Set<String>? = URL("https://discordapp.com/api/oauth2/applications/$appId/assets").get { inputStream ->
         val array = ObjectMapper().readTree(inputStream) as ArrayNode
 
-        Set(array.size()) { i ->
+        setWith(array.size()) { i ->
             (array[i] as ObjectNode)["name"].asText()
         }
     }

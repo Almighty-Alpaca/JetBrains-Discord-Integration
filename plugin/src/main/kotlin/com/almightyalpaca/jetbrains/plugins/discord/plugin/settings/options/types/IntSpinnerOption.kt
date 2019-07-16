@@ -1,8 +1,24 @@
+/*
+ * Copyright 2017-2019 Aljoscha Grebe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.GridBagConstraints
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.intellij.ui.JBIntSpinner
 import java.awt.GridBagConstraints
@@ -38,7 +54,7 @@ class IntSpinnerOption(
         JPanel().apply {
             layout = GridBagLayout()
 
-            add(label(description), GridBagConstraints {
+            add(label(description), gbc {
                 gridx = 0
                 gridy = 0
                 gridwidth = 1
@@ -46,7 +62,7 @@ class IntSpinnerOption(
                 anchor = GridBagConstraints.WEST
             })
 
-            add(componentImpl, GridBagConstraints {
+            add(componentImpl, gbc {
                 gridx = 1
                 gridy = 0
                 gridwidth = 1

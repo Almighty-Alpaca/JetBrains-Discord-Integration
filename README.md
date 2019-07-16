@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="plugin\src\main\resources\META-INF\pluginIcon.svg" alt-text="Test" width="200"/>
+  <img src="plugin\src\main\resources\META-INF\pluginIcon.svg" alt="JetBrains Discord Integration" width="200"/>
 </p>
 <h1 align="center">JetBrains Discord Integration</h1>
 <p align="center">
@@ -26,7 +26,9 @@
 Open your IDE, go to Settings > Plugins > Browse repositories... > Search for "Discord Integration" and select this plugin (be sure to select one with the right name, there a a total of 3 Discord plugins)
 
 #### ...from the GitHub release page
+
 Go to the [GitHub relase page](/releases/latest) and grab the latest `JetBrains-Discord-Integration-X.X.X.zip`. Do not unzip the file. In your IDE go to `Settings > Plugins > Install plugin from disk...` and select the previously downloaded zip file.
+
 #### ...or compile from source
 
 As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this make take a bit as it needs download the sources for IntelliJ first.
@@ -35,11 +37,11 @@ Open your favorite terminal and execute the following commands:
 ```bash
 git clone https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration.git
 cd JetBrains-Discord-Integration
-# The next line is only neccesary on linux to make the gradle wrapper executable
+# The next line is only neccesary on Linux to make the Gradle Wrapper executable
 chmod +x gradlew
 ./gradlew
 ```
-The plugin zip will be generated under `plugin/build/distributions/JetBrains-Discord-Integration-Plugin-X.X.X.zip`.
+This will generate the file `JetBrains-Discord-Integration-Plugin-X.X.X.zip`.
 
 To install the zip file follow the steps from the [previous install method](#from-the-github-release-page).
 
@@ -61,8 +63,6 @@ If you have questions regarding any JetBrains IDE or other JetBrains products an
 
 [![JetBrains Community Discord Server](https://discordapp.com/api/guilds/433980600391696384/embed.png?style=banner2)](https://discord.gg/9ut9sqD)
 
-
 ## License
 
-This project has released under the Apache 2.0 license. You can see the full license [here](/LICENSE.md)
-
+This project has been released under the Apache 2.0 license. You can see the full license [here](/LICENSE.md)

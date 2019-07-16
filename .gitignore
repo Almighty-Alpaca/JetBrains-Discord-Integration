@@ -134,6 +134,8 @@ gradle-app.setting
 
 ### Project Files ###
 
+# Tokens
 secrets.gradle.kts
 
+# IntelliJ Sandbox
 .sandbox/

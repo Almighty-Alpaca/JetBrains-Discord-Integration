@@ -1,8 +1,24 @@
+/*
+ * Copyright 2017-2019 Aljoscha Grebe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.almightyalpaca.jetbrains.plugins.discord.icons.uploader
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.Map
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.mapWith
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -215,7 +231,7 @@ private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long)
 
     val array = ObjectMapper().readTree(response.readBytes()) as ArrayNode
 
-    Map(array.size()) { i ->
+    mapWith(array.size()) { i ->
         val node = (array[i] as ObjectNode)
         node["name"].asText() to node["id"].asLong()
     }
