@@ -35,10 +35,9 @@ class FileData(
     val readOnly: Boolean,
     val openedAt: OffsetDateTime = OffsetDateTime.now(),
     override val accessedAt: OffsetDateTime = openedAt
-) : FieldProvider,
-    AccessedAt {
+) : FieldProvider, AccessedAt {
     /** Path relative to the project directory */
-    val relativePath: Path by lazy { project.filePath.relativize(path) }
+    val relativePath: Path by lazy { project.filePath.toAbsolutePath().relativize(path.toAbsolutePath()) }
     /** Path relative to the project directory in Unix style (aka using forward slashes) */
     val relativePathSane: String by lazy { FilenameUtils.separatorsToUnix(relativePath.toString()) }
     val name: String by lazy { path.name }
