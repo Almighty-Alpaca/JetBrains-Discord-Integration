@@ -18,7 +18,8 @@ flavors:
       extension:
         equals:
           - .jsp
-          - .jsx
+          # Disabled due to incompatibility with React's .jsx
+          # - .jsx
           - .jsf
           - .war
           - .ear
