@@ -45,7 +45,7 @@ val isCI by lazy { System.getenv("CI") != null }
 
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "2018.2"
+    version = "2018.3.4"
     // version = "191.7479.19"
 
     downloadSources = !isCI
