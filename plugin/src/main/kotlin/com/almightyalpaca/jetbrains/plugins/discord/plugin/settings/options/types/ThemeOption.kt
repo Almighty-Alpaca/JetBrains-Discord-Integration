@@ -54,15 +54,17 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
         text = "Loading..."
 
         addActionListener {
-            val themes = source.getThemesOrNull()
+            val themes =this@ThemeOption. source.getThemesOrNull()
 
             if (themes != null) {
-                val dialog = ThemeDialog(themes, componentValue)
+                val dialog = ThemeDialog(themes,this@ThemeOption. componentValue)
                 val result = dialog.showAndGet()
 
                 if (result) {
-                    componentValue = dialog.value
-                    text = themes[componentValue]!!.name
+                    val value = dialog.value
+
+                    this@ThemeOption. componentValue = value
+                    text = themes[value]!!.name
                 }
             }
         }
@@ -104,52 +106,54 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
 
     init {
         source.getThemesAsync().asCompletableFuture().thenAcceptAsync { themes ->
-            if (this.currentValue == null || currentValue !in themes.keys) {
-                currentValue = themes.default.id
+            var value = this.currentValue
+            if (value == null || value !in themes.keys) {
+                value = themes.default.id
+                this.currentValue = value
             }
 
-            componentValue = currentValue
+            this.componentValue = value
 
-            componentImpl.isEnabled = true
-            componentImpl.text = themes[componentValue]!!.name
+            this.componentImpl.isEnabled = true
+            this.componentImpl.text = themes[value]!!.name
         }
     }
 
     private val value = ThemeValue(this)
-    override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
+    override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = this.value
 
     override val isModified: Boolean
-        get() = currentValue != componentValue
+        get() = this.currentValue != this.componentValue
 
     override val isDefault: Boolean
-        get() = source.getThemesOrNull()?.default?.id?.equals(currentValue) ?: false
+        get() = this.source.getThemesOrNull()?.default?.id?.equals(this.currentValue) ?: false
 
     override fun apply() {
-        currentValue = componentValue
+        this.currentValue = this.componentValue
     }
 
     override fun reset() {
-        componentValue = currentValue
+        this.componentValue = this.currentValue
     }
 
     override fun writeXml(element: Element, key: String) {
-        JDOMExternalizerUtil.writeField(element, key, currentValue)
+        JDOMExternalizerUtil.writeField(element, key, this.currentValue)
     }
 
     override fun readXml(element: Element, key: String) {
-        JDOMExternalizerUtil.readField(element, key)?.let { s -> currentValue = s }
+        JDOMExternalizerUtil.readField(element, key)?.let { s -> this.currentValue = s }
     }
 }
 
 class ThemeValue(private val option: ThemeOption) : SimpleValue<String?>() {
-    override fun get() = option.currentValue
-    override fun getComponent() = option.componentValue
+    override fun get() = this.option.currentValue
+    override fun getComponent() = this.option.componentValue
     override fun set(value: String?) {
-        option.currentValue = value
+        this.option.currentValue = value
     }
 
     override val description: String
-        get() = option.description
+        get() = this.option.description
 
     interface Provider : SimpleValue.Provider<String?> {
         override fun getValue(thisRef: OptionHolder, property: KProperty<*>): ThemeValue

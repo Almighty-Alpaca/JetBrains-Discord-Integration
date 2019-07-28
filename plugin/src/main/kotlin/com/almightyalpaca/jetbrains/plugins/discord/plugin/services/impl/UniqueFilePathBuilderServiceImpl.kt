@@ -105,8 +105,7 @@ class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
             var uniqueNameBuilderForShortName: UniqueNameBuilder<VirtualFile>? = valueMap[fileName]
 
             if (uniqueNameBuilderForShortName == null) {
-                val builder =
-                    filesWithTheSameName(fileName, project, skipNonOpenedFiles, scope)
+                val builder = filesWithTheSameName(fileName, project, skipNonOpenedFiles, scope)
                 valueMap[fileName] = builder ?: ourEmptyBuilder
                 uniqueNameBuilderForShortName = builder
             } else if (uniqueNameBuilderForShortName === ourEmptyBuilder) {
@@ -116,6 +115,7 @@ class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
             if (uniqueNameBuilderForShortName != null && uniqueNameBuilderForShortName.contains(file)) {
                 return uniqueNameBuilderForShortName.getShortPath(file)
             }
+
             return if (file is VirtualFilePathWrapper) file.presentableName else file.name
         }
 
