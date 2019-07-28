@@ -45,8 +45,8 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
         listeners += listener
     }
 
-    lateinit var currentValue: String
-    lateinit var componentValue: String
+    var currentValue: String? = null
+    var componentValue: String? = null
         private set
 
     private val componentImpl = JButton().apply button@{
@@ -104,7 +104,7 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
 
     init {
         source.getThemesAsync().asCompletableFuture().thenAcceptAsync { themes ->
-            if (!this::currentValue.isInitialized || currentValue !in themes.keys) {
+            if (this.currentValue == null || currentValue !in themes.keys) {
                 currentValue = themes.default.id
             }
 
@@ -141,17 +141,17 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
     }
 }
 
-class ThemeValue(private val option: ThemeOption) : SimpleValue<String>() {
+class ThemeValue(private val option: ThemeOption) : SimpleValue<String?>() {
     override fun get() = option.currentValue
     override fun getComponent() = option.componentValue
-    override fun set(value: String) {
+    override fun set(value: String?) {
         option.currentValue = value
     }
 
     override val description: String
         get() = option.description
 
-    interface Provider : SimpleValue.Provider<String> {
+    interface Provider : SimpleValue.Provider<String?> {
         override fun getValue(thisRef: OptionHolder, property: KProperty<*>): ThemeValue
     }
 }
