@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.services.UniqueFilePathBuilderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
@@ -43,6 +44,8 @@ class FileData(
     val name: String by lazy { path.name }
     val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
     val extensions: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(i) }.toSet() }
+
+    val uniqueName by lazy { UniqueFilePathBuilderService.instance.getUniqueVirtualFilePathWithinOpenedFileEditors(project, virtualFile); }
 
     override fun getField(target: Matcher.Target) = when (target) {
         Matcher.Target.EXTENSION -> extensions

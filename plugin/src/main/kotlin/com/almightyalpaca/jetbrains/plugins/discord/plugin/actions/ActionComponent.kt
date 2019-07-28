@@ -17,8 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.components.BaseComponent
 
-interface ActionComponent : ApplicationComponent {
+interface ActionComponent : BaseComponent {
     fun ActionItem.addAction(action: AnAction)
 }
