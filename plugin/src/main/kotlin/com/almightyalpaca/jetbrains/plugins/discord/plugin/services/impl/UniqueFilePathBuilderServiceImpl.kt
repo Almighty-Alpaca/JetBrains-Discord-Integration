@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 /**
- * This class was first copied from [com.intellij.openapi.fileEditor.impl.UniqueVFilePathBuilderImpl]
+ * This class was first copied from [UniqueVFilePathBuilderImpl][com.intellij.openapi.fileEditor.impl.UniqueVFilePathBuilderImpl] and then converted to Kotlin.
  */
 class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
     override fun getUniqueVirtualFilePath(project: Project, file: VirtualFile, scope: GlobalSearchScope): String {

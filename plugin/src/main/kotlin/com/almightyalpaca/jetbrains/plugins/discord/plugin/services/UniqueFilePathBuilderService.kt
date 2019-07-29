@@ -21,6 +21,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 
+/**
+ * This class was first copied from [UniqueVFilePathBuilder][com.intellij.openapi.fileEditor.impl.UniqueVFilePathBuilder] and then converted to Kotlin.
+ */
 interface UniqueFilePathBuilderService {
     fun getUniqueVirtualFilePath(project: Project, file: VirtualFile, scope: GlobalSearchScope): String
 

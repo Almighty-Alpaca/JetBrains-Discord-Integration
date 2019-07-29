@@ -103,9 +103,11 @@ tasks {
 
         dependsOn(buildPlugin)
 
-        copy {
-            from(buildPlugin.outputs)
-            into(".")
+        doLast {
+            copy {
+                from(buildPlugin.outputs)
+                into(".")
+            }
         }
     }
 }
