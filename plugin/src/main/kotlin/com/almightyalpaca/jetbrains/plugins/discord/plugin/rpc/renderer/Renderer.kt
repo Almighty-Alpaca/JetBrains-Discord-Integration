@@ -18,35 +18,14 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
-import java.time.Duration
-import java.time.OffsetDateTime
 
 abstract class Renderer(private val context: RenderContext) {
-    fun forceRender(): RichPresence = context.forceRender()
+    fun render(): RichPresence = context.render()
 
-    abstract fun RenderContext.forceRender(): RichPresence
+    abstract fun RenderContext.render(): RichPresence
 
-    private fun RenderContext.needsRender(): Boolean {
-        if (!settings.show.getValue())
-            return false
-
-        val accessedAt = file ?: project ?: application
-        val duration = Duration.between(accessedAt.accessedAt, OffsetDateTime.now()).toMinutes()
-
-        if (settings.timeoutEnabled.getValue() && duration >= settings.timeoutMinutes.getValue())
-            return false
-
-        return true
-    }
-
-    fun render() = when (context.needsRender()) {
-        true -> forceRender()
-        false -> null
-    }
-
-    protected fun RenderContext.forceRender(
+    protected fun RenderContext.render(
         details: LineValue?,
         detailsCustom: StringValue?,
         state: LineValue?,

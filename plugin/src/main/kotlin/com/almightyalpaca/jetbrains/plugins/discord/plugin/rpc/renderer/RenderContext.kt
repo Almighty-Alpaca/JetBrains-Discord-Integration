@@ -39,4 +39,6 @@ class RenderContext(source: Source, val application: ApplicationData, val mode: 
         Renderer.Mode.NORMAL -> get()
         Renderer.Mode.PREVIEW -> getComponent()
     }
+
+    fun createRenderer(): Renderer = renderType.createRenderer(this)
 }

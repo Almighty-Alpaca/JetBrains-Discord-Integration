@@ -94,7 +94,7 @@ class PreviewRenderer {
         val component = ApplicationComponent.instance
         val context = RenderContext(component.source, component.data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
-        val presence = renderer.forceRender()
+        val presence = renderer.render()
 
         val modified = user.draw(image, force) or game.draw(image, presence, force)
 
@@ -336,7 +336,7 @@ class PreviewRenderer {
                             return if (line.isNullOrBlank()) {
                                 true to true
                             } else {
-                                val lineCut = line.limitStringWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
+                                val lineCut = line.limitWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
 
                                 font = font14Medium
                                 color = whiteTranslucent80
@@ -381,7 +381,7 @@ class PreviewRenderer {
                             return if (line.isNullOrBlank()) {
                                 true to true
                             } else {
-                                val lineCut = line.limitStringWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
+                                val lineCut = line.limitWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
 
                                 font = font14Medium
                                 color = whiteTranslucent80

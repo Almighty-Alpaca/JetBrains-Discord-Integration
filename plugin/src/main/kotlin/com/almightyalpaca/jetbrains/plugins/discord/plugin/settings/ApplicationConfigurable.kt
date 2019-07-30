@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
 import com.intellij.openapi.options.SearchableConfigurable
 import kotlinx.coroutines.future.asCompletableFuture
@@ -35,7 +36,7 @@ class ApplicationConfigurable : SearchableConfigurable {
     override fun apply() {
         settings.apply()
 
-        ApplicationComponent.instance.update()
+        RichPresenceRenderService.instance.render()
     }
 
     override fun reset() {

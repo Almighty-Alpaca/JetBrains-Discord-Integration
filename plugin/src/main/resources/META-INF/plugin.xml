@@ -69,6 +69,9 @@
         <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
                             serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
 
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceRenderServiceImpl"/>
+
         <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.services.UniqueFilePathBuilderService"
                             serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.services.impl.UniqueFilePathBuilderServiceImpl"/>
 

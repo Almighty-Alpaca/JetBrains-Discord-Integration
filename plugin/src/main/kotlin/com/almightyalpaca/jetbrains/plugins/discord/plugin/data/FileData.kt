@@ -54,9 +54,34 @@ class FileData(
         Matcher.Target.PATH -> listOf(relativePathSane)
     }
 
-    fun builder() = FileDataBuilder(project, path, readOnly, openedAt, accessedAt)
+    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(projectBuilder, project, path, readOnly, openedAt, accessedAt)
 }
 
-class FileDataBuilder(val project: Project, var path: Path, var readOnly: Boolean, val openedAt: OffsetDateTime = OffsetDateTime.now(), var accessedAt: OffsetDateTime = openedAt) {
+class FileDataBuilder(
+    val projectBuilder: ProjectDataBuilder,
+    val project: Project,
+    var path: Path,
+    var readOnly: Boolean,
+    openedAt: OffsetDateTime = OffsetDateTime.now(),
+    accessedAt: OffsetDateTime = openedAt
+) {
+    var openedAt = openedAt
+        set(value) {
+            field = value
+
+            if (accessedAt.isBefore(field)) {
+                accessedAt = field
+            }
+        }
+
+    var accessedAt = accessedAt
+        set(value) {
+            field = value
+
+            if (field.isBefore(openedAt)) {
+                field = openedAt
+            }
+        }
+
     fun build(file: VirtualFile) = FileData(file, project, path, readOnly, openedAt, accessedAt)
 }

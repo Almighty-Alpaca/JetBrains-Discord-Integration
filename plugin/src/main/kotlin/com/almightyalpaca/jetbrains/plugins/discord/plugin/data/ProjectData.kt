@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -34,19 +35,40 @@ class ProjectData(
     override val accessedAt: OffsetDateTime
         get() = files.maxBy { it.value.accessedAt }?.value?.accessedAt ?: openedAt
 
-    fun builder() = ProjectDataBuilder(platformProject, name, openedAt, files)
+    fun builder(applicationBuilder: ApplicationDataBuilder) = ProjectDataBuilder(applicationBuilder, platformProject, name, openedAt, files)
 }
 
 @Suppress("NAME_SHADOWING")
-class ProjectDataBuilder(var platformProject: Project, var name: String, val openedAt: OffsetDateTime = OffsetDateTime.now(), files: Map<VirtualFile, FileData> = emptyMap()) {
-    private val files = mutableMapOf(*files.map { (k, v) -> k to v.builder() }.toTypedArray())
+class ProjectDataBuilder(
+    val applicationBuilder: ApplicationDataBuilder,
+    var platformProject: Project,
+    var name: String,
+    openedAt: OffsetDateTime = OffsetDateTime.now(),
+    files: Map<VirtualFile, FileData> = emptyMap()
+) {
+    private val files = mutableMapOf(*files.map { (k, v) -> k to v.builder(this) }.toTypedArray())
+
+    var openedAt = openedAt
+        set(value) {
+            field = value
+            files.values.forEach { f ->
+                if (f.openedAt.isBefore(value)) {
+                    f.openedAt = value
+                }
+            }
+        }
+
+    val accessedAt
+        get() = maxNullable(files.values.asSequence()
+            .map { f -> f.accessedAt }
+            .max(), openedAt)
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
         if (file?.checkValid() == true)
-            files.computeIfAbsent(file) { file -> FileDataBuilder(platformProject, file.filePath, file.isReadOnly) }.builder()
+            files.computeIfAbsent(file) { file -> FileDataBuilder(this, platformProject, file.filePath, file.isReadOnly) }.builder()
     }
 
-    private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.protocol.equals("dummy", true) // && file.exists()
+    private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.protocol.equals("dummy", true)
 
     fun update(file: VirtualFile?, builder: FileDataBuilder.() -> Unit) {
         if (file?.checkValid() == true)

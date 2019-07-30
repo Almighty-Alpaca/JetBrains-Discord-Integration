@@ -14,27 +14,17 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
-fun Int.roundToNextPowerOfTwo(): Int {
-    var v = this - 1
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
 
-    v = v or (v shr 1)
-    v = v or (v shr 2)
-    v = v or (v shr 4)
-    v = v or (v shr 8)
-    v = v or (v shr 16)
+interface RichPresenceRenderService {
 
-    return v + 1
-}
+    fun render()
 
-fun <T : Comparable<T>> max(t1: T, t2: T): T = when {
-    t1 > t2 -> t1
-    else -> t2
-}
-
-fun <T : Comparable<T>> maxNullable(t1: T?, t2: T): T = when {
-    t1 == null -> t2
-    t1 > t2 -> t1
-    else -> t2
+    companion object : Logging() {
+        inline val instance: RichPresenceRenderService
+            get() = getService(RichPresenceRenderService::class)
+    }
 }

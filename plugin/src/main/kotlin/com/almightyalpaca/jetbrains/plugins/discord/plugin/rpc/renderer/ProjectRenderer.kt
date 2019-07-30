@@ -19,7 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 class ProjectRenderer(context: RenderContext) : Renderer(context) {
-    override fun RenderContext.forceRender() = forceRender(
+    override fun RenderContext.render() = render(
         details = settings.projectDetails,
         detailsCustom = settings.projectDetailsCustom,
         state = settings.projectState,

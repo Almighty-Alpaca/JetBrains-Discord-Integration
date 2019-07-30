@@ -21,10 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationDataBuilder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.renderType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.BintraySource
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
@@ -33,23 +31,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.messages.MessageBusConnection
-import kotlinx.coroutines.*
 import java.nio.file.Paths
-import kotlin.coroutines.CoroutineContext
 
-class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
-    private val parentJob: Job = SupervisorJob()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + parentJob
-
+class ApplicationComponentImpl : ApplicationComponent {
     private val documentListener: DocumentListener by lazy { DocumentListener() }
     private val editorMouseListener: EditorMouseListener by lazy { EditorMouseListener() }
     private val virtualFileListener: VirtualFileListener by lazy { VirtualFileListener() }
 
     private val connection: MessageBusConnection by lazy { ApplicationManager.getApplication().messageBus.connect() }
-
-    private var updateJob: Job? = null
 
     override val source: Source
 
@@ -68,31 +57,10 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
         private set(value) {
             field = value
 
-            update()
+            RichPresenceRenderService.instance.render()
         }
-
-    @Synchronized
-    override fun update() {
-        updateJob?.cancel()
-
-        updateJob = launch {
-            val context = RenderContext(source, data, Renderer.Mode.NORMAL)
-            val renderer = context.renderType.createRenderer(context)
-            val presence = renderer.render()
-
-            RichPresenceService.instance.update(presence)
-
-            updateJob = launch {
-                delay(20 * 1000)
-
-                update()
-            }
-        }
-    }
 
     override fun initComponent() {
-        data = ApplicationData.DEFAULT
-
         connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, FileDocumentManagerListener())
         connection.subscribe(FileEditorManagerListener.TOPIC, FileEditorManagerListener())
 
@@ -106,8 +74,6 @@ class ApplicationComponentImpl : ApplicationComponent, CoroutineScope {
 
     @Synchronized
     override fun disposeComponent() {
-        parentJob.cancel()
-
         RichPresenceService.instance.update(null)
 
         this.connection.disconnect()

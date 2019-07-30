@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
@@ -52,11 +53,26 @@ class ApplicationData(
     override fun toString(): String = "ApplicationData" // ObjectMapper().writeValueAsString(this)
 }
 
-class ApplicationDataBuilder(var id: String, var name: String, var version: String, val openedAt: OffsetDateTime = OffsetDateTime.now(), projects: Map<Project, ProjectData> = emptyMap()) {
-    private val projects = mutableMapOf(*projects.map { (k, v) -> k to v.builder() }.toTypedArray())
+class ApplicationDataBuilder(var id: String, var name: String, var version: String, openedAt: OffsetDateTime = OffsetDateTime.now(), projects: Map<Project, ProjectData> = emptyMap()) {
+    private val projects = mutableMapOf(*projects.map { (k, v) -> k to v.builder(this) }.toTypedArray())
+
+    val accessedAt
+        get() = maxNullable(projects.values.asSequence()
+            .map { p -> p.accessedAt }
+            .max(), openedAt)
+
+    var openedAt = openedAt
+        set(value) {
+            field = value
+            projects.values.forEach { p ->
+                if (p.openedAt.isBefore(value)) {
+                    p.openedAt = value
+                }
+            }
+        }
 
     fun add(project: Project?, builder: ProjectDataBuilder.() -> Unit = {}) {
-        project?.let { projects.computeIfAbsent(project) { ProjectDataBuilder(project, project.name) }.builder() }
+        project?.let { projects.computeIfAbsent(project) { ProjectDataBuilder(this, project, project.name) }.builder() }
     }
 
     fun update(project: Project?, builder: ProjectDataBuilder.() -> Unit) {

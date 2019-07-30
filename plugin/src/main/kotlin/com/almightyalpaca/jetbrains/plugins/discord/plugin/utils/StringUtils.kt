@@ -33,7 +33,7 @@ fun String.limit(limit: Int, dots: Boolean = false) = when (length <= limit) {
     }
 }
 
-fun String.limitStringWidth(font: FontMetrics, limit: Int): String {
+fun String.limitWidth(font: FontMetrics, limit: Int): String {
     when (font.stringWidth(this) <= limit) {
         true -> return this
         false -> {

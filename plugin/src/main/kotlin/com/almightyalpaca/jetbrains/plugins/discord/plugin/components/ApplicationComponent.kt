@@ -29,8 +29,6 @@ interface ApplicationComponent : BaseComponent {
 
     fun app(builder: ApplicationDataBuilder.() -> Unit)
 
-    fun update()
-
     companion object {
         inline val instance: ApplicationComponent
             get() = getComponent(ApplicationComponent::class)
