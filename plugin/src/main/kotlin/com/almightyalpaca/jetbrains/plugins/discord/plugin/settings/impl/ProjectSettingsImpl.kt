@@ -30,7 +30,7 @@ import com.intellij.openapi.project.Project
 
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, PersistentStateOptionHolderImpl() {
-    override val show by check("Show new projects in Rich Presence", settings.newProjectShow.get() == NewProjectShow.SHOW)
+    override val show by check("Show this project in Rich Presence", settings.newProjectShow.get() == NewProjectShow.SHOW)
 
     private val nameOverrideToggle by toggleable<Boolean>()
     override val nameOverrideEnabled by nameOverrideToggle.toggle.check("Override project name", false)

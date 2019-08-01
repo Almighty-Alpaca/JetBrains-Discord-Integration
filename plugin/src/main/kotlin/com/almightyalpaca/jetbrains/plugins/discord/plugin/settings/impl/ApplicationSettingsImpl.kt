@@ -107,5 +107,5 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val theme by themeChooser("Theme")
 
     private val newProject by group("Settings for new projects")
-    override val newProjectShow by newProject.selection("Show this project in Rich Presence", NewProjectShow.ASK)
+    override val newProjectShow by newProject.selection("Show new projects in Rich Presence", NewProjectShow.ASK)
 }
