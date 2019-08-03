@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,9 +34,9 @@ dependencies {
 
     compile(group = "org.apache.commons", name = "commons-text", version = "1.7")
 
-    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.2")
-    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.2")
-    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.2")
+    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.3")
+    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.3")
+    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.3")
 }
 
 tasks {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,7 @@ dependencies {
 
     compile(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "4.0.0")
+    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "4.0.1")
 
     compile(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
@@ -71,7 +71,7 @@ tasks {
 
         // use local icons
         environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
-        
+
         // use icons from specific bintray repo
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
     }
