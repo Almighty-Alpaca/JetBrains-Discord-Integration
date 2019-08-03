@@ -53,26 +53,15 @@ class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
     }
 
     override fun getUniqueVirtualFilePathWithinOpenedFileEditors(project: Project, vFile: VirtualFile): String {
-        return getUniqueVirtualFilePath(
-            project,
-            vFile,
-            true,
-            GlobalSearchScope.projectScope(project)
-        )
+        return getUniqueVirtualFilePath(project, vFile, true, GlobalSearchScope.projectScope(project))
     }
 
     companion object {
-
         private val ourShortNameBuilderCacheKey = Key.create<CachedValue<Map<GlobalSearchScope, Map<String, UniqueNameBuilder<VirtualFile>>>>>("project's.short.file.name.builder")
         private val ourShortNameOpenedBuilderCacheKey = Key.create<CachedValue<Map<GlobalSearchScope, Map<String, UniqueNameBuilder<VirtualFile>>>>>("project's.short.file.name.opened.builder")
         private val ourEmptyBuilder = UniqueNameBuilder<VirtualFile>(null, null, -1)
 
-        private fun getUniqueVirtualFilePath(
-            project: Project,
-            file: VirtualFile,
-            skipNonOpenedFiles: Boolean,
-            scope: GlobalSearchScope
-        ): String {
+        private fun getUniqueVirtualFilePath(project: Project, file: VirtualFile, skipNonOpenedFiles: Boolean, scope: GlobalSearchScope): String {
             val key = if (skipNonOpenedFiles) ourShortNameOpenedBuilderCacheKey else ourShortNameBuilderCacheKey
             var data = project.getUserData(key)
             if (data == null) {
@@ -119,12 +108,7 @@ class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
             return if (file is VirtualFilePathWrapper) file.presentableName else file.name
         }
 
-        private fun filesWithTheSameName(
-            fileName: String,
-            project: Project,
-            skipNonOpenedFiles: Boolean,
-            scope: GlobalSearchScope
-        ): UniqueNameBuilder<VirtualFile>? {
+        private fun filesWithTheSameName(fileName: String, project: Project, skipNonOpenedFiles: Boolean, scope: GlobalSearchScope): UniqueNameBuilder<VirtualFile>? {
             var filesWithSameName = if (skipNonOpenedFiles) emptySet() else FilenameIndex.getVirtualFilesByName(project, fileName, scope)
             val setOfFilesWithTheSameName = THashSet(filesWithSameName)
             // add open files out of project scope
@@ -146,7 +130,7 @@ class UniqueFilePathBuilderServiceImpl : UniqueFilePathBuilderService {
             if (filesWithSameName.size > 1) {
                 var path = project.basePath
                 path = if (path == null) "" else FileUtil.toSystemIndependentName(path)
-                val builder = UniqueNameBuilder<VirtualFile>(path, File.separator, 25)
+                val builder = UniqueNameBuilder<VirtualFile>(path, File.separator, 120)
                 for (virtualFile in filesWithSameName) {
                     val presentablePath = if (virtualFile is VirtualFilePathWrapper)
                         (virtualFile as VirtualFilePathWrapper).presentablePath

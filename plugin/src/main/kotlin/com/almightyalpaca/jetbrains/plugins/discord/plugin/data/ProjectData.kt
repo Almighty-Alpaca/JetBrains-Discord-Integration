@@ -16,8 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
@@ -65,7 +63,7 @@ class ProjectDataBuilder(
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
         if (file?.checkValid() == true)
-            files.computeIfAbsent(file) { file -> FileDataBuilder(this, platformProject, file.filePath, file.isReadOnly) }.builder()
+            files.computeIfAbsent(file) { file -> FileDataBuilder(this, platformProject) }.builder()
     }
 
     private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.protocol.equals("dummy", true)

@@ -18,11 +18,12 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.VirtualFileCopyEvent
+import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.openapi.vfs.VirtualFileMoveEvent
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent
 import java.time.OffsetDateTime
 
 class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
@@ -43,11 +44,6 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
                     update(editor.project) {
                         update(file) {
                             accessedAt = OffsetDateTime.now()
-                            if (event.propertyName == VirtualFile.PROP_NAME) {
-                                path = file.filePath
-                            } else if (event.propertyName == VirtualFile.PROP_WRITABLE) {
-                                readOnly = file.isReadOnly
-                            }
                         }
                     }
                 }
@@ -95,7 +91,6 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
                 for (editor in editors) {
                     update(editor.project) {
                         update(file) {
-                            path = file.filePath
                             accessedAt = OffsetDateTime.now()
                         }
                     }

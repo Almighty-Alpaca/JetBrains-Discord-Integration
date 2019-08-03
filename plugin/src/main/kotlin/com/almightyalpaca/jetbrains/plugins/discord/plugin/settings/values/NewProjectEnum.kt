@@ -21,7 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 
 typealias NewProjectShowValue = SimpleValue<NewProjectShow>
 
-enum class NewProjectShow(val description: String, override val toolTip: String? = null):ToolTipProvider {
+enum class NewProjectShow(val description: String, override val toolTip: String? = null) : ToolTipProvider {
     SHOW("Show"),
     HIDE("Hide"),
     ASK("Ask every time");

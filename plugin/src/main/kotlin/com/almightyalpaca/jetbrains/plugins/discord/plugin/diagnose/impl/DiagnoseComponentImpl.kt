@@ -82,7 +82,7 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
         val process = Runtime.getRuntime().exec("""tasklist /V /fi "SESSIONNAME eq Console"""")
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
-                .filter { line -> line.contains("discord", true) }
+                .filter { line -> line.contains("Discord", true) }
                 .toList()
         }
 
@@ -120,7 +120,7 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
 
     private fun readIDEMac(): DiagnoseComponent.IDE = DiagnoseComponent.IDE.OTHER
 
-    override fun reportDiscordConnectionChange() = TODO("not implemented")
+    // override fun reportDiscordConnectionChange() = TODO("not implemented")
     // override fun reportInternetConnectionChange() = TODO("not implemented")
 
     override fun disposeComponent() {

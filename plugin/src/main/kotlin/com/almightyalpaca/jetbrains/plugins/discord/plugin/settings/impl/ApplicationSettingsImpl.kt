@@ -32,7 +32,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
 
     private val timeoutOptionPair by timeoutToggle.option.pair()
     override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
-    override val timeoutResetTime by timeoutOptionPair.second.check("Reset open time", true);
+    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true)
 
     private val group by group("Rich Presence Layout")
     private val preview by group.preview()
@@ -103,6 +103,8 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val fileIconSmallText by fileIconSmallToggle.option.selection("Text", PresenceIconText.Small.File)
 
     override val fileTime by fileTab.selection("Show elapsed time", PresenceTime.File)
+
+    override val filePrefixEnabled by fileTab.check("Prefix files names with Reading/Editing", true)
 
     override val theme by themeChooser("Theme")
 

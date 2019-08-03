@@ -27,7 +27,7 @@ import javax.swing.event.HyperlinkListener
 class AskShowNotification(val callback: AskShowNotification.(Boolean) -> Unit) : NotificationActionProvider, Notification(
     CHANNEL,
     "Show project in Rich Presence?",
-    "You have selected to be asked for every project whether or not the show the project in Discord.",
+    "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project",
     NotificationType.INFORMATION
 ) {
     init {

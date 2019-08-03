@@ -40,7 +40,6 @@ object Roboto {
     val medium: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Medium.ttf"))
     val bold: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Bold.ttf"))
     val black: Font = Font.createFont(Font.TRUETYPE_FONT, Roboto::class.java.getResourceAsStream("/discord/fonts/roboto/Roboto-Black.ttf"))
-
 }
 
 fun BufferedImage.toScaledImage(width: Int, height: Int = width, hints: Int = Image.SCALE_SMOOTH): BufferedImage = createImage(width, height).withGraphics {

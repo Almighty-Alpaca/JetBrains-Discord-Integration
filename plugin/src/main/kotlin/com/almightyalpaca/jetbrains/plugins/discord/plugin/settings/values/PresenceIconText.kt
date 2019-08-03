@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 
 typealias IconTextValue = SimpleValue<PresenceIconText>
 
-enum class PresenceIconText(val description: String, override val toolTip: String? = null): ToolTipProvider {
+enum class PresenceIconText(val description: String, override val toolTip: String? = null) : ToolTipProvider {
     APPLICATION_VERSION("Application Version") {
         override fun RenderContext.getResult() = application.version.toResult()
     },
@@ -54,9 +54,9 @@ enum class PresenceIconText(val description: String, override val toolTip: Strin
         val File = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, NONE)
     }
 
-    fun String?.toResult() = when (this) {
-        null -> Result.Empty
-        else -> Result.String(this)
+    fun String?.toResult() = when {
+        this == null || trim().isBlank() -> Result.Empty
+        else -> Result.String(trim())
     }
 
     sealed class Result {

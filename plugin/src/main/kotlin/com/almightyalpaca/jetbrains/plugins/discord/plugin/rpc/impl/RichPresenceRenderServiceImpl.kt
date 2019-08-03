@@ -76,7 +76,7 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService, CoroutineScope 
         if (isTimeout && shouldRender) {
             isTimeout = false
 
-            if (settings.timeoutResetTime.get()) {
+            if (settings.timeoutResetTimeEnabled.get()) {
                 launch {
                     component.app {
                         openedAt = OffsetDateTime.now()

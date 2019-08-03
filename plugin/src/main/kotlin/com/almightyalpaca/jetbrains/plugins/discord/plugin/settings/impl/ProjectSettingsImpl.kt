@@ -28,7 +28,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 
-@State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
+@State(name = "DiscordProjectSettings", storages = [Storage("discord.xml")])
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, PersistentStateOptionHolderImpl() {
     override val show by check("Show this project in Rich Presence", settings.newProjectShow.get() == NewProjectShow.SHOW)
 

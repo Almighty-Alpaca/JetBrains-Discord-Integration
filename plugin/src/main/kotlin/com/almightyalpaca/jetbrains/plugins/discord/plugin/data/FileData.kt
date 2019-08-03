@@ -19,9 +19,9 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.services.UniqueFilePathBuilderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.name
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,20 +32,20 @@ import java.time.OffsetDateTime
 class FileData(
     val virtualFile: VirtualFile,
     val project: Project,
-    val path: Path,
-    val readOnly: Boolean,
     val openedAt: OffsetDateTime = OffsetDateTime.now(),
     override val accessedAt: OffsetDateTime = openedAt
 ) : FieldProvider, AccessedAt {
     /** Path relative to the project directory */
-    val relativePath: Path by lazy { project.filePath.toAbsolutePath().relativize(path.toAbsolutePath()) }
+    val relativePath: Path by lazy { project.filePath.toAbsolutePath().relativize(virtualFile.filePath.toAbsolutePath()) }
     /** Path relative to the project directory in Unix style (aka using forward slashes) */
     val relativePathSane: String by lazy { FilenameUtils.separatorsToUnix(relativePath.toString()) }
-    val name: String by lazy { path.name }
+    val name: String by lazy { virtualFile.name }
     val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
     val extensions: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(i) }.toSet() }
 
     val uniqueName by lazy { UniqueFilePathBuilderService.instance.getUniqueVirtualFilePathWithinOpenedFileEditors(project, virtualFile); }
+
+    val readOnly by lazy { virtualFile.isReadOnly }
 
     override fun getField(target: Matcher.Target) = when (target) {
         Matcher.Target.EXTENSION -> extensions
@@ -54,14 +54,12 @@ class FileData(
         Matcher.Target.PATH -> listOf(relativePathSane)
     }
 
-    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(projectBuilder, project, path, readOnly, openedAt, accessedAt)
+    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(projectBuilder, project, openedAt, accessedAt)
 }
 
 class FileDataBuilder(
     val projectBuilder: ProjectDataBuilder,
     val project: Project,
-    var path: Path,
-    var readOnly: Boolean,
     openedAt: OffsetDateTime = OffsetDateTime.now(),
     accessedAt: OffsetDateTime = openedAt
 ) {
@@ -83,5 +81,5 @@ class FileDataBuilder(
             }
         }
 
-    fun build(file: VirtualFile) = FileData(file, project, path, readOnly, openedAt, accessedAt)
+    fun build(file: VirtualFile) = FileData(file, project, openedAt, accessedAt)
 }

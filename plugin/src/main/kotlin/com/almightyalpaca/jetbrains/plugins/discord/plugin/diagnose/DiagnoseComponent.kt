@@ -38,7 +38,7 @@ interface DiagnoseComponent : BaseComponent {
     }
 
     // TODO: periodically re-check Discord
-    fun reportDiscordConnectionChange()
+    // fun reportDiscordConnectionChange()
     // fun reportInternetConnectionChange()
 
     companion object {

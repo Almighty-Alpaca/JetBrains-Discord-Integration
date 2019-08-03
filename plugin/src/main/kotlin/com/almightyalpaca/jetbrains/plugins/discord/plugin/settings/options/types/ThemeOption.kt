@@ -54,16 +54,16 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
         text = "Loading..."
 
         addActionListener {
-            val themes =this@ThemeOption. source.getThemesOrNull()
+            val themes = this@ThemeOption.source.getThemesOrNull()
 
             if (themes != null) {
-                val dialog = ThemeDialog(themes,this@ThemeOption. componentValue)
+                val dialog = ThemeDialog(themes, this@ThemeOption.componentValue)
                 val result = dialog.showAndGet()
 
                 if (result) {
                     val value = dialog.value
 
-                    this@ThemeOption. componentValue = value
+                    this@ThemeOption.componentValue = value
                     text = themes[value]!!.name
                 }
             }

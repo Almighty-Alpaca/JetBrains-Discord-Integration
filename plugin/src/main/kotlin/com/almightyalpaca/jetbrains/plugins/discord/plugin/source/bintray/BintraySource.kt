@@ -123,7 +123,6 @@ class BintraySource(location: String) : Source, CoroutineScope {
         BintrayLanguageSourceMap(map).toLanguageMap()
     }
 
-
     private suspend fun readThemes(): ThemeMap = coroutineScope {
         val mapper = ObjectMapper(YAMLFactory())
 

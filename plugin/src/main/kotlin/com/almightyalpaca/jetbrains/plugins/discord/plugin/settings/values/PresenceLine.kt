@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.FileData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
@@ -57,10 +58,10 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         }
     },
     FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
-        override fun RenderContext.getResult() = file?.uniqueName.toResult()
+        override fun RenderContext.getResult() = file?.let { getPrefix(file) + file.uniqueName }.toResult()
     },
     FILE_NAME("File Name", "Only shows the file name even when there are multiple open files with the same name") {
-        override fun RenderContext.getResult() = file?.virtualFile?.name.toResult()
+        override fun RenderContext.getResult() = file?.let { getPrefix(file) + file.name }.toResult()
     },
     CUSTOM("Custom") {
         override fun RenderContext.getResult() = Result.Custom
@@ -81,14 +82,24 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME_PATH, FILE_NAME, CUSTOM)
     }
 
-    fun String?.toResult() = when (this) {
-        null -> Result.Empty
-        else -> Result.String(this)
+    fun String?.toResult() = when {
+        this == null || trim().isBlank() -> Result.Empty
+        else -> Result.String(trim())
     }
 
     sealed class Result {
         object Empty : Result()
         object Custom : Result()
         data class String(val value: kotlin.String) : Result()
+    }
+}
+
+private fun RenderContext.getPrefix(file: FileData): String {
+    return when (settings.filePrefixEnabled.getValue()) {
+        true -> when (file.readOnly) {
+            true -> "Reading "
+            false -> "Editing "
+        }
+        false -> ""
     }
 }

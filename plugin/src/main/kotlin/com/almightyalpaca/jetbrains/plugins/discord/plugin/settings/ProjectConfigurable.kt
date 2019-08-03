@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
