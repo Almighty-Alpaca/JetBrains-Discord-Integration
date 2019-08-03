@@ -17,6 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.logging
 
 abstract class Logger {
+    var enabled: Boolean = System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.logging") == "true"
+
     abstract fun log(level: Level, o: Any?)
     abstract fun log(level: Level, t: Throwable, o: Any?)
 

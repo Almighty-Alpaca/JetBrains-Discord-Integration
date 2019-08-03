@@ -43,7 +43,7 @@ class ApplicationComponentImpl : ApplicationComponent {
     override val source: Source
 
     init {
-        val icons: String? = System.getenv("ICONS")
+        val icons: String? = System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.source")
         val (platform, location) = icons?.split(':', limit = 2) ?: listOf("", "")
         source = when (platform.toLowerCase()) {
             "bintray" -> BintraySource(location)
