@@ -40,7 +40,26 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
     }
 
     private fun readDiscordMac(): DiagnoseComponent.Discord {
-        // TODO: Mac Discord detection
+        val clients = arrayOf(
+            "Discord.app",
+            "Discord PTB.app",
+            "Discord Canary.app",
+            "Discord Development.app"
+        )
+
+        val process = Runtime.getRuntime().exec("ps -A")
+        process.waitFor()
+
+        val clientNotRunning = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
+            reader.lineSequence()
+                .none { line -> clients.any { client -> line.contains(client) } }
+        }
+
+        if (clientNotRunning) {
+            return DiagnoseComponent.Discord.CLOSED
+        }
+
+        // TODO: Mac Discord browser detection
         return DiagnoseComponent.Discord.OTHER
     }
 
