@@ -63,7 +63,7 @@ class ProjectDataBuilder(
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
         if (file?.checkValid() == true)
-            files.computeIfAbsent(file) { file -> FileDataBuilder(this, platformProject) }.builder()
+            files.computeIfAbsent(file) { FileDataBuilder(this, platformProject) }.builder()
     }
 
     private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.protocol.equals("dummy", true)
