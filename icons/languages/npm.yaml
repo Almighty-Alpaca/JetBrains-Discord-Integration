@@ -5,6 +5,16 @@ match:
   name:
     equals:
       - package.json
-      - package-lock.json
-      - .npmignore
-      - .npmrc
+flavors:
+  - name: NPM Lock
+    match:
+      name:
+        equals: package-lock.json
+  - name: NPM Ignore
+    match:
+      name:
+        equals: .npmignore
+  - name: NPM Config
+    match:
+      name:
+        equals: .npmrc

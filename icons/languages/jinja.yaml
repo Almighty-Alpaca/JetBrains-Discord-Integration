@@ -4,6 +4,6 @@ parent: text
 match:
   extension:
     equals:
-      - .jinja
+      - .jinja2
       - .j2
       - .jnj

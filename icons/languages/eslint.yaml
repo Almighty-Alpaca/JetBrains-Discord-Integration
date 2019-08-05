@@ -4,4 +4,8 @@ parent: javascript
 match:
   name:
     startsWith: .eslintrc
-    equals: .eslintignore
+flavors:
+  - name: ESLint Ignore
+    match:
+      name:
+        equals: .eslintignore

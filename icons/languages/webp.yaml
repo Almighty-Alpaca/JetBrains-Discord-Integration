@@ -1,0 +1,6 @@
+name: WebP
+asset: webp
+parent: image
+match:
+  extension:
+    equals: .webp

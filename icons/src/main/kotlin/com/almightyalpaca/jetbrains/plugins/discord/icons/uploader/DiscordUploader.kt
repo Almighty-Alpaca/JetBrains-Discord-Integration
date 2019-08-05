@@ -58,8 +58,10 @@ import java.util.stream.Stream
 suspend fun main() {
     val token = System.getenv("DISCORD_TOKEN")!!
 
-    val connectionPool = ConnectionPool(150, 10, TimeUnit.SECONDS)
-    val threadPool = Executors.newCachedThreadPool()
+    val processes = Runtime.getRuntime().availableProcessors() * 2
+
+    val connectionPool = ConnectionPool(processes, 30, TimeUnit.SECONDS)
+    val threadPool = Executors.newFixedThreadPool(processes)
 
     HttpClient(OkHttp) {
         engine {
@@ -67,14 +69,14 @@ suspend fun main() {
                 cache(Cache(File("build/cache/uploader/discord"), 1024L * 1024L * 1024L)) // 1GiB
                 connectionPool(connectionPool)
                 dispatcher(Dispatcher(threadPool).apply {
-                    maxRequests = 150
-                    maxRequestsPerHost = 150
+                    maxRequests = 30
+                    maxRequestsPerHost = 30
                 })
 
-                callTimeout(60, TimeUnit.SECONDS)
-                connectTimeout(30, TimeUnit.SECONDS)
-                readTimeout(30, TimeUnit.SECONDS)
-                writeTimeout(30, TimeUnit.SECONDS)
+                callTimeout(30, TimeUnit.SECONDS)
+                connectTimeout(10, TimeUnit.SECONDS)
+                readTimeout(10, TimeUnit.SECONDS)
+                writeTimeout(10, TimeUnit.SECONDS)
             }
         }
         install(UserAgent)
@@ -121,8 +123,11 @@ suspend fun main() {
         }
     }
 
-    threadPool.shutdown() // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
     connectionPool.evictAll()
+    threadPool.shutdown() // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
+
+    threadPool.awaitTermination(30, TimeUnit.SECONDS)
+    threadPool.shutdownNow()
 }
 
 private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: String, source: Path) = launch {
