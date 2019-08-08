@@ -54,11 +54,10 @@ class FileData(
         Matcher.Target.PATH -> listOf(relativePathSane)
     }
 
-    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(projectBuilder, project, openedAt, accessedAt)
+    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(project, openedAt, accessedAt)
 }
 
 class FileDataBuilder(
-    val projectBuilder: ProjectDataBuilder,
     val project: Project,
     openedAt: OffsetDateTime = OffsetDateTime.now(),
     accessedAt: OffsetDateTime = openedAt

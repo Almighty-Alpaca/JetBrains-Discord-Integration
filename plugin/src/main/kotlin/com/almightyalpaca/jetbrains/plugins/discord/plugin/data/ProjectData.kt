@@ -19,7 +19,9 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.NonPhysicalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
 import java.time.OffsetDateTime
 
 class ProjectData(
@@ -33,12 +35,11 @@ class ProjectData(
     override val accessedAt: OffsetDateTime
         get() = files.maxBy { it.value.accessedAt }?.value?.accessedAt ?: openedAt
 
-    fun builder(applicationBuilder: ApplicationDataBuilder) = ProjectDataBuilder(applicationBuilder, platformProject, name, openedAt, files)
+    fun builder(applicationBuilder: ApplicationDataBuilder) = ProjectDataBuilder(platformProject, name, openedAt, files)
 }
 
 @Suppress("NAME_SHADOWING")
 class ProjectDataBuilder(
-    val applicationBuilder: ApplicationDataBuilder,
     var platformProject: Project,
     var name: String,
     openedAt: OffsetDateTime = OffsetDateTime.now(),
@@ -63,10 +64,10 @@ class ProjectDataBuilder(
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
         if (file?.checkValid() == true)
-            files.computeIfAbsent(file) { FileDataBuilder(this, platformProject) }.builder()
+            files.computeIfAbsent(file) { FileDataBuilder(platformProject) }.builder()
     }
 
-    private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.protocol.equals("dummy", true)
+    private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.isBlacklisted()
 
     fun update(file: VirtualFile?, builder: FileDataBuilder.() -> Unit) {
         if (file?.checkValid() == true)
@@ -80,4 +81,11 @@ class ProjectDataBuilder(
     operator fun contains(file: VirtualFile?) = file != null && file in files
 
     fun build() = ProjectData(platformProject, name, openedAt, files.map { file, data -> file to data.build(file) })
+
 }
+
+private val fileSystemBlacklist = hashSetOf(
+    "db" // Database Navigator plugin
+)
+
+private fun VirtualFileSystem.isBlacklisted() = this is NonPhysicalFileSystem || this.protocol in fileSystemBlacklist

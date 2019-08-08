@@ -76,10 +76,10 @@ suspend fun main() {
                     maxRequestsPerHost = 150
                 })
 
-                callTimeout(60, TimeUnit.SECONDS)
-                connectTimeout(30, TimeUnit.SECONDS)
-                readTimeout(30, TimeUnit.SECONDS)
-                writeTimeout(30, TimeUnit.SECONDS)
+                callTimeout(240, TimeUnit.SECONDS)
+                connectTimeout(120, TimeUnit.SECONDS)
+                readTimeout(120, TimeUnit.SECONDS)
+                writeTimeout(120, TimeUnit.SECONDS)
             }
         }
         install(Auth) {

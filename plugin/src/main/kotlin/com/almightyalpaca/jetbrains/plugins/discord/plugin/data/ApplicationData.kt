@@ -72,7 +72,7 @@ class ApplicationDataBuilder(var id: String, var name: String, var version: Stri
         }
 
     fun add(project: Project?, builder: ProjectDataBuilder.() -> Unit = {}) {
-        project?.let { projects.computeIfAbsent(project) { ProjectDataBuilder(this, project, project.name) }.builder() }
+        project?.let { projects.computeIfAbsent(project) { ProjectDataBuilder(project, project.name) }.builder() }
     }
 
     fun update(project: Project?, builder: ProjectDataBuilder.() -> Unit) {
