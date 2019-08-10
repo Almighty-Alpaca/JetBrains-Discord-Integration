@@ -24,7 +24,14 @@ import javax.imageio.ImageIO
 
 class LocalAsset(private val source: LocalSource, id: String, theme: Theme, private val applicationCode: String) : AbstractAsset(id, theme) {
     override fun getImage(size: Int?): BufferedImage? = when (id) {
-        "application" -> source.pathApplications.resolve("$applicationCode.png")
+        "application" -> {
+            val application = source.pathApplications.resolve("${theme.id}/$applicationCode.png")
+            if (Files.exists(application)) {
+                application
+            } else {
+                source.pathApplications.resolve("$applicationCode.png")
+            }
+        }
         else -> source.pathThemes.resolve("${theme.id}/$id.png")
     }.let { p -> Files.newInputStream(p) }.use(ImageIO::read)
 }

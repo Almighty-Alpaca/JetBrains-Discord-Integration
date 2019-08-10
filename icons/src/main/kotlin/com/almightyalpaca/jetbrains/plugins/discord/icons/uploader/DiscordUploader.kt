@@ -220,13 +220,20 @@ private fun CoroutineScope.contentEqualsAsync(client: HttpClient, local: Path?, 
 private fun getAssetUrl(appId: Long, iconId: Long?) = URL("https://cdn.discordapp.com/app-assets/$appId/$iconId.png?size=1024")
 
 private fun CoroutineScope.getLocalIconsAsync(appCode: String, theme: String) = async(Dispatchers.IO) {
-    val application = Stream.of("application" to Paths.get("applications/$appCode.png"))
-    val icons = Files.list(Paths.get("themes/$theme"))
+
+    var application = Paths.get("applications/$theme/$appCode.png")
+    if (!Files.exists(application)) {
+        application = Paths.get("applications/$appCode.png")
+    }
+
+    val applicationStream = Stream.of("application" to application)
+
+    val iconStream = Files.list(Paths.get("themes/$theme"))
         .filter { p -> Files.isRegularFile(p) }
         .filter { p -> p.name.endsWith(".png") }
         .map { p -> p.name.substring(0, p.name.length - 4) to p }
 
-    Stream.concat(application, icons).toMap()
+    Stream.concat(applicationStream, iconStream).toMap()
 }
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
