@@ -64,7 +64,7 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
     }
 
     private fun readDiscordLinux(): DiagnoseComponent.Discord {
-        val process = Runtime.getRuntime().exec("ps -aux")
+        val process = Runtime.getRuntime().exec("ps ax")
         process.waitFor()
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
@@ -74,7 +74,7 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
 
         if (lines.isBlank()) {
             return DiagnoseComponent.Discord.CLOSED
-        } else if (lines.contains("snap", true)) {
+        } else if (lines.contains("/snap/discord/", true)) {
             return DiagnoseComponent.Discord.SNAP
         }
 
