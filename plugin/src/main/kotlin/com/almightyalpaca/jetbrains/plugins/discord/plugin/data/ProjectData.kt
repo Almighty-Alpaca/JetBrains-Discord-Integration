@@ -35,7 +35,7 @@ class ProjectData(
     override val accessedAt: OffsetDateTime
         get() = files.maxBy { it.value.accessedAt }?.value?.accessedAt ?: openedAt
 
-    fun builder(applicationBuilder: ApplicationDataBuilder) = ProjectDataBuilder(platformProject, name, openedAt, files)
+    fun builder() = ProjectDataBuilder(platformProject, name, openedAt, files)
 }
 
 @Suppress("NAME_SHADOWING")
@@ -45,7 +45,7 @@ class ProjectDataBuilder(
     openedAt: OffsetDateTime = OffsetDateTime.now(),
     files: Map<VirtualFile, FileData> = emptyMap()
 ) {
-    private val files = mutableMapOf(*files.map { (k, v) -> k to v.builder(this) }.toTypedArray())
+    private val files = mutableMapOf(*files.map { (k, v) -> k to v.builder() }.toTypedArray())
 
     var openedAt = openedAt
         set(value) {

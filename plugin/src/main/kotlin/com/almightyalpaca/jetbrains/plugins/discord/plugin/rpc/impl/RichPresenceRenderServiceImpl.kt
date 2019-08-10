@@ -35,65 +35,68 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService, CoroutineScope 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + parentJob
 
+    private var renderJob: Job? = null
     private var timeoutJob: Job? = null
 
     private var isTimeout = false
 
     @Synchronized
     override fun render() {
-        timeoutJob?.cancel()
+        renderJob?.cancel()
+        renderJob = launch {
+            timeoutJob?.cancel()
 
-        val component = ApplicationComponent.instance
+            val component = ApplicationComponent.instance
+            val context = RenderContext(component.source, component.data, Renderer.Mode.NORMAL)
 
-        val context = RenderContext(component.source, component.data, Renderer.Mode.NORMAL)
+            var shouldRender = true
 
-        var shouldRender = true
-
-        if (!settings.show.get()) {
-            shouldRender = false
-        }
-
-        if (settings.timeoutEnabled.get()) {
-            val lastAccessedAt = (context.file ?: context.project ?: context.application).accessedAt
-            val durationUntilTimeout = Duration.between(lastAccessedAt, OffsetDateTime.now())
-
-            if (durationUntilTimeout.toMinutes() >= settings.timeoutMinutes.get()) {
+            if (!settings.show.get()) {
                 shouldRender = false
-                isTimeout = true
+            }
+
+            if (settings.timeoutEnabled.get()) {
+                val lastAccessedAt = (context.file ?: context.project ?: context.application).accessedAt
+                val durationUntilTimeout = Duration.between(lastAccessedAt, OffsetDateTime.now())
+
+                if (durationUntilTimeout.toMinutes() >= settings.timeoutMinutes.get()) {
+                    shouldRender = false
+                    isTimeout = true
+                } else {
+                    if (!isTimeout) {
+                        timeoutJob = launch {
+                            val delay = Duration.ofMinutes(settings.timeoutMinutes.get().toLong()).minus(durationUntilTimeout).toMillis()
+                            delay(delay)
+
+                            timeoutJob = null
+                            render()
+                        }
+                    }
+                }
+            }
+
+            if (isTimeout && shouldRender) {
+                isTimeout = false
+
+                if (settings.timeoutResetTimeEnabled.get()) {
+                    launch {
+                        component.app {
+                            openedAt = OffsetDateTime.now()
+                        }
+                    }
+
+                    return@launch
+                }
+            }
+
+            if (shouldRender) {
+                val renderer = context.createRenderer()
+                val presence = renderer.render()
+
+                RichPresenceService.instance.update(presence)
             } else {
-                if (!isTimeout) {
-                    timeoutJob = launch {
-                        val delay = Duration.ofMinutes(settings.timeoutMinutes.get().toLong()).minus(durationUntilTimeout).toMillis()
-                        delay(delay)
-
-                        timeoutJob = null
-                        render()
-                    }
-                }
+                RichPresenceService.instance.update(null)
             }
-        }
-
-        if (isTimeout && shouldRender) {
-            isTimeout = false
-
-            if (settings.timeoutResetTimeEnabled.get()) {
-                launch {
-                    component.app {
-                        openedAt = OffsetDateTime.now()
-                    }
-                }
-
-                return
-            }
-        }
-
-        if (shouldRender) {
-            val renderer = context.createRenderer()
-            val presence = renderer.render()
-
-            RichPresenceService.instance.update(presence)
-        } else {
-            RichPresenceService.instance.update(null)
         }
     }
 

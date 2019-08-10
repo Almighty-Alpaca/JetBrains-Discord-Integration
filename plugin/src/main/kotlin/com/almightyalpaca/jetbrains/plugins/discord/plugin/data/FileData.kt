@@ -54,7 +54,7 @@ class FileData(
         Matcher.Target.PATH -> listOf(relativePathSane)
     }
 
-    fun builder(projectBuilder: ProjectDataBuilder) = FileDataBuilder(project, openedAt, accessedAt)
+    fun builder() = FileDataBuilder(project, openedAt, accessedAt)
 }
 
 class FileDataBuilder(

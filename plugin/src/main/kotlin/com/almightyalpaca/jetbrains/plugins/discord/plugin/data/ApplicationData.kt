@@ -54,7 +54,7 @@ class ApplicationData(
 }
 
 class ApplicationDataBuilder(var id: String, var name: String, var version: String, openedAt: OffsetDateTime = OffsetDateTime.now(), projects: Map<Project, ProjectData> = emptyMap()) {
-    private val projects = mutableMapOf(*projects.map { (k, v) -> k to v.builder(this) }.toTypedArray())
+    private val projects = mutableMapOf(*projects.map { (k, v) -> k to v.builder() }.toTypedArray())
 
     val accessedAt
         get() = maxNullable(projects.values.asSequence()

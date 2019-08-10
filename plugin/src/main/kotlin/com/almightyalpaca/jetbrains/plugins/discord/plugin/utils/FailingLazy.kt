@@ -20,15 +20,15 @@ interface FailingLazy<out T> : Lazy<T>
 
 fun <T> failingLazy(default: T, initializer: () -> T): FailingLazy<T> = FailingLazyImpl(default, initializer)
 
-private object UNINITIALIZED_VALUE
+private object UNINITIALIZED
 
 private class FailingLazyImpl<out T>(private val default: T, initializer: () -> T) : FailingLazy<T> {
     private var initializer: (() -> T)? = initializer
-    private var _value: Any? = UNINITIALIZED_VALUE
+    private var _value: Any? = UNINITIALIZED
 
     override val value: T
         get() {
-            if (_value === UNINITIALIZED_VALUE) {
+            if (_value === UNINITIALIZED) {
                 try {
                     _value = initializer!!()
                     initializer = null
@@ -41,7 +41,7 @@ private class FailingLazyImpl<out T>(private val default: T, initializer: () -> 
             return _value as T
         }
 
-    override fun isInitialized(): Boolean = _value !== UNINITIALIZED_VALUE
+    override fun isInitialized(): Boolean = _value !== UNINITIALIZED
 
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 }

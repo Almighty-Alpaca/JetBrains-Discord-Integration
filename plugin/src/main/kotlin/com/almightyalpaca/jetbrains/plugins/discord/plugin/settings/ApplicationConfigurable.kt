@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
