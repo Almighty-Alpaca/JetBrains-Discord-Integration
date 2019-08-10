@@ -42,6 +42,7 @@ import kotlinx.coroutines.supervisorScope
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
+import okhttp3.Protocol
 import org.apache.commons.io.FilenameUtils
 import java.io.File
 import java.nio.ByteBuffer
@@ -55,8 +56,16 @@ import java.util.stream.Stream
 @KtorExperimentalAPI
 @InternalAPI
 suspend fun main() {
-    val connectionPool = ConnectionPool(150, 10, TimeUnit.SECONDS)
-    val threadPool = Executors.newCachedThreadPool()
+    val parallelism = 15
+
+    val connectionPool = ConnectionPool(parallelism, 30, TimeUnit.SECONDS)
+    val threadPool = Executors.newCachedThreadPool { run ->
+        val thread = Thread(run)
+
+        thread.isDaemon = true
+
+        return@newCachedThreadPool thread
+    }
 
     val user = "almightyalpaca"
     val repository = "JetBrains-Discord-Integration"
@@ -72,14 +81,16 @@ suspend fun main() {
                 cache(Cache(File("build/cache/uploader/bintray"), 1024L * 1024L * 1024L)) // 1GiB
                 connectionPool(connectionPool)
                 dispatcher(Dispatcher(threadPool).apply {
-                    maxRequests = 150
-                    maxRequestsPerHost = 150
+                    maxRequests = parallelism
+                    maxRequestsPerHost = parallelism
                 })
 
-                callTimeout(240, TimeUnit.SECONDS)
-                connectTimeout(120, TimeUnit.SECONDS)
-                readTimeout(120, TimeUnit.SECONDS)
-                writeTimeout(120, TimeUnit.SECONDS)
+                callTimeout(10, TimeUnit.SECONDS)
+                connectTimeout(10, TimeUnit.SECONDS)
+                readTimeout(10, TimeUnit.SECONDS)
+                writeTimeout(10, TimeUnit.SECONDS)
+
+                protocols(listOf(Protocol.HTTP_1_1)) // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
             }
         }
         install(Auth) {
@@ -104,9 +115,6 @@ suspend fun main() {
             }
         }
     }
-
-    threadPool.shutdown() // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
-    connectionPool.evictAll()
 }
 
 private suspend fun HttpClient.createVersion(user: String, repository: String, `package`: String, version: String) {

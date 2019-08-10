@@ -42,6 +42,7 @@ import kotlinx.coroutines.io.jvm.javaio.toInputStream
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
+import okhttp3.Protocol
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.net.URL
@@ -58,10 +59,16 @@ import java.util.stream.Stream
 suspend fun main() {
     val token = System.getenv("DISCORD_TOKEN")!!
 
-    val processes = Runtime.getRuntime().availableProcessors() * 2
+    val parallelism = 15
 
-    val connectionPool = ConnectionPool(processes, 30, TimeUnit.SECONDS)
-    val threadPool = Executors.newFixedThreadPool(processes)
+    val connectionPool = ConnectionPool(parallelism, 30, TimeUnit.SECONDS)
+    val threadPool = Executors.newCachedThreadPool { run ->
+        val thread = Thread(run)
+
+        thread.isDaemon = true
+
+        return@newCachedThreadPool thread
+    }
 
     HttpClient(OkHttp) {
         engine {
@@ -69,14 +76,16 @@ suspend fun main() {
                 cache(Cache(File("build/cache/uploader/discord"), 1024L * 1024L * 1024L)) // 1GiB
                 connectionPool(connectionPool)
                 dispatcher(Dispatcher(threadPool).apply {
-                    maxRequests = 30
-                    maxRequestsPerHost = 30
+                    maxRequests = parallelism
+                    maxRequestsPerHost = parallelism
                 })
 
-                callTimeout(30, TimeUnit.SECONDS)
+                callTimeout(10, TimeUnit.SECONDS)
                 connectTimeout(10, TimeUnit.SECONDS)
                 readTimeout(10, TimeUnit.SECONDS)
                 writeTimeout(10, TimeUnit.SECONDS)
+
+                protocols(listOf(Protocol.HTTP_1_1)) // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
             }
         }
         install(UserAgent)
@@ -122,12 +131,6 @@ suspend fun main() {
             }
         }
     }
-
-    connectionPool.evictAll()
-    threadPool.shutdown() // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
-
-    threadPool.awaitTermination(30, TimeUnit.SECONDS)
-    threadPool.shutdownNow()
 }
 
 private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: String, source: Path) = launch {
@@ -173,7 +176,7 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
             val all = local.await().keys + discord.await().keys
 
             for (icon in all) {
-                println("Comparing ${theme.id}/$icon ($appCode)")
+                // println("Comparing ${theme.id}/$icon ($appCode)")
                 when (icon) {
                     !in discord.await() -> {
                         println("Create ${theme.id}/$icon ($appCode)")
@@ -189,7 +192,7 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
                                 println("Override ${theme.id}/$icon ($appCode)")
                                 changes += DiscordChange.Override(appId, discord.await().getValue(icon), local.await().getValue(icon), icon)
                             } else {
-                                println("Nothing ${theme.id}/$icon ($appCode)")
+                                // println("Nothing ${theme.id}/$icon ($appCode)")
                             }
                         }
                     }
