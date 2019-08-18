@@ -40,20 +40,18 @@ dependencies {
 }
 
 tasks {
-    val `graphs-dot` by registering(JavaExec::class) task@{
-        group = "icons"
-
+    val graphsDot by registering(JavaExec::class) task@{
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.graphs.GraphsKt"
     }
 
-    val graphs by registering task@{
+    create("graphs") {
         group = "icons"
 
-        dependsOn(`graphs-dot`)
+        dependsOn(graphsDot)
 
         doLast {
-            val files = project.file("build/graphs").listFiles()
+            val files = project.file("build/graphs").listFiles()!!
                 .filter { f -> f.isFile }
                 .map { f -> f.nameWithoutExtension }
             for (file in files) {
@@ -65,74 +63,68 @@ tasks {
         }
     }
 
-    val `validate-languages` by registering(JavaExec::class) task@{
-        group = "icons"
+    val checkLanguages by registering(JavaExec::class) task@{
+        group = "verification"
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.validator.LanguageValidatorKt"
     }
 
-    val `validate-icons` by registering(JavaExec::class) task@{
-        group = "icons"
+    val checkIcons by registering(JavaExec::class) task@{
+        group = "verification"
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.validator.IconValidatorKt"
     }
 
-    val validate by registering task@{
-        group = "icons"
-
-        dependsOn(`validate-languages`)
-        dependsOn(`validate-icons`)
+    check {
+        dependsOn(checkLanguages)
+        dependsOn(checkIcons)
     }
 
-    val `find-unused-icons` by registering(JavaExec::class) task@{
+    create<JavaExec>("checkUnusedIcons") task@{
         group = "icons"
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.find.UnusedIconFinderKt"
     }
 
-    val find by registering task@{
+    fun Task.checkTokens() {
+        if (!project.extra.has("DISCORD_TOKEN") || !project.extra.has("BINTRAY_KEY")) {
+            enabled = false
+        }
+    }
+
+    val uploadIcons by registering(JavaExec::class) task@{
         group = "icons"
 
-        dependsOn(`find-unused-icons`)
+        dependsOn(checkIcons)
+        checkTokens()
+
+        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+        main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
+
+        environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
     }
 
-    test {
-        dependsOn(validate)
+    val uploadLanguages by registering(JavaExec::class) task@{
+        group = "icons"
+
+        dependsOn(checkLanguages)
+        checkTokens()
+
+        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+        main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
+
+        environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
     }
 
-    if (project.extra.has("DISCORD_TOKEN") && project.extra.has("BINTRAY_KEY")) {
-        val `upload-icons` by registering(JavaExec::class) task@{
-            group = "icons"
+    create("upload") {
+        group = "icons"
 
-            dependsOn(`validate-icons`)
+        dependsOn(check)
 
-            sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-            main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
-
-            environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
-        }
-
-        val `upload-languages` by registering(JavaExec::class) task@{
-            group = "icons"
-
-            dependsOn(`validate-languages`)
-
-            sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-            main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
-
-            environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
-        }
-
-        val upload by registering task@{
-            group = "icons"
-
-            dependsOn(validate)
-
-            dependsOn(`upload-languages`)
-            dependsOn(`upload-icons`)
-        }
+        dependsOn(uploadLanguages)
+        dependsOn(uploadIcons)
     }
 }

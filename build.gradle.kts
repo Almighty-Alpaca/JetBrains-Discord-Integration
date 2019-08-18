@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
 import com.palantir.gradle.gitversion.VersionDetails
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Files
 
 plugins {
-    kotlin("jvm") version "1.3.41" apply false
-    id("com.github.ben-manes.versions") version "0.21.0"
-    id("org.jetbrains.intellij") version "0.4.9" apply false
-    id("com.github.johnrengelman.shadow") version "5.1.0" apply false
-    id("com.palantir.git-version") version "0.11.0"
-    id("com.github.hierynomus.license") version "0.15.0"
+    kotlin("jvm") apply false
+    id("com.github.ben-manes.versions")
+    id("com.palantir.git-version")
+    id("com.github.hierynomus.license") // TODO
+//    id("com.palantir.consistent-versions")
+//    id("com.palantir.baseline-exact-dependencies")
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
@@ -37,14 +39,16 @@ project.version = when (versionDetails.lastTag.endsWith(version)) {
     true -> version
 }
 
-subprojects {
-    group = rootProject.group.toString() + "." + project.name.toLowerCase()
-    version = rootProject.version
-
+allprojects {
     repositories {
         mavenCentral()
         jcenter()
     }
+}
+
+subprojects {
+    group = rootProject.group.toString() + "." + project.name.toLowerCase()
+    version = rootProject.version
 
     val secrets = rootProject.file("secrets.gradle.kts")
     if (secrets.exists()) {
@@ -75,6 +79,8 @@ defaultTasks = mutableListOf("default")
 
 tasks {
     dependencyUpdates {
+        gradleReleaseChannel = GradleReleaseChannel.CURRENT.toString()
+
         resolutionStrategy {
             componentSelection {
                 all {
@@ -89,11 +95,15 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "5.5.1"
+        gradleVersion = "5.6"
     }
 
-    val clean by registering(Delete::class) {
-        group = "build"
+    create<Delete>("clean") {
+        val regex = Regex("""JetBrains-Discord-Integration-Plugin-(\d+).(\d+).(\d+)(?:-eap-(\d+))?.zip""")
+
+        Files.newDirectoryStream(project.projectDir.toPath())
+            .filter { p -> regex.matches(p.fileName.toString()) }
+            .forEach { p -> delete.add(p) }
 
         delete.add(project.buildDir)
     }

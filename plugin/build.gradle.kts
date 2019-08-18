@@ -17,6 +17,7 @@
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.intellij.IntelliJPluginExtension
+import org.jetbrains.intellij.tasks.BuildSearchableOptionsTask
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jsoup.Jsoup
 
@@ -27,7 +28,8 @@ plugins {
 }
 
 dependencies {
-    compile(kotlin("stdlib-jdk8"))
+    compile(kotlin(module = "stdlib-jdk8"))
+
     compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.2")
 
     compile(project(":shared")) {
@@ -36,7 +38,7 @@ dependencies {
 
     compile(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "4.0.1")
+    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "4.1.0")
 
     compile(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
@@ -46,7 +48,6 @@ val isCI by lazy { System.getenv("CI") != null }
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
     version = "IU-2018.3.4"
-    // version = "191.7479.19"
 
     downloadSources = !isCI
 
@@ -79,7 +80,8 @@ tasks {
     publishPlugin {
         token(project.extra["JETBRAINS_TOKEN"])
 
-        channels("EAP")
+        if ((version as String).contains("eap"))
+            channels("EAP")
     }
 
     prepareSandbox task@{
@@ -98,9 +100,9 @@ tasks {
         dependsOn(verifyPlugin)
     }
 
-    fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
-
     shadowJar task@{
+        fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
+
         mergeServiceFiles()
 
         prefix("org.yaml.snakeyaml")
@@ -139,37 +141,43 @@ tasks {
             expand("changes" to list.toString())
         }
     }
-}
 
-operator fun MatchResult.get(i: Int) = groupValues[i]
+    withType<BuildSearchableOptionsTask> {
+
+    }
+}
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
 
-fun readInfoFile(file: File) = file.readText()
-    // Remove unnecessary whitespace
-    .trim()
+fun readInfoFile(file: File): String {
+    operator fun MatchResult.get(i: Int) = groupValues[i]
 
-    // Replace headlines
-    .replace(Regex("(\\r?\\n|^)##(.*)(\\r?\\n|\$)")) { match -> "${match[1]}<b>${match[2]}</b>${match[3]}" }
+    return file.readText()
+        // Remove unnecessary whitespace
+        .trim()
 
-    // Replace issue links
-    .replace(Regex("\\[([^\\[]+)\\]\\(([^\\)]+)\\)")) { match -> "<a href=\"${match[2]}\">${match[1]}</a>" }
-    .replace(Regex("\\(#([0-9]+)\\)")) { match -> "(<a href=\"$github/issues/${match[1]}\">#${match[1]}</a>)" }
+        // Replace headlines
+        .replace(Regex("(\\r?\\n|^)##(.*)(\\r?\\n|\$)")) { match -> "${match[1]}<b>${match[2]}</b>${match[3]}" }
 
-    // Replace inner lists
-    .replace(Regex("\r?\n  - (.*)")) { match -> "<li>${match[1]}</li>" }
-    .replace(Regex("((?:<li>.*</li>)+)")) { match -> "<ul>${match[1]}</ul>" }
+        // Replace issue links
+        .replace(Regex("\\[([^\\[]+)\\]\\(([^\\)]+)\\)")) { match -> "<a href=\"${match[2]}\">${match[1]}</a>" }
+        .replace(Regex("\\(#([0-9]+)\\)")) { match -> "(<a href=\"$github/issues/${match[1]}\">#${match[1]}</a>)" }
 
-    // Replace lists
-    .replace(Regex("\r?\n- (.*)")) { match -> "<li>${match[1]}</li>" }
-    .replace(Regex("((?:<li>.*</li>)+)")) { match -> "<ul>${match[1]}</ul>" }
-    .replace(Regex("\\s*<li>\\s*"), "<li>")
-    .replace(Regex("\\s*</li>\\s*"), "</li>")
-    .replace(Regex("\\s*<ul>\\s*"), "<ul>")
-    .replace(Regex("\\s*</ul>\\s*"), "</ul>")
+        // Replace inner lists
+        .replace(Regex("\r?\n  - (.*)")) { match -> "<li>${match[1]}</li>" }
+        .replace(Regex("((?:<li>.*</li>)+)")) { match -> "<ul>${match[1]}</ul>" }
 
-    // Replace newlines
-    .replace("\n", "<br>")
+        // Replace lists
+        .replace(Regex("\r?\n- (.*)")) { match -> "<li>${match[1]}</li>" }
+        .replace(Regex("((?:<li>.*</li>)+)")) { match -> "<ul>${match[1]}</ul>" }
+        .replace(Regex("\\s*<li>\\s*"), "<li>")
+        .replace(Regex("\\s*</li>\\s*"), "</li>")
+        .replace(Regex("\\s*<ul>\\s*"), "<ul>")
+        .replace(Regex("\\s*</ul>\\s*"), "</ul>")
+
+        // Replace newlines
+        .replace("\n", "<br>")
+}
 
 tasks {
     //fun showHtml(html: String) = JFrame("Changelog").apply {
