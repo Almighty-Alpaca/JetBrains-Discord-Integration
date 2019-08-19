@@ -1,0 +1,6 @@
+name: ANTLR
+asset: antlr
+parent: text
+match:
+  extension:
+    equals: .g4
