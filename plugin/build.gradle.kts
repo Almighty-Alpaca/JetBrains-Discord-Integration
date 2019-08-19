@@ -27,20 +27,25 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
+val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
+
 dependencies {
-    compile(kotlin(module = "stdlib-jdk8"))
+    implementation(kotlin(module = "stdlib"))
 
-    compile(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.2")
 
-    compile(project(":shared")) {
+    implementation(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }
 
-    compile(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.9.9")
 
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "4.1.0")
+    implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    compile(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.1.0")
+
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
 
 val isCI by lazy { System.getenv("CI") != null }
@@ -55,6 +60,8 @@ configure<IntelliJPluginExtension> {
 
     sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
 
+    instrumentCode = false
+
     // For testing with a custom theme
     // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
 }
@@ -62,12 +69,21 @@ configure<IntelliJPluginExtension> {
 project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
 
 tasks {
+    checkUnusedDependencies {
+        ignore("com.jetbrains", "ideaIU")
+    }
+
+    checkImplicitDependencies {
+        ignore("org.jetbrains", "annotations")
+    }
+
     patchPluginXml {
         changeNotes(readInfoFile(rootProject.file("CHANGELOG.md")))
         pluginDescription(readInfoFile(rootProject.file("DESCRIPTION.md")))
     }
 
     withType<RunIdeTask> {
+        // enable logging
         environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.logging"] = "true"
 
         // use local icons
@@ -145,9 +161,23 @@ tasks {
     withType<BuildSearchableOptionsTask> {
 
     }
-}
 
-val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
+    create("printChangelog") {
+        group = "markdown"
+
+        doLast {
+            println(readInfoFile(rootProject.file("CHANGELOG.md")))
+        }
+    }
+
+    create ("printDescription"){
+        group = "markdown"
+
+        doLast {
+            println(readInfoFile(rootProject.file("DESCRIPTION.md")))
+        }
+    }
+}
 
 fun readInfoFile(file: File): String {
     operator fun MatchResult.get(i: Int) = groupValues[i]
@@ -177,49 +207,4 @@ fun readInfoFile(file: File): String {
 
         // Replace newlines
         .replace("\n", "<br>")
-}
-
-tasks {
-    //fun showHtml(html: String) = JFrame("Changelog").apply {
-    //    defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-    //    contentPane = JScrollPane(JLabel("<html>" + html))
-    //    java.awt.Dimension screenSize = Toolkit . defaultToolkit . screenSize
-    //            preferredSize = java.awt.Dimension((screenSize.width / 2).intValue(), (screenSize.height / 2).intValue())
-    //    location = java.awt.Point((screenSize.width / 4).intValue(), (screenSize.height / 4).intValue())
-    //    alwaysOnTop = true
-    //    pack()
-    //    visible = true
-    //}
-
-    //tasks.create(name: "showChangelog") {
-    //    group = "markdown"
-    //
-    //    doLast {
-    //        showHtml(readInfoFile("CHANGELOG.md") as String)
-    //    }
-    //}
-
-    val printChangelog by registering {
-        group = "markdown"
-
-        doLast {
-            println(readInfoFile(rootProject.file("CHANGELOG.md")))
-        }
-    }
-
-    //tasks.create(name: "showDescription") {
-    //    group = "markdown"
-    //
-    //    doLast {
-    //        showHtml(readInfoFile("DESCRIPTION.md") as String)
-    //    }
-    //}
-
-    val printDescription by registering {
-        group = "markdown"
-
-        doLast {
-            println(readInfoFile(rootProject.file("DESCRIPTION.md")))
-        }
-    }
 }

@@ -30,16 +30,32 @@ repositories {
 }
 
 dependencies {
-    compile(project(":shared"))
+    implementation(project(":shared"))
 
-    compile(group = "org.apache.commons", name = "commons-text", version = "1.7")
+    implementation(kotlin("stdlib"))
 
-    compile(group = "io.ktor", name = "ktor-client-core", version = "1.2.3")
-    compile(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.3")
-    compile(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.3")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-io-jvm", version = "0.1.13")
+
+    implementation(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.3")
+    implementation(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.3")
+    implementation(group = "io.ktor", name = "ktor-client-core-jvm", version = "1.2.3")
+    implementation(group = "io.ktor", name = "ktor-http-jvm", version = "1.2.3")
+    implementation(group = "io.ktor", name = "ktor-utils-jvm", version = "1.2.3")
+
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.1.0")
+
+    implementation(group = "org.apache.commons", name = "commons-text", version = "1.7")
+    implementation(group = "commons-io", name = "commons-io", version = "2.6")
+
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9.3")
 }
 
 tasks {
+    checkImplicitDependencies {
+        ignore("org.jetbrains", "annotations")
+    }
+
     val graphsDot by registering(JavaExec::class) task@{
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.graphs.GraphsKt"
@@ -83,7 +99,7 @@ tasks {
     }
 
     create<JavaExec>("checkUnusedIcons") task@{
-        group = "icons"
+        group = "verification"
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.find.UnusedIconFinderKt"

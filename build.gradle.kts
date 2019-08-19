@@ -24,9 +24,7 @@ plugins {
     kotlin("jvm") apply false
     id("com.github.ben-manes.versions")
     id("com.palantir.git-version")
-    id("com.github.hierynomus.license") // TODO
-//    id("com.palantir.consistent-versions")
-//    id("com.palantir.baseline-exact-dependencies")
+    id("com.palantir.baseline-exact-dependencies")
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
@@ -47,6 +45,8 @@ allprojects {
 }
 
 subprojects {
+    apply(plugin = "com.palantir.baseline-exact-dependencies")
+
     group = rootProject.group.toString() + "." + project.name.toLowerCase()
     version = rootProject.version
 
@@ -99,6 +99,8 @@ tasks {
     }
 
     create<Delete>("clean") {
+        group = "build"
+        
         val regex = Regex("""JetBrains-Discord-Integration-Plugin-(\d+).(\d+).(\d+)(?:-eap-(\d+))?.zip""")
 
         Files.newDirectoryStream(project.projectDir.toPath())

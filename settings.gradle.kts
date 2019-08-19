@@ -38,7 +38,5 @@ pluginManagement {
         id("com.github.johnrengelman.shadow") version "5.1.0"
         id("com.palantir.git-version") version "0.11.0"
         id("com.palantir.baseline-exact-dependencies") version "1.12.0"
-
-        id("com.github.hierynomus.license") version "0.15.0" // TODO
     }
 }
