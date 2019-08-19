@@ -1,9 +1,13 @@
-## v1.0.0 - Reborn like a phoenix
+## v1.0.0 - Better than ever before
 - Brand new codebase written in Kotlin
 - Support for multiple icon themes
-- More customizable presence than ever before
-- New language support doesn't require a plugin update anymore
-
+- Customize every aspect of the rich presence
+- Beautiful preview in settings
+- Support for project descriptions
+- Whole new language detection with support for a wide range of languages and frameworks 
+- Adding more languages is now possible in a matter of seconds without a new plugin update  
+- And so much more I can't even remember what already existed before and what didn't
+ 
 ## v0.9.0 - More settings & languages, less bugs
 - Added F# (#43)
 - Added additional C# file extensions (#43)

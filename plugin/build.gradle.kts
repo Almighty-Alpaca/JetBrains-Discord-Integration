@@ -78,8 +78,8 @@ tasks {
     }
 
     patchPluginXml {
-        changeNotes(readInfoFile(rootProject.file("CHANGELOG.md")))
-        pluginDescription(readInfoFile(rootProject.file("DESCRIPTION.md")))
+        changeNotes(readInfoFile(project.file("CHANGELOG.md")))
+        pluginDescription(readInfoFile(project.file("DESCRIPTION.md")))
     }
 
     withType<RunIdeTask> {
@@ -150,7 +150,7 @@ tasks {
 
     processResources {
         filesMatching("/discord/changes.html") {
-            val document = Jsoup.parse(readInfoFile(rootProject.file("CHANGELOG.md")))
+            val document = Jsoup.parse(readInfoFile(project.file("CHANGELOG.md")))
             val body = document.getElementsByTag("body")[0]
             val list = body.getElementsByTag("ul")[0]
 
@@ -166,7 +166,7 @@ tasks {
         group = "markdown"
 
         doLast {
-            println(readInfoFile(rootProject.file("CHANGELOG.md")))
+            println(readInfoFile(project.file("CHANGELOG.md")))
         }
     }
 
@@ -174,7 +174,7 @@ tasks {
         group = "markdown"
 
         doLast {
-            println(readInfoFile(rootProject.file("DESCRIPTION.md")))
+            println(readInfoFile(project.file("DESCRIPTION.md")))
         }
     }
 }
