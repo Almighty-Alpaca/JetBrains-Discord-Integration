@@ -16,6 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getComponent
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.project.Project
 
 interface ProjectNotificationComponent : ProjectComponent
+
+val Project.notifications: ProjectNotificationComponent
+    get() = this.getComponent()

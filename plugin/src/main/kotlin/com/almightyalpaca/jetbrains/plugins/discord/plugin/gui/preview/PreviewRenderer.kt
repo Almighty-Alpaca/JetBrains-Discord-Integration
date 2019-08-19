@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.blurple
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.darkOverlay
@@ -71,10 +71,6 @@ class PreviewRenderer {
     private val font14MediumMetrics: FontMetrics = image.graphics.getFontMetrics(font14Medium)
     private val font11BlackMetrics: FontMetrics = image.graphics.getFontMetrics(font11Black)
 
-    private val font16BoldHeight: Int = font16BoldMetrics.height
-    private val font16RegularHeight: Int = font16RegularMetrics.ascent
-    private val font14BoldHeight: Int = font14BoldMetrics.height
-    private val font14MediumHeight: Int = font14MediumMetrics.height
     private val font11BlackHeight: Int = font11BlackMetrics.height
 
     private val font16BoldBaseline: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading
@@ -83,16 +79,12 @@ class PreviewRenderer {
     private val font14MediumBaseline: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading
     private val font11BlackBaseline: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading
 
-    private val font16BoldMaxHeight: Int = font16BoldMetrics.maxAscent + font16BoldMetrics.leading + font16BoldMetrics.maxDescent
-    private val font16RegularMaxHeight: Int = font16RegularMetrics.maxAscent + font16RegularMetrics.leading + font16RegularMetrics.maxDescent
     private val font14BoldMaxHeight: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading + font14BoldMetrics.maxDescent
     private val font14MediumMaxHeight: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
-    private val font11BlackMaxHeight: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading + font11BlackMetrics.maxDescent
 
     @Synchronized
     fun draw(force: Boolean = false): ModifiedImage {
-        val component = ApplicationComponent.instance
-        val context = RenderContext(component.source, component.data, Renderer.Mode.PREVIEW)
+        val context = RenderContext(applicationComponent.source, applicationComponent.data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
         val presence = renderer.render()
 
@@ -106,7 +98,7 @@ class PreviewRenderer {
         private var lastAvatarEmpty = true
 
         fun draw(image: BufferedImage, force: Boolean): Boolean {
-            val user = RichPresenceService.instance.user
+            val user = richPresenceService.user
 
             val avatar = when {
                 user != lastUser -> {
@@ -214,7 +206,7 @@ class PreviewRenderer {
 
                     font = font14Bold
                     color = whiteTranslucent80
-                    drawString(ApplicationComponent.instance.data.name, indentation + 3, sectionStart + font14BoldBaseline)
+                    drawString(applicationComponent.data.name, indentation + 3, sectionStart + font14BoldBaseline)
                 }
             }
 

@@ -18,8 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.NewProjectShow
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
@@ -37,4 +37,4 @@ class ProjectNotificationSettings : PersistentStateComponent<ProjectNotification
 }
 
 val Project.notificationSettings: ProjectNotificationSettings
-    get() = ServiceManager.getService(this, ProjectNotificationSettings::class.java)
+    get() = this.getService()

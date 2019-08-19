@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.services
 
-import com.intellij.openapi.components.ServiceManager
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lazyService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -30,9 +30,6 @@ interface UniqueFilePathBuilderService {
     fun getUniqueVirtualFilePath(project: Project, vFile: VirtualFile): String
 
     fun getUniqueVirtualFilePathWithinOpenedFileEditors(project: Project, vFile: VirtualFile): String
-
-    companion object {
-        val instance: UniqueFilePathBuilderService
-            get() = ServiceManager.getService(UniqueFilePathBuilderService::class.java)
-    }
 }
+
+val uniqueFilePathBuilderService: UniqueFilePathBuilderService by lazyService()

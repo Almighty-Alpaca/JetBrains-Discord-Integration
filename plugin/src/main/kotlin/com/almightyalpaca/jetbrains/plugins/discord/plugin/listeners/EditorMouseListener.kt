@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -29,7 +29,7 @@ class EditorMouseListener : com.intellij.openapi.editor.event.EditorMouseListene
         val project = event.editor.project
         val file = FileDocumentManager.getInstance().getFile(event.editor.document)
 
-        ApplicationComponent.instance.app {
+        applicationComponent.app {
             update(project) {
                 update(file) {
                     accessedAt = OffsetDateTime.now()

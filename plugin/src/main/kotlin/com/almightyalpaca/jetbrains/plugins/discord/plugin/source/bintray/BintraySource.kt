@@ -42,9 +42,9 @@ class BintraySource(location: String) : Source, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + parentJob
 
-    internal val user: String
-    internal val repository: String
-    internal val `package`: String
+    private val user: String
+    private val repository: String
+    private val `package`: String
 
     private val client: OkHttpClient
 

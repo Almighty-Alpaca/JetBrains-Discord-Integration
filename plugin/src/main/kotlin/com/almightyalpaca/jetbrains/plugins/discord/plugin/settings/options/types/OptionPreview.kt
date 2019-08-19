@@ -34,11 +34,11 @@ import kotlin.reflect.KProperty
 
 fun OptionCreator<in Preview>.preview() = OptionProviderImpl(this, OptionPreview())
 
-class OptionPreview : Option<Preview>(""), OptionCreator<Tabs> {
-    lateinit var tabsKey: String
-    lateinit var tabsOption: Option<out Tabs>
+class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider {
+    private lateinit var tabsKey: String
+    private lateinit var tabsOption: Option<out Tabs>
 
-    val value = Preview(this)
+    private val value = Preview(this)
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
 
     override fun set(key: String, option: Option<out Tabs>) {
@@ -119,6 +119,6 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs> {
 
 class Preview(private val option: OptionPreview) : Value(), OptionCreator<Tabs> by option {
     interface Provider : Value.Provider {
-        override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): Group
+        override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): Preview
     }
 }

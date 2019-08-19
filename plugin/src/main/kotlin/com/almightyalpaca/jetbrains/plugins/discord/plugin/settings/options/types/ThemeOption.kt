@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.themes.ThemeDialog
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
@@ -38,7 +38,7 @@ import kotlin.reflect.KProperty
 fun OptionCreator<in ThemeValue>.themeChooser(description: String) = OptionProviderImpl(this, ThemeOption(description))
 
 class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeValue.Provider {
-    private val source: Source = ApplicationComponent.instance.source
+    private val source: Source = applicationComponent.source
 
     private val listeners = mutableListOf<(ThemeValue) -> Unit>()
     override fun addChangeListener(listener: (ThemeValue) -> Unit) {

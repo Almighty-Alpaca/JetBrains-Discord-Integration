@@ -17,7 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.diagnoseComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
 import com.intellij.openapi.options.SearchableConfigurable
 import kotlinx.coroutines.future.asCompletableFuture
@@ -35,7 +36,7 @@ class ApplicationConfigurable : SearchableConfigurable {
     override fun apply() {
         settings.apply()
 
-        RichPresenceRenderService.instance.render()
+        richPresenceRenderService.render()
     }
 
     override fun reset() {
@@ -45,14 +46,13 @@ class ApplicationConfigurable : SearchableConfigurable {
     override fun createComponent() = JPanel().apply panel@{
         layout = BoxLayout(this@panel, BoxLayout.Y_AXIS)
 
-        val diagnose = DiagnoseComponent.instance
-        diagnose.discord.asCompletableFuture().thenAcceptAsync { discord ->
+        diagnoseComponent.discord.asCompletableFuture().thenAcceptAsync { discord ->
             if (discord != DiagnoseComponent.Discord.OTHER) {
                 SwingUtilities.invokeLater { add(createErrorMessage(discord.message), 0) }
             }
         }
 
-        diagnose.ide.asCompletableFuture().thenAcceptAsync { ide ->
+        diagnoseComponent.ide.asCompletableFuture().thenAcceptAsync { ide ->
             if (ide != DiagnoseComponent.IDE.OTHER) {
                 SwingUtilities.invokeLater { add(createErrorMessage(ide.message), 0) }
             }

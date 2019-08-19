@@ -24,14 +24,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.reflect.KClass
 
 inline val application: Application
     get() = ApplicationManager.getApplication()
 
-fun <T : BaseComponent> getComponent(interfaceClass: KClass<T>): T = application.getComponent(interfaceClass.java)
+inline fun <reified T : BaseComponent> Project.getComponent(): T = this.getComponent(T::class.java)
 
-fun <T : Any> getService(interfaceClass: KClass<T>): T = ServiceManager.getService(interfaceClass.java)
+inline fun <reified T : Any> Project.getService(): T = ServiceManager.getService(this, T::class.java)
+
+inline fun <reified T : BaseComponent> lazyComponent(): Lazy<T> = lazy { application.getComponent(T::class.java) }
+
+inline fun <reified T : Any> lazyService(): Lazy<T> = lazy { ServiceManager.getService(T::class.java) }
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 inline val Project.filePath: Path
@@ -39,6 +42,3 @@ inline val Project.filePath: Path
 
 inline val VirtualFile.filePath: Path
     get() = Paths.get(this.path)
-
-inline val VirtualFile.isReadOnly
-    get() = !isWritable

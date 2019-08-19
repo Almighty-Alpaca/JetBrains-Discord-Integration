@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ProjectComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.AskShowNotification
@@ -41,6 +40,3 @@ class ProjectNotificationComponentImpl(val project: Project) : ProjectNotificati
 
     override fun disposeComponent() {}
 }
-
-val Project.notifications: ProjectComponent
-    get() = this.getComponent(ProjectComponent::class.java)

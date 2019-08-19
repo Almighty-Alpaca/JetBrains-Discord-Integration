@@ -23,5 +23,5 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.Abstr
 class BintrayThemeSourceMap(private val source: BintraySource, map: Map<String, ThemeSource>) : AbstractThemeSourceMap(map) {
     override fun createThemeMap(themes: Map<String, Theme>, default: Theme) = BintrayThemeMap(themes, default)
 
-    override fun createTheme(id: String, name: String, description: String, applications: Map<String, Long>) = BintrayTheme(source, id, name, description, applications)
+    override fun createTheme(id: String, name: String, description: String, applications: Map<String, Long>) = BintrayTheme(id, name, description, applications)
 }

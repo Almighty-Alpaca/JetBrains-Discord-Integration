@@ -53,16 +53,6 @@ sealed class RetryPolicy(value: Long, val maxValue: Long) {
         return next
     }
 
-    class Constant(value: Long = 10) : RetryPolicy(value, value) {
-        override val next: Constant
-            get() = this
-    }
-
-    class Linear(value: Long = 5, maxValue: Long = 60, private val factor: Int = 2) : RetryPolicy(value, maxValue) {
-        override val next: Linear
-            get() = Linear(value + factor, maxValue, factor)
-    }
-
     class Exponential(value: Long = 2, maxValue: Long = 60, private val factor: Int = 2) : RetryPolicy(value, maxValue) {
         override val next: Exponential
             get() = Exponential(value * factor, maxValue, factor)

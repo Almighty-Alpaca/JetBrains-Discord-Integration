@@ -16,12 +16,12 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import kotlinx.coroutines.*
 import java.time.Duration
@@ -46,8 +46,7 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService, CoroutineScope 
         renderJob = launch {
             timeoutJob?.cancel()
 
-            val component = ApplicationComponent.instance
-            val context = RenderContext(component.source, component.data, Renderer.Mode.NORMAL)
+            val context = RenderContext(applicationComponent.source, applicationComponent.data, Renderer.Mode.NORMAL)
 
             var shouldRender = true
 
@@ -80,7 +79,7 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService, CoroutineScope 
 
                 if (settings.timeoutResetTimeEnabled.get()) {
                     launch {
-                        component.app {
+                        applicationComponent.app {
                             openedAt = OffsetDateTime.now()
                         }
                     }
@@ -93,9 +92,9 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService, CoroutineScope 
                 val renderer = context.createRenderer()
                 val presence = renderer.render()
 
-                RichPresenceService.instance.update(presence)
+                richPresenceService.update(presence)
             } else {
-                RichPresenceService.instance.update(null)
+                richPresenceService.update(null)
             }
         }
     }

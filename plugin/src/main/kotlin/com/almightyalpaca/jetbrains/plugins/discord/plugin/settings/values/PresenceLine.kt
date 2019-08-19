@@ -96,7 +96,7 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
 
 private fun RenderContext.getPrefix(file: FileData): String {
     return when (settings.filePrefixEnabled.getValue()) {
-        true -> when (file.readOnly) {
+        true -> when (file.isWriteable) {
             true -> "Reading "
             false -> "Editing "
         }

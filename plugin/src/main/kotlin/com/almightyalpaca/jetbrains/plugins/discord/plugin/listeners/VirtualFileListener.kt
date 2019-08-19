@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -39,7 +39,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
         document?.let {
             val editors = EditorFactory.getInstance().getEditors(document)
 
-            ApplicationComponent.instance.app {
+            applicationComponent.app {
                 for (editor in editors) {
                     update(editor.project) {
                         update(file) {
@@ -66,7 +66,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
         document?.let {
             val editors = EditorFactory.getInstance().getEditors(document)
 
-            ApplicationComponent.instance.app {
+            applicationComponent.app {
                 for (editor in editors) {
                     update(editor.project) {
                         remove(file)
@@ -87,7 +87,7 @@ class VirtualFileListener : com.intellij.openapi.vfs.VirtualFileListener {
         document?.let {
             val editors = EditorFactory.getInstance().getEditors(document)
 
-            ApplicationComponent.instance.app {
+            applicationComponent.app {
                 for (editor in editors) {
                     update(editor.project) {
                         update(file) {

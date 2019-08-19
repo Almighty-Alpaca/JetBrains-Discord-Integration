@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
@@ -32,7 +32,7 @@ class FileEditorManagerListener : FileEditorManagerListener {
 
         val project = source.project
 
-        ApplicationComponent.instance.app {
+        applicationComponent.app {
             update(project) {
                 add(file)
             }
@@ -44,7 +44,7 @@ class FileEditorManagerListener : FileEditorManagerListener {
 
         val project = source.project
 
-        ApplicationComponent.instance.app {
+        applicationComponent.app {
             update(project) {
                 remove(file)
             }
@@ -56,7 +56,7 @@ class FileEditorManagerListener : FileEditorManagerListener {
 
         val project = event.manager.project
 
-        ApplicationComponent.instance.app {
+        applicationComponent.app {
             update(project) {
                 update(event.newFile) {
                     accessedAt = OffsetDateTime.now()

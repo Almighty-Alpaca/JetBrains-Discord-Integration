@@ -21,8 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationDataBuilder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.BintraySource
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
@@ -57,7 +57,7 @@ class ApplicationComponentImpl : ApplicationComponent {
         private set(value) {
             field = value
 
-            RichPresenceRenderService.instance.render()
+            richPresenceRenderService.render()
         }
 
     override fun initComponent() {
@@ -74,7 +74,7 @@ class ApplicationComponentImpl : ApplicationComponent {
 
     @Synchronized
     override fun disposeComponent() {
-        RichPresenceService.instance.update(null)
+        richPresenceService.update(null)
 
         this.connection.disconnect()
 

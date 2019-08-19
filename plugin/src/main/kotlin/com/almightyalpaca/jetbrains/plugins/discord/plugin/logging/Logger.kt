@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.logging
 
+// TODO: proper logging
 abstract class Logger {
     var enabled: Boolean = System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.logging") == "true"
 

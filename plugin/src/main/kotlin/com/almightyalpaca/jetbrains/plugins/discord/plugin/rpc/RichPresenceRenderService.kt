@@ -16,15 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lazyService
 
 interface RichPresenceRenderService {
 
     fun render()
-
-    companion object : Logging() {
-        inline val instance: RichPresenceRenderService
-            get() = getService(RichPresenceRenderService::class)
-    }
 }
+
+val richPresenceRenderService: RichPresenceRenderService by lazyService()

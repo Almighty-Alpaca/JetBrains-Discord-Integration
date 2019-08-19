@@ -28,11 +28,6 @@ fun Int.roundToNextPowerOfTwo(): Int {
     return v + 1
 }
 
-fun <T : Comparable<T>> max(t1: T, t2: T): T = when {
-    t1 > t2 -> t1
-    else -> t2
-}
-
 fun <T : Comparable<T>> maxNullable(t1: T?, t2: T): T = when {
     t1 == null -> t2
     t1 > t2 -> t1

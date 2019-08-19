@@ -22,8 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lazyService
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import org.jdom.Element
 
 interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder {
@@ -70,5 +70,4 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val newProjectShow: NewProjectShowValue
 }
 
-val settings: ApplicationSettings
-    get() = ServiceManager.getService(ApplicationSettings::class.java)
+val settings: ApplicationSettings by lazyService()

@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -35,7 +35,7 @@ class DocumentListener : com.intellij.openapi.editor.event.DocumentListener, Pro
         val editors = EditorFactory.getInstance().getEditors(document)
         val file = FileDocumentManager.getInstance().getFile(document)
 
-        ApplicationComponent.instance.app {
+        applicationComponent.app {
             for (editor in editors) {
                 update(editor.project) {
                     update(file) {

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 
-class BintrayTheme(private val source: BintraySource, id: String, name: String, description: String, applications: Map<String, Long>) : AbstractTheme(id, name, description, applications) {
+class BintrayTheme(id: String, name: String, description: String, applications: Map<String, Long>) : AbstractTheme(id, name, description, applications) {
     private val sets = ConcurrentHashMap<String, BintrayIconSet>()
 
     override fun getIconSet(applicationCode: String): IconSet? {
@@ -36,7 +36,7 @@ class BintrayTheme(private val source: BintraySource, id: String, name: String, 
             if (applicationId != null) {
                 val icons = getIcons(applicationId)
                 if (icons != null) {
-                    set = BintrayIconSet(source, this, applicationId, icons, applicationCode)
+                    set = BintrayIconSet(this, applicationId, icons, applicationCode)
                     sets[applicationCode] = set
                 }
             }

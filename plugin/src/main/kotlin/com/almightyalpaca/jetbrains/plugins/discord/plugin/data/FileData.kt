@@ -16,10 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.services.UniqueFilePathBuilderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.services.uniqueFilePathBuilderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isReadOnly
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
@@ -39,13 +38,15 @@ class FileData(
     val relativePath: Path by lazy { project.filePath.toAbsolutePath().relativize(virtualFile.filePath.toAbsolutePath()) }
     /** Path relative to the project directory in Unix style (aka using forward slashes) */
     val relativePathSane: String by lazy { FilenameUtils.separatorsToUnix(relativePath.toString()) }
-    val name: String by lazy { virtualFile.name }
+    val name
+        get() = virtualFile.name
     val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
     val extensions: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(i) }.toSet() }
 
-    val uniqueName by lazy { UniqueFilePathBuilderService.instance.getUniqueVirtualFilePathWithinOpenedFileEditors(project, virtualFile); }
+    val uniqueName by lazy { uniqueFilePathBuilderService.getUniqueVirtualFilePathWithinOpenedFileEditors(project, virtualFile); }
 
-    val readOnly by lazy { virtualFile.isReadOnly }
+    val isWriteable
+        get() = virtualFile.isWritable
 
     override fun getField(target: Matcher.Target) = when (target) {
         Matcher.Target.EXTENSION -> extensions

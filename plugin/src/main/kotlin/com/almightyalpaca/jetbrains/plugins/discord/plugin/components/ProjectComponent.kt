@@ -16,4 +16,10 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.components
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getComponent
+import com.intellij.openapi.project.Project
+
 interface ProjectComponent : com.intellij.openapi.components.ProjectComponent
+
+val Project.component: ProjectComponent
+    get() = this.getComponent()

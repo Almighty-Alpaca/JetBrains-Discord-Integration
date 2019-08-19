@@ -32,9 +32,6 @@ fun <T> OptionCreator<in Toggle<T>>.toggleable() = OptionProviderImpl(this, Opti
 val Toggle<Boolean>.toggle
     get() = toggle { it }
 
-val Toggle<Boolean>.reverseToggle
-    get() = toggle { !it }
-
 fun <T : Enum<T>> Toggle<T>.enableOn(vararg values: T) = toggle { it in values }
 fun <T : Enum<T>> Toggle<T>.disableOn(vararg values: T) = toggle { it !in values }
 
