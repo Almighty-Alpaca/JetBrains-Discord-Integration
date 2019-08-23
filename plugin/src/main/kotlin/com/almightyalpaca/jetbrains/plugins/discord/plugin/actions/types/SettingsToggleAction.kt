@@ -26,7 +26,7 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import javax.swing.Icon
 
-class ToggleAction(private val value: (Project) -> BooleanValue, private val enabled: View, private val disabled: View) : AnAction() {
+class SettingsToggleAction(private val value: (Project) -> BooleanValue, private val enabled: View, private val disabled: View) : AnAction() {
     constructor(value: BooleanValue, enabled: View, disabled: View) : this({ value }, enabled, disabled)
 
     override fun actionPerformed(e: AnActionEvent) {

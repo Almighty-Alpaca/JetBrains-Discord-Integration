@@ -17,26 +17,38 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.AskShowNotification
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.AskShowProjectNotification
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
-import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class ProjectNotificationComponentImpl(val project: Project) : ProjectNotificationComponent {
+class ProjectNotificationComponentImpl(val project: Project) : ProjectNotificationComponent, CoroutineScope {
+    private val parentJob: Job = SupervisorJob()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + parentJob
+
     override fun initComponent() {
-        showAskShowProject()
-    }
-
-    private fun showAskShowProject() {
-        if (project.notificationSettings.askShowProject) {
-            val notification = AskShowNotification { show ->
-                project.settings.show.set(show)
-                project.notificationSettings.askShowProject = false
+        with(project.notificationSettings) {
+            launch {
+                delay(10_000)
+                checkAskShowProject()
             }
-            Notifications.Bus.notify(notification)
         }
     }
 
-    override fun disposeComponent() {}
+    private suspend fun ProjectNotificationSettings.checkAskShowProject() {
+        if (askShowProject) {
+            askShowProject = AskShowProjectNotification.show()
+            richPresenceRenderService.render()
+        }
+    }
+
+    override fun disposeComponent() {
+        parentJob.cancel()
+    }
 }

@@ -17,12 +17,34 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.showUpdateNotification
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.UpdateNotification
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.plugin
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class ApplicationNotificationComponentImpl : ApplicationNotificationComponent {
+class ApplicationNotificationComponentImpl : ApplicationNotificationComponent, CoroutineScope {
+    private val parentJob: Job = SupervisorJob()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + parentJob
 
     override fun initComponent() {
-        showUpdateNotification()
+        with(notificationSettings) {
+            checkUpdate()
+        }
+    }
+
+    private fun ApplicationNotificationSettings.checkUpdate() {
+        if (plugin.version != lastUpdateNotification) {
+            notificationSettings.lastUpdateNotification = plugin.version
+
+            launch {
+                delay(10_000)
+                UpdateNotification.show()
+            }
+        }
     }
 
     override fun disposeComponent() {}

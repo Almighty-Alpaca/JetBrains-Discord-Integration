@@ -16,38 +16,38 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.CHANNEL
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types.SimpleAction
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.pluginId
+import com.intellij.notification.NotificationDisplayType
+import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
-import com.intellij.notification.impl.NotificationActionProvider
-import javax.swing.event.HyperlinkEvent
-import javax.swing.event.HyperlinkListener
+import com.intellij.notification.Notifications
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class AskShowNotification(val callback: AskShowNotification.(Boolean) -> Unit) : NotificationActionProvider, Notification(
-    CHANNEL,
-    "Show project in Rich Presence?",
-    "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project",
-    NotificationType.INFORMATION
-) {
-    init {
-        setListener(object : NotificationListener.Adapter() {
-            override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-                when (e.description) {
-                    "show" -> callback(true)
-                    "hide" -> callback(false)
-                    else -> return
-                }
+private const val title = "Show project in Rich Presence?"
+private const val content = "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project"
 
-                expire()
-            }
+private val group = NotificationGroup(
+        pluginId.idString + ".project.show",
+        NotificationDisplayType.STICKY_BALLOON,
+        true
+)
+
+object AskShowProjectNotification {
+
+    suspend fun show() = suspendCoroutine<Boolean> { continuation ->
+        val notification = group.createNotification(title, null, content, NotificationType.INFORMATION)
+
+        notification.addAction(SimpleAction("Show") {
+            notification.expire()
+            continuation.resume(true)
         })
-    }
+        notification.addAction(SimpleAction("Hide") {
+            notification.expire()
+            continuation.resume(false)
+        })
 
-    override fun getActions(listener: HyperlinkListener): Array<NotificationActionProvider.Action> {
-        return arrayOf(
-            NotificationActionProvider.Action(listener, "show", "Show"),
-            NotificationActionProvider.Action(listener, "hide", "Hide")
-        )
+        Notifications.Bus.notify(notification)
     }
 }
