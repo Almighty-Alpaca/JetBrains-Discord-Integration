@@ -28,13 +28,12 @@ plugins {
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
-val version = "1.0.0"
 
 @Suppress("UNCHECKED_CAST")
 val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
-project.version = when (versionDetails.lastTag.endsWith(version)) {
-    false -> "${"1.0.0"}-eap-${versionDetails.commitDistance}"
-    true -> version
+project.version = versionDetails.lastTag.removePrefix("v") + when  {
+    versionDetails.isCleanTag -> ""
+    else -> "-eap-${versionDetails.commitDistance}"
 }
 
 allprojects {
