@@ -43,7 +43,8 @@ class ProjectNotificationComponentImpl(val project: Project) : ProjectNotificati
 
     private suspend fun ProjectNotificationSettings.checkAskShowProject() {
         if (askShowProject) {
-            askShowProject = AskShowProjectNotification.show()
+            project.settings.show.set(AskShowProjectNotification.show())
+            askShowProject = false
             richPresenceRenderService.render()
         }
     }
