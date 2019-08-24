@@ -16,34 +16,32 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.services.uniqueFilePathBuilderService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.filePath
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
 import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
+import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FilenameUtils
-import java.nio.file.Path
 import java.time.OffsetDateTime
 
 class FileData(
-    val virtualFile: VirtualFile,
+    private val virtualFile: VirtualFile,
     val project: Project,
     val openedAt: OffsetDateTime = OffsetDateTime.now(),
     override val accessedAt: OffsetDateTime = openedAt
 ) : FieldProvider, AccessedAt {
     /** Path relative to the project directory */
-    val relativePath: Path by lazy { project.filePath.toAbsolutePath().relativize(virtualFile.filePath.toAbsolutePath()) }
-    /** Path relative to the project directory in Unix style (aka using forward slashes) */
-    val relativePathSane: String by lazy { FilenameUtils.separatorsToUnix(relativePath.toString()) }
+    val relativePath by lazy { FilenameUtils.separatorsToUnix(virtualFile.path) }
     val name
         get() = virtualFile.name
     val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
     val extensions: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(i) }.toSet() }
 
-    val uniqueName by lazy { uniqueFilePathBuilderService.getUniqueVirtualFilePathWithinOpenedFileEditors(project, virtualFile); }
+    val uniqueName by lazy { application.runReadAction(Computable { EditorTabPresentationUtil.getUniqueEditorTabTitle(project, virtualFile, null) }) }
 
     val isWriteable
         get() = virtualFile.isWritable
@@ -52,7 +50,7 @@ class FileData(
         Matcher.Target.EXTENSION -> extensions
         Matcher.Target.NAME -> listOf(name)
         Matcher.Target.BASENAME -> baseNames
-        Matcher.Target.PATH -> listOf(relativePathSane)
+        Matcher.Target.PATH -> listOf(relativePath)
     }
 
     fun builder() = FileDataBuilder(project, openedAt, accessedAt)

@@ -19,9 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.NonPhysicalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
 import java.time.OffsetDateTime
 
 class ProjectData(
@@ -63,14 +61,12 @@ class ProjectDataBuilder(
             .max(), openedAt)
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
-        if (file?.checkValid() == true)
+        if (file != null)
             files.computeIfAbsent(file) { FileDataBuilder(platformProject) }.builder()
     }
 
-    private fun VirtualFile?.checkValid() = this != null && !this.fileSystem.isBlacklisted()
-
     fun update(file: VirtualFile?, builder: FileDataBuilder.() -> Unit) {
-        if (file?.checkValid() == true)
+        if (file != null)
             files[file]?.builder()
     }
 
@@ -83,9 +79,3 @@ class ProjectDataBuilder(
     fun build() = ProjectData(platformProject, name, openedAt, files.map { file, data -> file to data.build(file) })
 
 }
-
-private val fileSystemBlacklist = hashSetOf(
-    "db" // Database Navigator plugin
-)
-
-private fun VirtualFileSystem.isBlacklisted() = this is NonPhysicalFileSystem || this.protocol in fileSystemBlacklist
