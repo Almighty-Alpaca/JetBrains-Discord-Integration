@@ -37,7 +37,8 @@ class ApplicationNotificationComponentImpl : ApplicationNotificationComponent, C
     }
 
     private fun ApplicationNotificationSettings.checkUpdate() {
-        if (plugin.version != lastUpdateNotification) {
+        val version = plugin.version
+        if (version != lastUpdateNotification && "eap" !in version) {
             notificationSettings.lastUpdateNotification = plugin.version
 
             launch {
