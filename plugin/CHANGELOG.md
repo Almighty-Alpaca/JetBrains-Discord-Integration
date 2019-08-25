@@ -1,3 +1,9 @@
+## v1.0.1 - Fixing the small ones
+- Fix Reading/editing being swapped
+- Fix show project prompt always showing
+- Fix show project prompt disappearing too quickly
+- Fix compatibility with plugins with non-default file system implementations
+
 ## v1.0.0 - Better than ever before
 - Brand new codebase written in Kotlin
 - Support for multiple icon themes
