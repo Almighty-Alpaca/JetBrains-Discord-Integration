@@ -96,8 +96,11 @@ tasks {
     publishPlugin {
         token(project.extra["JETBRAINS_TOKEN"])
 
-        if ((version as String).contains("eap"))
-            channels("EAP")
+        if ((version as String).contains("eap")) {
+            channels("eap")
+        } else {
+            channels("default", "eap")
+        }
     }
 
     prepareSandbox task@{
@@ -170,7 +173,7 @@ tasks {
         }
     }
 
-    create ("printDescription"){
+    create("printDescription") {
         group = "markdown"
 
         doLast {
