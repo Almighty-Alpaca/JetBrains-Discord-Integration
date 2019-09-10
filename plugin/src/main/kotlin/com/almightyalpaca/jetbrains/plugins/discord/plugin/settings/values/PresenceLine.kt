@@ -16,11 +16,12 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.FileData
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getUniqueName
+import com.intellij.openapi.vfs.VirtualFile
 
 typealias LineValue = SimpleValue<PresenceLine>
 
@@ -29,11 +30,11 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         override fun RenderContext.getResult(): Result = Result.Empty
     },
     PROJECT_DESCRIPTION("Project Description") {
-        override fun RenderContext.getResult(): Result = project?.platformProject?.settings?.description?.getValue().toResult()
+        override fun RenderContext.getResult(): Result = project?.settings?.description?.getValue().toResult()
     },
     PROJECT_NAME("Project Name") {
         override fun RenderContext.getResult(): Result {
-            val settings = project?.platformProject?.settings
+            val settings = project?.settings
 
             return when (settings?.nameOverrideEnabled?.getValue()) {
                 true -> settings.nameOverrideText.getValue()
@@ -45,20 +46,20 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         override fun RenderContext.getResult(): Result {
             val project = project ?: return Result.Empty
 
-            val settings = project.platformProject.settings
+            val settings = project.settings
             val name = when (settings.nameOverrideEnabled.getValue()) {
                 true -> settings.nameOverrideText.getValue()
                 else -> project.name
             }
 
-            return when (val description = project.platformProject.settings.description.getValue()) {
+            return when (val description = project.settings.description.getValue()) {
                 "" -> name
                 else -> "$name - $description"
             }.toResult()
         }
     },
     FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
-        override fun RenderContext.getResult() = file?.let { getPrefix(file) + file.uniqueName }.toResult()
+        override fun RenderContext.getResult() = file?.let { getPrefix(file) + file.getUniqueName(project!!) }.toResult()
     },
     FILE_NAME("File Name", "Only shows the file name even when there are multiple open files with the same name") {
         override fun RenderContext.getResult() = file?.let { getPrefix(file) + file.name }.toResult()
@@ -94,9 +95,9 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
     }
 }
 
-private fun RenderContext.getPrefix(file: FileData): String {
+private fun RenderContext.getPrefix(file: VirtualFile): String {
     return when (settings.filePrefixEnabled.getValue()) {
-        true -> when (file.isWriteable) {
+        true -> when (file.isWritable) {
             true -> "Editing "
             false -> "Reading "
         }

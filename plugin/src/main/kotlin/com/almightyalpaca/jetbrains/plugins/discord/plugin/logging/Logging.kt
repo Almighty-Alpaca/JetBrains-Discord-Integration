@@ -24,7 +24,7 @@ abstract class Logging {
             logger.log(Logger.Level.DEBUG, factory.invoke().toString())
     }
 
-    protected inline fun log(t: Throwable, factory: () -> Any?) {
+    protected inline fun log(t: Throwable, factory: () -> Any? = {}) {
         if (logger.enabled)
             logger.log(Logger.Level.DEBUG, t, factory.invoke().toString())
     }

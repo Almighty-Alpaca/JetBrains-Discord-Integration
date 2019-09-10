@@ -17,19 +17,13 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ProjectComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.keys.openedAt
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceRenderService
 import com.intellij.openapi.project.Project
 
 class ProjectComponentImpl(val project: Project) : ProjectComponent {
     override fun initComponent() {
-        applicationComponent.app {
-            add(project)
-        }
-    }
-
-    override fun disposeComponent() {
-        applicationComponent.app {
-            remove(project)
-        }
+        project.openedAt = System.currentTimeMillis()
+        richPresenceRenderService.render()
     }
 }

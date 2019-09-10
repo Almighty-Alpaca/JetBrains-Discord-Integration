@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
-class ApplicationRenderer(context: RenderContext) : Renderer(context) {
+class FileRenderer(context: RenderContext) : Renderer(context) {
     override fun RenderContext.render() = render(
-        details = settings.applicationDetails,
-        detailsCustom = settings.applicationDetailsCustom,
-        state = settings.applicationState,
-        stateCustom = settings.applicationStateCustom,
-        largeIcon = settings.applicationIconLarge,
-        largeIconText = settings.applicationIconLargeText,
-        smallIcon = settings.applicationIconSmall,
-        smallIconText = settings.applicationIconSmallText,
-        startTimestamp = settings.applicationTime
+        details = settings.fileDetails,
+        detailsCustom = settings.fileDetailsCustom,
+        state = settings.fileState,
+        stateCustom = settings.fileStateCustom,
+        largeIcon = settings.fileIconLarge,
+        largeIconText = settings.fileIconLargeText,
+        smallIcon = settings.fileIconSmall,
+        smallIconText = settings.fileIconSmallText,
+        startTimestamp = settings.fileTime
     )
 }

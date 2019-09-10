@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getImage
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.limit
@@ -29,8 +29,8 @@ class RichPresence(
     val appId: Long?,
     state: String? = null,
     details: String? = null,
-    var startTimestamp: OffsetDateTime? = null,
-    var endTimestamp: OffsetDateTime? = null,
+    var startTimestamp: Long? = null,
+    var endTimestamp: Long? = null,
     var largeImage: Image? = null,
     var smallImage: Image? = null,
     partyId: String? = null,

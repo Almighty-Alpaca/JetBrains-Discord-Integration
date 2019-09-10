@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.connection
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lazyService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
 
-interface RichPresenceRenderService {
+const val UPDATE_DELAY = 2000L
 
-    fun render()
+interface RPCConnection {
+    val appId: Long
+
+    val running: Boolean
+
+    fun connect()
+    fun disconnect()
+
+    fun send(presence: RichPresence?)
 }
-
-val richPresenceRenderService: RichPresenceRenderService by lazyService()

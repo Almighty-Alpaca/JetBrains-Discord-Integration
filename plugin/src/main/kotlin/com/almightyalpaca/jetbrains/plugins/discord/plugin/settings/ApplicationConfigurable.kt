@@ -18,7 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.diagnoseComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
 import com.intellij.openapi.options.SearchableConfigurable
 import kotlinx.coroutines.future.asCompletableFuture

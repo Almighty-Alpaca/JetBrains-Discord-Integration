@@ -66,14 +66,11 @@
         <projectService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationSettings"/>
         <applicationService serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings"/>
 
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresenceService"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.impl.RichPresenceServiceImpl"/>
 
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceRenderServiceImpl"/>
-
-        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.services.UniqueFilePathBuilderService"
-                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.services.impl.UniqueFilePathBuilderServiceImpl"/>
+        <applicationService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresenceRenderService"
+                            serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.impl.RichPresenceRenderServiceImpl"/>
 
         <applicationConfigurable groupId="tools"
                                  groupWeight="200"
