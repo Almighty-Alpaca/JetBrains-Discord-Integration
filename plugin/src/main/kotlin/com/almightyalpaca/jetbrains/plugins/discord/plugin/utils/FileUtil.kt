@@ -22,6 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FilenameUtils
 
@@ -35,4 +36,9 @@ val VirtualFile.fields: FieldProvider
         }
     }
 
-fun VirtualFile.getUniqueName(project: Project) = application.runReadAction(Computable { EditorTabPresentationUtil.getUniqueEditorTabTitle(project, this, null) })
+fun VirtualFile.getUniqueName(project: Project) = application.runReadAction(Computable {
+    when (Disposer.isDisposed(project)) {
+        true -> null
+        false -> EditorTabPresentationUtil.getUniqueEditorTabTitle(project, this, null)
+    }
+})
