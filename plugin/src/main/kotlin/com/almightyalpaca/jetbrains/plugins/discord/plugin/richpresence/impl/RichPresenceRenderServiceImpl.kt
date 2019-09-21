@@ -51,6 +51,8 @@ class RichPresenceRenderServiceImpl : RichPresenceRenderService {
     }
 
     private fun runRenderJob(): Unit = try {
+        log { "RichPresenceRenderServiceImpl#runRenderJob()" }
+
         val context = RenderContext(Renderer.Mode.NORMAL)
 
         var shouldRender = true

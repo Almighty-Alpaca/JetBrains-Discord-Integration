@@ -22,7 +22,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.roundToNextPowe
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
 import java.awt.image.BufferedImage
 import java.net.URL
-import java.time.OffsetDateTime
 import javax.imageio.ImageIO
 
 class RichPresence(
@@ -42,7 +41,9 @@ class RichPresence(
     var instance: Boolean = false
 ) {
     constructor(appId: Long?, initializer: RichPresence.() -> Unit) : this(appId) {
-        initializer()
+        if (appId != null) {
+            initializer()
+        }
     }
 
     var state = state?.limit(128, true)
