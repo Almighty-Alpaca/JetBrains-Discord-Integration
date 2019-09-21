@@ -32,8 +32,8 @@ val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
 dependencies {
     implementation(kotlin(module = "stdlib"))
 
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.2")
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.2.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.3.1")
 
     implementation(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
@@ -43,9 +43,7 @@ dependencies {
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.1.0")
-
-    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.0")
 }
 
 val isCI by lazy { System.getenv("CI") != null }

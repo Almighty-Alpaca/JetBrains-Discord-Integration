@@ -23,7 +23,6 @@ include("icons")
 include("shared")
 
 pluginManagement {
-
     repositories {
         gradlePluginPortal()
         maven {
@@ -32,11 +31,11 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version "1.3.41"
-        id("com.github.ben-manes.versions") version "0.22.0"
+        kotlin("jvm") version "1.3.50"
+        id("com.github.ben-manes.versions") version "0.25.0"
         id("org.jetbrains.intellij") version "0.4.10"
         id("com.github.johnrengelman.shadow") version "5.1.0"
-        id("com.palantir.git-version") version "0.11.0"
-        id("com.palantir.baseline-exact-dependencies") version "1.12.0"
+        id("com.palantir.git-version") version "0.12.2"
+        id("com.palantir.baseline-exact-dependencies") version "2.9.2"
     }
 }

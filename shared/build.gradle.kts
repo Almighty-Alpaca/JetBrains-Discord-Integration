@@ -21,7 +21,7 @@ plugins {
 dependencies {
     implementation(kotlin(module = "stdlib"))
 
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
 
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 

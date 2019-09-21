@@ -31,7 +31,7 @@ group = "com.almightyalpaca.jetbrains.plugins.discord"
 
 @Suppress("UNCHECKED_CAST")
 val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
-project.version = versionDetails.lastTag.removePrefix("v") + when  {
+project.version = versionDetails.lastTag.removePrefix("v") + when {
     versionDetails.isCleanTag -> ""
     else -> "-eap-${versionDetails.commitDistance}"
 }
@@ -80,26 +80,21 @@ tasks {
     dependencyUpdates {
         gradleReleaseChannel = GradleReleaseChannel.CURRENT.toString()
 
-        resolutionStrategy {
-            componentSelection {
-                all {
-                    sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr")
-                        .map { qualifier -> Regex(".*[.-]$qualifier[.\\d-_]*", RegexOption.IGNORE_CASE) }
-                        .any { regex -> regex.matches(candidate.version) }
-                        .let { if (it) reject("snapshot") }
-                }
-            }
+        rejectVersionIf {
+            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr")
+                .map { qualifier -> Regex(".*[.-]$qualifier[.\\d-_]*", RegexOption.IGNORE_CASE) }
+                .any { regex -> regex.matches(candidate.version) }
         }
     }
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "5.6"
+        gradleVersion = "5.6.2"
     }
 
     create<Delete>("clean") {
         group = "build"
-        
+
         val regex = Regex("""JetBrains-Discord-Integration-Plugin-(\d+).(\d+).(\d+)(?:-eap-(\d+))?.zip""")
 
         Files.newDirectoryStream(project.projectDir.toPath())
