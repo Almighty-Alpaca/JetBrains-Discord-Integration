@@ -75,6 +75,8 @@ abstract class Renderer(private val context: RenderContext) {
                     RichPresence.Image(icon.value, caption)
                 }
             }
+
+            this.partyId = "eap"
         }
     }
 
