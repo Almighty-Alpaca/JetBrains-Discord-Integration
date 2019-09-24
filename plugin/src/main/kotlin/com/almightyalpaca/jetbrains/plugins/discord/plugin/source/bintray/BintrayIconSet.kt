@@ -30,8 +30,8 @@ import kotlinx.coroutines.SupervisorJob
 import java.net.URL
 import kotlin.coroutines.CoroutineContext
 
-class BintrayIconSet(theme: Theme, applicationId: Long?, icons: Set<String>, applicationCode: String) :
-    AbstractIconSet(theme, applicationId, icons, applicationCode), CoroutineScope {
+class BintrayIconSet(theme: Theme, applicationId: Long?, icons: Set<String>, applicationName: String) :
+    AbstractIconSet(theme, applicationId, icons, applicationName), CoroutineScope {
     private val parentJob: Job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext

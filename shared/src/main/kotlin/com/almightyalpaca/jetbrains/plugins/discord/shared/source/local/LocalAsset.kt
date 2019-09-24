@@ -22,14 +22,14 @@ import java.awt.image.BufferedImage
 import java.nio.file.Files
 import javax.imageio.ImageIO
 
-class LocalAsset(private val source: LocalSource, id: String, theme: Theme, private val applicationCode: String) : AbstractAsset(id, theme) {
+class LocalAsset(private val source: LocalSource, id: String, theme: Theme, private val applicationName: String) : AbstractAsset(id, theme) {
     override fun getImage(size: Int?): BufferedImage? = when (id) {
         "application" -> {
-            val application = source.pathApplications.resolve("${theme.id}/$applicationCode.png")
+            val application = source.pathApplications.resolve("${theme.id}/$applicationName.png")
             if (Files.exists(application)) {
                 application
             } else {
-                source.pathApplications.resolve("$applicationCode.png")
+                source.pathApplications.resolve("$applicationName.png")
             }
         }
         else -> source.pathThemes.resolve("${theme.id}/$id.png")

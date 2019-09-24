@@ -20,7 +20,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicatio
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.keys.accessedAt
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.IdeApplicationInfo
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.fields
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
@@ -33,7 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class RenderContext(source: Source, val project: Project?, val file: VirtualFile?, val mode: Renderer.Mode) {
     val theme: Theme? = source.getThemesOrNull()?.get(settings.theme.getValue())
-    val icons: IconSet? = theme?.getIconSet(IdeApplicationInfo.productCode)
+    val icons: IconSet? = theme?.getIconSet(settings.applicationType.getValue().applicationName)
 
     val accessedAt: Long = application.accessedAt
 

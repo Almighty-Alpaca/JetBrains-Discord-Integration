@@ -164,35 +164,36 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, theme: Them
     supervisorScope {
         val changes = Collections.newSetFromMap<DiscordChange>(ConcurrentHashMap())
 
-        for (application in theme.applications) {
-            val appCode = application.key
-            val appId = application.value
+        for ((applicationName, applicationId) in theme.applications) {
+            if (applicationName.toUpperCase() == applicationName) { // skip old application code based entries
+                continue
+            }
 
-            println("Starting with ${theme.name} ($appCode)")
+            println("Starting with ${theme.name} ($applicationName)")
 
-            val local = getLocalIconsAsync(appCode, theme.id)
-            val discord = getDiscordIconsAsync(client, appId)
+            val local = getLocalIconsAsync(applicationName, theme.id)
+            val discord = getDiscordIconsAsync(client, applicationId)
 
             val all = local.await().keys + discord.await().keys
 
             for (icon in all) {
-                // println("Comparing ${theme.id}/$icon ($appCode)")
+                // println("Comparing ${theme.id}/$icon ($applicationName)")
                 when (icon) {
                     !in discord.await() -> {
-                        println("Create ${theme.id}/$icon ($appCode)")
-                        changes += DiscordChange.Create(appId, local.await().getValue(icon), icon)
+                        println("Create ${theme.id}/$icon ($applicationName)")
+                        changes += DiscordChange.Create(applicationId, local.await().getValue(icon), icon)
                     }
                     !in local.await() -> {
-                        println("Delete ${theme.id}/$icon ($appCode)")
-                        changes += DiscordChange.Delete(appId, discord.await().getValue(icon))
+                        println("Delete ${theme.id}/$icon ($applicationName)")
+                        changes += DiscordChange.Delete(applicationId, discord.await().getValue(icon))
                     }
                     else -> {
                         launch {
-                            if (!contentEqualsAsync(client, local.await()[icon], getAssetUrl(appId, discord.await()[icon])).await()) {
-                                println("Override ${theme.id}/$icon ($appCode)")
-                                changes += DiscordChange.Override(appId, discord.await().getValue(icon), local.await().getValue(icon), icon)
+                            if (!contentEqualsAsync(client, local.await()[icon], getAssetUrl(applicationId, discord.await()[icon])).await()) {
+                                println("Override ${theme.id}/$icon ($applicationName)")
+                                changes += DiscordChange.Override(applicationId, discord.await().getValue(icon), local.await().getValue(icon), icon)
                             } else {
-                                // println("Nothing ${theme.id}/$icon ($appCode)")
+                                // println("Nothing ${theme.id}/$icon ($applicationName)")
                             }
                         }
                     }

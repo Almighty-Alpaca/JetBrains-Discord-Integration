@@ -22,5 +22,5 @@ interface Theme {
     val description: String
     val applications: Map<String, Long>
 
-    fun getIconSet(applicationCode: String): IconSet?
+    fun getIconSet(applicationName: String): IconSet?
 }

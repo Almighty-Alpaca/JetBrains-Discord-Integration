@@ -44,6 +44,8 @@ dependencies {
     implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.0")
+
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }
 
 val isCI by lazy { System.getenv("CI") != null }

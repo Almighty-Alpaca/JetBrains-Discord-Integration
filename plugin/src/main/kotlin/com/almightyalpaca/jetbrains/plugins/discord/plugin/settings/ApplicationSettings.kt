@@ -65,6 +65,7 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val fileIconSmallText: IconTextValue
     val fileTime: TimeValue
 
+    val applicationType: ApplicationTypeValue
     val theme: ThemeValue
 
     val newProjectShow: NewProjectShowValue

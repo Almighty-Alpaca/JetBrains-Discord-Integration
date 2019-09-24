@@ -29,15 +29,15 @@ import java.util.concurrent.ConcurrentHashMap
 class BintrayTheme(id: String, name: String, description: String, applications: Map<String, Long>) : AbstractTheme(id, name, description, applications) {
     private val sets = ConcurrentHashMap<String, BintrayIconSet>()
 
-    override fun getIconSet(applicationCode: String): IconSet? {
-        var set = sets[applicationCode]
+    override fun getIconSet(applicationName: String): IconSet? {
+        var set = sets[applicationName]
         if (set == null) {
-            val applicationId = applications[applicationCode]
+            val applicationId = applications[applicationName]
             if (applicationId != null) {
                 val icons = getIcons(applicationId)
                 if (icons != null) {
-                    set = BintrayIconSet(this, applicationId, icons, applicationCode)
-                    sets[applicationCode] = set
+                    set = BintrayIconSet(this, applicationId, icons, applicationName)
+                    sets[applicationName] = set
                 }
             }
         }

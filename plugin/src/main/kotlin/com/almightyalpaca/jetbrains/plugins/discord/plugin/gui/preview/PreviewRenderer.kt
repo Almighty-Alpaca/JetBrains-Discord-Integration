@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPres
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.blurple
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.darkOverlay
@@ -163,8 +164,9 @@ class PreviewRenderer {
         private val images = Images()
         private val text = Text()
 
-        var lastImagesEmpty: Boolean? = null
         var first = true
+        var lastApplicationName: String? = null
+        var lastImagesEmpty: Boolean? = null
 
         fun draw(image: BufferedImage, presence: RichPresence, force: Boolean): Boolean {
 
@@ -187,7 +189,8 @@ class PreviewRenderer {
                 }
             }
 
-            if (force || first || lastImagesEmpty != imagesEmpty) {
+            val applicationName = settings.applicationType.getComponent().applicationNameReadable
+            if (force || lastApplicationName != applicationName || lastImagesEmpty != imagesEmpty) {
                 // IDE name
                 image.withGraphics {
                     val sectionStart = (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8
@@ -203,13 +206,14 @@ class PreviewRenderer {
 
                     font = font14Bold
                     color = whiteTranslucent80
-                    drawString(IdeApplicationInfo.name, indentation + 3, sectionStart + font14BoldBaseline)
+                    drawString(applicationName, indentation + 3, sectionStart + font14BoldBaseline)
                 }
             }
 
             val textModified = text.draw(image, presence, imagesEmpty, force)
 
             first = false
+            lastApplicationName = applicationName
             lastImagesEmpty = imagesEmpty
 
             return imagesModified || textModified

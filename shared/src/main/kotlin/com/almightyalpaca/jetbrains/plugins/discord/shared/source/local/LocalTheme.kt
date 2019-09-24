@@ -29,15 +29,15 @@ import java.util.concurrent.ConcurrentHashMap
 class LocalTheme(private val source: LocalSource, id: String, name: String, description: String, applications: Map<String, Long>) : AbstractTheme(id, name, description, applications) {
     private val sets = ConcurrentHashMap<String, LocalIconSet>()
 
-    override fun getIconSet(applicationCode: String): IconSet? {
-        var set = sets[applicationCode]
+    override fun getIconSet(applicationName: String): IconSet? {
+        var set = sets[applicationName]
         if (set == null) {
-            val applicationId = applications[applicationCode]
+            val applicationId = applications[applicationName]
             if (applicationId != null) {
                 val icons = getIcons(applicationId)
                 if (icons != null) {
-                    set = LocalIconSet(source, this, applicationId, icons, applicationCode)
-                    sets[applicationCode] = set
+                    set = LocalIconSet(source, this, applicationId, icons, applicationName)
+                    sets[applicationName] = set
                 }
             }
         }

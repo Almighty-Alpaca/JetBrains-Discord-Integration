@@ -20,9 +20,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractIconSet
 
-class LocalIconSet(private val source: LocalSource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationCode: String) : AbstractIconSet(theme, applicationId, icons, applicationCode) {
+class LocalIconSet(private val source: LocalSource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationName: String) : AbstractIconSet(theme, applicationId, icons, applicationName) {
     override fun getAsset(assetId: String): Asset? = when (assetId in this) {
-        true -> LocalAsset(source, assetId, theme, applicationCode)
+        true -> LocalAsset(source, assetId, theme, applicationName)
         false -> null
     }
 }
