@@ -48,3 +48,6 @@ secrets.gradle.kts
 
 # IntelliJ Sandbox
 .sandbox/
+
+# Plugin .zip
+JetBrains-Discord-Integration-Plugin-*.zip

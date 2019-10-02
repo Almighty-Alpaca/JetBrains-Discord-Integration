@@ -33,7 +33,7 @@ group = "com.almightyalpaca.jetbrains.plugins.discord"
 val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
 project.version = versionDetails.lastTag.removePrefix("v") + when {
     versionDetails.isCleanTag -> ""
-    else -> "-eap-${versionDetails.commitDistance}"
+    else -> "+${versionDetails.commitDistance}"
 }
 
 allprojects {
