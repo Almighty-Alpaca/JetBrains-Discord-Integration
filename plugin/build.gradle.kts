@@ -96,7 +96,7 @@ tasks {
     publishPlugin {
         token(project.extra["JETBRAINS_TOKEN"])
 
-        if ((version as String).contains("eap")) {
+        if (!(version as String).matches(Regex("""\d\.\d\.\d"""))) {
             channels("eap")
         } else {
             channels("default", "eap")
