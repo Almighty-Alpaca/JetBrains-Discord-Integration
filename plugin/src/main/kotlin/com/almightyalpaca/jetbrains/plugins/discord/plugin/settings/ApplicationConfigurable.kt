@@ -52,6 +52,12 @@ class ApplicationConfigurable : SearchableConfigurable {
             }
         }
 
+        diagnoseComponent.plugins.asCompletableFuture().thenAcceptAsync { plugins ->
+            if (plugins != DiagnoseComponent.Plugins.NONE) {
+                SwingUtilities.invokeLater { add(createErrorMessage(plugins.message), 0) }
+            }
+        }
+
         diagnoseComponent.ide.asCompletableFuture().thenAcceptAsync { ide ->
             if (ide != DiagnoseComponent.IDE.OTHER) {
                 SwingUtilities.invokeLater { add(createErrorMessage(ide.message), 0) }

@@ -18,6 +18,9 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryCatch
+import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginId
 import kotlinx.coroutines.*
 import org.apache.commons.lang3.SystemUtils
 import java.nio.charset.StandardCharsets
@@ -30,6 +33,7 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
         get() = Dispatchers.Default + parentJob
 
     override val discord = async(start = CoroutineStart.DEFAULT) { tryCatch(DiagnoseComponent.Discord.OTHER) { readDiscord() } }
+    override val plugins = async(start = CoroutineStart.DEFAULT) { tryCatch(DiagnoseComponent.Plugins.NONE) { readPlugins() } }
     override val ide = async(start = CoroutineStart.DEFAULT) { tryCatch(DiagnoseComponent.IDE.OTHER) { readIDE() } }
 
     private fun readDiscord(): DiagnoseComponent.Discord = when {
@@ -118,6 +122,25 @@ class DiagnoseComponentImpl : DiagnoseComponent, CoroutineScope {
         }
 
         return DiagnoseComponent.Discord.OTHER
+    }
+
+    private val pluginsIds = arrayOf(
+        "com.tsunderebug.discordintellij",
+        "com.my.fobes.intellij.discord"
+    )
+
+    private fun readPlugins(): DiagnoseComponent.Plugins {
+        val matches = PluginManager.getPlugins()
+            .asSequence()
+            .map(IdeaPluginDescriptor::getPluginId)
+            .map(PluginId::getIdString)
+            .count(pluginsIds::contains)
+
+        return when (matches) {
+            0 -> DiagnoseComponent.Plugins.NONE
+            1 -> DiagnoseComponent.Plugins.ONE
+            else -> DiagnoseComponent.Plugins.MULTIPLE
+        }
     }
 
     private fun readIDE(): DiagnoseComponent.IDE = when {

@@ -22,18 +22,25 @@ import com.intellij.openapi.components.BaseComponent
 import kotlinx.coroutines.Deferred
 
 interface DiagnoseComponent : BaseComponent {
-    val ide: Deferred<IDE>
     val discord: Deferred<Discord>
-
-    enum class IDE(val message: String) {
-        SNAP("${ApplicationNamesInfo.getInstance().fullProductName} is running as a Snap package. This will most likely prevent prevent the plugin from connection to your Discord client!"),
-        OTHER("")
-    }
+    val plugins: Deferred<Plugins>
+    val ide: Deferred<IDE>
 
     enum class Discord(val message: String) {
         SNAP("It seems like Discord is running in a Snap package. This will most likely prevent prevent the plugin from connecting to your Discord client!"),
         BROWSER("It seems like Discord is running in the browser. The plugin will not be able to connect to the Discord client!"),
         CLOSED("Could not detect a running Discord client!"),
+        OTHER("")
+    }
+
+    enum class Plugins(val message: String) {
+        NONE(""),
+        ONE("It seems like you have another Rich Presence plugin installed. Please uninstall it to avoid conflicts!"),
+        MULTIPLE("It seems like you have multiple other Rich Presence plugin installed. Please uninstall them to avoid conflicts!")
+    }
+
+    enum class IDE(val message: String) {
+        SNAP("${ApplicationNamesInfo.getInstance().fullProductName} is running as a Snap package. This will most likely prevent prevent the plugin from connection to your Discord client!"),
         OTHER("")
     }
 
