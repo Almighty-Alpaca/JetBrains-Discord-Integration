@@ -94,7 +94,11 @@ tasks {
     }
 
     publishPlugin {
-        token(project.extra["JETBRAINS_TOKEN"])
+        if (project.extra.has("JETBRAINS_TOKEN")) {
+            token(project.extra["JETBRAINS_TOKEN"])
+        } else {
+            enabled = false
+        }
 
         if (!(version as String).matches(Regex("""\d\.\d\.\d"""))) {
             channels("eap")
