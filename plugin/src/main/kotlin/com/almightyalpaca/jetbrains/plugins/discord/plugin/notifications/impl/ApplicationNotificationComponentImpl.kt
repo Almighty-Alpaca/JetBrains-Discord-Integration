@@ -20,7 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.Applica
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.UpdateNotification
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.plugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -37,9 +37,9 @@ class ApplicationNotificationComponentImpl : ApplicationNotificationComponent, C
     }
 
     private fun ApplicationNotificationSettings.checkUpdate() {
-        val version = plugin.version
-        if (version != lastUpdateNotification && "eap" !in version) {
-            notificationSettings.lastUpdateNotification = plugin.version
+        val version = Plugin.plugin.version
+        if (version != lastUpdateNotification && Plugin.Version.isStable) {
+            notificationSettings.lastUpdateNotification = version
 
             launch {
                 delay(10_000)

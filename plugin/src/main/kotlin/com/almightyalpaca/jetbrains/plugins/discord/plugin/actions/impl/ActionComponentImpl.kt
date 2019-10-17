@@ -21,7 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ActionItem
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.items.ApplicationHideAction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.items.ProjectHideAction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.Icons
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.pluginId
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -34,7 +34,7 @@ class ActionComponentImpl : ActionComponent {
         discord = DefaultActionGroup("Discord", true).apply {
             templatePresentation.icon = Icons.DISCORD_BLURPLE
         }
-        manager.registerAction("$pluginId.Group", discord)
+        manager.registerAction("${Plugin.pluginId}.Group", discord)
 
         val tools = manager.getAction("ToolsMenu") as DefaultActionGroup
         tools.add(discord)
@@ -46,7 +46,7 @@ class ActionComponentImpl : ActionComponent {
     override fun ActionItem.addAction(action: AnAction) {
         val id = this::class.java.simpleName
 
-        manager.registerAction("$pluginId.$id", action, pluginId)
+        manager.registerAction("${Plugin.pluginId}.$id", action, Plugin.pluginId)
         discord.add(action)
     }
 }

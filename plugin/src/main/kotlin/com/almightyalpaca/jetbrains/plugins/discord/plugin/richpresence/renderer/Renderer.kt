@@ -19,6 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.rendere
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 
 abstract class Renderer(private val context: RenderContext) {
     fun render(): RichPresence = context.render()
@@ -76,7 +77,9 @@ abstract class Renderer(private val context: RenderContext) {
                 }
             }
 
-            this.partyId = "eap"
+            if (Plugin.Version.isEap) {
+                this.partyId = "eap"
+            }
         }
     }
 

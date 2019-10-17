@@ -17,7 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types.SimpleAction
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.pluginId
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
@@ -29,7 +29,7 @@ private const val title = "Show project in Rich Presence?"
 private const val content = "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project"
 
 private val group = NotificationGroup(
-        pluginId.idString + ".project.show",
+    Plugin.pluginId.idString + ".project.show",
         NotificationDisplayType.STICKY_BALLOON,
         true
 )

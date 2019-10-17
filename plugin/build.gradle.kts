@@ -100,7 +100,7 @@ tasks {
             enabled = false
         }
 
-        if (!(version as String).matches(Regex("""\d\.\d\.\d"""))) {
+        if (!(version as String).matches(Regex("""\d+\.\d+\.\d+"""))) {
             channels("eap")
         } else {
             channels("default", "eap")

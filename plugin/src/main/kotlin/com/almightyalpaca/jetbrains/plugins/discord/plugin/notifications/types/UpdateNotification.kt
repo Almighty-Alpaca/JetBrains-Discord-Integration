@@ -17,13 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.plugin
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.pluginId
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.*
 
 object UpdateNotification {
-    private val title = "Discord Integration updated to ${plugin.version}"
+    private val title = "Discord Integration updated to ${Plugin.plugin.version}"
     private val content = """
         Thanks you for using the JetBrains Discord Integration!
         New in this version:${getChangelog()}
@@ -31,9 +29,9 @@ object UpdateNotification {
         """.trimIndent()
 
     private val group = NotificationGroup(
-            pluginId.idString + ".update",
-            NotificationDisplayType.STICKY_BALLOON,
-            true
+        Plugin.pluginId.idString + ".update",
+        NotificationDisplayType.STICKY_BALLOON,
+        true
     )
 
     private fun getChangelog(): String = ApplicationComponent::class.java.getResource("/discord/changes.html").readText()

@@ -19,5 +19,12 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 
-val pluginId by lazy { PluginId.getId("com.almightyalpaca.intellij.plugins.discord") }
-val plugin by lazy { PluginManager.getPlugin(pluginId)!! }
+object Plugin {
+    val pluginId by lazy { PluginId.getId("com.almightyalpaca.intellij.plugins.discord") }
+    val plugin by lazy { PluginManager.getPlugin(pluginId)!! }
+
+    object Version {
+        val isStable by lazy { plugin.version.matches(Regex("""\d+\.\d+\.\d+""")) }
+        val isEap by lazy { !isStable }
+    }
+}

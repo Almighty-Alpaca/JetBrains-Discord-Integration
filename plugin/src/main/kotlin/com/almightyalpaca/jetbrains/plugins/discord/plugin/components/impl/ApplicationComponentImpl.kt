@@ -50,7 +50,6 @@ class ApplicationComponentImpl : ApplicationComponent {
         application.openedAt = System.currentTimeMillis()
         richPresenceRenderService.render()
 
-
         Toolkit.getDefaultToolkit().addAWTEventListener({ e ->
             when (e) {
                 is MouseEvent, is KeyEvent -> {
