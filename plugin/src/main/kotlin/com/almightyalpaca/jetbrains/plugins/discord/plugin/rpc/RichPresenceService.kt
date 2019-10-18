@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lazyService
 
-interface RichPresenceRenderService {
-    fun render()
+interface RichPresenceService {
+    fun update(presence: RichPresence?)
+
+    val user: User
 }
 
-val richPresenceRenderService: RichPresenceRenderService by lazyService()
+val richPresenceService: RichPresenceService by lazyService()

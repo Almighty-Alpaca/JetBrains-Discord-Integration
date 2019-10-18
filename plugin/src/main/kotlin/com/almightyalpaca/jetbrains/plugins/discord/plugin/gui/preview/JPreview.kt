@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
 import kotlinx.coroutines.*
 import javax.swing.ImageIcon
 import javax.swing.JLabel

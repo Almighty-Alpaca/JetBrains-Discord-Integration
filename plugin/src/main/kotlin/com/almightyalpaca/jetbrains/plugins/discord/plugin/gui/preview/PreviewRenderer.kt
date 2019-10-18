@@ -16,11 +16,13 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.RenderContext
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.Renderer
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceService
+
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.blurple
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.darkOverlay
@@ -33,7 +35,9 @@ import java.awt.Color
 import java.awt.Font
 import java.awt.FontMetrics
 import java.awt.image.BufferedImage
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.User as RPCUser
+import java.time.Duration
+import java.time.OffsetDateTime
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User as RPCUser
 
 class PreviewRenderer {
     private val user = User()
@@ -82,7 +86,7 @@ class PreviewRenderer {
 
     @Synchronized
     fun draw(force: Boolean = false): ModifiedImage {
-        val context = RenderContext(Renderer.Mode.PREVIEW)
+        val context = RenderContext(applicationComponent.source, applicationComponent.data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
         val presence = renderer.render()
 
@@ -390,12 +394,12 @@ class PreviewRenderer {
             }
 
             private inner class Time {
-                var lastTime: Long? = null
-                var lastTimeNow: Long? = null
+                var lastTime: OffsetDateTime? = null
+                var lastTimeNow: OffsetDateTime? = null
 
                 fun draw(image: BufferedImage, presence: RichPresence, imagesEmpty: Boolean, detailsEmpty: Boolean, stateEmpty: Boolean, force: Boolean): Boolean {
                     val time = presence.startTimestamp
-                    val timeNow = System.currentTimeMillis()
+                    val timeNow = OffsetDateTime.now()
 
                     if (force || lastTime != time || lastTimeNow != timeNow || lastImagesEmpty != imagesEmpty || lastDetailsEmpty != detailsEmpty || lastStateEmpty != stateEmpty) {
                         lastTime = time
@@ -422,7 +426,8 @@ class PreviewRenderer {
                             fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 10.0))
 
                             if (time != null) {
-                                val formatted = DurationFormatUtils.formatDuration(timeNow - time, "HH:mm:ss")
+                                val millis = Duration.between(time, timeNow).toMillis()
+                                val formatted = DurationFormatUtils.formatDuration(millis, "HH:mm:ss")
 
                                 font = font14Medium
                                 color = whiteTranslucent80

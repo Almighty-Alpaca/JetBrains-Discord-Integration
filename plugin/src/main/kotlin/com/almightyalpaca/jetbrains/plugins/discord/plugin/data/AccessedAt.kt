@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ProjectComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
-import com.intellij.openapi.project.Project
+import java.time.OffsetDateTime
 
-class ProjectComponentImpl(val project: Project) : ProjectComponent {
-    override fun initComponent() {
-        applicationComponent.app {
-            add(project)
-        }
-    }
-
-    override fun disposeComponent() {
-        applicationComponent.app {
-            remove(project)
-        }
-    }
+interface AccessedAt {
+    val accessedAt: OffsetDateTime
 }

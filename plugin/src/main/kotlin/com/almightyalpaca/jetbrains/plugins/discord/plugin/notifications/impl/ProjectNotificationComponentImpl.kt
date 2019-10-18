@@ -20,7 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.Project
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.notificationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types.AskShowProjectNotification
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.*

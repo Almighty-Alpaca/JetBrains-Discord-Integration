@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.toggle
 import com.intellij.openapi.actionSystem.AnAction

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.connection
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection
 
 import club.minnced.discord.rpc.DiscordEventHandlers
 import club.minnced.discord.rpc.DiscordEventHandlers.OnReady
@@ -23,8 +23,8 @@ import club.minnced.discord.rpc.DiscordRPC
 import club.minnced.discord.rpc.DiscordRichPresence
 import club.minnced.discord.rpc.DiscordUser
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.User
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -113,8 +113,8 @@ private fun User.Companion.fromLibraryObject(user: DiscordUser): User = User.Nor
 private fun RichPresence.toLibraryObject() = DiscordRichPresence().apply {
     this@toLibraryObject.state?.let { state = it }
     this@toLibraryObject.details?.let { details = it }
-    this@toLibraryObject.startTimestamp?.let { startTimestamp = it }
-    this@toLibraryObject.endTimestamp?.let { endTimestamp = it }
+    this@toLibraryObject.startTimestamp?.toInstant()?.toEpochMilli()?.let { startTimestamp = it }
+    this@toLibraryObject.endTimestamp?.toInstant()?.toEpochMilli()?.let { endTimestamp = it }
     this@toLibraryObject.largeImage?.key?.let { largeImageKey = it }
     this@toLibraryObject.largeImage?.text?.let { largeImageText = it }
     this@toLibraryObject.smallImage?.key?.let { smallImageKey = it }

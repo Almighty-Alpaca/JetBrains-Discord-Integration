@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.impl
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresenceService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.User
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.connection.NativeRPCConnection
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.connection.RPCConnection
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.NativeRPCConnection
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RPCConnection
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

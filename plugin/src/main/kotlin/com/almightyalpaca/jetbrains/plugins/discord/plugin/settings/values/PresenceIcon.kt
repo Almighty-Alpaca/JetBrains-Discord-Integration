@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 

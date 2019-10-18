@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getImage
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.limit
@@ -22,14 +22,15 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.roundToNextPowe
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
 import java.awt.image.BufferedImage
 import java.net.URL
+import java.time.OffsetDateTime
 import javax.imageio.ImageIO
 
 class RichPresence(
     val appId: Long?,
     state: String? = null,
     details: String? = null,
-    var startTimestamp: Long? = null,
-    var endTimestamp: Long? = null,
+    var startTimestamp: OffsetDateTime? = null,
+    var endTimestamp: OffsetDateTime? = null,
     var largeImage: Image? = null,
     var smallImage: Image? = null,
     partyId: String? = null,

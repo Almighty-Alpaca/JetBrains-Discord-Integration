@@ -17,23 +17,29 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.keys.accessedAt
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.keys.openedAt
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationDataBuilder
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceRenderService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.richPresenceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.BintraySource
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
-import java.awt.AWTEvent
-import java.awt.Toolkit
-import java.awt.event.KeyEvent
-import java.awt.event.MouseEvent
+import com.intellij.AppTopics
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.util.messages.MessageBusConnection
 import java.nio.file.Paths
-import java.time.OffsetDateTime
 
 class ApplicationComponentImpl : ApplicationComponent {
+    private val documentListener: DocumentListener by lazy { DocumentListener() }
+    private val editorMouseListener: EditorMouseListener by lazy { EditorMouseListener() }
+    private val virtualFileListener: VirtualFileListener by lazy { VirtualFileListener() }
+
+    private val connection: MessageBusConnection by lazy { ApplicationManager.getApplication().messageBus.connect() }
+
     override val source: Source
 
     init {
@@ -46,23 +52,49 @@ class ApplicationComponentImpl : ApplicationComponent {
         }
     }
 
-    override fun initComponent() {
-        application.openedAt = System.currentTimeMillis()
-        richPresenceRenderService.render()
+    override var data: ApplicationData = ApplicationData.DEFAULT
+        @Synchronized
+        private set(value) {
+            field = value
 
-        Toolkit.getDefaultToolkit().addAWTEventListener({ e ->
-            when (e) {
-                is MouseEvent, is KeyEvent -> {
-                    application.accessedAt = System.currentTimeMillis()
-                    richPresenceRenderService.render()
-                }
-            }
-        }, AWTEvent.MOUSE_EVENT_MASK or AWTEvent.KEY_EVENT_MASK)
+            richPresenceRenderService.render()
+        }
+
+    override fun initComponent() {
+        connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, FileDocumentManagerListener())
+        connection.subscribe(FileEditorManagerListener.TOPIC, FileEditorManagerListener())
+
+        with(EditorFactory.getInstance().eventMulticaster) {
+            addDocumentListener(documentListener)
+            addEditorMouseListener(editorMouseListener)
+        }
+
+        VirtualFileManager.getInstance().addVirtualFileListener(this.virtualFileListener)
+
     }
 
     @Synchronized
     override fun disposeComponent() {
         richPresenceService.update(null)
+
+        this.connection.disconnect()
+
+        with(EditorFactory.getInstance().eventMulticaster) {
+            removeDocumentListener(documentListener)
+            removeEditorMouseListener(editorMouseListener)
+        }
+
+        VirtualFileManager.getInstance().removeVirtualFileListener(this.virtualFileListener)
+
+    }
+
+    @Synchronized
+    override fun app(builder: ApplicationDataBuilder.() -> Unit) {
+        val applicationDataBuilder = data.builder()
+
+        applicationDataBuilder.builder()
+
+        data = applicationDataBuilder.build()
     }
 
     companion object : Logging()

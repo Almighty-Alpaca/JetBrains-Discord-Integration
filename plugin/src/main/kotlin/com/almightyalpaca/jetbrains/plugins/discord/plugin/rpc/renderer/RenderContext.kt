@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.keys.accessedAt
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.getIconSet
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
@@ -25,18 +25,17 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.fields
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.vfs.VirtualFile
 
-class RenderContext(source: Source, val project: Project?, val file: VirtualFile?, val mode: Renderer.Mode) {
+class RenderContext(source: Source, val application: ApplicationData, val mode: Renderer.Mode) {
     val theme: Theme? = source.getThemesOrNull()?.get(settings.theme.getValue())
     val icons: IconSet? = theme?.getIconSet(settings.applicationType.getValue().applicationName)
 
-    val accessedAt: Long = application.accessedAt
+    val project = application.projects.values
+        .filter { p -> p.platformProject.settings.show.getValue() }
+        .maxBy { p -> p.accessedAt }
+    val file = project?.files?.values?.maxBy { f -> f.accessedAt }
 
-    val match by lazy { file?.let { source.getLanguagesOrNull()?.findLanguage(file.fields) } }
+    val match by lazy { file?.let { source.getLanguagesOrNull()?.findLanguage(file) } }
 
     fun <T> SimpleValue<T>.getValue(): T = when (mode) {
         Renderer.Mode.NORMAL -> get()
@@ -44,23 +43,4 @@ class RenderContext(source: Source, val project: Project?, val file: VirtualFile
     }
 
     fun createRenderer(): Renderer = renderType.createRenderer(this)
-}
-
-fun RenderContext(mode: Renderer.Mode): RenderContext {
-    val projectManager = ProjectManager.getInstance()
-
-    var selectedProject: Project? = null
-    var selectedFile: VirtualFile? = null
-    for (project in projectManager.openProjects) {
-        val fileEditorManager = FileEditorManager.getInstance(project)
-        val selectedEditor = fileEditorManager.selectedEditor
-
-        if (selectedEditor != null) {
-            selectedProject = project
-            selectedFile = selectedEditor.file
-            break
-        }
-    }
-
-    return RenderContext(applicationComponent.source, selectedProject, selectedFile, mode)
 }

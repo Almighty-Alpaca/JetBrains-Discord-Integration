@@ -17,7 +17,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.components.ServiceManager

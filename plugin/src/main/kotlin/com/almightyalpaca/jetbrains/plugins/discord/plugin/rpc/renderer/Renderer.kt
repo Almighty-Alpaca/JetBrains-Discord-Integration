@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.renderer
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.richpresence.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
