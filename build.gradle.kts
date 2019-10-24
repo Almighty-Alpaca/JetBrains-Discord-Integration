@@ -95,13 +95,15 @@ tasks {
     create<Delete>("clean") {
         group = "build"
 
-        val regex = Regex("""JetBrains-Discord-Integration-Plugin-(\d+).(\d+).(\d+)(?:-eap-(\d+))?.zip""")
+        val regex = Regex("""JetBrains-Discord-Integration-Plugin-\d+.\d+.\d+(?:\+\d+)?.zip""")
 
-        Files.newDirectoryStream(project.projectDir.toPath())
-            .filter { p -> regex.matches(p.fileName.toString()) }
-            .forEach { p -> delete.add(p) }
+        delete {
+            Files.newDirectoryStream(project.projectDir.toPath())
+                .filter { p -> regex.matches(p.fileName.toString()) }
+                .forEach { p -> delete(p) }
 
-        delete.add(project.buildDir)
+            delete(project.buildDir)
+        }
     }
 
     create("default") {
