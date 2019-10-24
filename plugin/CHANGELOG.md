@@ -1,3 +1,9 @@
+## v1.1.0 - More bugs to fix
+- Fix error when closing a project. (#63)
+- Beta testers now get a special role in the server
+- Add IDE names without editions (e.g. 'IntelliJ IDEA' instead of 'IntelliJ IDEA Community')
+- Show warning in settings when other Discord rich presence plugins are installed
+
 ## v1.0.1 - Fixing the small ones
 - Fix Reading/editing being swapped
 - Fix show project prompt always showing
