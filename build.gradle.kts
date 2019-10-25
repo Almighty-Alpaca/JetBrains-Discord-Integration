@@ -31,10 +31,23 @@ group = "com.almightyalpaca.jetbrains.plugins.discord"
 
 @Suppress("UNCHECKED_CAST")
 val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
-project.version = versionDetails.lastTag.removePrefix("v") + when {
-    versionDetails.isCleanTag -> ""
+
+var version = versionDetails.lastTag.removePrefix("v")
+version += when (versionDetails.commitDistance) {
+    0 -> ""
     else -> "+${versionDetails.commitDistance}"
 }
+
+//if (!versionDetails.isCleanTag) {
+//    version += "-dirty"
+//    allprojects {
+//        listOf("publishPlugin", "uploadIcons", "uploadLanguages").forEach { name ->
+//            tasks.findByName(name)?.enabled = false
+//        }
+//    }
+//}
+
+project.version = version
 
 allprojects {
     repositories {

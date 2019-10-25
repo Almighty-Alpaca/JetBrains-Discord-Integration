@@ -1,4 +1,4 @@
-## v1.1.0 - More bugs to fix
+## v1.1.0 - Hidden editions
 - Fix error when closing a project. (#63)
 - Beta testers now get a special role in the server
 - Add IDE names without editions (e.g. 'IntelliJ IDEA' instead of 'IntelliJ IDEA Community')
