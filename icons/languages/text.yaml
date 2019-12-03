@@ -2,6 +2,8 @@ name: Text
 asset: text
 parent: default
 match:
-  extension:
-    equals:
-      - .txt
+#  extension:
+#    equals:
+#      - .txt
+  name:
+    regex: "^(?!CMakeLists).*\\.txt$" # Hack to fix CMakeLists.txt (was matched by .txt before)
