@@ -30,8 +30,8 @@ private const val content = "Select if this project should be visible. You can c
 
 private val group = NotificationGroup(
     Plugin.pluginId.idString + ".project.show",
-        NotificationDisplayType.STICKY_BALLOON,
-        true
+    NotificationDisplayType.STICKY_BALLOON,
+    true
 )
 
 object AskShowProjectNotification {

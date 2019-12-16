@@ -17,11 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.ApplicationData
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.getIconSet
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.application
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.fields
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
@@ -31,7 +28,7 @@ class RenderContext(source: Source, val application: ApplicationData, val mode: 
     val icons: IconSet? = theme?.getIconSet(settings.applicationType.getValue().applicationName)
 
     val project = application.projects.values
-        .filter { p -> p.platformProject.settings.show.getValue() }
+        .filter { p -> p.platform.settings.show.getValue() }
         .maxBy { p -> p.accessedAt }
     val file = project?.files?.values?.maxBy { f -> f.accessedAt }
 

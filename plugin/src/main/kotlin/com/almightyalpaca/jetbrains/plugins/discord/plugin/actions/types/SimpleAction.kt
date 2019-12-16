@@ -21,11 +21,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import javax.swing.Icon
 
 class SimpleAction(
-        text: String? = null,
-        description: String? = null,
-        icon: Icon? = null,
-        val action: (AnActionEvent) -> Unit)
-    : AnAction(text, description, icon) {
+    text: String? = null,
+    description: String? = null,
+    icon: Icon? = null,
+    val action: (AnActionEvent) -> Unit
+) : AnAction(text, description, icon) {
 
     override fun actionPerformed(e: AnActionEvent) {
         this.action(e)

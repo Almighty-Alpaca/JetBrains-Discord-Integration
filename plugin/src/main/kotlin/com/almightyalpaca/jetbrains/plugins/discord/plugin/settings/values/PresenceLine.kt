@@ -29,11 +29,11 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         override fun RenderContext.getResult(): Result = Result.Empty
     },
     PROJECT_DESCRIPTION("Project Description") {
-        override fun RenderContext.getResult(): Result = project?.platformProject?.settings?.description?.getValue().toResult()
+        override fun RenderContext.getResult(): Result = project?.settings?.description?.getValue().toResult()
     },
     PROJECT_NAME("Project Name") {
         override fun RenderContext.getResult(): Result {
-            val settings = project?.platformProject?.settings
+            val settings = project?.settings
 
             return when (settings?.nameOverrideEnabled?.getValue()) {
                 true -> settings.nameOverrideText.getValue()
@@ -45,13 +45,13 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         override fun RenderContext.getResult(): Result {
             val project = project ?: return Result.Empty
 
-            val settings = project.platformProject.settings
+            val settings = project.settings
             val name = when (settings.nameOverrideEnabled.getValue()) {
                 true -> settings.nameOverrideText.getValue()
                 else -> project.name
             }
 
-            return when (val description = project.platformProject.settings.description.getValue()) {
+            return when (val description = project.settings.description.getValue()) {
                 "" -> name
                 else -> "$name - $description"
             }.toResult()

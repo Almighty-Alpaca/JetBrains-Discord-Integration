@@ -21,10 +21,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.ProjectManagerListener
 import java.time.OffsetDateTime
 
-class DocumentListener : com.intellij.openapi.editor.event.DocumentListener, ProjectManagerListener {
+class DocumentListener : com.intellij.openapi.editor.event.DocumentListener {
 
     override fun beforeDocumentChange(event: DocumentEvent) {}
 

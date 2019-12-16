@@ -16,13 +16,12 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
 
-
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.components.applicationComponent
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.blurple
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.darkOverlay

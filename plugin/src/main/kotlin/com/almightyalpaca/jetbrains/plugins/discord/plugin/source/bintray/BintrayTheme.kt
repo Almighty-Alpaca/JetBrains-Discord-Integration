@@ -18,8 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.setWith
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
+import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.setWith
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode

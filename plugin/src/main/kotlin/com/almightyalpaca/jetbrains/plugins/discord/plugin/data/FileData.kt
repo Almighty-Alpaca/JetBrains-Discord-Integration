@@ -29,22 +29,40 @@ import org.apache.commons.io.FilenameUtils
 import java.time.OffsetDateTime
 
 class FileData(
-    private val virtualFile: VirtualFile,
+    private val platform: VirtualFile,
     val project: Project,
-    val openedAt: OffsetDateTime = OffsetDateTime.now(),
-    override val accessedAt: OffsetDateTime = openedAt
+    val openedAt: OffsetDateTime,
+    override val accessedAt: OffsetDateTime
 ) : FieldProvider, AccessedAt {
+
+    val name: String = platform.name
+    private val path: String = platform.path
+    val isWriteable = platform.isWritable
+
     /** Path relative to the project directory */
-    val relativePath by lazy { FilenameUtils.separatorsToUnix(virtualFile.path) }
-    val name
-        get() = virtualFile.name
-    val baseNames: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(0, i) }.toSet() }
-    val extensions: Collection<String> by lazy { name.find('.').mapToObj { i -> name.substring(i) }.toSet() }
+    private val relativePath: String by lazy { FilenameUtils.separatorsToUnix(path) }
 
-    val uniqueName by lazy { application.runReadAction(Computable { EditorTabPresentationUtil.getUniqueEditorTabTitle(project, virtualFile, null) }) }
+    private val baseNames: Collection<String> by lazy {
+        name.find('.')
+            .mapToObj { i -> name.substring(0, i) }
+            .toSet()
+    }
 
-    val isWriteable
-        get() = virtualFile.isWritable
+    private val extensions: Collection<String> by lazy {
+        name.find('.')
+            .mapToObj { i -> name.substring(i) }
+            .toSet()
+    }
+
+    val uniqueName: String by lazy {
+        application.runReadAction(Computable {
+            if (!project.isDisposed) {
+                EditorTabPresentationUtil.getUniqueEditorTabTitle(project, platform, null)
+            } else {
+                name
+            }
+        })
+    }
 
     override fun getField(target: Matcher.Target) = when (target) {
         Matcher.Target.EXTENSION -> extensions

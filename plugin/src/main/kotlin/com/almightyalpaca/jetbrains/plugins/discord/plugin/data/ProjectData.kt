@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.maxNullable
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.map
 import com.intellij.openapi.project.Project
@@ -23,23 +24,24 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.time.OffsetDateTime
 
 class ProjectData(
-    val platformProject: Project,
-    val name: String,
+    val platform: Project,
     val openedAt: OffsetDateTime = OffsetDateTime.now(),
     files: Map<VirtualFile, FileData> = emptyMap()
 ) : AccessedAt {
+    val name = platform.name
     val files = files.toMap()
 
     override val accessedAt: OffsetDateTime
         get() = files.maxBy { it.value.accessedAt }?.value?.accessedAt ?: openedAt
 
-    fun builder() = ProjectDataBuilder(platformProject, name, openedAt, files)
+    fun builder() = ProjectDataBuilder(platform, openedAt, files)
+
+    val settings = platform.settings
 }
 
 @Suppress("NAME_SHADOWING")
 class ProjectDataBuilder(
-    var platformProject: Project,
-    var name: String,
+    var platform: Project,
     openedAt: OffsetDateTime = OffsetDateTime.now(),
     files: Map<VirtualFile, FileData> = emptyMap()
 ) {
@@ -62,7 +64,7 @@ class ProjectDataBuilder(
 
     fun add(file: VirtualFile?, builder: FileDataBuilder.() -> Unit = {}) {
         if (file != null)
-            files.computeIfAbsent(file) { FileDataBuilder(platformProject) }.builder()
+            files.computeIfAbsent(file) { FileDataBuilder(platform) }.builder()
     }
 
     fun update(file: VirtualFile?, builder: FileDataBuilder.() -> Unit) {
@@ -70,12 +72,12 @@ class ProjectDataBuilder(
             files[file]?.builder()
     }
 
-    infix fun remove(file: VirtualFile?) {
+    fun remove(file: VirtualFile?) {
         file.let { files.remove(file) }
     }
 
     operator fun contains(file: VirtualFile?) = file != null && file in files
 
-    fun build() = ProjectData(platformProject, name, openedAt, files.map { file, data -> file to data.build(file) })
+    fun build() = ProjectData(platform, openedAt, files.map { file, data -> file to data.build(file) })
 
 }
