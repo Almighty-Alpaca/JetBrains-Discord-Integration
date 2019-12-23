@@ -52,7 +52,7 @@ val isCI by lazy { System.getenv("CI") != null }
 
 configure<IntelliJPluginExtension> {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "IU-2018.3.4"
+    version = "IU-2019.1"
 
     downloadSources = !isCI
 
@@ -163,10 +163,6 @@ tasks {
 
             expand("changes" to list.toString())
         }
-    }
-
-    withType<BuildSearchableOptionsTask> {
-
     }
 
     create("printChangelog") {
