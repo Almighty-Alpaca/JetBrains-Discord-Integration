@@ -28,18 +28,18 @@ val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
 dependencies {
     implementation(kotlin(module = "stdlib"))
 
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.3.1")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.3.3")
 
     implementation(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }
 
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.9.9")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.1")
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.0")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.2")
 
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 }

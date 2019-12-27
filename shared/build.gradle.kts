@@ -21,13 +21,13 @@ plugins {
 dependencies {
     implementation(kotlin(module = "stdlib"))
 
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.1")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
 
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.9.9")
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9.3")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.9.9")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.1")
 }
 
 tasks {
