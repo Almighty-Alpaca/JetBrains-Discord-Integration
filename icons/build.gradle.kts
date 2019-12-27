@@ -120,7 +120,11 @@ tasks {
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.DiscordUploaderKt"
 
-        environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
+        if ("DISCORD_TOKEN" in project.extra) {
+            environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
+        } else {
+            enabled = false
+        }
     }
 
     val uploadLanguages by registering(JavaExec::class) task@{
@@ -132,7 +136,11 @@ tasks {
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.icons.uploader.BintrayUploaderKt"
 
-        environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
+        if ("BINTRAY_KEY" in project.extra) {
+            environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
+        } else {
+            enabled = false
+        }
     }
 
     create("upload") {
@@ -144,3 +152,5 @@ tasks {
         dependsOn(uploadIcons)
     }
 }
+
+operator fun ExtraPropertiesExtension.contains(key: String) = has(key)

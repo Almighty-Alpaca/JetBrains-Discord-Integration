@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import java.net.URI
-
 rootProject.name = "JetBrains-Discord-Integration"
 
 include("plugin")
@@ -26,7 +24,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            url = URI("http://palantir.bintray.com/releases")
+            url = java.net.URI("https://palantir.bintray.com/releases")
         }
     }
 

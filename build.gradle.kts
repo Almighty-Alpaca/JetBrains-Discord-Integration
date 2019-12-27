@@ -54,6 +54,15 @@ allprojects {
         mavenCentral()
         jcenter()
     }
+
+    fun secret(name: String) {
+        project.extra[name] = (System.getenv(name) ?: return)
+    }
+
+    secret("DISCORD_TOKEN")
+    secret("BINTRAY_KEY")
+    secret("JETBRAINS_TOKEN")
+
 }
 
 subprojects {
@@ -67,24 +76,11 @@ subprojects {
         apply(from = secrets)
     }
 
-    secret("DISCORD_TOKEN")
-    secret("BINTRAY_KEY")
-    secret("JETBRAINS_TOKEN")
-
     tasks {
         withType<KotlinCompile> {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
-}
-
-fun secret(name: String) {
-    if (project.extra.has(name))
-        return
-
-    val env: String = System.getenv(name) ?: return
-
-    project.extra[name] = env
 }
 
 defaultTasks = mutableListOf("default")

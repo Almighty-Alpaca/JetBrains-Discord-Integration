@@ -15,10 +15,6 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.intellij.IntelliJPluginExtension
-import org.jetbrains.intellij.tasks.BuildSearchableOptionsTask
-import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jsoup.Jsoup
 
 plugins {
@@ -50,15 +46,15 @@ dependencies {
 
 val isCI by lazy { System.getenv("CI") != null }
 
-configure<IntelliJPluginExtension> {
+intellij {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "IU-2019.1"
+    version = "2019.1"
 
     downloadSources = !isCI
 
     updateSinceUntilBuild = false
 
-    sandboxDirectory = "${project.rootDir.canonicalPath}/.sandbox"
+    sandboxDirectory = "${project.rootDir.absolutePath}/.sandbox"
 
     instrumentCode = false
 
@@ -82,7 +78,7 @@ tasks {
         pluginDescription(readInfoFile(project.file("DESCRIPTION.md")))
     }
 
-    withType<RunIdeTask> {
+    runIde {
         // enable logging
         environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.logging"] = "true"
 
@@ -124,7 +120,7 @@ tasks {
     }
 
     shadowJar task@{
-        fun ShadowJar.prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
+        fun prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
 
         mergeServiceFiles()
 
