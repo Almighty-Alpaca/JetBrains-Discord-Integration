@@ -62,7 +62,6 @@ allprojects {
     secret("DISCORD_TOKEN")
     secret("BINTRAY_KEY")
     secret("JETBRAINS_TOKEN")
-
 }
 
 subprojects {
@@ -98,7 +97,7 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "5.6.3"
+        gradleVersion = "6.0.1"
     }
 
     create<Delete>("clean") {

@@ -42,6 +42,10 @@ dependencies {
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.2")
 
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
+
+    implementation(group = "commons-io", name = "commons-io", version = "2.6")
+
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.1")
 }
 
 val isCI by lazy { System.getenv("CI") != null }
@@ -60,9 +64,17 @@ intellij {
 
     // For testing with a custom theme
     // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
-}
 
-project.setProperty("archivesBaseName", "${rootProject.name}-${project.name.capitalize()}")
+    configureDefaultDependencies = false
+
+    afterEvaluate {
+        project.dependencies {
+            idea(files(ideaDependency.jarFiles.filter { f -> !f.name.matches(Regex("""(commons|kotlinx-coroutines).*""")) }))
+            // TODO: fix when adding plugins
+            // ideaPlugins(pluginDependencies.flatMap(PluginDependency::getJarFiles))
+        }
+    }
+}
 
 tasks {
     checkUnusedDependencies {
@@ -149,6 +161,10 @@ tasks {
         prefix("com.fasterxml.jackson.core")
         prefix("com.fasterxml.jackson.annotation")
         prefix("club.minnced.discord.rpc")
+    }
+
+    withType<AbstractArchiveTask> {
+        archiveBaseName.set("${rootProject.name}-${project.name.capitalize()}")
     }
 
     processResources {
