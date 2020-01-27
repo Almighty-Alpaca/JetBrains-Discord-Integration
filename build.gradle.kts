@@ -56,7 +56,7 @@ allprojects {
     }
 
     fun secret(name: String) {
-        project.extra[name] = (System.getenv(name) ?: return)
+        project.extra[name] = System.getenv(name) ?: return
     }
 
     secret("DISCORD_TOKEN")
@@ -97,7 +97,7 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.0.1"
+        gradleVersion = "6.1.1"
     }
 
     create<Delete>("clean") {
@@ -105,13 +105,11 @@ tasks {
 
         val regex = Regex("""JetBrains-Discord-Integration-Plugin-\d+.\d+.\d+(?:\+\d+)?.zip""")
 
-        delete {
-            Files.newDirectoryStream(project.projectDir.toPath())
-                .filter { p -> regex.matches(p.fileName.toString()) }
-                .forEach { p -> delete(p) }
+        Files.newDirectoryStream(project.projectDir.toPath())
+            .filter { p -> regex.matches(p.fileName.toString()) }
+            .forEach { p -> delete(p) }
 
-            delete(project.buildDir)
-        }
+        delete(project.buildDir)
     }
 
     create("default") {
@@ -125,5 +123,11 @@ tasks {
                 into(".")
             }
         }
+    }
+
+    create<Delete>("clean-sandbox") {
+        group = "build"
+
+        delete(project.file(".sandbox"))
     }
 }

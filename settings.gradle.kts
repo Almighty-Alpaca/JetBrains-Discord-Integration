@@ -34,6 +34,6 @@ pluginManagement {
         id("org.jetbrains.intellij") version "0.4.15"
         id("com.github.johnrengelman.shadow") version "5.2.0"
         id("com.palantir.git-version") version "0.12.2"
-        id("com.palantir.baseline-exact-dependencies") version "2.45.1"
+        id("com.palantir.baseline-exact-dependencies") version "3.1.1"
     }
 }
