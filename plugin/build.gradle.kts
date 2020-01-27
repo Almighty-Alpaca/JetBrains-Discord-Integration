@@ -35,17 +35,18 @@ dependencies {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }
 
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.2")
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.2")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.3.1")
 
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
 
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.2")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.2")
 }
 
 val isCI by lazy { System.getenv("CI") != null }

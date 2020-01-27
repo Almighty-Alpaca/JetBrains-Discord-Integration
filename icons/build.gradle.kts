@@ -35,20 +35,20 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-io-jvm", version = "0.1.16")
 
-    implementation(group = "io.ktor", name = "ktor-client-okhttp", version = "1.2.6")
-    implementation(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.2.6")
-    implementation(group = "io.ktor", name = "ktor-client-core-jvm", version = "1.2.6")
-    implementation(group = "io.ktor", name = "ktor-http-jvm", version = "1.2.6")
-    implementation(group = "io.ktor", name = "ktor-utils-jvm", version = "1.2.6")
+    implementation(group = "io.ktor", name = "ktor-client-okhttp", version = "1.3.0")
+    implementation(group = "io.ktor", name = "ktor-client-auth-jvm", version = "1.3.0")
+    implementation(group = "io.ktor", name = "ktor-client-core-jvm", version = "1.3.0")
+    implementation(group = "io.ktor", name = "ktor-http-jvm", version = "1.3.0")
+    implementation(group = "io.ktor", name = "ktor-utils-jvm", version = "1.3.0")
+    implementation(group = "io.ktor", name = "ktor-io-jvm", version = "1.3.0")
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.2.2")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.3.1")
 
     implementation(group = "org.apache.commons", name = "commons-text", version = "1.8")
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.2")
 }
 
 tasks {

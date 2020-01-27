@@ -25,9 +25,9 @@ dependencies {
 
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.1")
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.1")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.1")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.2")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.2")
 }
 
 tasks {

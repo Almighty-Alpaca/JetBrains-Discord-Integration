@@ -33,12 +33,12 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.url
-import io.ktor.client.response.HttpResponse
-import io.ktor.client.response.readBytes
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readBytes
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.*
-import kotlinx.coroutines.io.jvm.javaio.toInputStream
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
