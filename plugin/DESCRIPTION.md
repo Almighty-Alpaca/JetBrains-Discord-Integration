@@ -10,4 +10,5 @@ Show everyone on Discord what awesome projects you're working on!
 - Hide individual projects you don't want to show yet or are under NDA
 - Does *not* insert ads into your rich presence
 
-For bugs, ideas or language requests [join the Discord server](https://discord.gg/SvuyuMP) or [visit the project on github](https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration).
+For troubleshooting, ideas and feature requests feel free to [join the Discord server](https://discord.gg/SvuyuMP).
+For bug reports please take a look at the [official GitHub repository](https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration).

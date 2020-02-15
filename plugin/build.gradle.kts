@@ -23,7 +23,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/"
+val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 
 dependencies {
     implementation(kotlin(module = "stdlib"))
