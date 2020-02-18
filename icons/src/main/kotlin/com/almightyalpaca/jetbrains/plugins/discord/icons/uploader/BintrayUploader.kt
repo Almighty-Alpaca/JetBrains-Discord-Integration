@@ -89,8 +89,6 @@ suspend fun main() {
                 connectTimeout(10, TimeUnit.SECONDS)
                 readTimeout(10, TimeUnit.SECONDS)
                 writeTimeout(10, TimeUnit.SECONDS)
-
-                protocols(listOf(Protocol.HTTP_1_1)) // TODO: remove once https://github.com/square/okhttp/issues/4029 has been fixed
             }
         }
         install(Auth) {
