@@ -19,15 +19,21 @@ plugins {
 }
 
 dependencies {
+    val versionCoroutines: String by project
+    val versionCommonsIo: String by project
+    val versionJackson: String by project
+
     implementation(kotlin(module = "stdlib"))
 
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$versionCoroutines"))
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
 
-    implementation(group = "commons-io", name = "commons-io", version = "2.6")
+    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.2")
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.2")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.2")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:$versionJackson"))
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core")
+    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml")
 }
 
 tasks {

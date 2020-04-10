@@ -26,34 +26,35 @@ plugins {
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 
 dependencies {
-    implementation(kotlin(module = "stdlib"))
-
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.3")
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version = "1.3.3")
+    val versionJackson: String by project
+    val versionOkHttp: String by project
+    val versionRpc: String by project
 
     implementation(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+        exclude(group = "commons-io", module = "commons-io")
     }
 
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.10.2")
+    implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
-    implementation(group = "club.minnced", name = "java-discord-rpc", version = "2.0.2")
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+    }
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.3.1")
-
-    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
-
-    implementation(group = "commons-io", name = "commons-io", version = "2.6")
-
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = "2.10.2")
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.10.2")
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml",
+        version = versionJackson
+    )
 }
 
 val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "2019.1"
+    version = "2020.1"
 
     downloadSources = !isCI
 
@@ -66,15 +67,15 @@ intellij {
     // For testing with a custom theme
     // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
 
-    configureDefaultDependencies = false
-
-    afterEvaluate {
-        project.dependencies {
-            idea(files(ideaDependency.jarFiles.filter { f -> !f.name.matches(Regex("""(commons|kotlinx-coroutines).*""")) }))
-            // TODO: fix when adding plugins
-            // ideaPlugins(pluginDependencies.flatMap(PluginDependency::getJarFiles))
-        }
-    }
+//    configureDefaultDependencies = false
+//
+//    afterEvaluate {
+//        project.dependencies {
+//            idea(files(ideaDependency.jarFiles.filter { f -> !f.name.matches(Regex("""(commons|kotlinx-coroutines).*""")) }))
+//            // TODO: fix when adding plugins
+//            // ideaPlugins(pluginDependencies.flatMap(PluginDependency::getJarFiles))
+//        }
+//    }
 }
 
 tasks {
@@ -96,7 +97,8 @@ tasks {
         environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.logging"] = "true"
 
         // use local icons
-        environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
+        environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] =
+            "local:${project(":icons").parent!!.projectDir.absolutePath}"
 
         // use icons from specific bintray repo
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
@@ -133,7 +135,8 @@ tasks {
     }
 
     shadowJar task@{
-        fun prefix(pkg: String, configure: Action<SimpleRelocator>? = null) = relocate(pkg, "${project.group}.dependencies.$pkg", configure)
+        fun prefix(pkg: String, configure: Action<SimpleRelocator>? = null) =
+            relocate(pkg, "${rootProject.group}.dependencies.$pkg", configure)
 
         mergeServiceFiles()
 
@@ -148,14 +151,14 @@ tasks {
         prefix("org.intellij.lang.annotations")
         prefix("org.apache.logging.slf4j")
         prefix("org.apache.logging.log4j")
-        prefix("org.apache.commons.lang3")
-        prefix("org.apache.commons.io")
+//        prefix("org.apache.commons.lang3")
+//        prefix("org.apache.commons.io")
         prefix("org.apache.commons.collections")
         prefix("org.apache.commons.codec")
         prefix("okio")
         prefix("okhttp3")
-        prefix("kotlinx.coroutines")
-        prefix("kotlin")
+//        prefix("kotlinx.coroutines")
+//        prefix("kotlin")
         prefix("com.jagrosh.discordipc")
         prefix("com.fasterxml.jackson.dataformat.yaml")
         prefix("com.fasterxml.jackson.databind")
