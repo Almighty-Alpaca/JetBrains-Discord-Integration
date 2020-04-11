@@ -89,8 +89,8 @@ tasks {
         gradleReleaseChannel = GradleReleaseChannel.CURRENT.toString()
 
         rejectVersionIf {
-            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", "M\\d+")
-                .map { qualifier -> Regex(".*[.-]$qualifier(release|[.\\d-_])*", RegexOption.IGNORE_CASE) }
+            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", """M\d+""")
+                .map { qualifier -> Regex(""".*[.-]$qualifier(release|[.\d-_])*""", RegexOption.IGNORE_CASE) }
                 .any { regex -> regex.matches(candidate.version) }
         }
     }

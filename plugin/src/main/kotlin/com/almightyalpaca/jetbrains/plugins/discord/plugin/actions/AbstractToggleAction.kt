@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
@@ -26,7 +26,11 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import javax.swing.Icon
 
-class SettingsToggleAction(private val value: (Project) -> BooleanValue, private val enabled: View, private val disabled: View) : AnAction() {
+abstract class AbstractToggleAction(
+    private val value: (Project) -> BooleanValue,
+    private val enabled: View,
+    private val disabled: View
+) : AnAction() {
     constructor(value: BooleanValue, enabled: View, disabled: View) : this({ value }, enabled, disabled)
 
     override fun actionPerformed(e: AnActionEvent) {

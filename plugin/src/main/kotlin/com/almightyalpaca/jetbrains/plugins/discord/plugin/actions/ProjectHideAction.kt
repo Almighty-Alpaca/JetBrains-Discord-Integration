@@ -14,31 +14,25 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.items
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ActionComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ActionItem
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types.SettingsToggleAction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.Icons
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
-class ProjectHideAction : ActionItem {
-    override fun ActionComponent.create() {
-
-        val hidden = SettingsToggleAction.View {
+class ProjectHideAction : AbstractToggleAction({ project -> project.settings.show }, shown, hidden) {
+    companion object {
+        val hidden = View {
             text = "Show project in Rich Presence"
             // description = ""
             icon = Icons.DISCORD_WHITE
             hoveredIcon = Icons.DISCORD_BLURPLE
         }
 
-        val shown = SettingsToggleAction.View {
+        val shown = View {
             text = "Hide project in Rich Presence"
             // description = ""
             icon = Icons.DISCORD_BLURPLE
             hoveredIcon = Icons.DISCORD_WHITE
         }
-
-        addAction(SettingsToggleAction({ project -> project.settings.show }, shown, hidden))
     }
 }

@@ -16,12 +16,12 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.types.SimpleAction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
+import com.intellij.openapi.project.DumbAwareAction
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -39,11 +39,11 @@ object AskShowProjectNotification {
     suspend fun show() = suspendCoroutine<Boolean> { continuation ->
         val notification = group.createNotification(title, null, content, NotificationType.INFORMATION)
 
-        notification.addAction(SimpleAction("Show") {
+        notification.addAction(DumbAwareAction.create("Show") {
             notification.expire()
             continuation.resume(true)
         })
-        notification.addAction(SimpleAction("Hide") {
+        notification.addAction(DumbAwareAction.create("Hide") {
             notification.expire()
             continuation.resume(false)
         })
