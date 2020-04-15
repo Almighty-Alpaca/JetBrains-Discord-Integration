@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.AppLifecycleListener
+import com.intellij.openapi.project.Project
 
-object Plugin {
-    private val pluginId by lazy { PluginManagerCore.getPluginByClassName(Plugin::class.java.name)!! }
-    private val plugin by lazy { PluginManagerCore.getPlugin(pluginId)!! }
-
-    fun getId() = pluginId
-    fun getIdString() = pluginId.idString
-
-    object Version {
-        val isStable by lazy { toString().matches(Regex("""\d+\.\d+\.\d+""")) }
-        val isEap by lazy { !isStable }
-
-        override fun toString(): String = plugin.version
+class DiagnoseAppLifecycleListener : AppLifecycleListener {
+    override fun appStarting(projectFromCommandLine: Project?) {
+        diagnoseService.discord
+        diagnoseService.plugins
+        diagnoseService.ide
     }
 }

@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.toggle
 import com.intellij.openapi.actionSystem.AnAction
@@ -37,7 +37,7 @@ abstract class AbstractToggleAction(
         val project = e.getData(PlatformDataKeys.PROJECT) ?: return
 
         value(project).toggle()
-        richPresenceRenderService.render()
+        renderService.render()
     }
 
     override fun update(e: AnActionEvent) {

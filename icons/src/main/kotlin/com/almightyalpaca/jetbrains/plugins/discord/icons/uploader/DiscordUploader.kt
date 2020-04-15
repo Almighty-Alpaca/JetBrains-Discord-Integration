@@ -42,7 +42,6 @@ import kotlinx.coroutines.*
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
-import okhttp3.Protocol
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.net.URL

@@ -51,7 +51,12 @@ sealed class Matcher {
         EXTENSION("extension"),
         NAME("name"),
         BASENAME("basename"),
-        PATH("path"),
+        PATH("path");
         // CONTENT("content") // TODO: implement content/magic byte matching
+
+
+        interface Provider {
+            fun getField(target: Target): Collection<String>
+        }
     }
 }

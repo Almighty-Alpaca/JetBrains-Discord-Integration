@@ -19,57 +19,26 @@
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
 
-    <idea-version since-build="201"/>
+    <idea-version since-build="201.4515.24"/>
 
     <depends>com.intellij.modules.lang</depends>
 
-    <application-components>
-        <component>
-            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ApplicationComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ApplicationComponentImpl
-            </implementation-class>
-        </component>
-        <component>
-            <interface-class>com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.impl.DiagnoseComponentImpl
-            </implementation-class>
-        </component>
-        <component>
-            <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl.ApplicationNotificationComponentImpl
-            </implementation-class>
-        </component>
-    </application-components>
-
-    <project-components>
-        <component>
-            <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.ProjectComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.components.impl.ProjectComponentImpl
-            </implementation-class>
-        </component>
-        <component>
-            <interface-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ProjectNotificationComponent
-            </interface-class>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.impl.ProjectNotificationComponentImpl
-            </implementation-class>
-        </component>
-    </project-components>
+    <applicationListeners>
+        <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseAppLifecycleListener"
+                topic="com.intellij.ide.AppLifecycleListener"/>
+        <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderAppLifecycleListener"
+                topic="com.intellij.ide.AppLifecycleListener"/>
+        <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.DiscordDynamicPluginListener"
+                topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+    </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings"
-                        serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ProjectSettingsImpl"/>
+        <projectService
+                serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings"
+                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ProjectSettingsImpl"/>
         <applicationService
                 serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings"
                 serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl.ApplicationSettingsImpl"/>
@@ -79,25 +48,22 @@
         <applicationService
                 serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings"/>
 
-        <applicationService
-                serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceService"
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceServiceImpl"/>
+        <applicationConfigurable
+                groupId="tools"
+                groupWeight="200"
+                displayName="Discord"
+                id="discord-application"
+                instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationConfigurable"/>
 
-        <applicationService
-                serviceInterface="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresenceRenderService"
-                serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.impl.RichPresenceRenderServiceImpl"/>
+        <projectConfigurable
+                groupId="discord-application"
+                groupWeight="200"
+                displayName="Project"
+                id="discord-project"
+                instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectConfigurable"/>
 
-        <applicationConfigurable groupId="tools"
-                                 groupWeight="200"
-                                 displayName="Discord"
-                                 id="discord-application"
-                                 instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationConfigurable"/>
-
-        <projectConfigurable groupId="discord-application"
-                             groupWeight="200"
-                             displayName="Project"
-                             id="discord-project"
-                             instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectConfigurable"/>
+        <backgroundPostStartupActivity
+                implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.NotificationStartupActivity"/>
     </extensions>
 
     <actions>
@@ -107,6 +73,9 @@
                compact="true"
                icon="/discord/images/logo/blurple.png">
             <add-to-group group-id="ToolsMenu"/>
+
+            <action id="DiscordActionGroup.RenderUpdateAction"
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.RenderUpdateAction"/>
 
             <action id="DiscordActionGroup.ApplicationHideAction"
                     class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ApplicationHideAction"/>

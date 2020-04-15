@@ -17,10 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.intellij.openapi.Disposable
 
 const val UPDATE_DELAY = 2000L
 
-interface RPCConnection {
+interface RpcConnection : Disposable {
     val appId: Long
 
     val running: Boolean

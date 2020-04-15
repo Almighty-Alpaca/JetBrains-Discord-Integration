@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 
@@ -24,10 +24,10 @@ typealias IconTextValue = SimpleValue<PresenceIconText>
 
 enum class PresenceIconText(val description: String, override val toolTip: String? = null) : ToolTipProvider {
     APPLICATION_VERSION("Application Version") {
-        override fun RenderContext.getResult() = application.version.toResult()
+        override fun RenderContext.getResult() = applicationData?.applicationVersion.toResult()
     },
     FILE_LANGUAGE("File Language") {
-        override fun RenderContext.getResult() = match?.name.toResult()
+        override fun RenderContext.getResult() = language?.name.toResult()
     },
     // CUSTOM("Custom") {
     //     override fun get(context: RenderContext) = Result.Custom

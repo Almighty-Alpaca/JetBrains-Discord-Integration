@@ -16,19 +16,14 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-import com.intellij.ide.plugins.PluginManagerCore
+fun Int.roundToNextPowerOfTwo(): Int {
+    var v = this - 1
 
-object Plugin {
-    private val pluginId by lazy { PluginManagerCore.getPluginByClassName(Plugin::class.java.name)!! }
-    private val plugin by lazy { PluginManagerCore.getPlugin(pluginId)!! }
+    v = v or (v shr 1)
+    v = v or (v shr 2)
+    v = v or (v shr 4)
+    v = v or (v shr 8)
+    v = v or (v shr 16)
 
-    fun getId() = pluginId
-    fun getIdString() = pluginId.idString
-
-    object Version {
-        val isStable by lazy { toString().matches(Regex("""\d+\.\d+\.\d+""")) }
-        val isEap by lazy { !isStable }
-
-        override fun toString(): String = plugin.version
-    }
+    return v + 1
 }

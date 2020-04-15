@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.richPresenceRenderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
 
@@ -32,7 +32,7 @@ class ProjectConfigurable(val project: Project) : SearchableConfigurable {
     override fun apply() {
         settings.apply()
 
-        richPresenceRenderService.render()
+        renderService.render()
     }
 
     override fun reset() {

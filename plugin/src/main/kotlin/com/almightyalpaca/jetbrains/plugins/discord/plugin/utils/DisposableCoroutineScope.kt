@@ -16,19 +16,19 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.Disposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-object Plugin {
-    private val pluginId by lazy { PluginManagerCore.getPluginByClassName(Plugin::class.java.name)!! }
-    private val plugin by lazy { PluginManagerCore.getPlugin(pluginId)!! }
+interface DisposableCoroutineScope : CoroutineScope, Disposable {
+    val parentJob: Job
 
-    fun getId() = pluginId
-    fun getIdString() = pluginId.idString
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + parentJob
 
-    object Version {
-        val isStable by lazy { toString().matches(Regex("""\d+\.\d+\.\d+""")) }
-        val isEap by lazy { !isStable }
-
-        override fun toString(): String = plugin.version
+    override fun dispose() {
+        parentJob.cancel()
     }
 }

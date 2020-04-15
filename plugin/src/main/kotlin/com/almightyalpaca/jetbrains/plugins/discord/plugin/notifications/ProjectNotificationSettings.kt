@@ -18,12 +18,15 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.NewProjectShow
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
+
+val Project.notificationSettings: ProjectNotificationSettings
+    get() = service()
 
 @State(name = "ProjectNotificationSettings", storages = [Storage("discord.xml")])
 class ProjectNotificationSettings : PersistentStateComponent<ProjectNotificationSettings> {
@@ -35,6 +38,3 @@ class ProjectNotificationSettings : PersistentStateComponent<ProjectNotification
         XmlSerializerUtil.copyBean(state, this)
     }
 }
-
-val Project.notificationSettings: ProjectNotificationSettings
-    get() = this.getService()

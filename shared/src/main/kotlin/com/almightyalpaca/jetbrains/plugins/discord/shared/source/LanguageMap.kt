@@ -16,9 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.shared.source
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.FieldProvider
+import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
 
 interface LanguageMap : Collection<Language> {
     val default: Language.Default
-    fun findLanguage(provider: FieldProvider): LanguageMatch
+    fun findLanguage(provider: Matcher.Target.Provider): LanguageMatch
 }

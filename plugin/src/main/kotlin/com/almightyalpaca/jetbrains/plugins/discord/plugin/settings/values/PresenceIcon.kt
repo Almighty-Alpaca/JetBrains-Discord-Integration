@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.renderer.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 
@@ -28,7 +28,7 @@ enum class PresenceIcon(val description: String, override val toolTip: String? =
     },
     FILE("File") {
         override fun RenderContext.getResult(): Result {
-            return icons?.let { icons -> match?.findIcon(icons) }?.asset.toResult()
+            return icons?.let { icons -> language?.findIcon(icons) }?.asset.toResult()
         }
     },
     NONE("None") {

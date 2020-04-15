@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.Icons
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 
-object Plugin {
-    private val pluginId by lazy { PluginManagerCore.getPluginByClassName(Plugin::class.java.name)!! }
-    private val plugin by lazy { PluginManagerCore.getPlugin(pluginId)!! }
+class RenderUpdateAction : DumbAwareAction() {
+    init {
+        templatePresentation.apply {
+            icon = Icons.DISCORD_BLURPLE
+            text = "Update now"
+        }
+    }
 
-    fun getId() = pluginId
-    fun getIdString() = pluginId.idString
-
-    object Version {
-        val isStable by lazy { toString().matches(Regex("""\d+\.\d+\.\d+""")) }
-        val isEap by lazy { !isStable }
-
-        override fun toString(): String = plugin.version
+    override fun actionPerformed(e: AnActionEvent) {
+        renderService.render()
     }
 }

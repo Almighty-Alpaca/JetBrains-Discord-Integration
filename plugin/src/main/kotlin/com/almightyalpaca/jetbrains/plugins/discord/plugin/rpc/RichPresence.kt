@@ -47,6 +47,7 @@ class RichPresence(
         }
     }
 
+    //TODO: make sure everything is at least 2 chars long
     var state = state?.limit(128, true)
         set(value) {
             field = value?.limit(128, true)
