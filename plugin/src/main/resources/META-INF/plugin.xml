@@ -49,7 +49,7 @@
                 serviceImplementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.ApplicationNotificationSettings"/>
 
         <applicationConfigurable
-                groupId="tools"
+                groupId="other"
                 groupWeight="200"
                 displayName="Discord"
                 id="discord-application"
