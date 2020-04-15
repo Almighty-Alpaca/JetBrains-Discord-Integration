@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.Icons
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Icons
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 class ApplicationHideAction : AbstractToggleAction(settings.show, shown, hidden) {

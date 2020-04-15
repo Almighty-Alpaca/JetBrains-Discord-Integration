@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.icons
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.openapi.util.IconLoader
 
 object Icons {
-    val DISCORD_BLURPLE = load("/discord/images/logo/blurple.png")
-    val DISCORD_WHITE = load("/discord/images/logo/white.png")
+    val DISCORD_BLURPLE =
+        load("/discord/images/logo/blurple.png")
+    val DISCORD_WHITE =
+        load("/discord/images/logo/white.png")
 
     private fun load(path: String) = IconLoader.getIcon(path)
 }

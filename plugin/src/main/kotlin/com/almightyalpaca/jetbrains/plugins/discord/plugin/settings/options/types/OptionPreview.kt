@@ -16,8 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview.JPreview
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview.JPreview
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
@@ -86,15 +85,11 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider
             add(tabsOption.component, tabsGbc)
 
             tabsOption.addChangeListener { tabs ->
-                previewImpl.type = when (val selected = tabs.selected) {
+                previewImpl.type = when (tabs.selected) {
                     0 -> Renderer.Type.APPLICATION
                     1 -> Renderer.Type.PROJECT
                     2 -> Renderer.Type.FILE
-                    else -> {
-                        log { "Unknown tab with id=$selected selected" }
-
-                        Renderer.Type.APPLICATION
-                    }
+                    else -> Renderer.Type.APPLICATION // TODO: should never happen but nevertheless handled better
                 }
             }
         }
@@ -113,8 +108,6 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider
     override fun reset() = tabsOption.reset()
     override fun writeXml(element: Element, key: String) = tabsOption.writeXml(element, tabsKey)
     override fun readXml(element: Element, key: String) = tabsOption.readXml(element, tabsKey)
-
-    companion object : Logging()
 }
 
 class Preview(private val option: OptionPreview) : Value(), OptionCreator<Tabs> by option {

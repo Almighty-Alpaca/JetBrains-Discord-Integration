@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.preview
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import kotlinx.coroutines.*

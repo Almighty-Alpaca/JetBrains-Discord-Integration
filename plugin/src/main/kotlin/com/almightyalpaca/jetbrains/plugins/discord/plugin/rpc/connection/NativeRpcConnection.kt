@@ -22,7 +22,6 @@ import club.minnced.discord.rpc.DiscordEventHandlers.OnStatus
 import club.minnced.discord.rpc.DiscordRPC
 import club.minnced.discord.rpc.DiscordRichPresence
 import club.minnced.discord.rpc.DiscordUser
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
@@ -60,8 +59,6 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun connect() {
-        log { "NativeRPCConnection($appId)#connect()" }
-
         if (!CONNECTED.compareAndSet(null, this)) {
             throw IllegalStateException("There can only be one connected RPC connection")
         }
@@ -78,8 +75,6 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun send(presence: RichPresence?) {
-        log { "NativeRPCConnection($appId)#send()" }
-
         if (CONNECTED.get() != this) {
             return
         }
@@ -98,8 +93,6 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun disconnect() {
-        log { "NativeRPCConnection($appId)#disconnect()" }
-
         if (CONNECTED.get() != this) {
             return
         }
@@ -115,8 +108,6 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
         super.dispose()
     }
-
-    companion object : Logging()
 }
 
 private fun User.Companion.fromLibraryObject(user: DiscordUser): User =

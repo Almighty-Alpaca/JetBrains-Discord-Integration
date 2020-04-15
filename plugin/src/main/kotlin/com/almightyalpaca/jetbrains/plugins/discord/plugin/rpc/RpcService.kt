@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.logging.Logging
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.NativeRpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
@@ -68,8 +67,6 @@ class RpcService : DisposableCoroutineScope {
 
     @Synchronized
     private fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) {
-        log { "RichPresenceServiceImpl#update()" }
-
         if (Disposer.isDisposed(this) || !forceUpdate && !forceReconnect && lastPresence == presence) {
             return
         }
@@ -103,8 +100,6 @@ class RpcService : DisposableCoroutineScope {
             connection?.send(presence)
         }
     }
-
-    companion object : Logging()
 
     override fun dispose() {
         rpcService.update(null)

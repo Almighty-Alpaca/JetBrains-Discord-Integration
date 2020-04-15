@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.gui.themes
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.themes
 
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeMap
