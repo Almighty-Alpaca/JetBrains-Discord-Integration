@@ -85,9 +85,7 @@ abstract class Renderer(private val context: RenderContext) {
                 }
             }
 
-            if (Plugin.Version.isEap) {
-                this.partyId = "eap"
-            }
+            this.partyId = Plugin.Version.toString()
         }
     }
 

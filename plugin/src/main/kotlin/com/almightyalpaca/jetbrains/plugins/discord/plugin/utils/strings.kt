@@ -21,14 +21,17 @@ import java.util.stream.IntStream
 
 fun CharSequence.find(char: Char, ignoreCase: Boolean = false): IntStream =
     IntStream.range(0, length)
-    .filter { i -> get(i).equals(char, ignoreCase) }
+        .filter { i -> get(i).equals(char, ignoreCase) }
 
-fun String.limit(limit: Int, dots: Boolean = false) =
-    when (length <= limit) {
-        true -> this
-        false -> when (dots) {
-            true -> "${substring(0, limit - 1)}…"
+fun String.limit(range: IntRange, dots: Boolean = true) =
+    when (length > range.last) {
+        true -> when (dots) {
+            true -> "${substring(0, range.last - 1)}…"
             false -> substring(0, 128)
+        }
+        false -> when (length < range.first) {
+            true -> this + ('\u200b' * (range.first - length))
+            false -> this
         }
     }
 
@@ -52,3 +55,23 @@ fun String.limitWidth(font: FontMetrics, limit: Int): String =
             result
         }
     }
+
+operator fun Char.times(n: Int): String = StringBuilder().apply {
+    for (i in 0..n + 1) {
+        append(this@times)
+    }
+}.toString()
+
+fun limitingLength(initialValue: String, range: IntRange, dots: Boolean) =
+    modifying(initialValue) { it.limit(range, dots) }
+
+@JvmName("limitingNullable")
+fun limitingLength(initialValue: String?, range: IntRange, dots: Boolean) =
+    modifying(initialValue) { it?.limit(range, dots) }
+
+fun verifyingLength(initialValue: String, range: IntRange) =
+    verifying(initialValue) { it.length in range }
+
+@JvmName("verifyingLengthNullable")
+fun verifyingLength(initialValue: String?, range: IntRange) =
+    verifying(initialValue) { it == null || it.length in range }

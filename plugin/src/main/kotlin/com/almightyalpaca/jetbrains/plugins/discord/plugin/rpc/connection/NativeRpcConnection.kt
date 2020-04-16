@@ -47,7 +47,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
     init {
         ready = OnReady { user ->
             running = true
-            userCallback(User.fromLibraryObject(user))
+            userCallback(user.toGeneric())
         }
         disconnected = OnStatus { _, _ ->
             running = false
@@ -86,7 +86,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
             when (presence) {
                 null -> DiscordRPC.INSTANCE.Discord_ClearPresence()
-                else -> DiscordRPC.INSTANCE.Discord_UpdatePresence(presence.toLibraryObject())
+                else -> DiscordRPC.INSTANCE.Discord_UpdatePresence(presence.toNative())
             }
         }
     }
@@ -110,25 +110,24 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
     }
 }
 
-private fun User.Companion.fromLibraryObject(user: DiscordUser): User =
-    User.Normal(user.username, user.discriminator, user.userId.toLong(), user.avatar)
+private fun DiscordUser.toGeneric(): User = User.Normal(username, discriminator, userId.toLong(), avatar)
 
-private fun RichPresence.toLibraryObject() = DiscordRichPresence().apply {
-    this@toLibraryObject.state?.let { state = it }
-    this@toLibraryObject.details?.let { details = it }
-    this@toLibraryObject.startTimestamp?.toInstant()?.toEpochMilli()?.let { startTimestamp = it }
-    this@toLibraryObject.endTimestamp?.toInstant()?.toEpochMilli()?.let { endTimestamp = it }
-    this@toLibraryObject.largeImage?.key?.let { largeImageKey = it }
-    this@toLibraryObject.largeImage?.text?.let { largeImageText = it }
-    this@toLibraryObject.smallImage?.key?.let { smallImageKey = it }
-    this@toLibraryObject.smallImage?.text?.let { smallImageText = it }
-    this@toLibraryObject.partyId?.let { partyId = it }
-    this@toLibraryObject.partySize.let { partySize = it }
-    this@toLibraryObject.partyMax.let { partyMax = it }
-    this@toLibraryObject.matchSecret?.let { matchSecret = it }
-    this@toLibraryObject.joinSecret?.let { joinSecret = it }
-    this@toLibraryObject.spectateSecret?.let { spectateSecret = it }
-    this@toLibraryObject.instance.let {
+private fun RichPresence.toNative() = DiscordRichPresence().apply {
+    this@toNative.state?.let { state = it }
+    this@toNative.details?.let { details = it }
+    this@toNative.startTimestamp?.toInstant()?.toEpochMilli()?.let { startTimestamp = it }
+    this@toNative.endTimestamp?.toInstant()?.toEpochMilli()?.let { endTimestamp = it }
+    this@toNative.largeImage?.key?.let { largeImageKey = it }
+    this@toNative.largeImage?.text?.let { largeImageText = it }
+    this@toNative.smallImage?.key?.let { smallImageKey = it }
+    this@toNative.smallImage?.text?.let { smallImageText = it }
+    this@toNative.partyId?.let { partyId = it }
+    this@toNative.partySize.let { partySize = it }
+    this@toNative.partyMax.let { partyMax = it }
+    this@toNative.matchSecret?.let { matchSecret = it }
+    this@toNative.joinSecret?.let { joinSecret = it }
+    this@toNative.spectateSecret?.let { spectateSecret = it }
+    this@toNative.instance.let {
         instance = when (it) {
             false -> 0
             true -> 1

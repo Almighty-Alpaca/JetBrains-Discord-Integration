@@ -16,9 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getImage
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.limit
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.roundToNextPowerOfTwo
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
 import java.awt.image.BufferedImage
 import java.net.URL
@@ -47,41 +45,16 @@ class RichPresence(
         }
     }
 
-    //TODO: make sure everything is at least 2 chars long
-    var state = state?.limit(128, true)
-        set(value) {
-            field = value?.limit(128, true)
-        }
-    var details = details?.limit(128, true)
-        set(value) {
-            field = value?.limit(128, true)
-        }
-
-    var partyId = partyId?.limit(128)
-        set(value) {
-            field = value?.limit(128)
-        }
-
-    var matchSecret = matchSecret?.limit(128)
-        set(value) {
-            field = value?.limit(128)
-        }
-    var joinSecret = joinSecret?.limit(128)
-        set(value) {
-            field = value?.limit(128)
-        }
-    var spectateSecret = spectateSecret?.limit(128)
-        set(value) {
-            field = value?.limit(128)
-        }
+    var state by limitingLength(state, 2..128, true)
+    var details by limitingLength(details, 2..128, true)
+    var partyId by verifyingLength(partyId, 0..128)
+    var matchSecret by verifyingLength(matchSecret, 0..128)
+    var joinSecret by verifyingLength(joinSecret, 0..128)
+    var spectateSecret by verifyingLength(spectateSecret, 0..128)
 
     class Image(var asset: Asset?, text: String?) {
-        val key = asset?.id?.limit(32, true)
-
-        var text = text?.limit(128, true)
-            set(value) {
-                field = value?.limit(128, true)
-            }
+        val key = asset?.id?.limit(0..32, false)
+        var text by limitingLength(text, 2..128, true)
     }
 }
 
@@ -93,7 +66,10 @@ sealed class User {
     class Normal(override val name: String, override val tag: String, val id: Long, val avatarId: String) : User() {
         override fun getAvatar(size: Int?) = when (size) {
             null -> URL("https://cdn.discordapp.com/avatars/$id/$avatarId.png?size=128")
-            else -> URL("https://cdn.discordapp.com/avatars/$id/$avatarId.png?size=${size.roundToNextPowerOfTwo().coerceIn(16..4096)}")
+            else -> URL(
+                "https://cdn.discordapp.com/avatars/$id/$avatarId.png?size=${size.roundToNextPowerOfTwo()
+                    .coerceIn(16..4096)}"
+            )
         }.getImage()
     }
 
@@ -102,7 +78,8 @@ sealed class User {
         override val tag: String? = null
 
         // URL: https://discordapp.com/assets/f78426a064bc9dd24847519259bc42af.png
-        override fun getAvatar(size: Int?): BufferedImage = ImageIO.read(CLYDE::class.java.getResourceAsStream("/discord/images/avatars/clyde.png"))
+        override fun getAvatar(size: Int?): BufferedImage =
+            ImageIO.read(CLYDE::class.java.getResourceAsStream("/discord/images/avatars/clyde.png"))
     }
 
     companion object
