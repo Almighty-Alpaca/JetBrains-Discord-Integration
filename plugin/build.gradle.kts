@@ -29,12 +29,12 @@ dependencies {
     val versionJackson: String by project
     val versionOkHttp: String by project
     val versionRpc: String by project
+    val versionCommonsIo: String by project
 
     implementation(project(":shared")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-        exclude(group = "commons-io", module = "commons-io")
     }
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
@@ -44,6 +44,8 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
+
+    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml",
         version = versionJackson
@@ -152,7 +154,7 @@ tasks {
         prefix("org.apache.logging.slf4j")
         prefix("org.apache.logging.log4j")
 //        prefix("org.apache.commons.lang3")
-//        prefix("org.apache.commons.io")
+        prefix("org.apache.commons.io")
         prefix("org.apache.commons.collections")
         prefix("org.apache.commons.codec")
         prefix("okio")
