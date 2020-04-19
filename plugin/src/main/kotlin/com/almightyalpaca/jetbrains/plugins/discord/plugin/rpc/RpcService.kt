@@ -20,7 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.Native
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.intellij.openapi.components.Service
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val rpcService: RpcService
-get() = service()
+    get() = service()
 
 @Service
 class RpcService : DisposableCoroutineScope {

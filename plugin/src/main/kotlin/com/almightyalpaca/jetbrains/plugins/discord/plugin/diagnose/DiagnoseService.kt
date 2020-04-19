@@ -22,7 +22,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.Service
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.extensions.PluginId
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -32,7 +32,7 @@ import org.apache.commons.lang3.SystemUtils
 import java.nio.charset.StandardCharsets
 
 val diagnoseService: DiagnoseService
-get() = service()
+    get() = service()
 
 @Service
 class DiagnoseService : DisposableCoroutineScope {

@@ -30,8 +30,7 @@ sealed class Data {
         val applicationVersion: String,
         val applicationStartTime: Long,
         val applicationSettings: ApplicationSettings
-    ) : Data() {
-    }
+    ) : Data()
 
     open class Project(
         applicationId: String,

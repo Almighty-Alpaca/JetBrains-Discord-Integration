@@ -20,7 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.Opti
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.intellij.openapi.components.PersistentStateComponent
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jdom.Element
 

@@ -22,8 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.service
 import org.jdom.Element
 
 val settings: ApplicationSettings

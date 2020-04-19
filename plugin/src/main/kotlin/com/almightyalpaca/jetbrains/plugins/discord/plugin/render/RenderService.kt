@@ -21,8 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob

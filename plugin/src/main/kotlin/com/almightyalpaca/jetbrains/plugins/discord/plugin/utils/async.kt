@@ -16,8 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import org.jetbrains.concurrency.Promise
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -26,38 +24,4 @@ import kotlin.coroutines.suspendCoroutine
 suspend fun <T> Promise<T>.toSuspendFunction(): T? = suspendCoroutine { continuation ->
     onError(continuation::resumeWithException)
     onProcessed(continuation::resume)
-}
-
-inline fun <reified T> Project.service() = service(T::class.java)
-
-fun <T> Project.service(clazz: Class<T>): T {
-//    println("GETTING PROJECT SERVICE: $clazz")
-
-    val service: T = this.getService(clazz)
-
-    if (service == null) {
-        println("COULDN'T FIND PROJECT SERVICE $clazz")
-        NullPointerException().printStackTrace()
-    } else {
-//        println("FOUND PROJECT SERVICE: $clazz")
-    }
-
-    return service
-}
-
-inline fun <reified T> service(): T = service(T::class.java)
-
-fun <T> service(clazz: Class<T>): T {
-//    println("GETTING SERVICE: $clazz")
-
-    val service: T = ApplicationManager.getApplication().getService(clazz)
-
-    if (service == null) {
-        println("COULDN'T FIND SERVICE $clazz")
-        NullPointerException().printStackTrace()
-    } else {
-//        println("FOUND SERVICE $service")
-    }
-
-    return service
 }

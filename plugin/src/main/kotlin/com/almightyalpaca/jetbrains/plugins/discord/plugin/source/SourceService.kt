@@ -20,11 +20,11 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray.Bintra
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.local.LocalSource
 import com.intellij.openapi.components.Service
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.service
+import com.intellij.openapi.components.service
 import java.nio.file.Paths
 
 val sourceService: SourceService
-get() = service()
+    get() = service()
 
 @Service
 class SourceService {
