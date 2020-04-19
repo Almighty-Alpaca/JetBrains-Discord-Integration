@@ -66,8 +66,8 @@ class RpcService : DisposableCoroutineScope {
     fun update(presence: RichPresence?) = update(presence, forceUpdate = false, forceReconnect = false)
 
     @Synchronized
-    private fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) {
-        if (Disposer.isDisposed(this) || !forceUpdate && !forceReconnect && lastPresence == presence) {
+    fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) {
+        if (Disposer.isDisposed(this) || (!forceUpdate && !forceReconnect && lastPresence == presence)) {
             return
         }
 
@@ -102,7 +102,7 @@ class RpcService : DisposableCoroutineScope {
     }
 
     override fun dispose() {
-        rpcService.update(null)
+        update(null)
 
         super.dispose()
     }

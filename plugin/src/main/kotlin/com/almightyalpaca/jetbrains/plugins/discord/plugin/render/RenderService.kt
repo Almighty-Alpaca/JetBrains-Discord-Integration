@@ -32,6 +32,8 @@ import kotlinx.coroutines.launch
 val renderService: RenderService
     get() = service()
 
+private const val RENDER_INTERVAL: Long = 5_000
+
 @Service
 class RenderService : DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
@@ -41,11 +43,16 @@ class RenderService : DisposableCoroutineScope {
 
     private var isTimeout = false
 
+    private var forceUpdate = false
+
     @Synchronized
-    fun render() {
+    fun render(force: Boolean = false) {
         if (Disposer.isDisposed(this)) {
             return
         }
+
+        if (force)
+            forceUpdate = true
 
         renderJob?.cancel()
         renderJob = launch {
@@ -54,6 +61,9 @@ class RenderService : DisposableCoroutineScope {
             val data = dataService.getData() ?: return@launch
 
             val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
+
+            if (force)
+                forceUpdate = true
 
             var shouldRender = true
 
@@ -85,7 +95,7 @@ class RenderService : DisposableCoroutineScope {
 //                }
 //            }
 
-            if (isTimeout && shouldRender) {
+            if (isTimeout && shouldRender && !forceUpdate) {
                 isTimeout = false
 
                 // TODO: fix resetting timeout
@@ -104,12 +114,14 @@ class RenderService : DisposableCoroutineScope {
                 val renderer = context.createRenderer()
                 val presence = renderer.render()
 
-                rpcService.update(presence)
+                rpcService.update(presence, forceUpdate = forceUpdate)
             } else {
-                rpcService.update(null)
+                rpcService.update(null, forceUpdate = forceUpdate)
             }
 
-            delay(5_000)
+            forceUpdate = false
+
+            delay(RENDER_INTERVAL)
 
             render()
         }

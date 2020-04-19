@@ -25,7 +25,7 @@ class RenderUpdateAction : DumbAwareAction() {
     init {
         templatePresentation.apply {
             icon = Icons.DISCORD_BLURPLE
-            text = "Update now"
+            text = "Force update now"
         }
     }
 

@@ -52,9 +52,53 @@ class RichPresence(
     var joinSecret by verifyingLength(joinSecret, 0..128)
     var spectateSecret by verifyingLength(spectateSecret, 0..128)
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is RichPresence) return false
+
+        if (appId != other.appId) return false
+        if (startTimestamp != other.startTimestamp) return false
+        if (endTimestamp != other.endTimestamp) return false
+        if (largeImage != other.largeImage) return false
+        if (smallImage != other.smallImage) return false
+        if (partySize != other.partySize) return false
+        if (partyMax != other.partyMax) return false
+        if (instance != other.instance) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = appId?.hashCode() ?: 0
+        result = 31 * result + (startTimestamp?.hashCode() ?: 0)
+        result = 31 * result + (endTimestamp?.hashCode() ?: 0)
+        result = 31 * result + (largeImage?.hashCode() ?: 0)
+        result = 31 * result + (smallImage?.hashCode() ?: 0)
+        result = 31 * result + partySize
+        result = 31 * result + partyMax
+        result = 31 * result + instance.hashCode()
+        return result
+    }
+
     class Image(var asset: Asset?, text: String?) {
         val key = asset?.id?.limit(0..32, false)
         var text by limitingLength(text, 2..128, true)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Image) return false
+
+            if (asset != other.asset) return false
+            if (key != other.key) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = asset?.hashCode() ?: 0
+            result = 31 * result + (key?.hashCode() ?: 0)
+            return result
+        }
     }
 }
 
@@ -62,6 +106,22 @@ sealed class User {
     abstract val name: String
     abstract val tag: String?
     abstract fun getAvatar(size: Int? = null): BufferedImage?
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        if (name != other.name) return false
+        if (tag != other.tag) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + (tag?.hashCode() ?: 0)
+        return result
+    }
 
     class Normal(override val name: String, override val tag: String, val id: Long, val avatarId: String) : User() {
         override fun getAvatar(size: Int?) = when (size) {

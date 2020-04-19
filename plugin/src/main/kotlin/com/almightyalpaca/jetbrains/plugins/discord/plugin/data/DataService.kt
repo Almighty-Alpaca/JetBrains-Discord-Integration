@@ -30,6 +30,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.IdeFrame
@@ -79,17 +80,20 @@ class DataService {
 
                 if (file != null) {
                     val fileName = file.name
-                    val fileUniqueName = ReadAction.compute<String, Exception> {
-                        try {
-                            if (!project.isDisposed) {
-                                EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
-                            } else {
+                    val fileUniqueName = when (DumbService.isDumb(project)) {
+                        true -> fileName
+                        false -> ReadAction.compute<String, Exception> {
+                            try {
+                                if (!project.isDisposed) {
+                                    EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
+                                } else {
+                                    fileName
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+
                                 fileName
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-
-                            fileName
                         }
                     }
                     val filePath = file.path
