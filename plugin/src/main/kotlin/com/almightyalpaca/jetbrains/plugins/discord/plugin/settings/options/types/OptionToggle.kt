@@ -27,7 +27,8 @@ import javax.swing.Box
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
-fun <T> OptionCreator<in Toggle<T>>.toggleable() = OptionProviderImpl(this, OptionToggle())
+fun <T> OptionCreator<in Toggle<T>>.toggleable(enabled: Boolean = true) =
+    OptionProviderImpl(this, OptionToggle(enabled))
 
 val Toggle<Boolean>.toggle
     get() = toggle { it }
@@ -35,7 +36,7 @@ val Toggle<Boolean>.toggle
 fun <T : Enum<T>> Toggle<T>.enableOn(vararg values: T) = toggle { it in values }
 fun <T : Enum<T>> Toggle<T>.disableOn(vararg values: T) = toggle { it !in values }
 
-class OptionToggle<T> : Option<Toggle<T>>(""), Toggle.Provider<T> {
+class OptionToggle<T>(private val enabled: Boolean) : Option<Toggle<T>>(""), Toggle.Provider<T> {
     lateinit var toggle: Triple<String, SimpleOption<out T>, (T) -> Boolean>
     lateinit var option: kotlin.Pair<String, Option<*>>
 
@@ -55,7 +56,8 @@ class OptionToggle<T> : Option<Toggle<T>>(""), Toggle.Provider<T> {
             val toggleComponent = toggle.second.component
             val optionComponent = option.second.component
 
-            toggle.second.addChangeListener { value -> option.second.isComponentEnabled = toggle.third(value) }
+            if (enabled)
+                toggle.second.addChangeListener { value -> option.second.isComponentEnabled = toggle.third(value) }
 
             add(toggleComponent, gbc {
                 gridx = 0
@@ -97,7 +99,8 @@ class OptionToggle<T> : Option<Toggle<T>>(""), Toggle.Provider<T> {
             option.second.isComponentEnabled = value
         }
 
-    override fun addChangeListener(listener: (Toggle<T>) -> Unit) = throw Exception("Cannot listen to toggleable changes")
+    override fun addChangeListener(listener: (Toggle<T>) -> Unit) =
+        throw Exception("Cannot listen to toggleable changes")
 
     override val isModified: Boolean
         get() = toggle.second.isModified || option.second.isModified

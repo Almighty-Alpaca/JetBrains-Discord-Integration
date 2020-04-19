@@ -27,11 +27,11 @@ import javax.swing.JPanel
 import javax.swing.JSpinner
 import javax.swing.SpinnerNumberModel
 
-fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#") =
-    OptionProviderImpl(this, IntSpinnerOption(description, initialValue, step, minValue, maxValue, format))
+fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled :Boolean = true) =
+    OptionProviderImpl(this, IntSpinnerOption(description, initialValue, step, minValue, maxValue, format, enabled))
 
-fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#") =
-    spinner(description, initialValue, range.first, range.last, step, format)
+fun OptionCreator<in Int>.spinner(description: String, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#", enabled :Boolean = true) =
+    spinner(description, initialValue, range.first, range.last, step, format, enabled)
 
 class IntSpinnerOption(
     description: String,
@@ -39,7 +39,8 @@ class IntSpinnerOption(
     private val step: Int,
     private val minValue: Int = Int.MIN_VALUE,
     private val maxValue: Int = Int.MAX_VALUE,
-    private val format: String
+    private val format: String,
+    private val enabled: Boolean
 ) : SimpleOption<Int>(description, initialValue.coerceIn(minValue, maxValue)) {
     override fun transformValue(value: Int) = value.coerceIn(minValue, maxValue)
 
@@ -47,6 +48,8 @@ class IntSpinnerOption(
         JBIntSpinner(currentValue, minValue, maxValue).apply spinner@{
             model = SpinnerNumberModel(currentValue, minValue, maxValue, step)
             editor = JSpinner.NumberEditor(this@spinner, format)
+
+            this.isEnabled = enabled
         }
     }
 
@@ -54,7 +57,10 @@ class IntSpinnerOption(
         JPanel().apply {
             layout = GridBagLayout()
 
-            add(label(description), gbc {
+            val label = label(description).apply {
+                this.isEnabled = enabled
+            }
+            add(label, gbc {
                 gridx = 0
                 gridy = 0
                 gridwidth = 1

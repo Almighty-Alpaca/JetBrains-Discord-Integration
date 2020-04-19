@@ -27,12 +27,12 @@ import com.intellij.openapi.components.Storage
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
     override val show by check("Show Rich Presence", true)
 
-    private val timeoutToggle by toggleable<Boolean>()
-    override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
+    private val timeoutToggle by toggleable<Boolean>(false)
+    override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity (currently unavailable)", initialValue = true, enabled = false)
 
     private val timeoutOptionPair by timeoutToggle.option.pair()
-    override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
-    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true)
+    override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes", enabled = false)
+    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true, enabled = false)
 
     private val group by group("Rich Presence Layout")
     private val preview by group.preview()

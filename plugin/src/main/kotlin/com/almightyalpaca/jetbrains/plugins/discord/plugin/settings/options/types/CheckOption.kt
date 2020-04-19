@@ -21,10 +21,17 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl
 import com.intellij.ui.components.JBCheckBox
 import javax.swing.JComponent
 
-fun OptionCreator<in Boolean>.check(description: String, initialValue: Boolean) = OptionProviderImpl(this, CheckOption(description, initialValue))
+fun OptionCreator<in Boolean>.check(description: String, initialValue: Boolean, enabled: Boolean = true) =
+    OptionProviderImpl(this, CheckOption(description, initialValue, enabled))
 
-class CheckOption(description: String, initialValue: Boolean) : SimpleOption<Boolean>(description, initialValue) {
-    override val componentImpl by lazy { JBCheckBox(description, currentValue) }
+class CheckOption(description: String, initialValue: Boolean, private val enabled: Boolean) :
+    SimpleOption<Boolean>(description, initialValue) {
+    override val componentImpl by lazy {
+        JBCheckBox(description, currentValue).apply {
+            this.isEnabled = enabled
+        }
+    }
+
     override val component: JComponent
         get() = componentImpl
 
