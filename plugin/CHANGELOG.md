@@ -1,8 +1,9 @@
-## In development
-- Support for 2020.1
+## v1.2.0
+- Support for 2020.1 (#77)
 - Completely new way how current presence is calculated
 - Move settings to "other" category 
 - Fix presence for very short project names/custom strings
+- Disable timeout option for now due to architectural changes (will be enabled again later)
 
 ## v1.1.1
 - Fix error when closing a project (for real this time 🙏🏼). (#63)
