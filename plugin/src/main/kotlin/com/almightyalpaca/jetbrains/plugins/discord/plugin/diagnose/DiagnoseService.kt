@@ -30,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import org.apache.commons.lang3.SystemUtils
 import java.nio.charset.StandardCharsets
+import java.util.*
 
 val diagnoseService: DiagnoseService
     get() = service()
@@ -147,6 +148,7 @@ class DiagnoseService : DisposableCoroutineScope {
             .asSequence()
             .map(IdeaPluginDescriptor::getPluginId)
             .map(PluginId::getIdString)
+            .filter(Objects::nonNull)
             .count(pluginsIds::contains)
 
         return when (matches) {
