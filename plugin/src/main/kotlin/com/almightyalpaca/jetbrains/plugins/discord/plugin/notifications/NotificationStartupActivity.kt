@@ -37,10 +37,10 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
     }
 
     private fun checkUpdate() {
-        val version = Plugin.Version.toString()
-        if (version != notificationSettings.lastUpdateNotification && Plugin.Version.isStable) {
-            notificationSettings.lastUpdateNotification = version
-            launch { ApplicationUpdateNotification.show() }
+        val version = Plugin.version
+        if (version != null && version.toString() != notificationSettings.lastUpdateNotification && version.isStable()) {
+            notificationSettings.lastUpdateNotification = version.toString()
+            launch { ApplicationUpdateNotification.show(version.toString()) }
         }
     }
 

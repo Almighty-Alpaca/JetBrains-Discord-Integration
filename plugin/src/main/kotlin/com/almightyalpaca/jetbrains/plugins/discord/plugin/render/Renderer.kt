@@ -85,7 +85,7 @@ abstract class Renderer(private val context: RenderContext) {
                 }
             }
 
-            this.partyId = Plugin.Version.toString()
+            this.partyId = Plugin.version?.toString()
         }
     }
 

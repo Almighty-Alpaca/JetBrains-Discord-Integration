@@ -31,7 +31,7 @@ private const val content =
     "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project"
 
 private val group = NotificationGroup(
-    Plugin.getIdString() + ".project.show",
+    "${Plugin.getId()}.project.show",
     NotificationDisplayType.STICKY_BALLOON,
     true
 )
