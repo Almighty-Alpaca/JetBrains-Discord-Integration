@@ -74,13 +74,18 @@
                icon="/discord/images/logo/blurple.png">
             <add-to-group group-id="ToolsMenu"/>
 
-            <action id="DiscordActionGroup.RenderUpdateAction"
-                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.RenderUpdateAction"/>
-
             <action id="DiscordActionGroup.ApplicationHideAction"
                     class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ApplicationHideAction"/>
             <action id="DiscordActionGroup.ProjectHideAction"
                     class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ProjectHideAction"/>
+
+            <separator/>
+
+            <action id="DiscordActionGroup.RenderUpdateAction"
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.RenderUpdateAction"/>
+            <action id="DiscordActionGroup.ReconnectAction"
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ReconnectAction"/>
+
         </group>
     </actions>
 

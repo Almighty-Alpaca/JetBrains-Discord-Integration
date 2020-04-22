@@ -65,7 +65,7 @@ operator fun Char.times(n: Int): String = StringBuilder().apply {
 fun limitingLength(initialValue: String, range: IntRange, dots: Boolean) =
     modifying(initialValue) { it.limit(range, dots) }
 
-@JvmName("limitingNullable")
+@JvmName("limitingLengthNullable")
 fun limitingLength(initialValue: String?, range: IntRange, dots: Boolean) =
     modifying(initialValue) { it?.limit(range, dots) }
 

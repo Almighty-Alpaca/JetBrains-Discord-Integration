@@ -90,8 +90,8 @@ class RpcService : DisposableCoroutineScope {
                 }
 
                 connection = NativeRpcConnection(presence.appId) { user -> onReady(user) }.apply {
-                    connect()
                     Disposer.register(this@RpcService, this@apply)
+                    connect()
                 }
                 connectionChecker = checkConnected()
 

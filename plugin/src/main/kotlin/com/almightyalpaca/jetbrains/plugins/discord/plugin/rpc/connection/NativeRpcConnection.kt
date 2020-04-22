@@ -51,6 +51,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
         }
         disconnected = OnStatus { _, _ ->
             running = false
+            userCallback(User.CLYDE)
         }
     }
 
