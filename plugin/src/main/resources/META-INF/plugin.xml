@@ -23,6 +23,14 @@
 
     <depends>com.intellij.modules.lang</depends>
 
+    <application-components>
+        <component>
+            <implementation-class>
+                com.almightyalpaca.jetbrains.plugins.discord.plugin.development.DisableDynamicPluginComponent
+            </implementation-class>
+        </component>
+    </application-components>
+
     <applicationListeners>
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseAppLifecycleListener"
@@ -31,8 +39,9 @@
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderAppLifecycleListener"
                 topic="com.intellij.ide.AppLifecycleListener"/>
         <listener
-                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners.DiscordDynamicPluginListener"
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.development.PreventUnloadingDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.listeners
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.development
 
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.extensions.PluginId
 
-class DiscordDynamicPluginListener : DynamicPluginListener {
+class PreventUnloadingDynamicPluginListener : DynamicPluginListener {
     override fun checkUnloadPlugin(pluginDescriptor: IdeaPluginDescriptor) {
         if (pluginDescriptor.pluginId == PluginId.getId("")) {
             val e =
