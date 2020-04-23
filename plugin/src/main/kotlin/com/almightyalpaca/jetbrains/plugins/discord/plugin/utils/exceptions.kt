@@ -16,11 +16,16 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-inline fun <T> tryCatch(default: T, print: Boolean = true, block: () -> T): T = try {
-    block()
-} catch (e: Exception) {
-    if (print) {
-        e.printStackTrace()
+inline fun <T> tryOrNull(print: Boolean = true, block: () -> T) = tryOrDefault(null, print, block)
+
+inline fun <T> tryOrDefault(default: T, print: Boolean = true, block: () -> T): T {
+    return try {
+        block()
+    } catch (e: Exception) {
+        if (print) {
+            e.printStackTrace()
+        }
+
+        default
     }
-    default
 }

@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -40,16 +41,16 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(): Data? {
-        val dataManager = DataManager.getInstance()
-
+    suspend fun getData(): Data? = tryOrNull {
         val project: Project?
         val editor: FileEditor?
 
         val window = IdeFocusManager.getGlobalInstance().lastFocusedIdeWindow as IdeFrame?
 
         if (window == null) {
-            val dataContext = dataManager.dataContextFromFocusAsync.toSuspendFunction() ?: return null
+            val dataManager: DataManager? = DataManager.getInstanceIfCreated()
+
+            val dataContext = dataManager?.dataContextFromFocusAsync?.toSuspendFunction() ?: return null
 
             project = dataContext.getData(CommonDataKeys.PROJECT)
             editor = dataContext.getData(PlatformDataKeys.FILE_EDITOR)
