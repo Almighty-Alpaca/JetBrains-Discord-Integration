@@ -77,16 +77,24 @@ class BintraySource(location: String) : Source, CoroutineScope {
             .build()
     }
 
-    private val versionJob: Deferred<String> = retryAsync { readVersion() }
-    private val filesJob: Deferred<Collection<String>> = retryAsync { readFiles() }
-    private val languageJob: Deferred<LanguageMap> = retryAsync { readLanguages() }
-    private val themeJob: Deferred<ThemeMap> = retryAsync { readThemes() }
+    private val versionJob: Deferred<String> = retryAsync(
+        log = { DiscordPlugin.LOG.error("Error getting Bintray version", it) },
+        block = { readVersion().also { DiscordPlugin.LOG.info("Bintray version complete") } })
+    private val filesJob: Deferred<Collection<String>> = retryAsync(
+        log = { DiscordPlugin.LOG.error("Error getting Bintray files", it) },
+        block = { readFiles().also { DiscordPlugin.LOG.info("Bintray files complete") } })
+    private val languageJob: Deferred<LanguageMap> = retryAsync(
+        log = { DiscordPlugin.LOG.error("Error getting Bintray languages", it) },
+        block = { readLanguages().also { DiscordPlugin.LOG.info("Bintray languages complete") } })
+    private val themeJob: Deferred<ThemeMap> = retryAsync(
+        log = { DiscordPlugin.LOG.error("Error getting Bintray themes", it) },
+        block = { readThemes().also { DiscordPlugin.LOG.info("Bintray themes complete") } })
 
     override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
 
     private suspend fun readVersion(): String {
-        DiscordPlugin.LOG.debug("Getting Bintray repo version")
+        DiscordPlugin.LOG.info("Getting Bintray repo version")
 
         return get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
             ObjectMapper().readTree(body.byteStream())
@@ -96,7 +104,7 @@ class BintraySource(location: String) : Source, CoroutineScope {
     }
 
     private suspend fun readFiles(): Collection<String> {
-        DiscordPlugin.LOG.debug("Getting Bintray repo files")
+        DiscordPlugin.LOG.info("Getting Bintray repo files")
 
         val version: String = versionJob.await()
 
@@ -108,7 +116,7 @@ class BintraySource(location: String) : Source, CoroutineScope {
     }
 
     private suspend fun readLanguages(): LanguageMap = coroutineScope {
-        DiscordPlugin.LOG.debug("Getting Bintray repo languages")
+        DiscordPlugin.LOG.info("Getting Bintray repo languages")
 
         val mapper = ObjectMapper(YAMLFactory())
 
@@ -134,7 +142,7 @@ class BintraySource(location: String) : Source, CoroutineScope {
     }
 
     private suspend fun readThemes(): ThemeMap = coroutineScope {
-        DiscordPlugin.LOG.debug("Getting Bintray repo themes")
+        DiscordPlugin.LOG.info("Getting Bintray repo themes")
 
         val mapper = ObjectMapper(YAMLFactory())
 
@@ -191,7 +199,14 @@ class BintraySource(location: String) : Source, CoroutineScope {
             })
         }
 
-    private suspend fun <T> getFile(user: String, repository: String, `package`: String, version: String, path: String, handler: (ResponseBody) -> T) =
+    private suspend fun <T> getFile(
+        user: String,
+        repository: String,
+        `package`: String,
+        version: String,
+        path: String,
+        handler: (ResponseBody) -> T
+    ) =
         get("https://dl.bintray.com/$user/$repository/$`package`/$version/$path", handler)
 
 }

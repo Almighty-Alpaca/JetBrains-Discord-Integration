@@ -26,20 +26,32 @@ fun <T> Deferred<T>.getCompletedOrNull() = when (isCompleted) {
     false -> null
 }
 
-fun <T> CoroutineScope.retryAsync(policy: RetryPolicy = RetryPolicy.Exponential(), initial: Boolean = false, block: suspend () -> T) = async {
-    retry(policy, initial, block)
+fun <T> CoroutineScope.retryAsync(
+    policy: RetryPolicy = RetryPolicy.Exponential(),
+    initial: Boolean = false,
+    log: (Exception) -> Unit = {},
+    block: suspend () -> T
+) = async {
+    retry(policy, initial, log, block)
 }
 
-suspend fun <T> retry(policy: RetryPolicy = RetryPolicy.Exponential(), initial: Boolean = false, block: suspend () -> T): T {
+suspend fun <T> retry(
+    policy: RetryPolicy = RetryPolicy.Exponential(),
+    initial: Boolean = false,
+    log: (Exception) -> Unit = {},
+    block: suspend () -> T
+): T {
     try {
         if (!initial) {
             return block()
         }
-    } catch (ignored: Exception) {}
+    } catch (e: Exception) {
+        log(e)
+    }
 
     policy.wait()
 
-    return retry(policy.next, false, block)
+    return retry(policy.next, false, log, block)
 }
 
 sealed class RetryPolicy(value: Long, val maxValue: Long) {
@@ -56,6 +68,5 @@ sealed class RetryPolicy(value: Long, val maxValue: Long) {
     class Exponential(value: Long = 2, maxValue: Long = 60, private val factor: Int = 2) : RetryPolicy(value, maxValue) {
         override val next: Exponential
             get() = Exponential(value * factor, maxValue, factor)
-
     }
 }
