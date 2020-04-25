@@ -48,7 +48,7 @@ class RenderService : DisposableCoroutineScope {
 
     @Synchronized
     fun render(force: Boolean = false) {
-        DiscordPlugin.LOG.info("Rendering presence, force=$force")
+        DiscordPlugin.LOG.info("Scheduling render, force=$force")
 
         if (Disposer.isDisposed(this)) {
             DiscordPlugin.LOG.info("Skipping render, service already disposed")

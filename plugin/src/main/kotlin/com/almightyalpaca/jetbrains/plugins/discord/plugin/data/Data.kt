@@ -30,7 +30,11 @@ sealed class Data {
         val applicationVersion: String,
         val applicationStartTime: Long,
         val applicationSettings: ApplicationSettings
-    ) : Data()
+    ) : Data() {
+        override fun toString(): String {
+            return "Application(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings)"
+        }
+    }
 
     open class Project(
         applicationId: String,
@@ -40,7 +44,11 @@ sealed class Data {
         applicationSettings: ApplicationSettings,
         val projectName: String,
         val projectSettings: ProjectSettings
-    ) : Application(applicationId, applicationName, applicationVersion, applicationStartTime, applicationSettings)
+    ) : Application(applicationId, applicationName, applicationVersion, applicationStartTime, applicationSettings) {
+        override fun toString(): String {
+            return "Project(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings)"
+        }
+    }
 
     open class File(
         applicationId: String,
@@ -89,5 +97,8 @@ sealed class Data {
             Matcher.Target.PATH -> listOf(filePathRelative)
         }
 
+        override fun toString(): String {
+            return "File(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings, fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+        }
     }
 }

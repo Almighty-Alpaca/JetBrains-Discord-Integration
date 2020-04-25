@@ -41,7 +41,7 @@ abstract class Renderer(private val context: RenderContext) {
         smallIconText: IconTextValue?,
         startTimestamp: TimeValue?
     ): RichPresence {
-        DiscordPlugin.LOG.debug("Rendering presence, data=${context.data::class.simpleName}")
+        DiscordPlugin.LOG.debug("Rendering presence, data=${context.data}")
 
         if (context.icons == null) {
             DiscordPlugin.LOG.debug("RenderContext.icons=null")
