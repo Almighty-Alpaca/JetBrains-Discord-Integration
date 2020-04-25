@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
@@ -42,6 +43,8 @@ val dataService: DataService
 @Service
 class DataService {
     suspend fun getData(): Data? = tryOrNull {
+        DiscordPlugin.LOG.debug("Getting data")
+
         val project: Project?
         val editor: FileEditor?
 
@@ -100,6 +103,8 @@ class DataService {
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
+                    DiscordPlugin.LOG.debug("Returning file data")
+
                     return Data.File(
                         applicationId,
                         applicationName,
@@ -116,6 +121,8 @@ class DataService {
                 }
             }
 
+            DiscordPlugin.LOG.debug("Returning project data")
+
             return Data.Project(
                 applicationId,
                 applicationName,
@@ -126,6 +133,8 @@ class DataService {
                 projectSettings
             )
         }
+
+        DiscordPlugin.LOG.debug("Returning application data")
 
         return Data.Application(
             applicationId,

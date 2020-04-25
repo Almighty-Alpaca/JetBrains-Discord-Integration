@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
+package com.almightyalpaca.jetbrains.plugins.discord.plugin
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.diagnostic.Logger
 
-class DiagnoseAppLifecycleListener : AppLifecycleListener {
-    override fun appStarting(projectFromCommandLine: Project?) {
-        DiscordPlugin.LOG.info("App starting, diagnosing environment")
-
-        diagnoseService.discord
-        diagnoseService.plugins
-        diagnoseService.ide
-    }
+object DiscordPlugin {
+    val LOG: Logger = Logger.getInstance("Discord")
 }

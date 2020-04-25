@@ -16,21 +16,24 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Icons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class ReconnectAction : DumbAwareAction() {
+class ForceReconnectAction : DumbAwareAction() {
     init {
         templatePresentation.apply {
             icon = Icons.DISCORD_BLURPLE
-            text = "Force reconnect to Discord"
+            text = "Force reconnect"
         }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
+        DiscordPlugin.LOG.info("Forcing manual reconnect")
+
         rpcService.update(null)
 
         renderService.render(true)

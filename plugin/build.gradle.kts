@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+@file:Suppress("SuspiciousCollectionReassignment")
+
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
 
 plugins {
@@ -47,7 +50,8 @@ dependencies {
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml",
+    implementation(
+        group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml",
         version = versionJackson
     )
 }
@@ -167,6 +171,12 @@ tasks {
         prefix("com.fasterxml.jackson.core")
         prefix("com.fasterxml.jackson.annotation")
         prefix("club.minnced.discord.rpc")
+    }
+
+    withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
+        }
     }
 
     withType<AbstractArchiveTask> {

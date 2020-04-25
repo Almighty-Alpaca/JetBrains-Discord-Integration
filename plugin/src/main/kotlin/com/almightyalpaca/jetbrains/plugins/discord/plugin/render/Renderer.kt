@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.Data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
@@ -100,10 +99,3 @@ abstract class Renderer(private val context: RenderContext) {
         FILE({ context -> FileRenderer(context) });
     }
 }
-
-inline val RenderContext.renderType
-    get() = when (data) {
-        is Data.File -> Renderer.Type.FILE
-        is Data.Project -> Renderer.Type.PROJECT
-        is Data.Application -> Renderer.Type.APPLICATION
-    }

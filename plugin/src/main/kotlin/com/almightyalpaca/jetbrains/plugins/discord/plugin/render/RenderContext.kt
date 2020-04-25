@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 
-class RenderContext(source: Source, val data: Data, val mode: Renderer.Mode) {
+class RenderContext(source: Source, val data: Data, private val mode: Renderer.Mode) {
     val icons: IconSet? by lazy {
         source.getThemesOrNull()
             ?.get(settings.theme.getValue())
@@ -35,10 +35,18 @@ class RenderContext(source: Source, val data: Data, val mode: Renderer.Mode) {
 
     val language by lazy { fileData?.let { source.getLanguagesOrNull()?.findLanguage(fileData) } }
 
+    fun createRenderer(): Renderer {
+        val type = when (data) {
+            is Data.File -> Renderer.Type.FILE
+            is Data.Project -> Renderer.Type.PROJECT
+            is Data.Application -> Renderer.Type.APPLICATION
+        }
+
+        return type.createRenderer(this)
+    }
+
     fun <T> SimpleValue<T>.getValue(): T = when (mode) {
         Renderer.Mode.NORMAL -> get()
         Renderer.Mode.PREVIEW -> getComponent()
     }
-
-    fun createRenderer(): Renderer = renderType.createRenderer(this)
 }

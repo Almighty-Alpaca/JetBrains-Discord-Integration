@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("SuspiciousCollectionReassignment")
+
 import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
 import com.palantir.gradle.gitversion.VersionDetails
 import groovy.lang.Closure
@@ -79,7 +81,7 @@ subprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 jvmTarget = "11"
-                freeCompilerArgs = listOf("-Xjvm-default=enable")
+                freeCompilerArgs += "-Xjvm-default=enable"
             }
         }
     }

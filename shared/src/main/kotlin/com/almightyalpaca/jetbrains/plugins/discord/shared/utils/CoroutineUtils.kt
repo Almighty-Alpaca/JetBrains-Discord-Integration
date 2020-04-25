@@ -35,10 +35,10 @@ suspend fun <T> retry(policy: RetryPolicy = RetryPolicy.Exponential(), initial: 
         if (!initial) {
             return block()
         }
-    } catch (ignored: Exception) {
-    }
+    } catch (ignored: Exception) {}
 
     policy.wait()
+
     return retry(policy.next, false, block)
 }
 

@@ -22,6 +22,7 @@ import club.minnced.discord.rpc.DiscordEventHandlers.OnStatus
 import club.minnced.discord.rpc.DiscordRPC
 import club.minnced.discord.rpc.DiscordRichPresence
 import club.minnced.discord.rpc.DiscordUser
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
@@ -46,10 +47,14 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     init {
         ready = OnReady { user ->
+            DiscordPlugin.LOG.info("Rpc connected, user: ${user.username}#${user.discriminator}")
+
             running = true
             userCallback(user.toGeneric())
         }
         disconnected = OnStatus { _, _ ->
+            DiscordPlugin.LOG.info("Rpc disconnected")
+
             running = false
             userCallback(User.CLYDE)
         }
@@ -60,12 +65,16 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun connect() {
-        if (!CONNECTED.compareAndSet(null, this)) {
-            throw IllegalStateException("There can only be one connected RPC connection")
-        }
+        DiscordPlugin.LOG.info("Starting new rpc connection")
 
         if (DiscordRPC.INSTANCE == null) {
-            throw IllegalStateException("DiscordRPC has been unloaded")
+            DiscordPlugin.LOG.error("DiscordRPC library isn't loaded")
+            throw IllegalStateException("DiscordRPC isn't loaded")
+        }
+
+        if (!CONNECTED.compareAndSet(null, this)) {
+            DiscordPlugin.LOG.error("Another rpc connection is already running")
+            throw IllegalStateException("Another rpc connection is already running")
         }
 
         DiscordRPC.INSTANCE.Discord_Initialize(appId.toString(), this, false, null)
@@ -76,7 +85,11 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun send(presence: RichPresence?) {
+        DiscordPlugin.LOG.info("Sending new presence")
+
         if (CONNECTED.get() != this) {
+            DiscordPlugin.LOG.error("Can't send presence to inactive connection")
+
             return
         }
 
@@ -94,6 +107,8 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun disconnect() {
+        DiscordPlugin.LOG.info("Stopping rpc connection")
+
         if (CONNECTED.get() != this) {
             return
         }

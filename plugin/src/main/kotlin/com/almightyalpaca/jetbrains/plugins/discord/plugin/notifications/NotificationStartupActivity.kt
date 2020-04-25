@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
@@ -37,19 +38,31 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
     }
 
     private fun checkUpdate() {
+        DiscordPlugin.LOG.info("Checking for plugin update")
+
         val version = Plugin.version
         if (version != null && version.toString() != notificationSettings.lastUpdateNotification && version.isStable()) {
+            DiscordPlugin.LOG.info("Plugin update found, showing changelog")
+
             notificationSettings.lastUpdateNotification = version.toString()
             launch { ApplicationUpdateNotification.show(version.toString()) }
         }
     }
 
     private suspend fun checkAskShowProject(project: Project) {
+        DiscordPlugin.LOG.info("Checking for project confirmation")
+
         val settings = project.settings
         val notificationSettings = project.notificationSettings
 
         if (notificationSettings.askShowProject) {
-            settings.show.set(AskShowProjectNotification.show(project))
+            DiscordPlugin.LOG.info("Showing project conformation dialog")
+
+            val result = AskShowProjectNotification.show(project)
+
+            DiscordPlugin.LOG.info("Project confirmation result=$result")
+
+            settings.show.set(result)
             notificationSettings.askShowProject = false
             renderService.render()
         }

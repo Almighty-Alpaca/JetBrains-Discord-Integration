@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.dataService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
@@ -47,12 +48,16 @@ class RenderService : DisposableCoroutineScope {
 
     @Synchronized
     fun render(force: Boolean = false) {
+        DiscordPlugin.LOG.info("Rendering presence, force=$force")
+
         if (Disposer.isDisposed(this)) {
+            DiscordPlugin.LOG.info("Skipping render, service already disposed")
             return
         }
 
-        if (force)
+        if (force) {
             forceUpdate = true
+        }
 
         renderJob?.cancel()
         renderJob = launch {
@@ -62,8 +67,9 @@ class RenderService : DisposableCoroutineScope {
 
             val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
-            if (force)
+            if (force) {
                 forceUpdate = true
+            }
 
             var shouldRender = true
 

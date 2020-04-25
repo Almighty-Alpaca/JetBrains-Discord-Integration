@@ -16,20 +16,23 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Icons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class RenderUpdateAction : DumbAwareAction() {
+class ForceRenderUpdateAction : DumbAwareAction() {
     init {
         templatePresentation.apply {
             icon = Icons.DISCORD_BLURPLE
-            text = "Force update now"
+            text = "Force render update"
         }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
+        DiscordPlugin.LOG.info("Forcing manual render")
+
         renderService.render(true)
     }
 }
