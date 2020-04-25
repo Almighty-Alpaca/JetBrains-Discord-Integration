@@ -17,12 +17,15 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.openapi.project.Project
 
 class DiagnoseAppLifecycleListener : AppLifecycleListener {
     override fun appStarting(projectFromCommandLine: Project?) {
         DiscordPlugin.LOG.info("App starting, diagnosing environment")
+
+        DiscordPlugin.LOG.debug("Application identifiers: ${ApplicationType.IDE.applicationName}, ${ApplicationType.IDE_EDITION.applicationName}")
 
         diagnoseService.discord
         diagnoseService.plugins

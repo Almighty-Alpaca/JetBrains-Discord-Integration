@@ -26,33 +26,30 @@ import org.apache.commons.io.FilenameUtils
 sealed class Data {
     open class Application(
         val applicationId: String,
-        val applicationName: String,
         val applicationVersion: String,
         val applicationStartTime: Long,
         val applicationSettings: ApplicationSettings
     ) : Data() {
         override fun toString(): String {
-            return "Application(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings)"
+            return "Application(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings)"
         }
     }
 
     open class Project(
         applicationId: String,
-        applicationName: String,
         applicationVersion: String,
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
         val projectSettings: ProjectSettings
-    ) : Application(applicationId, applicationName, applicationVersion, applicationStartTime, applicationSettings) {
+    ) : Application(applicationId, applicationVersion, applicationStartTime, applicationSettings) {
         override fun toString(): String {
-            return "Project(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings)"
+            return "Project(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings)"
         }
     }
 
     open class File(
         applicationId: String,
-        applicationName: String,
         applicationVersion: String,
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
@@ -64,7 +61,6 @@ sealed class Data {
         val fileIsWriteable: Boolean
     ) : Project(
         applicationId,
-        applicationName,
         applicationVersion,
         applicationStartTime,
         applicationSettings,
@@ -98,7 +94,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "File(applicationId='$applicationId', applicationName='$applicationName', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings, fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "File(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings, fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
         }
     }
 }

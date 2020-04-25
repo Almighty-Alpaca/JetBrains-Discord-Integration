@@ -66,13 +66,9 @@ class DataService {
             }
         }
 
-        val applicationId = ApplicationInfoEx.getInstance().build.productCode
-        val applicationName =
-            ApplicationNamesInfo.getInstance()
-                .fullProductNameWithEdition
-                .replace("Edition", "")
-                .trim()
-        val applicationVersion = ApplicationInfoEx.getInstance().fullVersion
+        val applicationInfo = ApplicationInfoEx.getInstance()
+        val applicationId = applicationInfo.build.productCode
+        val applicationVersion = applicationInfo.fullVersion
         val applicationStartTime = ApplicationManager.getApplication().startTime
         val applicationSettings = settings
 
@@ -104,7 +100,6 @@ class DataService {
 
                     return Data.File(
                         applicationId,
-                        applicationName,
                         applicationVersion,
                         applicationStartTime,
                         applicationSettings,
@@ -122,7 +117,6 @@ class DataService {
 
             return Data.Project(
                 applicationId,
-                applicationName,
                 applicationVersion,
                 applicationStartTime,
                 applicationSettings,
@@ -135,7 +129,6 @@ class DataService {
 
         return Data.Application(
             applicationId,
-            applicationName,
             applicationVersion,
             applicationStartTime,
             applicationSettings
