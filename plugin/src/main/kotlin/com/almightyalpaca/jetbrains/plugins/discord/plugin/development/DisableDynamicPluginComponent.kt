@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.development
 
 import com.intellij.openapi.components.ApplicationComponent

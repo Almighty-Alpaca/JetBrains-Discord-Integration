@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
@@ -40,6 +41,12 @@ abstract class Renderer(private val context: RenderContext) {
         smallIconText: IconTextValue?,
         startTimestamp: TimeValue?
     ): RichPresence {
+        DiscordPlugin.LOG.debug("Rendering presence, data=${context.data::class.simpleName}")
+
+        if (context.icons == null) {
+            DiscordPlugin.LOG.debug("RenderContext.icons=null")
+        }
+
         return RichPresence(context.icons?.applicationId) presence@{
             this@presence.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceLine.Result.Empty -> null

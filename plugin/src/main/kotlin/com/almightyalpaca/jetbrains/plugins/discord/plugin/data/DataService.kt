@@ -19,6 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -87,16 +88,12 @@ class DataService {
                     val fileUniqueName = when (DumbService.isDumb(project)) {
                         true -> fileName
                         false -> ReadAction.compute<String, Exception> {
-                            try {
+                            tryOrDefault(fileName) {
                                 if (!project.isDisposed) {
                                     EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
                                 } else {
                                     fileName
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-
-                                fileName
                             }
                         }
                     }

@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
@@ -55,7 +56,8 @@ class BintraySource(location: String) : Source, CoroutineScope {
         this.`package` = `package`
 
         val appConfigHash = Paths.get(PathManager.getConfigPath()).toAbsolutePath().toString().hashCode()
-        val cacheDir = Paths.get(FileUtils.getTempDirectoryPath(), "JetBrains-Discord-Integration/$appConfigHash/bintray")
+        val cacheDir =
+            Paths.get(FileUtils.getTempDirectoryPath(), "JetBrains-Discord-Integration/$appConfigHash/bintray")
         val cacheSize = 1024L * 1024L * 16L  // 16MiB
 
         val cache = Cache(cacheDir.toFile(), cacheSize)
@@ -83,13 +85,19 @@ class BintraySource(location: String) : Source, CoroutineScope {
     override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
 
-    private suspend fun readVersion() = get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
-        ObjectMapper().readTree(body.byteStream())
-            .get("name")
-            .asText()
+    private suspend fun readVersion(): String {
+        DiscordPlugin.LOG.debug("Getting Bintray repo version")
+
+        return get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/_latest") { body ->
+            ObjectMapper().readTree(body.byteStream())
+                .get("name")
+                .asText()
+        }
     }
 
     private suspend fun readFiles(): Collection<String> {
+        DiscordPlugin.LOG.debug("Getting Bintray repo files")
+
         val version: String = versionJob.await()
 
         return get("https://bintray.com/api/v1/packages/$user/$repository/$`package`/versions/$version/files") { body ->
@@ -100,6 +108,8 @@ class BintraySource(location: String) : Source, CoroutineScope {
     }
 
     private suspend fun readLanguages(): LanguageMap = coroutineScope {
+        DiscordPlugin.LOG.debug("Getting Bintray repo languages")
+
         val mapper = ObjectMapper(YAMLFactory())
 
         val version = versionJob.await()
@@ -124,6 +134,8 @@ class BintraySource(location: String) : Source, CoroutineScope {
     }
 
     private suspend fun readThemes(): ThemeMap = coroutineScope {
+        DiscordPlugin.LOG.debug("Getting Bintray repo themes")
+
         val mapper = ObjectMapper(YAMLFactory())
 
         val version = versionJob.await()

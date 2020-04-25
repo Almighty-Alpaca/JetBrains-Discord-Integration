@@ -71,8 +71,6 @@ class RpcService : DisposableCoroutineScope {
         update(lastPresence, forceUpdate = true)
     }
 
-    fun update(presence: RichPresence?) = update(presence, forceUpdate = false, forceReconnect = false)
-
     @Synchronized
     fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) {
         try {
@@ -91,7 +89,10 @@ class RpcService : DisposableCoroutineScope {
             lastPresence = presence
 
             if (presence?.appId == null) { // Stop connection
-                DiscordPlugin.LOG.debug("Presence or appId null, stopping connection")
+                when (presence) {
+                    null -> DiscordPlugin.LOG.debug("Presence null, stopping connection")
+                    else -> DiscordPlugin.LOG.debug("Presence.appId null, stopping connection")
+                }
 
                 if (connection != null) {
                     connectionChecker?.cancel()

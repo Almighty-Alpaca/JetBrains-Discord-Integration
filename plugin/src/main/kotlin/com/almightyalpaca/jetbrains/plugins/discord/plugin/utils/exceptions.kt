@@ -16,6 +16,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+
 inline fun <T> tryOrNull(print: Boolean = true, block: () -> T) = tryOrDefault(null, print, block)
 
 inline fun <T> tryOrDefault(default: T, print: Boolean = true, block: () -> T): T {
@@ -23,7 +25,7 @@ inline fun <T> tryOrDefault(default: T, print: Boolean = true, block: () -> T): 
         block()
     } catch (e: Exception) {
         if (print) {
-            e.printStackTrace()
+            DiscordPlugin.LOG.error(e)
         }
 
         default

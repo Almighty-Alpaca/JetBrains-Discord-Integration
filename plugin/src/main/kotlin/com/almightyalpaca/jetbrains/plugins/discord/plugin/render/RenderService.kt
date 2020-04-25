@@ -42,7 +42,7 @@ class RenderService : DisposableCoroutineScope {
     private var renderJob: Job? = null
 //    private var timeoutJob: Job? = null
 
-    private var isTimeout = false
+//    private var isTimeout = false
 
     private var forceUpdate = false
 
@@ -101,10 +101,10 @@ class RenderService : DisposableCoroutineScope {
 //                }
 //            }
 
-            if (isTimeout && shouldRender && !forceUpdate) {
-                isTimeout = false
+//            if (isTimeout && shouldRender && !forceUpdate) {
+//                isTimeout = false
 
-                // TODO: fix resetting timeout
+            // TODO: fix resetting timeout
 //                if (settings.timeoutResetTimeEnabled.get()) {
 //                    launch {
 //                        dataService.app {
@@ -114,14 +114,18 @@ class RenderService : DisposableCoroutineScope {
 //
 //                    return@launch
 //                }
-            }
+//            }
 
             if (shouldRender) {
+                DiscordPlugin.LOG.info("Render result: visible")
+
                 val renderer = context.createRenderer()
                 val presence = renderer.render()
 
                 rpcService.update(presence, forceUpdate = forceUpdate)
             } else {
+                DiscordPlugin.LOG.info("Render result: hidden")
+
                 rpcService.update(null, forceUpdate = forceUpdate)
             }
 
