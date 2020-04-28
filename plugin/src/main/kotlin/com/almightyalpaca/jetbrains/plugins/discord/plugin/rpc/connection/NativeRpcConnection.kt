@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private var CONNECTED: AtomicReference<NativeRpcConnection?> = AtomicReference(null)
 
-class NativeRpcConnection(override val appId: Long, private val userCallback: (User) -> Unit) : DiscordEventHandlers(),
+class NativeRpcConnection(override val appId: Long, private val userCallback: (User?) -> Unit) : DiscordEventHandlers(),
     RpcConnection, DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
 
@@ -56,7 +56,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
             DiscordPlugin.LOG.info("Rpc disconnected")
 
             running = false
-            userCallback(User.CLYDE)
+            userCallback(null)
         }
     }
 

@@ -22,10 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFuncti
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.components.Service
@@ -56,7 +54,7 @@ class DataService {
 
             val dataContext = dataManager?.dataContextFromFocusAsync?.toSuspendFunction() ?: return null
 
-            project = dataContext.getData(CommonDataKeys.PROJECT)
+            project = dataContext.getData(PlatformDataKeys.PROJECT)
             editor = dataContext.getData(PlatformDataKeys.FILE_EDITOR)
         } else {
             project = window.project

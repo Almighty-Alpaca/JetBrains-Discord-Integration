@@ -41,7 +41,6 @@
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.development.PreventUnloadingDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
-
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -94,7 +93,6 @@
                     class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ForceRenderUpdateAction"/>
             <action id="DiscordActionGroup.ReconnectAction"
                     class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ForceReconnectAction"/>
-
         </group>
     </actions>
 

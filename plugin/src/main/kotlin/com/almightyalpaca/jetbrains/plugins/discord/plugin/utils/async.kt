@@ -17,6 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import org.jetbrains.concurrency.Promise
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -25,3 +27,10 @@ suspend fun <T> Promise<T>.toSuspendFunction(): T? = suspendCoroutine { continua
     onError(continuation::resumeWithException)
     onProcessed(continuation::resume)
 }
+
+fun ScheduledExecutorService.scheduleWithFixedDelay(
+    delay: Long,
+    initialDelay: Long = delay,
+    unit: TimeUnit,
+    command: () -> Unit
+) = scheduleWithFixedDelay(Runnable(command), initialDelay, delay, unit)

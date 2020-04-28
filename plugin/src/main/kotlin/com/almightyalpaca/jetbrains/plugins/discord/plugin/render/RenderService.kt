@@ -22,13 +22,16 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.concurrency.AppExecutorUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 val renderService: RenderService
     get() = service()
@@ -39,101 +42,56 @@ private const val RENDER_INTERVAL: Long = 5_000
 class RenderService : DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
 
-    private var renderJob: Job? = null
-//    private var timeoutJob: Job? = null
-
-//    private var isTimeout = false
-
-    private var forceUpdate = false
+    private var renderJob: ScheduledFuture<*>? = null
 
     @Synchronized
-    fun render(force: Boolean = false) {
+    fun render(force: Boolean = false) = runBlocking async@{
         DiscordPlugin.LOG.info("Scheduling render, force=$force")
 
-        if (Disposer.isDisposed(this)) {
+        if (Disposer.isDisposed(this@RenderService)) {
             DiscordPlugin.LOG.info("Skipping render, service already disposed")
-            return
+            return@async
         }
 
-        if (force) {
-            forceUpdate = true
+        val data = dataService.getData() ?: return@async
+
+        val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
+
+        var shouldRender = true
+
+        // TODO: check for timeout
+
+        if (!settings.show.get()) {
+            shouldRender = false
         }
 
-        renderJob?.cancel()
-        renderJob = launch {
-//            timeoutJob?.cancel()
+        if (shouldRender) {
+            DiscordPlugin.LOG.info("Render result: visible")
 
-            val data = dataService.getData() ?: return@launch
+            val renderer = context.createRenderer()
+            val presence = renderer.render()
 
-            val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
+            rpcService.update(presence, force)
+        } else {
+            DiscordPlugin.LOG.info("Render result: hidden")
 
-            if (force) {
-                forceUpdate = true
-            }
-
-            var shouldRender = true
-
-            if (!settings.show.get()) {
-                shouldRender = false
-            }
-
-//            if (settings.timeoutEnabled.get()) {
-//                // TODO: fix timeout
-//                val lastAccessedAt =
-//                    OffsetDateTime.now() //(context.file ?: context.project ?: context.application).accessedAt
-//                val durationUntilTimeout = Duration.between(lastAccessedAt, OffsetDateTime.now())
-//
-//                if (durationUntilTimeout.toMinutes() >= settings.timeoutMinutes.get()) {
-//                    shouldRender = false
-//                    isTimeout = true
-//                } else {
-//                    if (!isTimeout) {
-//                        timeoutJob = launch {
-//                            val delay =
-//                                Duration.ofMinutes(settings.timeoutMinutes.get().toLong()).minus(durationUntilTimeout)
-//                                    .toMillis()
-//                            delay(delay)
-//
-//                            timeoutJob = null
-//                            render()
-//                        }
-//                    }
-//                }
-//            }
-
-//            if (isTimeout && shouldRender && !forceUpdate) {
-//                isTimeout = false
-
-            // TODO: fix resetting timeout
-//                if (settings.timeoutResetTimeEnabled.get()) {
-//                    launch {
-//                        dataService.app {
-//                            openedAt = OffsetDateTime.now()
-//                        }
-//                    }
-//
-//                    return@launch
-//                }
-//            }
-
-            if (shouldRender) {
-                DiscordPlugin.LOG.info("Render result: visible")
-
-                val renderer = context.createRenderer()
-                val presence = renderer.render()
-
-                rpcService.update(presence, forceUpdate = forceUpdate)
-            } else {
-                DiscordPlugin.LOG.info("Render result: hidden")
-
-                rpcService.update(null, forceUpdate = forceUpdate)
-            }
-
-            forceUpdate = false
-
-            delay(RENDER_INTERVAL)
-
-            render()
+            rpcService.update(null, force)
         }
+    }
+
+    fun startRenderClock() {
+        val executor = AppExecutorUtil.getAppScheduledExecutorService()
+
+        this.renderJob = executor.scheduleWithFixedDelay(delay = 5, unit = TimeUnit.SECONDS) {
+            try {
+                render()
+            } catch (e: Exception) {
+                DiscordPlugin.LOG.error("Error rendering presence", e)
+            }
+        }
+    }
+
+    override fun dispose() {
+        renderJob?.cancel(true)
     }
 }

@@ -66,8 +66,9 @@ class RpcService : DisposableCoroutineScope {
         }
     }
 
-    private fun onReady(user: User) {
+    private fun updateUser(user: User?) {
         _user = user
+
         update(lastPresence, forceUpdate = true)
     }
 
@@ -81,6 +82,7 @@ class RpcService : DisposableCoroutineScope {
                 return
             }
 
+            // TODO: check if this is the source of stuck updates
             if (!forceUpdate && !forceReconnect && lastPresence == presence) {
                 DiscordPlugin.LOG.debug("Skipping presence update, nothing to do")
                 return
@@ -115,7 +117,7 @@ class RpcService : DisposableCoroutineScope {
                         connection = null
                     }
 
-                    connection = NativeRpcConnection(presence.appId) { user -> onReady(user) }.apply {
+                    connection = NativeRpcConnection(presence.appId, ::updateUser).apply {
                         Disposer.register(this@RpcService, this@apply)
                         connect()
                     }

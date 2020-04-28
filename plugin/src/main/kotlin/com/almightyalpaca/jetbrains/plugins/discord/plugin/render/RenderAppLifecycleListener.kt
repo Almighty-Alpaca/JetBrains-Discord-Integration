@@ -21,6 +21,6 @@ import com.intellij.openapi.project.Project
 
 class RenderAppLifecycleListener : AppLifecycleListener {
     override fun appStarting(projectFromCommandLine: Project?) {
-        renderService.render()
+        renderService.startRenderClock()
     }
 }
