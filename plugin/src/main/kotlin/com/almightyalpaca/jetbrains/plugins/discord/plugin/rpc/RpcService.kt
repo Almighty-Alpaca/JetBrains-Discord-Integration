@@ -83,10 +83,10 @@ class RpcService : DisposableCoroutineScope {
             }
 
             // TODO: check if this is the source of stuck updates
-            if (!forceUpdate && !forceReconnect && lastPresence == presence) {
-                DiscordPlugin.LOG.debug("Skipping presence update, nothing to do")
-                return
-            }
+            // if (!forceUpdate && !forceReconnect && lastPresence == presence) {
+            //     DiscordPlugin.LOG.debug("Skipping presence update, nothing to do")
+            //     return
+            // }
 
             lastPresence = presence
 
