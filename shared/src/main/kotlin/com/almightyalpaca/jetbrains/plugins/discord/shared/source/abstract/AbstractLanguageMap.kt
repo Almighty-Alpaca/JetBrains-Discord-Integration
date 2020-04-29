@@ -21,7 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Language
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMatch
 
-abstract class AbstractLanguageMap(languages: Collection<Language>) : LanguageMap, Collection<Language> by languages {
+abstract class AbstractLanguageMap(private val languages: Collection<Language>) : LanguageMap, Collection<Language> by languages {
     override val default: Language.Default = find { l -> l.id == "default" } as Language.Default
 
     override fun findLanguage(provider: Matcher.Target.Provider): LanguageMatch {
@@ -36,5 +36,9 @@ abstract class AbstractLanguageMap(languages: Collection<Language>) : LanguageMa
         }
 
         return default.match
+    }
+
+    override fun toString(): String {
+        return "AbstractLanguageMap(default=$default, languages=$languages)"
     }
 }

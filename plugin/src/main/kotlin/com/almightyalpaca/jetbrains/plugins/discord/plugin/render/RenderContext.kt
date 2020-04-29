@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
 
-class RenderContext(source: Source, val data: Data, private val mode: Renderer.Mode) {
+class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode) {
     val icons: IconSet? by lazy {
         source.getThemesOrNull()
             ?.get(settings.theme.getValue())

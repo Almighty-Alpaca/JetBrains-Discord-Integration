@@ -17,6 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
 import com.almightyalpaca.jetbrains.plugins.discord.shared.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toMap
@@ -79,16 +80,16 @@ class BintraySource(location: String) : Source, CoroutineScope {
 
     private val versionJob: Deferred<String> = retryAsync(
         log = { DiscordPlugin.LOG.error("Error getting Bintray version", it) },
-        block = { readVersion().also { DiscordPlugin.LOG.info("Bintray version complete") } })
+        block = { readVersion().also { DiscordPlugin.LOG.debugLazy { "Bintray version complete: $it" } } })
     private val filesJob: Deferred<Collection<String>> = retryAsync(
         log = { DiscordPlugin.LOG.error("Error getting Bintray files", it) },
-        block = { readFiles().also { DiscordPlugin.LOG.info("Bintray files complete") } })
+        block = { readFiles().also { DiscordPlugin.LOG.debugLazy { "Bintray files complete: $it" } } })
     private val languageJob: Deferred<LanguageMap> = retryAsync(
         log = { DiscordPlugin.LOG.error("Error getting Bintray languages", it) },
-        block = { readLanguages().also { DiscordPlugin.LOG.info("Bintray languages complete") } })
+        block = { readLanguages().also { DiscordPlugin.LOG.debugLazy { "Bintray languages complete: $it" } } })
     private val themeJob: Deferred<ThemeMap> = retryAsync(
         log = { DiscordPlugin.LOG.error("Error getting Bintray themes", it) },
-        block = { readThemes().also { DiscordPlugin.LOG.info("Bintray themes complete") } })
+        block = { readThemes().also { DiscordPlugin.LOG.debugLazy { "Bintray themes complete: $it" } } })
 
     override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob

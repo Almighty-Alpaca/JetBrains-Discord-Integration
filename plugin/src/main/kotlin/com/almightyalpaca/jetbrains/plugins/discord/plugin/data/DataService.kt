@@ -64,9 +64,7 @@ class DataService {
             }
         }
 
-        val applicationInfo = ApplicationInfoEx.getInstance()
-        val applicationId = applicationInfo.build.productCode
-        val applicationVersion = applicationInfo.fullVersion
+        val applicationVersion = ApplicationInfoEx.getInstance().fullVersion
         val applicationStartTime = ApplicationManager.getApplication().startTime
         val applicationSettings = settings
 
@@ -97,7 +95,6 @@ class DataService {
                     DiscordPlugin.LOG.debug("Returning file data")
 
                     return Data.File(
-                        applicationId,
                         applicationVersion,
                         applicationStartTime,
                         applicationSettings,
@@ -114,7 +111,6 @@ class DataService {
             DiscordPlugin.LOG.debug("Returning project data")
 
             return Data.Project(
-                applicationId,
                 applicationVersion,
                 applicationStartTime,
                 applicationSettings,
@@ -126,7 +122,6 @@ class DataService {
         DiscordPlugin.LOG.debug("Returning application data")
 
         return Data.Application(
-            applicationId,
             applicationVersion,
             applicationStartTime,
             applicationSettings

@@ -56,7 +56,7 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
         val notificationSettings = project.notificationSettings
 
         if (notificationSettings.askShowProject) {
-            DiscordPlugin.LOG.info("Showing project conformation dialog")
+            DiscordPlugin.LOG.info("Showing project confirmation dialog")
 
             val result = AskShowProjectNotification.show(project)
 

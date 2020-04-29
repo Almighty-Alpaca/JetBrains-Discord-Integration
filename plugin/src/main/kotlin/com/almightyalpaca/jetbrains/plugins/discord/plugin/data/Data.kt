@@ -25,31 +25,28 @@ import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
     open class Application(
-        val applicationId: String,
         val applicationVersion: String,
         val applicationStartTime: Long,
         val applicationSettings: ApplicationSettings
     ) : Data() {
         override fun toString(): String {
-            return "Application(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings)"
+            return "Application(applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime)"
         }
     }
 
     open class Project(
-        applicationId: String,
         applicationVersion: String,
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
         val projectSettings: ProjectSettings
-    ) : Application(applicationId, applicationVersion, applicationStartTime, applicationSettings) {
+    ) : Application(applicationVersion, applicationStartTime, applicationSettings) {
         override fun toString(): String {
-            return "Project(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings)"
+            return "Project(applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, projectName='$projectName')"
         }
     }
 
     open class File(
-        applicationId: String,
         applicationVersion: String,
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
@@ -60,7 +57,6 @@ sealed class Data {
         val filePath: String,
         val fileIsWriteable: Boolean
     ) : Project(
-        applicationId,
         applicationVersion,
         applicationStartTime,
         applicationSettings,
@@ -94,7 +90,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "File(applicationId='$applicationId', applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, applicationSettings=$applicationSettings, projectName='$projectName', projectSettings=$projectSettings, fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "File(applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime projectName='$projectName', fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
         }
     }
 }

@@ -22,6 +22,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.concat
 
 sealed class AbstractLanguage(final override val id: String, final override val name: String) : Language {
+    override fun toString(): String {
+        return "AbstractLanguage(id='$id', name='$name')"
+    }
+
     abstract class Simple(id: String, name: String, final override val parent: Language?, assetIds: List<String>?, final override val matchers: Map<Matcher.Target, Matcher>) :
         AbstractLanguage(id, name), Language.Simple {
 

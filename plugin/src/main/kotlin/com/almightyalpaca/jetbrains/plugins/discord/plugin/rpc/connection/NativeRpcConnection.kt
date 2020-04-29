@@ -26,6 +26,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
@@ -80,7 +81,13 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
         DiscordRPC.INSTANCE.Discord_Initialize(appId.toString(), this, false, null)
 
         callbackRunner = Executors.newSingleThreadScheduledExecutor()
-        callbackRunner.scheduleAtFixedRate(DiscordRPC.INSTANCE::Discord_RunCallbacks, 2, 2, TimeUnit.SECONDS)
+        callbackRunner.scheduleWithFixedDelay(delay = 2, unit = TimeUnit.SECONDS, command = ::runCallbacks)
+    }
+
+    private fun runCallbacks() {
+        DiscordPlugin.LOG.debug("Running rpc callbacks")
+
+        DiscordRPC.INSTANCE.Discord_RunCallbacks()
     }
 
     @Synchronized

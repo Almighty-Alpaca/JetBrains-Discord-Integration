@@ -41,7 +41,12 @@ abstract class Renderer(private val context: RenderContext) {
         smallIconText: IconTextValue?,
         startTimestamp: TimeValue?
     ): RichPresence {
-        DiscordPlugin.LOG.debug("Rendering presence, data=${context.data}")
+        DiscordPlugin.LOG.debug("Rendering presence, data=${context.data}, mode=${context.mode}")
+        DiscordPlugin.LOG.debug("Themes: ${context.source.getThemesOrNull()}")
+        DiscordPlugin.LOG.debug("languages: ${context.source.getLanguagesOrNull()}")
+        DiscordPlugin.LOG.debug("Icons: ${context.icons}")
+        DiscordPlugin.LOG.debug("Data: ${context.data}")
+        DiscordPlugin.LOG.debug("Mode: ${context.mode}")
 
         if (context.icons == null) {
             DiscordPlugin.LOG.debug("RenderContext.icons=null")
