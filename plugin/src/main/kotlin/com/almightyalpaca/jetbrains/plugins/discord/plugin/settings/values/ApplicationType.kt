@@ -19,6 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
 import com.intellij.openapi.application.ApplicationNamesInfo
+import java.util.*
 
 typealias ApplicationTypeValue = SimpleValue<ApplicationType>
 
@@ -46,7 +47,7 @@ enum class ApplicationType(val description: String, override val toolTip: String
     val applicationName by lazy {
         applicationNameReadable.split(' ')
             .asSequence()
-            .map(String::toLowerCase)
+            .map { it.toLowerCase(Locale.ENGLISH) }
             .joinToString(separator = "_")
     }
 
