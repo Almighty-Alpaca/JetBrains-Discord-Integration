@@ -51,10 +51,12 @@ class JPreview : JLabel(), CoroutineScope {
         updateJob?.cancel()
 
         updateJob = launch {
-            val (modified, image) = preview.draw(force)
+            if (isShowing) {
+                val (modified, image) = preview.draw(force)
 
-            if (modified) {
-                icon = ImageIcon(image)
+                if (modified) {
+                    icon = ImageIcon(image)
+                }
             }
 
             updateJob = launch {
