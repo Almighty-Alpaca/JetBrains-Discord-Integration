@@ -39,7 +39,8 @@ sealed class Data {
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
-        val projectSettings: ProjectSettings
+        val projectSettings: ProjectSettings,
+        val vcsBranch: String?
     ) : Application(applicationVersion, applicationStartTime, applicationSettings) {
         override fun toString(): String {
             return "Project(applicationVersion='$applicationVersion', applicationStartTime=$applicationStartTime, projectName='$projectName')"
@@ -55,13 +56,15 @@ sealed class Data {
         val fileName: String,
         val fileUniqueName: String,
         val filePath: String,
-        val fileIsWriteable: Boolean
+        val fileIsWriteable: Boolean,
+        vcsBranch: String?
     ) : Project(
         applicationVersion,
         applicationStartTime,
         applicationSettings,
         projectName,
-        projectSettings
+        projectSettings,
+        vcsBranch
     ), Matcher.Target.Provider {
         /** Path relative to the project directory */
         private val filePathRelative: String by lazy {

@@ -70,6 +70,8 @@ intellij {
 
     instrumentCode = false
 
+    setPlugins("git4idea")
+
     // For testing with a custom theme
     // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
 

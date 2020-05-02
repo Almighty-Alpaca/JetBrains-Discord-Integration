@@ -22,6 +22,7 @@
     <idea-version since-build="201.4515.24"/>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends>Git4Idea</depends>
 
     <application-components>
         <component>

@@ -35,6 +35,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.IdeFrame
+import git4idea.branch.GitBranchUtil
 
 val dataService: DataService
     get() = service()
@@ -71,6 +72,8 @@ class DataService {
         if (project != null && project.settings.show.get()) {
             val projectName = project.name
             val projectSettings = project.settings
+            val vcsBranch =
+                GitBranchUtil.getRepositoryOrGuess(project, project.projectFile)?.currentBranchName
 
             if (editor != null) {
                 val file = editor.file
@@ -103,7 +106,8 @@ class DataService {
                         fileName,
                         fileUniqueName,
                         filePath,
-                        fileIsWriteable
+                        fileIsWriteable,
+                        vcsBranch
                     )
                 }
             }
@@ -115,7 +119,8 @@ class DataService {
                 applicationStartTime,
                 applicationSettings,
                 projectName,
-                projectSettings
+                projectSettings,
+                vcsBranch
             )
         }
 
