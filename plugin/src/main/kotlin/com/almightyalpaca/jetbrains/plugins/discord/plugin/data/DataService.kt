@@ -72,8 +72,6 @@ class DataService {
         if (project != null && project.settings.show.get()) {
             val projectName = project.name
             val projectSettings = project.settings
-            val vcsBranch =
-                GitBranchUtil.getRepositoryOrGuess(project, project.projectFile)?.currentBranchName
 
             if (editor != null) {
                 val file = editor.file
@@ -97,6 +95,8 @@ class DataService {
 
                     DiscordPlugin.LOG.debug("Returning file data")
 
+                    val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, file)?.currentBranchName
+
                     return Data.File(
                         applicationVersion,
                         applicationStartTime,
@@ -113,6 +113,8 @@ class DataService {
             }
 
             DiscordPlugin.LOG.debug("Returning project data")
+
+            val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, null)?.currentBranchName
 
             return Data.Project(
                 applicationVersion,
