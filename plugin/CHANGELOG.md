@@ -1,3 +1,11 @@
+## In Development
+- Add a button to force reconnect to Discord client
+- Add ability to show current git branch (#89)
+- Add support for Rider for Unreal Engine preview
+- Fix a lot of bugs that could prevent the plugin from loading
+- Fix settings preview being rendered in the background
+- Change target Java version back to 1.8
+
 ## v1.2.0
 - Support for 2020.1 (#77)
 - Completely new way how current presence is calculated
