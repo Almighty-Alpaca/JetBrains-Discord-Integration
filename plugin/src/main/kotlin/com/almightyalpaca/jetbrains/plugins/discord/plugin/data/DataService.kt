@@ -35,6 +35,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.IdeFrame
+import git4idea.branch.GitBranchUtil
 
 val dataService: DataService
     get() = service()
@@ -94,6 +95,8 @@ class DataService {
 
                     DiscordPlugin.LOG.debug("Returning file data")
 
+                    val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, file)?.currentBranchName
+
                     return Data.File(
                         applicationVersion,
                         applicationStartTime,
@@ -103,19 +106,23 @@ class DataService {
                         fileName,
                         fileUniqueName,
                         filePath,
-                        fileIsWriteable
+                        fileIsWriteable,
+                        vcsBranch
                     )
                 }
             }
 
             DiscordPlugin.LOG.debug("Returning project data")
 
+            val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, null)?.currentBranchName
+
             return Data.Project(
                 applicationVersion,
                 applicationStartTime,
                 applicationSettings,
                 projectName,
-                projectSettings
+                projectSettings,
+                vcsBranch
             )
         }
 
