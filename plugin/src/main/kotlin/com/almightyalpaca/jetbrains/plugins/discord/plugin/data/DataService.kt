@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getCurrentGitBranch
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
@@ -35,7 +36,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.IdeFrame
-import git4idea.branch.GitBranchUtil
 
 val dataService: DataService
     get() = service()
@@ -93,9 +93,9 @@ class DataService {
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
-                    DiscordPlugin.LOG.debug("Returning file data")
+                    val vcsBranch = getCurrentGitBranch(project, file)
 
-                    val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, file)?.currentBranchName
+                    DiscordPlugin.LOG.debug("Returning file data")
 
                     return Data.File(
                         applicationVersion,
@@ -112,9 +112,9 @@ class DataService {
                 }
             }
 
-            DiscordPlugin.LOG.debug("Returning project data")
+            val vcsBranch = getCurrentGitBranch(project, null)
 
-            val vcsBranch = GitBranchUtil.getRepositoryOrGuess(project, null)?.currentBranchName
+            DiscordPlugin.LOG.debug("Returning project data")
 
             return Data.Project(
                 applicationVersion,

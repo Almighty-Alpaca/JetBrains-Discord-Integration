@@ -57,7 +57,7 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
             }.toResult()
         }
     },
-    PROJECT_VCS_BRANCH("Project Current Vcs Branch") {
+    PROJECT_VCS_BRANCH("Current VCS Branch", toolTip = "The Git plugin needs to be enabled for this option") {
         override fun RenderContext.getResult(): Result = projectData?.vcsBranch.toResult()
     },
     FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
@@ -81,8 +81,8 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
         val Application2 = NONE to arrayOf(NONE, CUSTOM)
         val Project1 = PROJECT_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, CUSTOM)
         val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, CUSTOM)
-        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME_PATH, FILE_NAME, PROJECT_VCS_BRANCH, CUSTOM)
-        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, FILE_NAME_PATH, FILE_NAME, PROJECT_VCS_BRANCH, CUSTOM)
+        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
+        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
     }
 
     fun String?.toResult() = when {
