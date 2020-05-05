@@ -24,6 +24,7 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.util.containers.stream
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -138,22 +139,23 @@ class DiagnoseService : DisposableCoroutineScope {
         return Discord.OTHER
     }
 
-    private val pluginsIds = arrayOf(
+    private val pluginsIds: Array<String?> = arrayOf(
         "com.tsunderebug.discordintellij",
         "com.my.fobes.intellij.discord"
     )
 
     private fun readPlugins(): Plugins {
         val matches = PluginManager.getPlugins()
-            .asSequence()
+            .stream()
             .map(IdeaPluginDescriptor::getPluginId)
             .map(PluginId::getIdString)
             .filter(Objects::nonNull)
-            .count(pluginsIds::contains)
+            .filter(pluginsIds::contains)
+            .count()
 
         return when (matches) {
-            0 -> Plugins.NONE
-            1 -> Plugins.ONE
+            0L -> Plugins.NONE
+            1L -> Plugins.ONE
             else -> Plugins.MULTIPLE
         }
     }
