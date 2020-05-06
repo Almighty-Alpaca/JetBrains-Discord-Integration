@@ -16,6 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.time
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
@@ -36,7 +39,7 @@ private val TIME_OPENED = Key.create<Long>("discord.time.started")
 
 var Application.timeStarted
     get() = startTime
-//        getUserData(TIME_OPENED) ?: System.currentTimeMillis()
+    //        getUserData(TIME_OPENED) ?: System.currentTimeMillis()
     private set(value) {
 //        putUserData(TIME_OPENED, value)
     }
@@ -80,13 +83,22 @@ class TimeoutService : Disposable {
 
     private val loaded = AtomicBoolean(false)
 
-//    private val idleListener = Runnable {
-//        DiscordPlugin.LOG.debug("TIMEOUT")
-//    }
+    var idle = false
+        private set
 
-//    private val activityListener = Runnable {
-//        DiscordPlugin.LOG.debug("ACTIVITY")
-//    }
+    private val idleListener = Runnable {
+        idle = true
+
+        renderService.render(true)
+    }
+
+    private val activityListener = Runnable {
+        if (idle) {
+            idle = false
+
+            renderService.render(true)
+        }
+    }
 
 //    private val propertyChangeListener = PropertyChangeListener { event ->
 //        val oldFrame = event.oldValue
@@ -108,12 +120,12 @@ class TimeoutService : Disposable {
 //        }
 //    }
 
-//    init {
+    init {
 //        KeyboardFocusManager.getCurrentKeyboardFocusManager()
 //            .addPropertyChangeListener("focusedWindow", propertyChangeListener)
-//
-//        IdeEventQueue.getInstance().addActivityListener(activityListener, this)
-//    }
+
+        IdeEventQueue.getInstance().addActivityListener(activityListener, this)
+    }
 
     fun load() {
         if (Disposer.isDisposed(this)) {
@@ -134,12 +146,12 @@ class TimeoutService : Disposable {
             }
         }
 
-//        val timeoutMillis = settings.timeoutMinutes.get() * 60 * 1000
-//        IdeEventQueue.getInstance().addIdleListener(idleListener, timeoutMillis)
+        val timeoutMillis = settings.timeoutMinutes.get() * 60 * 1000
+        IdeEventQueue.getInstance().addIdleListener(idleListener, timeoutMillis)
     }
 
     private fun unload() {
-//        IdeEventQueue.getInstance().removeIdleListener(idleListener)
+        IdeEventQueue.getInstance().removeIdleListener(idleListener)
     }
 
     override fun dispose() {
@@ -159,9 +171,9 @@ class TimeoutService : Disposable {
     }
 }
 
-//internal sealed class Status {
-//    object None : Status()
-//    class Application(val lastChange: Long = System.currentTimeMillis()) : Status()
-//    class Project(val lastChange: Long = System.currentTimeMillis(), project: com.intellij.openapi.project.Project) :
-//        Status()
-//}
+internal sealed class Status {
+    object None : Status()
+    class Application(val lastChange: Long = System.currentTimeMillis()) : Status()
+    class Project(val lastChange: Long = System.currentTimeMillis(), project: com.intellij.openapi.project.Project) :
+        Status()
+}

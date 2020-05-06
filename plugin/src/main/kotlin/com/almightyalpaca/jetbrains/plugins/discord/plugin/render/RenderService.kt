@@ -21,6 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.dataService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
 import com.intellij.openapi.components.Service
@@ -57,15 +58,17 @@ class RenderService : DisposableCoroutineScope {
 
         val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
-        var shouldRender = true
-
-        // TODO: check for timeout
+        var visible = true
 
         if (!settings.show.get()) {
-            shouldRender = false
+            visible = false
         }
 
-        if (shouldRender) {
+        if (timeService.idle) {
+            visible = false
+        }
+
+        if (visible) {
             DiscordPlugin.LOG.info("Render result: visible")
 
             val renderer = context.createRenderer()
