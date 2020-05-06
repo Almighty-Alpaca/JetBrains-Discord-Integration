@@ -1,4 +1,4 @@
-## In Development
+## v1.3.0
 - Add a button to force reconnect to Discord client
 - Add ability to show current git branch (#89)
 - Add support for Rider for Unreal Engine preview
