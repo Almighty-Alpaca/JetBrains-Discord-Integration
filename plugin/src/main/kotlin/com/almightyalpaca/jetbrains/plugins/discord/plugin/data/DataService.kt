@@ -69,7 +69,7 @@ class DataService {
         val applicationStartTime = ApplicationManager.getApplication().startTime
         val applicationSettings = settings
 
-        if (project != null && project.settings.show.get()) {
+        if (project != null && !project.isDefault && project.settings.show.get()) {
             val projectName = project.name
             val projectSettings = project.settings
 
