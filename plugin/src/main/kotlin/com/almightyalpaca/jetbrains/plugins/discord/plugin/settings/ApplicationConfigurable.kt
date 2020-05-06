@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.diagnoseService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
@@ -35,6 +36,8 @@ class ApplicationConfigurable : SearchableConfigurable {
 
     override fun apply() {
         settings.apply()
+
+        timeService.load()
 
         renderService.render()
     }

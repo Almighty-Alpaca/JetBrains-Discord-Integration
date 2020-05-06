@@ -18,6 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeStarted
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getCurrentGitBranch
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
@@ -66,11 +68,12 @@ class DataService {
         }
 
         val applicationVersion = ApplicationInfoEx.getInstance().fullVersion
-        val applicationStartTime = ApplicationManager.getApplication().startTime
+        val applicationStartTime = ApplicationManager.getApplication().timeStarted
         val applicationSettings = settings
 
         if (project != null && !project.isDefault && project.settings.show.get()) {
             val projectName = project.name
+            val projectTimeOpened = project.timeOpened
             val projectSettings = project.settings
 
             if (editor != null) {
@@ -90,6 +93,7 @@ class DataService {
                             }
                         }
                     }
+                    val fileTimeOpened = file.timeOpened
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
@@ -102,9 +106,11 @@ class DataService {
                         applicationStartTime,
                         applicationSettings,
                         projectName,
+                        projectTimeOpened,
                         projectSettings,
                         fileName,
                         fileUniqueName,
+                        fileTimeOpened,
                         filePath,
                         fileIsWriteable,
                         vcsBranch
@@ -121,6 +127,7 @@ class DataService {
                 applicationStartTime,
                 applicationSettings,
                 projectName,
+                projectTimeOpened,
                 projectSettings,
                 vcsBranch
             )

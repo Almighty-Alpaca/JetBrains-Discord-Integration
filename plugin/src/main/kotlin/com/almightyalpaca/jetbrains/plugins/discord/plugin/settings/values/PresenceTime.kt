@@ -24,13 +24,13 @@ typealias TimeValue = SimpleValue<PresenceTime>
 
 enum class PresenceTime(val description: String, override val toolTip: String? = null) : ToolTipProvider {
     APPLICATION("Application") {
-        override fun RenderContext.getResult() = applicationData?.applicationStartTime.toResult()
+        override fun RenderContext.getResult() = applicationData?.applicationTimeOpened.toResult()
     },
-    PROJECT("Project") { // TODO: fix project open time
-        override fun RenderContext.getResult() = Result.Empty //projectData?.openedAt.toResult()
+    PROJECT("Project") {
+        override fun RenderContext.getResult() = projectData?.projectTimeOpened.toResult()
     },
-    FILE("File") { // TODO: fix file project open time
-        override fun RenderContext.getResult() = Result.Empty //fileData?.openedAt.toResult()
+    FILE("File") {
+        override fun RenderContext.getResult() = fileData?.fileTimeOpened.toResult()
     },
     HIDE("Hide") {
         override fun RenderContext.getResult() = Result.Empty
