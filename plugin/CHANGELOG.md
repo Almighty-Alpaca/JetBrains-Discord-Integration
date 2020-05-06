@@ -2,8 +2,10 @@
 - Add a button to force reconnect to Discord client
 - Add ability to show current git branch (#89)
 - Add support for Rider for Unreal Engine preview
+- Add support for idle timeout and elapsed time for files/projects again 
 - Fix a lot of bugs that could prevent the plugin from loading
 - Fix settings preview being rendered in the background
+- Fix hidden projects being shown
 - Change target Java version back to 1.8
 
 ## v1.2.0
