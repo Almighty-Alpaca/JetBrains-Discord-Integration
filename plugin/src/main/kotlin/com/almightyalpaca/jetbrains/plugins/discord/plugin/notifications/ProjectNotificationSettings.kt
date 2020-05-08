@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.NewProjectShow
 import com.intellij.openapi.components.PersistentStateComponent
@@ -30,7 +31,7 @@ val Project.notificationSettings: ProjectNotificationSettings
 
 @State(name = "ProjectNotificationSettings", storages = [Storage("discord.xml")])
 class ProjectNotificationSettings : PersistentStateComponent<ProjectNotificationSettings> {
-    var askShowProject: Boolean = settings.newProjectShow.get() == NewProjectShow.ASK
+    var askShowProject: Boolean = settings.newProjectShow.get(Renderer.Mode.NORMAL) == NewProjectShow.ASK
 
     override fun getState(): ProjectNotificationSettings? = this
 

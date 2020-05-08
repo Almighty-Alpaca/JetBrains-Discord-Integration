@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.toggle
@@ -43,7 +44,7 @@ abstract class AbstractToggleAction(
     override fun update(e: AnActionEvent) {
         val project = e.getData(PlatformDataKeys.PROJECT) ?: return
 
-        if (value(project).get()) {
+        if (value(project).get(Renderer.Mode.NORMAL)) {
             enabled.apply(e.presentation)
         } else {
             disabled.apply(e.presentation)

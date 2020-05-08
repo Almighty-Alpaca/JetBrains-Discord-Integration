@@ -45,8 +45,5 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
         return type.createRenderer(this)
     }
 
-    fun <T> SimpleValue<T>.getValue(): T = when (mode) {
-        Renderer.Mode.NORMAL -> get()
-        Renderer.Mode.PREVIEW -> getComponent()
-    }
+    fun <T> SimpleValue<T>.getValue(): T = get(mode)
 }

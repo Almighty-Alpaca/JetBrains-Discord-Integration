@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.check
@@ -30,7 +31,7 @@ import com.intellij.openapi.project.Project
 
 @State(name = "DiscordProjectSettings", storages = [Storage("discord.xml")])
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, PersistentStateOptionHolderImpl() {
-    override val show by check("Show this project in Rich Presence", settings.newProjectShow.get() == NewProjectShow.SHOW)
+    override val show by check("Show this project in Rich Presence", settings.newProjectShow.get(Renderer.Mode.NORMAL) == NewProjectShow.SHOW)
 
     private val nameOverrideToggle by toggleable<Boolean>()
     override val nameOverrideEnabled by nameOverrideToggle.toggle.check("Override project name", false)

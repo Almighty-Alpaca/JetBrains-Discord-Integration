@@ -89,7 +89,7 @@ class PreviewRenderer {
     @Synchronized
     suspend fun draw(force: Boolean = false): ModifiedImage {
 
-        val data = dataService.getData() ?: return ModifiedImage(false, image)
+        val data = dataService.getData(Renderer.Mode.PREVIEW) ?: return ModifiedImage(false, image)
 
         val context = RenderContext(sourceService.source, data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
@@ -202,7 +202,7 @@ class PreviewRenderer {
                 }
             }
 
-            val applicationName = settings.applicationType.getComponent().applicationNameReadable
+            val applicationName = settings.applicationType.get(Renderer.Mode.PREVIEW).applicationNameReadable
             if (force || lastApplicationName != applicationName || lastImagesEmpty != imagesEmpty) {
                 // IDE name
                 image.withGraphics {

@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
 import com.intellij.ui.components.JBCheckBox
@@ -66,5 +67,5 @@ class CheckOption(description: String, initialValue: Boolean, private val enable
 typealias BooleanValue = SimpleValue<Boolean>
 
 fun BooleanValue.toggle() {
-    set(!get())
+    set(!get(Renderer.Mode.NORMAL))
 }

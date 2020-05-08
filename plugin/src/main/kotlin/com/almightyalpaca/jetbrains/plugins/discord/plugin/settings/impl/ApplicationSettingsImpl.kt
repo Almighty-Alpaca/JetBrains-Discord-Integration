@@ -106,6 +106,8 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
 
     override val filePrefixEnabled by fileTab.check("Prefix files names with Reading/Editing", true)
 
+    override val fileHideVcsIgnored by fileTab.check("Hide VCS ignored files", false)
+
     override val applicationType by selection("Application name", ApplicationType.IDE_EDITION)
     override val theme by themeChooser("Theme")
 

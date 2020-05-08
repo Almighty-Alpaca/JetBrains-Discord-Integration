@@ -54,13 +54,13 @@ class RenderService : DisposableCoroutineScope {
             return@async
         }
 
-        val data = dataService.getData() ?: return@async
+        val data = dataService.getData(Renderer.Mode.NORMAL) ?: return@async
 
         val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
         var visible = true
 
-        if (!settings.show.get()) {
+        if (!settings.show.get(Renderer.Mode.NORMAL)) {
             visible = false
         }
 

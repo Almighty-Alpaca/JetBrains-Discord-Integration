@@ -17,13 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeStarted
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.getCurrentGitBranch
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
@@ -44,7 +42,7 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(): Data? = tryOrNull {
+    suspend fun getData(mode: Renderer.Mode): Data? = tryOrNull {
         DiscordPlugin.LOG.debug("Getting data")
 
         val project: Project?
@@ -71,7 +69,8 @@ class DataService {
         val applicationStartTime = ApplicationManager.getApplication().timeStarted
         val applicationSettings = settings
 
-        if (project != null && !project.isDefault && project.settings.show.get()) {
+
+        if (project != null && !project.isDefault && project.settings.show.get(mode)) {
             val projectName = project.name
             val projectTimeOpened = project.timeOpened
             val projectSettings = project.settings
@@ -79,7 +78,7 @@ class DataService {
             if (editor != null) {
                 val file = editor.file
 
-                if (file != null) {
+                if (file != null && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))) {
                     val fileName = file.name
                     val fileUniqueName = when (DumbService.isDumb(project)) {
                         true -> fileName
@@ -97,7 +96,7 @@ class DataService {
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
-                    val vcsBranch = getCurrentGitBranch(project, file)
+                    val vcsBranch = getCurrentVcsBranch(project, file)
 
                     DiscordPlugin.LOG.debug("Returning file data")
 
@@ -118,7 +117,7 @@ class DataService {
                 }
             }
 
-            val vcsBranch = getCurrentGitBranch(project, null)
+            val vcsBranch = getCurrentVcsBranch(project, null)
 
             DiscordPlugin.LOG.debug("Returning project data")
 

@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.intellij.openapi.util.JDOMExternalizerUtil
 import org.jdom.Element
@@ -61,9 +62,14 @@ abstract class SimpleOption<T>(description: String, val initialValue: T) : Optio
 }
 
 abstract class SimpleValue<T> : Value() {
-    abstract fun get(): T
-    abstract fun getComponent(): T
+    protected abstract fun get(): T
+    protected abstract fun getComponent(): T
     abstract fun set(value: T)
+
+    fun get(mode: Renderer.Mode) = when (mode) {
+        Renderer.Mode.PREVIEW -> getComponent()
+        Renderer.Mode.NORMAL -> get()
+    }
 
     abstract val description: String
 
