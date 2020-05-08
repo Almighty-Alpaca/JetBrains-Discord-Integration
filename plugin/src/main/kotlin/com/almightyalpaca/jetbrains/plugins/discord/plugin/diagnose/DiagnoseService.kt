@@ -76,7 +76,7 @@ class DiagnoseService : DisposableCoroutineScope {
     }
 
     private fun readDiscordLinux(): Discord {
-        val process = Runtime.getRuntime().exec("ps ax")
+        val process = Runtime.getRuntime().exec("ps -ef")
         process.waitFor()
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
@@ -84,14 +84,19 @@ class DiagnoseService : DisposableCoroutineScope {
                 .joinToString("\n")
         }
 
-        if (lines.isBlank()) {
-            return Discord.CLOSED
-        } else if (lines.contains("/snap/discord/", true)) {
-            return Discord.SNAP
-        }
+        return when {
+            lines.isBlank() -> {
+                Discord.CLOSED
+            }
+            lines.contains("/snap/discord/", true) -> {
+                Discord.SNAP
+            }
+            lines.split(" ")[0] != System.getProperty("user.name") ->
+                Discord.DIFFERENT_USER
 
-        // TODO: Linux Discord browser detection
-        return Discord.OTHER
+            // TODO: Linux Discord browser detection
+            else -> Discord.OTHER
+        }
     }
 
     private fun readDiscordWindows(): Discord {
@@ -186,6 +191,7 @@ class DiagnoseService : DisposableCoroutineScope {
         SNAP("It seems like Discord is running in a Snap package. This will most likely prevent the plugin from connecting to your Discord client!"),
         BROWSER("It seems like Discord is running in the browser. The plugin will not be able to connect to the Discord client!"),
         CLOSED("Could not detect a running Discord client!"),
+        DIFFERENT_USER("It seems like Discord wasn't started by the same user as your IDE was!"),
         OTHER("")
     }
 
