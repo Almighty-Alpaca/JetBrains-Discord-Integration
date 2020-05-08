@@ -76,11 +76,11 @@ class DiagnoseService : DisposableCoroutineScope {
     }
 
     private fun readDiscordLinux(): Discord {
-        val process = Runtime.getRuntime().exec("ps -ef")
+        val process = Runtime.getRuntime().exec("ps axo user:30,command")
         process.waitFor()
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
             reader.lineSequence()
-                .filter { line -> line.contains("discord", true) }
+                .filter { line -> line.contains("/discord", true) }
                 .joinToString("\n")
         }
 
