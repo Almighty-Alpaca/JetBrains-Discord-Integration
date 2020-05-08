@@ -29,11 +29,13 @@ interface OptionHolder : OptionCreator<Any?>, ComponentProvider {
     }
 
     var isComponentEnabled: Boolean
-        get() = component.isEnabled
+        get() = component?.isEnabled ?: true
         set(value) {
-            component.isEnabled = value
-            for (component in component.components) {
-                component.isEnabled = value
+            component?.let { c ->
+                c.isEnabled = value
+                for (component in c.components) {
+                    component.isEnabled = value
+                }
             }
         }
 

@@ -25,6 +25,7 @@ import org.jdom.Element
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.math.roundToInt
 import kotlin.reflect.KProperty
@@ -37,7 +38,7 @@ class OptionGroup(description: String) : Option<Group>(description), OptionHolde
 
     override fun addChangeListener(listener: (Group) -> Unit) = throw Exception("Cannot listen to group changes")
 
-    override val component by lazy {
+    override val component: JComponent? by lazy {
         JPanel().apply panel@{
             layout = GridBagLayout()
 

@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
@@ -37,16 +38,20 @@ private val group = NotificationGroup(
 )
 
 object AskShowProjectNotification {
-    suspend fun show(project: Project) = suspendCoroutine<Boolean> { continuation ->
+    suspend fun show(project: Project) = suspendCoroutine<ProjectShow> { continuation ->
         group.createNotification(title, null, content, NotificationType.INFORMATION)
             .apply {
-                addAction(DumbAwareAction.create("Show") {
+                addAction(DumbAwareAction.create("Project") {
                     expire()
-                    continuation.resume(true)
+                    continuation.resume(ProjectShow.PROJECT)
+                })
+                addAction(DumbAwareAction.create("Project and Files") {
+                    expire()
+                    continuation.resume(ProjectShow.PROJECT_FILES)
                 })
                 addAction(DumbAwareAction.create("Hide") {
                     expire()
-                    continuation.resume(false)
+                    continuation.resume(ProjectShow.HIDE)
                 })
             }.run { Notifications.Bus.notify(this, project) }
     }

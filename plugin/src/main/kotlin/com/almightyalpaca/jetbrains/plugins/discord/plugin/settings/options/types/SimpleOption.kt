@@ -33,6 +33,8 @@ abstract class SimpleOption<T>(description: String, val initialValue: T) : Optio
 
     protected open fun transformValue(value: T): T = value
 
+    abstract override val component: JComponent
+
     protected abstract val componentImpl: JComponent
 
     override var isComponentEnabled: Boolean

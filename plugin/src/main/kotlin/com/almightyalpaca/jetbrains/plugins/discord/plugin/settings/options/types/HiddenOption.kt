@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.HiddenOptionHolderImpl
 
-typealias NewProjectShowValue = SimpleValue<NewProjectShow>
-
-enum class NewProjectShow(val description: String, override val toolTip: String? = null) : ToolTipProvider {
-    SHOW("Show"),
-    HIDE("Hide"),
-    ASK("Ask every time");
-
-    override fun toString() = description
-}
+fun OptionCreator<Any?>.hidden() = HiddenOptionHolderImpl()

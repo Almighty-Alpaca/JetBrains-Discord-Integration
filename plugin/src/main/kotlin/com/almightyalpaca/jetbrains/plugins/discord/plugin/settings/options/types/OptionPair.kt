@@ -22,6 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl
 import org.jdom.Element
 import javax.swing.Box
 import javax.swing.BoxLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
@@ -40,7 +41,7 @@ class OptionPair : Option<Pair>(""), Pair.Provider {
     private val value = Pair(this)
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
 
-    override val component by lazy {
+    override val component: JComponent? by lazy {
         JPanel().apply panel@{
             layout = BoxLayout(this@panel, BoxLayout.X_AXIS)
 

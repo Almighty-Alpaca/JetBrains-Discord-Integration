@@ -72,5 +72,5 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val applicationType: ApplicationTypeValue
     val theme: ThemeValue
 
-    val newProjectShow: NewProjectShowValue
+    val applicationLastUpdateNotification: StringValue
 }

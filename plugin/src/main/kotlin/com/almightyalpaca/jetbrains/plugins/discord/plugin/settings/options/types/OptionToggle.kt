@@ -24,6 +24,7 @@ import org.jdom.Element
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.Box
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
@@ -49,7 +50,7 @@ class OptionToggle<T>(private val enabled: Boolean) : Option<Toggle<T>>(""), Tog
     private val value = Toggle(this)
     override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
 
-    override val component by lazy {
+    override val component: JComponent? by lazy {
         JPanel().apply panel@{
             layout = GridBagLayout()
 

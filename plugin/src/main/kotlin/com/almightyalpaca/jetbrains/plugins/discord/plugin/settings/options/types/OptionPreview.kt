@@ -28,6 +28,7 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.Box
 import javax.swing.BoxLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
@@ -48,7 +49,7 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider
         tabsOption = option
     }
 
-    override val component by lazy {
+    override val component: JComponent? by lazy {
         JPanel().apply panel@{
             // layout = BoxLayout(this@panel, BoxLayout.X_AXIS)
             layout = GridBagLayout()

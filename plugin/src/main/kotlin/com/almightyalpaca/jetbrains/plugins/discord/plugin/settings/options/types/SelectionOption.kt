@@ -37,6 +37,8 @@ fun <T> OptionCreator<in T>.selection(description: String, initialValue: T, valu
         where T : Enum<T>, T : ToolTipProvider =
     OptionProviderImpl(this, SelectionOption(description, initialValue, values))
 
+typealias EnumValue<T> = SimpleValue<Enum<T>>
+
 class SelectionOption<T>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) where T : Enum<T>, T : ToolTipProvider {
     init {
         if (initialValue !in values)
@@ -59,7 +61,7 @@ class SelectionOption<T>(description: String, initialValue: T, private val value
         }
     }
 
-    override val component by lazy {
+    override val component: JComponent by lazy {
         JPanel().apply {
             layout = GridBagLayout()
 

@@ -69,8 +69,7 @@ class DataService {
         val applicationStartTime = ApplicationManager.getApplication().timeStarted
         val applicationSettings = settings
 
-
-        if (project != null && !project.isDefault && project.settings.show.get(mode)) {
+        if (project != null && !project.isDefault && project.settings.show.get(mode).showProject) {
             val projectName = project.name
             val projectTimeOpened = project.timeOpened
             val projectSettings = project.settings
@@ -78,7 +77,7 @@ class DataService {
             if (editor != null) {
                 val file = editor.file
 
-                if (file != null && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))) {
+                if (file != null && project.settings.show.get(mode).showFiles && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))) {
                     val fileName = file.name
                     val fileUniqueName = when (DumbService.isDumb(project)) {
                         true -> fileName

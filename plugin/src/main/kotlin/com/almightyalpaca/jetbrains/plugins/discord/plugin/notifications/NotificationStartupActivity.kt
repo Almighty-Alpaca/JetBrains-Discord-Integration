@@ -17,8 +17,10 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.openapi.project.Project
@@ -41,10 +43,10 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
         DiscordPlugin.LOG.info("Checking for plugin update")
 
         val version = Plugin.version
-        if (version != null && version.toString() != notificationSettings.lastUpdateNotification && version.isStable()) {
+        if (version != null && version.toString() != settings.applicationLastUpdateNotification.get(Renderer.Mode.NORMAL) && version.isStable()) {
             DiscordPlugin.LOG.info("Plugin update found, showing changelog")
 
-            notificationSettings.lastUpdateNotification = version.toString()
+            settings.applicationLastUpdateNotification.set(version.toString())
             launch { ApplicationUpdateNotification.show(version.toString()) }
         }
     }
@@ -53,9 +55,8 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
         DiscordPlugin.LOG.info("Checking for project confirmation")
 
         val settings = project.settings
-        val notificationSettings = project.notificationSettings
 
-        if (notificationSettings.askShowProject) {
+        if (settings.show.get(Renderer.Mode.NORMAL) == ProjectShow.ASK) {
             DiscordPlugin.LOG.info("Showing project confirmation dialog")
 
             val result = AskShowProjectNotification.show(project)
@@ -63,7 +64,6 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
             DiscordPlugin.LOG.info("Project confirmation result=$result")
 
             settings.show.set(result)
-            notificationSettings.askShowProject = false
             renderService.render()
         }
     }

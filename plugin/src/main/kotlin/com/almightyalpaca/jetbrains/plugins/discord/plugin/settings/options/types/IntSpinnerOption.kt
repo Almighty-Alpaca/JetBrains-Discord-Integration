@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.intellij.ui.JBIntSpinner
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSpinner
 import javax.swing.SpinnerNumberModel
@@ -53,7 +54,7 @@ class IntSpinnerOption(
         }
     }
 
-    override val component by lazy {
+    override val component: JComponent by lazy {
         JPanel().apply {
             layout = GridBagLayout()
 

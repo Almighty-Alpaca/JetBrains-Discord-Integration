@@ -19,20 +19,20 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Icons
 
-class ProjectHideAction : AbstractToggleAction({ project -> project.settings.show }, shown, hidden) {
-    companion object {
-        val hidden = View {
-            text = "Show project in Rich Presence"
-            // description = ""
-            icon = Icons.DISCORD_WHITE
-            hoveredIcon = Icons.DISCORD_BLURPLE
-        }
-
-        val shown = View {
-            text = "Hide project in Rich Presence"
-            // description = ""
-            icon = Icons.DISCORD_BLURPLE
-            hoveredIcon = Icons.DISCORD_WHITE
-        }
-    }
-}
+//class ProjectHideAction : AbstractToggleAction({ project -> project.settings.show }, shown, hidden) {
+//    companion object {
+//        val hidden = View {
+//            text = "Show project in Rich Presence"
+//            // description = ""
+//            icon = Icons.DISCORD_WHITE
+//            hoveredIcon = Icons.DISCORD_BLURPLE
+//        }
+//
+//        val shown = View {
+//            text = "Hide project in Rich Presence"
+//            // description = ""
+//            icon = Icons.DISCORD_BLURPLE
+//            hoveredIcon = Icons.DISCORD_WHITE
+//        }
+//    }
+//}

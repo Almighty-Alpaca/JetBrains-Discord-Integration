@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.intellij.ui.components.JBTextField
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -38,7 +39,7 @@ class TextOption(description: String, initialValue: String, private val charLimi
         }
     }
 
-    override val component by lazy {
+    override val component: JComponent by lazy {
         JPanel().apply {
             layout = GridBagLayout()
 

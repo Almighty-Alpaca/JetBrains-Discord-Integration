@@ -22,6 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
 import com.intellij.ui.components.JBTabbedPane
 import org.jdom.Element
+import javax.swing.JComponent
 import kotlin.reflect.KProperty
 
 fun OptionCreator<in Tabs>.tabbed() = OptionProviderImpl(this, OptionTabs())
