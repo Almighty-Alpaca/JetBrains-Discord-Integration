@@ -23,13 +23,14 @@ import org.jdom.Element
 import javax.swing.JComponent
 import kotlin.reflect.KProperty
 
-abstract class SimpleOption<T>(description: String, val initialValue: T) : Option<T>(description), SimpleValue.Provider<T> {
+abstract class SimpleOption<T>(text: String, val description: String? = null, protected val initialValue: T) :
+    Option<T>(text), SimpleValue.Provider<T> {
     var currentValue = initialValue
 
     @Suppress("LeakingThis")
-    private val value = SimpleValueImpl(this)
+    protected open val value: SimpleValue<T> = SimpleValueImpl(this)
 
-    override fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T> = value
+    override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
 
     protected open fun transformValue(value: T): T = value
 
@@ -73,14 +74,15 @@ abstract class SimpleValue<T> : Value() {
         Renderer.Mode.NORMAL -> get()
     }
 
-    abstract val description: String
+    abstract val text: String
+    abstract val description: String?
 
     interface Provider<T> : Value.Provider {
         override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): SimpleValue<T>
     }
 }
 
-private class SimpleValueImpl<T>(private val option: SimpleOption<T>) : SimpleValue<T>() {
+open class SimpleValueImpl<T>(protected open val option: SimpleOption<T>) : SimpleValue<T>() {
     override fun get() = option.currentValue
     override fun getComponent() = option.componentValue
     override fun set(value: T) {
@@ -88,6 +90,9 @@ private class SimpleValueImpl<T>(private val option: SimpleOption<T>) : SimpleVa
         option.componentValue = value
     }
 
-    override val description: String
+    override val text: String
+        get() = option.text
+
+    override val description: String?
         get() = option.description
 }

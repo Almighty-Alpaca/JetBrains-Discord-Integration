@@ -29,13 +29,10 @@ import com.intellij.openapi.project.ProjectManager
 
 @State(name = "DiscordProjectSettings", storages = [Storage("discord.xml")])
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, PersistentStateOptionHolderImpl() {
-    private inline val showInitialValue
-        get() = when (project.isDefault) {
-            true -> ProjectShow.ASK
-            false -> ProjectManager.getInstance().defaultProject.settings.show.get(Renderer.Mode.NORMAL)
-        }
-
-    override val show by selection("Show project", showInitialValue)
+    override val show by when(project.isDefault) {
+        true -> selection("Show project", ProjectShow.ASK to ProjectShow.VALUES_DEFAULT)
+        false -> selection("Show project", ProjectManager.getInstance().defaultProject.settings.show.get(Renderer.Mode.NORMAL) to ProjectShow.VALUES)
+    }
 
     private val nameOverrideToggle by toggleable<Boolean>()
     override val nameOverrideEnabled by nameOverrideToggle.toggle.check("Override project name", false)

@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.DumbAwareAction
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 
-class ForceRenderUpdateAction : DumbAwareAction("Force render update") {
-    override fun actionPerformed(e: AnActionEvent) {
-        DiscordPlugin.LOG.info("Forcing manual render")
+interface RenderedValue<T> {
+    fun RenderContext.getResult(): T
 
-        renderService.render(true)
-    }
+    fun get(context: RenderContext) = context.run { getResult() }
 }

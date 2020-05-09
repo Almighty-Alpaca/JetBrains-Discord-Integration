@@ -23,7 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.Opti
 import org.jdom.Element
 import kotlin.reflect.KProperty
 
-abstract class Option<T>(var description: String) : Value.Provider, ComponentProvider {
+abstract class Option<T>(val text: String) : Value.Provider, ComponentProvider {
     abstract fun addChangeListener(listener: (T) -> Unit)
     abstract var isComponentEnabled: Boolean
 
@@ -41,4 +41,9 @@ abstract class Value {
     interface Provider {
         operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): Value
     }
+}
+
+interface UiValueType {
+    val text: String
+    val description: String?
 }

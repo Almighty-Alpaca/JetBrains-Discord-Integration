@@ -16,16 +16,24 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SelectionValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 
-typealias ProjectShowValue = SimpleValue<ProjectShow>
+typealias ProjectShowValue = SelectionValue<ProjectShow>
 
-enum class ProjectShow(val showProject: Boolean, val showFiles: Boolean, val description: String, override val toolTip: String? = null) : ToolTipProvider {
+enum class ProjectShow(
+    val showProject: Boolean,
+    val showFiles: Boolean,
+    override val text: String,
+    override val description: String? = null
+) : UiValueType {
     ASK(false, false, "Ask", "Show notification when first opening a new project"),
-    PROJECT(true, false, "Project"),
+    PROJECT(true, false, "Project only"),
     PROJECT_FILES(true, true, "Project and Files"),
     HIDE(false, false, "Hide");
 
-    override fun toString() = description
+    companion object {
+        val VALUES = arrayOf(PROJECT, PROJECT_FILES, HIDE)
+        val VALUES_DEFAULT = arrayOf(ASK, PROJECT, PROJECT_FILES, HIDE)
+    }
 }

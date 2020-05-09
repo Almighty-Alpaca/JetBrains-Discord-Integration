@@ -59,7 +59,7 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
         if (settings.show.get(Renderer.Mode.NORMAL) == ProjectShow.ASK) {
             DiscordPlugin.LOG.info("Showing project confirmation dialog")
 
-            val result = AskShowProjectNotification.show(project)
+            val result = ProjectShowNotification.show(project)
 
             DiscordPlugin.LOG.info("Project confirmation result=$result")
 

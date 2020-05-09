@@ -19,12 +19,12 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.Data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 typealias LineValue = SimpleValue<PresenceLine>
 
-enum class PresenceLine(val description: String, override val toolTip: String? = null) : ToolTipProvider {
+enum class PresenceLine(override val text: String, override val description: String? = null) : RenderedValue<PresenceLine.Result> , UiValueType {
     NONE("Empty") {
         override fun RenderContext.getResult(): Result = Result.Empty
     },
@@ -57,7 +57,7 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
             }.toResult()
         }
     },
-    PROJECT_VCS_BRANCH("Current VCS Branch", toolTip = "The Git plugin needs to be enabled for this option") {
+    PROJECT_VCS_BRANCH("Current VCS Branch", "The Git plugin needs to be enabled for this option") {
         override fun RenderContext.getResult(): Result = projectData?.vcsBranch.toResult()
     },
     FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
@@ -69,12 +69,6 @@ enum class PresenceLine(val description: String, override val toolTip: String? =
     CUSTOM("Custom") {
         override fun RenderContext.getResult() = Result.Custom
     };
-
-    protected abstract fun RenderContext.getResult(): Result
-
-    fun get(context: RenderContext) = context.run { getResult() }
-
-    override fun toString() = description
 
     companion object {
         val Application1 = NONE to arrayOf(NONE, CUSTOM)

@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.NotificationDisplayType
@@ -29,7 +30,7 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val title = "Show project in Rich Presence?"
 private const val content =
-    "Select if this project should be visible. You can change this later at any time under Settings > Tools > Discord > Project"
+    "Select if this project should be visible. You can change this later at any time under Settings > Other Settings > Discord > Project"
 
 private val group = NotificationGroup(
     "${Plugin.getId()}.project.show",
@@ -37,22 +38,16 @@ private val group = NotificationGroup(
     true
 )
 
-object AskShowProjectNotification {
+object ProjectShowNotification {
     suspend fun show(project: Project) = suspendCoroutine<ProjectShow> { continuation ->
         group.createNotification(title, null, content, NotificationType.INFORMATION)
             .apply {
-                addAction(DumbAwareAction.create("Project") {
-                    expire()
-                    continuation.resume(ProjectShow.PROJECT)
-                })
-                addAction(DumbAwareAction.create("Project and Files") {
-                    expire()
-                    continuation.resume(ProjectShow.PROJECT_FILES)
-                })
-                addAction(DumbAwareAction.create("Hide") {
-                    expire()
-                    continuation.resume(ProjectShow.HIDE)
-                })
+                for (value in project.settings.show.selectableValues) {
+                    addAction(DumbAwareAction.create(value.text) {
+                        expire()
+                        continuation.resume(value)
+                    })
+                }
             }.run { Notifications.Bus.notify(this, project) }
     }
 }

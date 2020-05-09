@@ -36,9 +36,10 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.reflect.KProperty
 
-fun OptionCreator<in ThemeValue>.themeChooser(description: String) = OptionProviderImpl(this, ThemeOption(description))
+fun OptionCreator<in ThemeValue>.themeChooser(text: String, description: String? = null) =
+    OptionProviderImpl(this, ThemeOption(text, description))
 
-class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeValue.Provider {
+class ThemeOption(text: String, val description: String?) : Option<ThemeValue>(text), ThemeValue.Provider {
     private val source: Source = sourceService.source
 
     private val listeners = mutableListOf<(ThemeValue) -> Unit>()
@@ -52,7 +53,7 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
 
     private val componentImpl = JButton().apply button@{
         isEnabled = false
-        text = "Loading..."
+        this.text = "Loading..."
 
         addActionListener {
             val themes = this@ThemeOption.source.getThemesOrNull()
@@ -65,7 +66,7 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
                     val value = dialog.value
 
                     this@ThemeOption.componentValue = value
-                    text = themes[value]!!.name
+                    this.text = themes[value]!!.name
                 }
             }
         }
@@ -75,7 +76,7 @@ class ThemeOption(description: String) : Option<ThemeValue>(description), ThemeV
         JPanel().apply {
             layout = GridBagLayout()
 
-            add(label(description), gbc {
+            add(label(text), gbc {
                 gridx = 0
                 gridy = 0
                 gridwidth = 1
@@ -153,7 +154,10 @@ class ThemeValue(private val option: ThemeOption) : SimpleValue<String?>() {
         this.option.currentValue = value
     }
 
-    override val description: String
+    override val text
+        get() = this.option.text
+
+    override val description
         get() = this.option.description
 
     interface Provider : SimpleValue.Provider<String?> {

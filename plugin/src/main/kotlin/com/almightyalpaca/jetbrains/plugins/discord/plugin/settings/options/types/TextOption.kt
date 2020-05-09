@@ -28,14 +28,16 @@ import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-fun OptionCreator<in String>.text(description: String, initialValue: String, charLimit: Int = 0) = OptionProviderImpl(this, TextOption(description, initialValue, charLimit))
+fun OptionCreator<in String>.text(text: String, description: String? = null, initialValue: String, charLimit: Int = 0) = OptionProviderImpl(this, TextOption(text, description, initialValue, charLimit))
 
-class TextOption(description: String, initialValue: String, private val charLimit: Int) : SimpleOption<String>(description, initialValue) {
+fun OptionCreator<in String>.text(text: String, initialValue: String, charLimit: Int = 0) = OptionProviderImpl(this, TextOption(text, null, initialValue, charLimit))
+
+class TextOption(text: String, description: String?, initialValue: String, private val charLimit: Int) : SimpleOption<String>(text, description, initialValue) {
     override val componentImpl by lazy {
         JBTextField().apply {
             // TODO: text field width
             // columns = charLimit
-            text = currentValue
+            this.text = currentValue
         }
     }
 
@@ -43,7 +45,7 @@ class TextOption(description: String, initialValue: String, private val charLimi
         JPanel().apply {
             layout = GridBagLayout()
 
-            add(label(description), gbc {
+            add(label(text), gbc {
                 gridx = 0
                 gridy = 0
                 gridwidth = 1

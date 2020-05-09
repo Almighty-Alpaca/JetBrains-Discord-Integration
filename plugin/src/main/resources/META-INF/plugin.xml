@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin>
+<idea-plugin url="https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration">
     <id>com.almightyalpaca.intellij.plugins.discord</id>
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
@@ -91,14 +91,13 @@
         <group id="DiscordActionGroup"
                text="Discord"
                popup="true"
-               compact="true"
                icon="/discord/images/logo/blurple.png">
             <add-to-group group-id="ToolsMenu"/>
 
             <action id="DiscordActionGroup.ApplicationHideAction"
-                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ApplicationHideAction"/>
-<!--            <action id="DiscordActionGroup.ProjectHideAction"-->
-<!--                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ProjectHideAction"/>-->
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ApplicationShowAction"/>
+            <group id="DiscordActionGroup.ProjectShowAction"
+                   class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ProjectShowAction"/>
 
             <separator/>
 

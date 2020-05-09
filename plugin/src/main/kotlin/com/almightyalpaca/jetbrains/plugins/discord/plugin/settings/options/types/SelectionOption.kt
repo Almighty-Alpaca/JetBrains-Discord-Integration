@@ -17,42 +17,96 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.contains
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import java.awt.Component
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.event.ItemEvent
+import java.util.*
 import javax.swing.*
+import kotlin.reflect.KProperty
 
-fun <T> OptionCreator<in T>.selection(description: String, values: kotlin.Pair<T, Array<T>>)
-        where T : Enum<T>, T : ToolTipProvider =
-    selection(description, values.first, values.second)
+inline fun <reified T> OptionCreator<in T>.selection(text: String, description: String? = null, values: kotlin.Pair<T, Array<T>>)
+        where T : Enum<T>, T : UiValueType =
+    selection(text, description, values.first, values.second)
 
-inline fun <reified T> OptionCreator<in T>.selection(description: String, initialValue: T)
-        where T : Enum<T>, T : ToolTipProvider =
-    selection(description, initialValue, enumValues())
+inline fun <reified T> OptionCreator<in T>.selection(text: String, values: kotlin.Pair<T, Array<T>>)
+        where T : Enum<T>, T : UiValueType =
+    selection(text, null, values.first, values.second)
 
-fun <T> OptionCreator<in T>.selection(description: String, initialValue: T, values: Array<T>)
-        where T : Enum<T>, T : ToolTipProvider =
-    OptionProviderImpl(this, SelectionOption(description, initialValue, values))
+inline fun <reified T> OptionCreator<in T>.selection(text: String, description: String? = null, initialValue: T)
+        where T : Enum<T>, T : UiValueType =
+    selection(text, description, initialValue, enumValues())
 
-typealias EnumValue<T> = SimpleValue<Enum<T>>
+inline fun <reified T> OptionCreator<in T>.selection(text: String, initialValue: T)
+        where T : Enum<T>, T : UiValueType =
+    selection(text, null, initialValue, enumValues())
 
-class SelectionOption<T>(description: String, initialValue: T, private val values: Array<T>) : SimpleOption<T>(description, initialValue) where T : Enum<T>, T : ToolTipProvider {
+inline fun <reified T> OptionCreator<in T>.selection(text: String, description: String? = null, initialValue: T, selectableValues: Array<T>)
+        where T : Enum<T>, T : UiValueType =
+    OptionProviderImpl(this, SelectionOption(text, description, initialValue, selectableValues, enumValues()))
+
+class SelectionOption<T>(
+    text: String,
+    description: String?,
+    initialValue: T,
+    val selectableValues: Array<T>,
+    val values: Array<T>
+) :
+    SimpleOption<T>(text, description, initialValue) where T : Enum<T>, T : UiValueType {
     init {
         if (initialValue !in values)
             throw Exception("initialValue is not an allowed currentValue")
     }
 
+    override val value: SelectionValue<T> = SelectionValue(this)
+
+    override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
+
+    private val model = when (currentValue) {
+        in selectableValues -> DefaultComboBoxModel(selectableValues)
+        else -> {
+            val values = Vector<T>(selectableValues.size + 1)
+            values.add(currentValue)
+            values.addAll(selectableValues)
+
+            DefaultComboBoxModel(values)
+        }
+    }
+
     override val componentImpl by lazy {
-        JComboBox(values).apply box@{
+        JComboBox(model).apply box@{
+            addItemListener { e ->
+                if (e.stateChange == ItemEvent.DESELECTED) {
+                    if (e.item !in selectableValues) {
+                        this@SelectionOption.model.removeElement(e.item)
+                    }
+                }
+            }
+
             renderer = object : DefaultListCellRenderer() {
-                override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+                override fun getListCellRendererComponent(
+                    list: JList<*>?,
+                    value: Any?,
+                    index: Int,
+                    isSelected: Boolean,
+                    cellHasFocus: Boolean
+                ): Component? {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
 
-                    isEnabled = this@box.isEnabled
-                    toolTipText = (value as ToolTipProvider).toolTip
+                    value as UiValueType
+
+                    this.isEnabled = this@box.isEnabled
+                    this.text = value.text
+                    this.toolTipText = value.description
+
+                    if (index == -1 && value !in selectableValues) {
+                        this.isEnabled = false
+                    }
 
                     return this
                 }
@@ -65,7 +119,7 @@ class SelectionOption<T>(description: String, initialValue: T, private val value
         JPanel().apply {
             layout = GridBagLayout()
 
-            add(label(description), gbc {
+            add(label(text), gbc {
                 gridx = 0
                 gridy = 0
                 gridwidth = 1
@@ -97,7 +151,21 @@ class SelectionOption<T>(description: String, initialValue: T, private val value
     override var componentValue: T
         get() = componentImpl.selectedItem as T
         set(value) {
+            val oldValue = componentImpl.selectedItem
+
+            if (value == oldValue) {
+                return
+            }
+
+            if (value !in model) {
+                model.insertElementAt(value, 0)
+            }
+
             componentImpl.selectedItem = value
+
+            if (oldValue !in selectableValues) {
+                this@SelectionOption.model.removeElement(oldValue)
+            }
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -116,7 +184,7 @@ class SelectionOption<T>(description: String, initialValue: T, private val value
     }
 
     override fun reset() {
-        componentImpl.selectedItem = currentValue
+        componentValue = currentValue
     }
 
     override fun toString() = currentValue.name
@@ -130,6 +198,11 @@ class SelectionOption<T>(description: String, initialValue: T, private val value
     }
 }
 
-interface ToolTipProvider {
-    val toolTip: String?
+class SelectionValue<T>(override val option: SelectionOption<T>) :
+    SimpleValueImpl<T>(option) where T : Enum<T>, T : UiValueType {
+    val values
+        get() = option.values
+
+    val selectableValues
+        get() = option.selectableValues
 }

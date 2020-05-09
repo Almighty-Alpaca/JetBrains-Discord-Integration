@@ -18,11 +18,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 
 typealias IconTextValue = SimpleValue<PresenceIconText>
 
-enum class PresenceIconText(val description: String, override val toolTip: String? = null) : ToolTipProvider {
+enum class PresenceIconText(override val text: String, override val description: String? = null) : RenderedValue<PresenceIconText.Result> , UiValueType {
     APPLICATION_VERSION("Application Version") {
         override fun RenderContext.getResult() = applicationData?.applicationVersion.toResult()
     },
@@ -35,12 +35,6 @@ enum class PresenceIconText(val description: String, override val toolTip: Strin
     NONE("None") {
         override fun RenderContext.getResult() = Result.Empty
     };
-
-    protected abstract fun RenderContext.getResult(): Result
-
-    fun get(context: RenderContext) = context.run { getResult() }
-
-    override fun toString() = description
 
     object Large {
         val Application = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, NONE)

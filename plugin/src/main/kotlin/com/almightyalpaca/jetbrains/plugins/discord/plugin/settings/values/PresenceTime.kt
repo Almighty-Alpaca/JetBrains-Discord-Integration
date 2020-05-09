@@ -18,11 +18,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ToolTipProvider
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 
 typealias TimeValue = SimpleValue<PresenceTime>
 
-enum class PresenceTime(val description: String, override val toolTip: String? = null) : ToolTipProvider {
+enum class PresenceTime(override val text: String, override val description: String? = null) : RenderedValue<PresenceTime.Result> , UiValueType {
     APPLICATION("Application") {
         override fun RenderContext.getResult() = applicationData?.applicationTimeOpened.toResult()
     },
@@ -35,12 +35,6 @@ enum class PresenceTime(val description: String, override val toolTip: String? =
     HIDE("Hide") {
         override fun RenderContext.getResult() = Result.Empty
     };
-
-    protected abstract fun RenderContext.getResult(): Result
-
-    fun get(context: RenderContext) = context.run { getResult() }
-
-    override fun toString() = description
 
     companion object {
         val Application = APPLICATION to arrayOf(APPLICATION, HIDE)
