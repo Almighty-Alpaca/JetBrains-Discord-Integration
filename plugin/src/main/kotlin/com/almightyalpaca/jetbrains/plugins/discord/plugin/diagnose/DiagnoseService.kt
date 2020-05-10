@@ -18,20 +18,16 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.extensions.PluginId
-import com.intellij.util.containers.stream
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import org.apache.commons.lang3.SystemUtils
 import java.nio.charset.StandardCharsets
-import java.util.*
 
 val diagnoseService: DiagnoseService
     get() = service()
@@ -139,23 +135,33 @@ class DiagnoseService : DisposableCoroutineScope {
         return Discord.OTHER
     }
 
-    private val pluginsIds: Array<String?> = arrayOf(
+    private val discordPluginIds = hashSetOf(
         "com.tsunderebug.discordintellij",
         "com.my.fobes.intellij.discord"
     )
 
     private fun readPlugins(): Plugins {
-        val matches = PluginManager.getPlugins()
-            .stream()
-            .map(IdeaPluginDescriptor::getPluginId)
-            .map(PluginId::getIdString)
-            .filter(Objects::nonNull)
-            .filter(pluginsIds::contains)
-            .count()
+//        val matches = PluginManager.getPlugins()
+//            .stream()
+//            .map(IdeaPluginDescriptor::getPluginId)
+//            .map(PluginId::getIdString)
+//            .filter(Objects::nonNull)
+//            .filter(pluginsIds::contains)
+//            .count()
+
+        var matches = 0
+
+        for (plugin in PluginManager.getPlugins()) {
+            val id = plugin.pluginId?.idString
+
+            if (discordPluginIds.contains(id)) {
+                matches++
+            }
+        }
 
         return when (matches) {
-            0L -> Plugins.NONE
-            1L -> Plugins.ONE
+            0 -> Plugins.NONE
+            1 -> Plugins.ONE
             else -> Plugins.MULTIPLE
         }
     }
