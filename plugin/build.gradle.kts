@@ -60,7 +60,7 @@ val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
     // https://www.jetbrains.com/intellij-repository/releases
-    version = "2020.1"
+    version = "2020.1.1"
 
     downloadSources = !isCI
 
