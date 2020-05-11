@@ -81,10 +81,8 @@ class PreviewRenderer {
     private val font14MediumBaseline: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading
     private val font11BlackBaseline: Int = font11BlackMetrics.maxAscent + font11BlackMetrics.leading
 
-    private val font14BoldMaxHeight: Int =
-        font14BoldMetrics.maxAscent + font14BoldMetrics.leading + font14BoldMetrics.maxDescent
-    private val font14MediumMaxHeight: Int =
-        font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
+    private val font14BoldMaxHeight: Int = font14BoldMetrics.maxAscent + font14BoldMetrics.leading + font14BoldMetrics.maxDescent
+    private val font14MediumMaxHeight: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
 
     @Synchronized
     suspend fun draw(force: Boolean = false): ModifiedImage {
@@ -154,11 +152,7 @@ class PreviewRenderer {
 
                         color = whiteTranslucent60
                         font = font16Regular
-                        drawString(
-                            tag,
-                            mid - textWidth / 2 + nameWidth,
-                            100 + font16BoldBaseline + (font16BoldBaseline - font16RegularBaseline) / 2
-                        )
+                        drawString(tag, mid - textWidth / 2 + nameWidth, 100 + font16BoldBaseline + (font16BoldBaseline - font16RegularBaseline) / 2)
                     }
                 }
 
@@ -269,25 +263,9 @@ class PreviewRenderer {
                         }
 
                         color = blurple
-                        fill(
-                            roundRectangle(
-                                0.0,
-                                sectionStart.toDouble(),
-                                width,
-                                (image.height - sectionStart).toDouble(),
-                                radiusBottomLeft = 10.0
-                            )
-                        )
+                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0))
                         color = darkOverlay
-                        fill(
-                            roundRectangle(
-                                0.0,
-                                sectionStart.toDouble(),
-                                width,
-                                (image.height - sectionStart).toDouble(),
-                                radiusBottomLeft = 10.0
-                            )
-                        )
+                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0 ))
 
                         if (large != null) {
                             drawImage(large, 10, sectionStart, null)
@@ -337,20 +315,15 @@ class PreviewRenderer {
             private inner class Details {
                 var lastLine: String? = null
 
-                fun draw(
-                    image: BufferedImage,
-                    presence: RichPresence,
-                    imagesEmpty: Boolean,
-                    force: Boolean
-                ): Pair<Boolean, Boolean> {
+                fun draw(image: BufferedImage, presence: RichPresence, imagesEmpty: Boolean, force: Boolean): Pair<Boolean, Boolean> {
                     val line = presence.details
 
                     if (force || lastImagesEmpty != imagesEmpty || lastLine != line) {
                         lastLine = line
 
                         image.withGraphics {
-                            val sectionStart =
-                                (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+                            val sectionStart =(image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+
                             val indentation = when (imagesEmpty) {
                                 true -> 7
                                 false -> 77
@@ -361,7 +334,7 @@ class PreviewRenderer {
                             color = darkOverlay
                             fillRect(indentation, sectionStart, image.width - indentation, font14MediumMaxHeight)
 
-                            return if (line.isNullOrBlank()) {
+                            return if (line?.isInvisible() != false) {
                                 true to true
                             } else {
                                 val lineCut = line.limitWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
@@ -374,31 +347,24 @@ class PreviewRenderer {
                             }
                         }
 
-                        return true to line.isNullOrBlank()
+                        return true to (line?.isInvisible() != false)
                     }
 
-                    return false to lastLine.isNullOrBlank()
+                    return false to (lastLine?.isInvisible() != false)
                 }
             }
 
             private inner class State {
                 var lastLine: String? = null
 
-                fun draw(
-                    image: BufferedImage,
-                    presence: RichPresence,
-                    imagesEmpty: Boolean,
-                    detailsEmpty: Boolean,
-                    force: Boolean
-                ): Pair<Boolean, Boolean> {
+                fun draw(image: BufferedImage, presence: RichPresence, imagesEmpty: Boolean, detailsEmpty: Boolean, force: Boolean): Pair<Boolean, Boolean> {
                     val line = presence.state
 
                     if (force || lastImagesEmpty != imagesEmpty || lastDetailsEmpty != detailsEmpty || lastLine != line) {
                         lastLine = line
 
                         image.withGraphics {
-                            var sectionStart =
-                                (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+                            var sectionStart = (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
                             if (!detailsEmpty) {
                                 sectionStart += font14MediumMaxHeight
                             }
@@ -413,7 +379,7 @@ class PreviewRenderer {
                             color = darkOverlay
                             fillRect(indentation, sectionStart, image.width - indentation, font14MediumMaxHeight)
 
-                            return if (line.isNullOrBlank()) {
+                            return if (line?.isInvisible() != false) {
                                 true to true
                             } else {
                                 val lineCut = line.limitWidth(font14MediumMetrics, image.width - (indentation + 3 + 10))
@@ -427,7 +393,7 @@ class PreviewRenderer {
                         }
                     }
 
-                    return true to line.isNullOrBlank()
+                    return true to (line?.isInvisible() != false)
                 }
             }
 
@@ -451,8 +417,8 @@ class PreviewRenderer {
                         lastTimeNow = timeNow
 
                         image.withGraphics {
-                            var sectionStart =
-                                (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+                            var sectionStart = (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+
                             if (!detailsEmpty) {
                                 sectionStart += font14MediumMaxHeight
                             }
@@ -467,25 +433,9 @@ class PreviewRenderer {
                             }
 
                             color = blurple
-                            fill(
-                                roundRectangle(
-                                    indentation,
-                                    sectionStart.toDouble(),
-                                    image.width - indentation,
-                                    (image.height - sectionStart).toDouble(),
-                                    radiusBottomRight = 10.0
-                                )
-                            )
+                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 10.0))
                             color = darkOverlay
-                            fill(
-                                roundRectangle(
-                                    indentation,
-                                    sectionStart.toDouble(),
-                                    image.width - indentation,
-                                    (image.height - sectionStart).toDouble(),
-                                    radiusBottomRight = 10.0
-                                )
-                            )
+                            fill(roundRectangle(indentation, sectionStart.toDouble(), image.width - indentation, (image.height - sectionStart).toDouble(), radiusBottomRight = 10.0))
 
                             if (time != null) {
                                 val millis = Duration.between(time, timeNow).toMillis()
@@ -493,11 +443,7 @@ class PreviewRenderer {
 
                                 font = font14Medium
                                 color = whiteTranslucent80
-                                drawString(
-                                    "$formatted elapsed",
-                                    indentation.toInt() + 3,
-                                    sectionStart + font14MediumBaseline
-                                )
+                                drawString("$formatted elapsed", indentation.toInt() + 3, sectionStart + font14MediumBaseline)
                             }
                         }
 

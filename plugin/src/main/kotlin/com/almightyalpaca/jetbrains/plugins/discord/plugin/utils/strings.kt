@@ -75,3 +75,7 @@ fun verifyingLength(initialValue: String, range: IntRange) =
 @JvmName("verifyingLengthNullable")
 fun verifyingLength(initialValue: String?, range: IntRange) =
     verifying(initialValue) { it == null || it.length in range }
+
+fun CharSequence.isInvisible(): Boolean {
+    return isBlank() || indices.all { this[it] == '\u200B' }
+}
