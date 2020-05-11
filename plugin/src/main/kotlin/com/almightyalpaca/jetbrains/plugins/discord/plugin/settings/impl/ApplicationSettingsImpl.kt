@@ -28,7 +28,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val show by check("Enable Rich Presence", true)
 
     private val timeoutToggle by toggleable<Boolean>(false)
-    override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity (currently unavailable)", true)
+    override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
 
     private val timeoutOptionPair by timeoutToggle.option.pair()
     override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
