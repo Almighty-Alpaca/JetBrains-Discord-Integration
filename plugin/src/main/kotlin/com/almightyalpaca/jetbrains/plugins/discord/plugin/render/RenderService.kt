@@ -30,7 +30,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.AppExecutorUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
@@ -41,49 +41,60 @@ val renderService: RenderService
 class RenderService : DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
 
-    private var renderJob: ScheduledFuture<*>? = null
+    private var renderClockJob: ScheduledFuture<*>? = null
+
+    private var renderJob: Job? = null
 
     @Synchronized
-    fun render(force: Boolean = false) = runBlocking async@{
-        DiscordPlugin.LOG.info("Scheduling render, force=$force")
-
-        if (Disposer.isDisposed(this@RenderService)) {
-            DiscordPlugin.LOG.info("Skipping render, service already disposed")
-            return@async
+    fun render(force: Boolean = false) {
+        renderJob?.let {
+            DiscordPlugin.LOG.info("Canceling previous render due to new request")
+            it.cancel()
         }
 
-        val data = dataService.getData(Renderer.Mode.NORMAL) ?: return@async
+        renderJob = launch {
+            DiscordPlugin.LOG.info("Scheduling render, force=$force")
 
-        val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
+            if (Disposer.isDisposed(this@RenderService)) {
+                DiscordPlugin.LOG.info("Skipping render, service already disposed")
+                return@launch
+            }
 
-        var visible = true
+            val data = dataService.getData(Renderer.Mode.NORMAL) ?: return@launch
 
-        if (!settings.show.get(Renderer.Mode.NORMAL)) {
-            visible = false
-        }
+            val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
-        if (timeService.idle && settings.timeoutEnabled.get(Renderer.Mode.NORMAL)) {
-            visible = false
-        }
+            var visible = true
 
-        if (visible) {
-            DiscordPlugin.LOG.info("Render result: visible")
+            if (!settings.show.get(Renderer.Mode.NORMAL)) {
+                visible = false
+            }
 
-            val renderer = context.createRenderer()
-            val presence = renderer.render()
+            if (timeService.idle && settings.timeoutEnabled.get(Renderer.Mode.NORMAL)) {
+                visible = false
+            }
 
-            rpcService.update(presence, force)
-        } else {
-            DiscordPlugin.LOG.info("Render result: hidden")
+            if (visible) {
+                DiscordPlugin.LOG.info("Render result: visible")
 
-            rpcService.update(null, force)
+                val renderer = context.createRenderer()
+                val presence = renderer.render()
+
+                rpcService.update(presence, force)
+            } else {
+                DiscordPlugin.LOG.info("Render result: hidden")
+
+                rpcService.update(null, force)
+            }
+
+            renderJob = null
         }
     }
 
     fun startRenderClock() {
         val executor = AppExecutorUtil.getAppScheduledExecutorService()
 
-        this.renderJob = executor.scheduleWithFixedDelay(delay = 5, unit = TimeUnit.SECONDS) {
+        this.renderClockJob = executor.scheduleWithFixedDelay(delay = 5, unit = TimeUnit.SECONDS) {
             try {
                 render()
             } catch (e: Exception) {
@@ -93,6 +104,6 @@ class RenderService : DisposableCoroutineScope {
     }
 
     override fun dispose() {
-        renderJob?.cancel(true)
+        renderClockJob?.cancel(true)
     }
 }

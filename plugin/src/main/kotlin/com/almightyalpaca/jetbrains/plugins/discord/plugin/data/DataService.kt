@@ -19,8 +19,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeStarted
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -65,13 +65,18 @@ class DataService {
             }
         }
 
-        val applicationVersion = ApplicationInfoEx.getInstance().fullVersion
-        val applicationStartTime = ApplicationManager.getApplication().timeStarted
+        val application = ApplicationManager.getApplication()
+        val applicationInfo = ApplicationInfoEx.getInstance()
+
+        val applicationVersion = applicationInfo.fullVersion
+        val applicationTimeOpened = application.timeOpened
+        val applicationTimeActive = application.timeActive
         val applicationSettings = settings
 
         if (project != null && !project.isDefault && project.settings.show.get(mode).showProject) {
             val projectName = project.name
             val projectTimeOpened = project.timeOpened
+            val projectTimeActive = project.timeActive
             val projectSettings = project.settings
 
             if (editor != null) {
@@ -95,6 +100,7 @@ class DataService {
                         }
                     }
                     val fileTimeOpened = file.timeOpened
+                    val fileTimeActive = file.timeActive
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
@@ -104,14 +110,17 @@ class DataService {
 
                     return Data.File(
                         applicationVersion,
-                        applicationStartTime,
+                        applicationTimeOpened,
+                        applicationTimeActive,
                         applicationSettings,
                         projectName,
                         projectTimeOpened,
+                        applicationTimeActive,
                         projectSettings,
                         fileName,
                         fileUniqueName,
                         fileTimeOpened,
+                        fileTimeActive,
                         filePath,
                         fileIsWriteable,
                         vcsBranch
@@ -125,10 +134,12 @@ class DataService {
 
             return Data.Project(
                 applicationVersion,
-                applicationStartTime,
+                applicationTimeOpened,
+                applicationTimeActive,
                 applicationSettings,
                 projectName,
                 projectTimeOpened,
+                projectTimeActive,
                 projectSettings,
                 vcsBranch
             )
@@ -138,7 +149,8 @@ class DataService {
 
         return Data.Application(
             applicationVersion,
-            applicationStartTime,
+            applicationTimeOpened,
+            applicationTimeActive,
             applicationSettings
         )
     }

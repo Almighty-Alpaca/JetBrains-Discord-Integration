@@ -23,13 +23,22 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 typealias TimeValue = SimpleValue<PresenceTime>
 
 enum class PresenceTime(override val text: String, override val description: String? = null) : RenderedValue<PresenceTime.Result>, UiValueType {
-    APPLICATION("Application") {
+    APPLICATION("Application (active)", "Time since the application has been opened and has not been idle") {
+        override fun RenderContext.getResult() = applicationData?.applicationTimeActive.toResult()
+    },
+    APPLICATION_TOTAL("Application (total)", "Time since the application has been started") {
         override fun RenderContext.getResult() = applicationData?.applicationTimeOpened.toResult()
     },
-    PROJECT("Project") {
+    PROJECT("Project (active)", "Time since the project has been opened and has not been idle") {
+        override fun RenderContext.getResult() = projectData?.projectTimeActive.toResult()
+    },
+    PROJECT_TOTAL("Project (total)", "Time since the project has been opened") {
         override fun RenderContext.getResult() = projectData?.projectTimeOpened.toResult()
     },
-    FILE("File") {
+    FILE("File (active)", "Time since the file has been opened and has not been idle") {
+        override fun RenderContext.getResult() = fileData?.fileTimeActive.toResult()
+    },
+    FILE_TOTAL("File (total)", "Time since the file has been opened") {
         override fun RenderContext.getResult() = fileData?.fileTimeOpened.toResult()
     },
     HIDE("Hide") {
@@ -37,9 +46,9 @@ enum class PresenceTime(override val text: String, override val description: Str
     };
 
     companion object {
-        val Application = APPLICATION to arrayOf(APPLICATION, HIDE)
-        val Project = APPLICATION to arrayOf(APPLICATION, PROJECT, HIDE)
-        val File = APPLICATION to arrayOf(APPLICATION, PROJECT, FILE, HIDE)
+        val Application = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, HIDE)
+        val Project = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, PROJECT, PROJECT_TOTAL, HIDE)
+        val File = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, PROJECT, PROJECT_TOTAL, FILE, FILE_TOTAL, HIDE)
     }
 
     fun Long?.toResult() = when (this) {

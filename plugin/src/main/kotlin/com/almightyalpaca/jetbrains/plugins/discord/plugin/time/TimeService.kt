@@ -33,69 +33,86 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.VirtualFile
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.min
 
-private val TIME_OPENED = Key.create<Long>("discord.time.started")
-//private val TIME_ELAPSED = Key.create<Long>("discord.time.elapsed")
-//private val TIME_FOCUS_GAINED = Key.create<Long>("discord.time.focus.gained")
+private val TIME_OPENED = Key.create<Long>("discord.time.opened")
+private val TIME_IDLE = Key.create<Long>("discord.time.idle")
 
-var Application.timeStarted
-    get() = startTime
-    //        getUserData(TIME_OPENED) ?: System.currentTimeMillis()
-    private set(value) {
-//        putUserData(TIME_OPENED, value)
-    }
+var Application.timeOpened
+    get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
+    private set(value) = putUserData(TIME_OPENED, value)
 
 var Project.timeOpened
     get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
-    private set(value) {
-        putUserData(TIME_OPENED, value)
-    }
+    private set(value) = putUserData(TIME_OPENED, value)
 
 var VirtualFile.timeOpened
     get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
-    private set(value) {
-        putUserData(TIME_OPENED, value)
-    }
+    private set(value) = putUserData(TIME_OPENED, value)
 
-//var Application.focusGainedAt
-//    get() = getUserData(TIME_STARTED) ?: System.currentTimeMillis()
-//    private set(value) {
-//        putUserData(TIME_STARTED, value)
-//    }
-//
-//fun getTimeElapsed() {
-//    val service = timeoutService
-//    if (service.status == Status.None) {
-//
-//    }
-//}
-//
-//fun getTimeElapsed(project: Project) {
-//
-//}
+var Application.durationIdle
+    get() = getUserData(TIME_IDLE) ?: 0
+    private set(value) = putUserData(TIME_IDLE, value)
 
-val timeService: TimeoutService
+var Project.durationIdle
+    get() = getUserData(TIME_IDLE) ?: 0
+    private set(value) = putUserData(TIME_IDLE, value)
+
+var VirtualFile.durationIdle
+    get() = getUserData(TIME_IDLE) ?: 0
+    private set(value) = putUserData(TIME_IDLE, value)
+
+val Application.timeActive
+    get() = timeOpened + durationIdle
+
+val Project.timeActive
+    get() = timeOpened + durationIdle
+
+val VirtualFile.timeActive
+    get() = timeOpened + durationIdle
+
+val timeService: TimeService
     get() = service()
 
 @Service
-class TimeoutService : Disposable {
+class TimeService : Disposable {
 //    internal var status: Status = Status.None
 //        private set
 
     private val loaded = AtomicBoolean(false)
 
-    var idle = false
-        private set
+    val idle
+        get() = idleSince.get() != null
+
+    private val idleSince = AtomicReference<Long?>(null)
 
     private val idleListener = Runnable {
-        idle = true
+        idleSince.updateAndGet { old ->
+            when (old) {
+                null -> System.currentTimeMillis()
+                else -> min(old, System.currentTimeMillis())
+            }
+        }
 
         renderService.render(true)
     }
 
     private val activityListener = Runnable {
-        if (idle) {
-            idle = false
+        val idleSince = idleSince.getAndSet(null)
+
+        if (idleSince != null) {
+            val idleDuration = System.currentTimeMillis() - idleSince
+
+            ApplicationManager.getApplication().durationIdle += idleDuration
+
+            for (project in ProjectManager.getInstance().openProjects) {
+                project.durationIdle += idleDuration
+
+                for (file in FileEditorManager.getInstance(project).openFiles) {
+                    file.durationIdle += idleDuration
+                }
+            }
 
             renderService.render(true)
         }
@@ -161,7 +178,7 @@ class TimeoutService : Disposable {
 //        KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener(propertyChangeListener)
     }
 
-    fun initializeApplication(application: Application) = Unit
+    fun initializeApplication(application: Application) = initialize(application)
     fun initializeProject(project: Project) = initialize(project)
     fun initializeFile(file: VirtualFile) = initialize(file)
 
@@ -169,12 +186,15 @@ class TimeoutService : Disposable {
         if (holder.getUserData(TIME_OPENED) == null) {
             holder.putUserData(TIME_OPENED, System.currentTimeMillis())
         }
+        if (holder.getUserData(TIME_IDLE) == null) {
+            holder.putUserData(TIME_IDLE, 0)
+        }
     }
 }
 
-internal sealed class Status {
-    object None : Status()
-    class Application(val lastChange: Long = System.currentTimeMillis()) : Status()
-    class Project(val lastChange: Long = System.currentTimeMillis(), project: com.intellij.openapi.project.Project) :
-        Status()
-}
+//internal sealed class Status {
+//    object None : Status()
+//    class Application(val lastChange: Long = System.currentTimeMillis()) : Status()
+//    class Project(val lastChange: Long = System.currentTimeMillis(), project: com.intellij.openapi.project.Project) :
+//        Status()
+//}

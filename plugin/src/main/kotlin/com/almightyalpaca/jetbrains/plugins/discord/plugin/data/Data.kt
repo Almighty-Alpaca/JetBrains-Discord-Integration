@@ -27,46 +27,54 @@ sealed class Data {
     open class Application(
         val applicationVersion: String,
         val applicationTimeOpened: Long,
+        val applicationTimeActive: Long,
         val applicationSettings: ApplicationSettings
     ) : Data() {
         override fun toString(): String {
-            return "Application(applicationVersion='$applicationVersion', applicationStartTime=$applicationTimeOpened)"
+            return "Data.Application(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, applicationSettings=$applicationSettings)"
         }
     }
 
     open class Project(
         applicationVersion: String,
-        applicationStartTime: Long,
+        applicationTimeOpened: Long,
+        applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
         val projectTimeOpened: Long,
+        val projectTimeActive: Long,
         val projectSettings: ProjectSettings,
         val vcsBranch: String?
-    ) : Application(applicationVersion, applicationStartTime, applicationSettings) {
+    ) : Application(applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
         override fun toString(): String {
-            return "Project(applicationVersion='$applicationVersion', applicationStartTime=$applicationTimeOpened, projectName='$projectName')"
+            return "Data.Project(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
         }
     }
 
     open class File(
         applicationVersion: String,
-        applicationStartTime: Long,
+        applicationTimeOpened: Long,
+        applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
         projectName: String,
         projectTimeOpened: Long,
+        projectTimeActive: Long,
         projectSettings: ProjectSettings,
         val fileName: String,
         val fileUniqueName: String,
         val fileTimeOpened: Long,
+        val fileTimeActive: Long,
         val filePath: String,
         val fileIsWriteable: Boolean,
         vcsBranch: String?
     ) : Project(
         applicationVersion,
-        applicationStartTime,
+        applicationTimeOpened,
+        applicationTimeActive,
         applicationSettings,
         projectName,
         projectTimeOpened,
+        projectTimeActive,
         projectSettings,
         vcsBranch
     ), Matcher.Target.Provider {
@@ -97,7 +105,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "File(applicationVersion='$applicationVersion', applicationStartTime=$applicationTimeOpened projectName='$projectName', fileName='$fileName', fileUniqueName='$fileUniqueName', filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "Data.File(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileUniqueName', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
         }
     }
 }
