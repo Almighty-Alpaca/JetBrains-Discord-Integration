@@ -39,7 +39,7 @@ class DiagnoseService : DisposableCoroutineScope {
 
     val discord = async(start = CoroutineStart.DEFAULT) { tryOrDefault(Discord.OTHER) { readDiscord() } }
     val plugins = async(start = CoroutineStart.DEFAULT) { tryOrDefault(Plugins.NONE) { readPlugins() } }
-    val ide = async(start = CoroutineStart.DEFAULT) { tryOrDefault(IDE.OTHER) { readIDE() } }
+    val ide = async(start = CoroutineStart.DEFAULT) { tryOrDefault(Ide.OTHER) { readIde() } }
 
     private fun readDiscord(): Discord = when {
         SystemUtils.IS_OS_WINDOWS -> readDiscordWindows()
@@ -60,8 +60,7 @@ class DiagnoseService : DisposableCoroutineScope {
         process.waitFor()
 
         val clientNotRunning = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
-            reader.lineSequence()
-                .none { line -> clients.any { client -> line.contains(client) } }
+            reader.lineSequence().none { line -> clients.any { client -> line.contains(client) } }
         }
 
         if (clientNotRunning) {
@@ -76,9 +75,7 @@ class DiagnoseService : DisposableCoroutineScope {
         val process = Runtime.getRuntime().exec("ps axo user:30,command")
         process.waitFor()
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
-            reader.lineSequence()
-                .filter { line -> line.contains("/discord", true) }
-                .joinToString("\n")
+            reader.lineSequence().filter { line -> line.contains("/discord", true) }.joinToString("\n")
         }
 
         return when {
@@ -114,9 +111,7 @@ class DiagnoseService : DisposableCoroutineScope {
 
         val process = Runtime.getRuntime().exec("""tasklist /V /fi "SESSIONNAME eq Console"""")
         val lines = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
-            reader.lineSequence()
-                .filter { line -> line.contains("Discord", true) }
-                .toList()
+            reader.lineSequence().filter { line -> line.contains("Discord", true) }.toList()
         }
 
         if (lines.isEmpty()) {
@@ -125,12 +120,7 @@ class DiagnoseService : DisposableCoroutineScope {
             val discordClientNotRunning = lines.none { line -> discord.any { exe -> line.startsWith(exe, true) } }
             if (discordClientNotRunning) {
                 val discordBrowser = lines.any { line ->
-                    line.contains("discord", true) && browsers.any { browser ->
-                        line.startsWith(
-                            browser,
-                            true
-                        )
-                    }
+                    line.contains("discord", true) && browsers.any { browser -> line.startsWith(browser, true) }
                 }
                 if (discordBrowser) {
                     return Discord.BROWSER
@@ -158,24 +148,24 @@ class DiagnoseService : DisposableCoroutineScope {
         }
     }
 
-    private fun readIDE(): IDE = when {
-        SystemUtils.IS_OS_WINDOWS -> readIDEWindows()
-        SystemUtils.IS_OS_LINUX -> readIDELinux()
-        SystemUtils.IS_OS_MAC -> readIDEMac()
-        else -> IDE.OTHER
+    private fun readIde(): Ide = when {
+        SystemUtils.IS_OS_WINDOWS -> readIdeWindows()
+        SystemUtils.IS_OS_LINUX -> readIdeLinux()
+        SystemUtils.IS_OS_MAC -> readIdeMac()
+        else -> Ide.OTHER
     }
 
-    private fun readIDEWindows(): IDE = IDE.OTHER
+    private fun readIdeWindows(): Ide = Ide.OTHER
 
-    private fun readIDELinux(): IDE {
+    private fun readIdeLinux(): Ide {
         if (System.getenv("SNAP") != null) {
-            return IDE.SNAP
+            return Ide.SNAP
         }
 
-        return IDE.OTHER
+        return Ide.OTHER
     }
 
-    private fun readIDEMac(): IDE = IDE.OTHER
+    private fun readIdeMac(): Ide = Ide.OTHER
 
     // override fun reportDiscordConnectionChange() = TODO("not implemented")
     // override fun reportInternetConnectionChange() = TODO("not implemented")
@@ -194,7 +184,7 @@ class DiagnoseService : DisposableCoroutineScope {
         MULTIPLE("It seems like you have multiple other Rich Presence plugin installed. Please uninstall them to avoid conflicts!")
     }
 
-    enum class IDE(val message: String) {
+    enum class Ide(val message: String) {
         SNAP("${ApplicationNamesInfo.getInstance().fullProductName} is running as a Snap package. This will most likely prevent the plugin from connection to your Discord client!"),
         OTHER("")
     }

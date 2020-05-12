@@ -16,8 +16,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview.JPreview
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview.JPreview
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl

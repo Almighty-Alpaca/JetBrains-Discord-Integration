@@ -37,8 +37,6 @@ import java.util.concurrent.TimeUnit
 val renderService: RenderService
     get() = service()
 
-private const val RENDER_INTERVAL: Long = 5_000
-
 @Service
 class RenderService : DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()

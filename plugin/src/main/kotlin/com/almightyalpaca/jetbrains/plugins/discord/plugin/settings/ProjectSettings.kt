@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project
 import org.jdom.Element
 
 val Project.settings: ProjectSettings
-get() = service()
+    get() = service()
 
 interface ProjectSettings : PersistentStateComponent<Element>, OptionHolder {
     val project: Project

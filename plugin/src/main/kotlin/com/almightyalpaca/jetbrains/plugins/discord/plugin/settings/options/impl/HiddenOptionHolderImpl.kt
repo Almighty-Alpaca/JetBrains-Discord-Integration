@@ -20,13 +20,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.imp
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.Option
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import org.jdom.Element
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
-import javax.swing.Box
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 @Suppress("DEPRECATION")
 open class HiddenOptionHolderImpl : OptionHolder {

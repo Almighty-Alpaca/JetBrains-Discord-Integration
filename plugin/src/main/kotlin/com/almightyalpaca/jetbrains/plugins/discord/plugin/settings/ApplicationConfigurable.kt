@@ -16,10 +16,10 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.diagnoseService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.createErrorMessage
 import com.intellij.openapi.options.SearchableConfigurable
 import kotlinx.coroutines.future.asCompletableFuture
@@ -64,7 +64,7 @@ class ApplicationConfigurable : SearchableConfigurable {
         }
 
         service.ide.asCompletableFuture().thenAcceptAsync { ide ->
-            if (ide != DiagnoseService.IDE.OTHER) {
+            if (ide != DiagnoseService.Ide.OTHER) {
                 SwingUtilities.invokeLater { add(createErrorMessage(ide.message), 0) }
             }
         }

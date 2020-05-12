@@ -24,7 +24,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 typealias LineValue = SimpleValue<PresenceLine>
 
-enum class PresenceLine(override val text: String, override val description: String? = null) : RenderedValue<PresenceLine.Result> , UiValueType {
+enum class PresenceLine(override val text: String, override val description: String? = null) : RenderedValue<PresenceLine.Result>, UiValueType {
     NONE("Empty") {
         override fun RenderContext.getResult(): Result = Result.Empty
     },

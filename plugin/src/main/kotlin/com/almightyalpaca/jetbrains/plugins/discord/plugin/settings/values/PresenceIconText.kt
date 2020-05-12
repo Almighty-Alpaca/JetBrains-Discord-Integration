@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 
 typealias IconTextValue = SimpleValue<PresenceIconText>
 
-enum class PresenceIconText(override val text: String, override val description: String? = null) : RenderedValue<PresenceIconText.Result> , UiValueType {
+enum class PresenceIconText(override val text: String, override val description: String? = null) : RenderedValue<PresenceIconText.Result>, UiValueType {
     APPLICATION_VERSION("Application Version") {
         override fun RenderContext.getResult() = applicationData?.applicationVersion.toResult()
     },

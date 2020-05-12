@@ -27,19 +27,12 @@ object ApplicationUpdateNotification {
         Enjoying this plugin? Having issues? Join our <a href="https://discord.gg/SvuyuMP">Discord</a> server for news and support.
         """.trimIndent()
 
-    private val group = NotificationGroup(
-        "${Plugin.getId()}.update",
-        NotificationDisplayType.STICKY_BALLOON,
-        true
-    )
+    private val group = NotificationGroup("${Plugin.getId()}.update", NotificationDisplayType.STICKY_BALLOON, true)
 
-    private fun getChangelog(): String =
-        ApplicationUpdateNotification::class.java.getResource("/discord/changes.html").readText()
+    private fun getChangelog(): String = ApplicationUpdateNotification::class.java.getResource("/discord/changes.html").readText()
 
-    fun show(version: String) = group.createNotification(
-        title(version),
-        content,
-        NotificationType.INFORMATION,
-        NotificationListener.UrlOpeningListener(false)
-    ).run(Notifications.Bus::notify)
+    fun show(version: String) =
+        group
+            .createNotification(title(version), content, NotificationType.INFORMATION, NotificationListener.UrlOpeningListener(false))
+            .run(Notifications.Bus::notify)
 }

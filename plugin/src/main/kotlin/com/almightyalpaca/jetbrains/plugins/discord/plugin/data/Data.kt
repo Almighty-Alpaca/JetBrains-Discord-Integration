@@ -39,7 +39,7 @@ sealed class Data {
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
-        val projectTimeOpened : Long,
+        val projectTimeOpened: Long,
         val projectSettings: ProjectSettings,
         val vcsBranch: String?
     ) : Application(applicationVersion, applicationStartTime, applicationSettings) {
@@ -53,11 +53,11 @@ sealed class Data {
         applicationStartTime: Long,
         applicationSettings: ApplicationSettings,
         projectName: String,
-        projectTimeOpened : Long,
+        projectTimeOpened: Long,
         projectSettings: ProjectSettings,
         val fileName: String,
         val fileUniqueName: String,
-        val fileTimeOpened : Long,
+        val fileTimeOpened: Long,
         val filePath: String,
         val fileIsWriteable: Boolean,
         vcsBranch: String?

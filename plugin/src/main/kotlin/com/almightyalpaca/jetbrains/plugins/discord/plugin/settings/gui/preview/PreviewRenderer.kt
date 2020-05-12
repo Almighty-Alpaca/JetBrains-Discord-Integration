@@ -265,7 +265,7 @@ class PreviewRenderer {
                         color = blurple
                         fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0))
                         color = darkOverlay
-                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0 ))
+                        fill(roundRectangle(0.0, sectionStart.toDouble(), width, (image.height - sectionStart).toDouble(), radiusBottomLeft = 10.0))
 
                         if (large != null) {
                             drawImage(large, 10, sectionStart, null)
@@ -322,7 +322,7 @@ class PreviewRenderer {
                         lastLine = line
 
                         image.withGraphics {
-                            val sectionStart =(image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
+                            val sectionStart = (image.height * 0.6).toInt() + 10 + font11BlackHeight + 8 + font14BoldMaxHeight
 
                             val indentation = when (imagesEmpty) {
                                 true -> 7

@@ -81,7 +81,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
         DiscordRPC.INSTANCE.Discord_Initialize(appId.toString(), this, false, null)
 
         callbackRunner = Executors.newSingleThreadScheduledExecutor()
-        callbackRunner.scheduleWithFixedDelay(delay = 2, unit = TimeUnit.SECONDS, command = ::runCallbacks)
+        callbackRunner.scheduleWithFixedDelay(delay = 2, unit = TimeUnit.SECONDS, command = this::runCallbacks)
     }
 
     private fun runCallbacks() {

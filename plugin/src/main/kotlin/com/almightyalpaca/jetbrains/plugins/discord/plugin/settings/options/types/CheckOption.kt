@@ -22,10 +22,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl
 import com.intellij.ui.components.JBCheckBox
 import javax.swing.JComponent
 
-fun OptionCreator<in Boolean>.check(text: String, description: String? = null, initialValue: Boolean, enabled: Boolean = true)=
+fun OptionCreator<in Boolean>.check(text: String, description: String? = null, initialValue: Boolean, enabled: Boolean = true) =
     OptionProviderImpl(this, CheckOption(text, description, initialValue, enabled))
 
-fun OptionCreator<in Boolean>.check(text: String, initialValue: Boolean, enabled: Boolean = true)=
+fun OptionCreator<in Boolean>.check(text: String, initialValue: Boolean, enabled: Boolean = true) =
     OptionProviderImpl(this, CheckOption(text, null, initialValue, enabled))
 
 class CheckOption(text: String, description: String?, initialValue: Boolean, private val enabled: Boolean) :

@@ -28,12 +28,11 @@ class PreventUnloadingDynamicPluginListener : DynamicPluginListener {
         if (pluginDescriptor.pluginId == PluginId.getId("")) {
             DiscordPlugin.LOG.info("Preventing plugin unload")
 
-            val e =
-                Class
-                    .forName("com.intellij.ide.plugins.CannotUnloadPluginException")
-                    .constructors
-                    .first()
-                    .newInstance("unsupported") as Exception
+            val e = Class
+                .forName("com.intellij.ide.plugins.CannotUnloadPluginException")
+                .constructors
+                .first()
+                .newInstance("unsupported") as Exception
 
             throw e
         }

@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 
 typealias TimeValue = SimpleValue<PresenceTime>
 
-enum class PresenceTime(override val text: String, override val description: String? = null) : RenderedValue<PresenceTime.Result> , UiValueType {
+enum class PresenceTime(override val text: String, override val description: String? = null) : RenderedValue<PresenceTime.Result>, UiValueType {
     APPLICATION("Application") {
         override fun RenderContext.getResult() = applicationData?.applicationTimeOpened.toResult()
     },

@@ -28,9 +28,11 @@ import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-fun OptionCreator<in String>.text(text: String, description: String? = null, initialValue: String, charLimit: Int = 0) = OptionProviderImpl(this, TextOption(text, description, initialValue, charLimit))
+fun OptionCreator<in String>.text(text: String, description: String? = null, initialValue: String, charLimit: Int = 0) =
+    OptionProviderImpl(this, TextOption(text, description, initialValue, charLimit))
 
-fun OptionCreator<in String>.text(text: String, initialValue: String, charLimit: Int = 0) = OptionProviderImpl(this, TextOption(text, null, initialValue, charLimit))
+fun OptionCreator<in String>.text(text: String, initialValue: String, charLimit: Int = 0) =
+    OptionProviderImpl(this, TextOption(text, null, initialValue, charLimit))
 
 class TextOption(text: String, description: String?, initialValue: String, private val charLimit: Int) : SimpleOption<String>(text, description, initialValue) {
     override val componentImpl by lazy {

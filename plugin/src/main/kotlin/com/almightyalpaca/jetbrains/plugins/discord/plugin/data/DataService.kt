@@ -77,7 +77,10 @@ class DataService {
             if (editor != null) {
                 val file = editor.file
 
-                if (file != null && project.settings.show.get(mode).showFiles && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))) {
+                if (file != null
+                    && project.settings.show.get(mode).showFiles
+                    && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))
+                ) {
                     val fileName = file.name
                     val fileUniqueName = when (DumbService.isDumb(project)) {
                         true -> fileName
