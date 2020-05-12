@@ -51,7 +51,7 @@ enum class PresenceLine(override val text: String, override val description: Str
                 else -> project.projectName
             }
 
-            return when (val description = project.projectSettings.description.getValue()) {
+            return when (val description = settings.description.getValue()) {
                 "" -> name
                 else -> "$name - $description"
             }.toResult()
@@ -59,6 +59,22 @@ enum class PresenceLine(override val text: String, override val description: Str
     },
     PROJECT_VCS_BRANCH("Current VCS Branch", "The Git plugin needs to be enabled for this option") {
         override fun RenderContext.getResult(): Result = projectData?.vcsBranch.toResult()
+    },
+    PROJECT_NAME_VCS_BRANCH("Project Name - VCS branch") {
+        override fun RenderContext.getResult(): Result {
+            val project = projectData ?: return Result.Empty
+            val settings = project.projectSettings
+
+            val name = when (settings.nameOverrideEnabled.getValue()) {
+                true -> settings.nameOverrideText.getValue()
+                else -> project.projectName
+            }
+
+            return when (val vcsBranch = project.vcsBranch) {
+                "" -> name
+                else -> "$name - $vcsBranch"
+            }.toResult()
+        }
     },
     FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
         override fun RenderContext.getResult() = fileData?.let { getPrefix(fileData) + fileData.fileUniqueName }.toResult()
@@ -73,10 +89,10 @@ enum class PresenceLine(override val text: String, override val description: Str
     companion object {
         val Application1 = NONE to arrayOf(NONE, CUSTOM)
         val Application2 = NONE to arrayOf(NONE, CUSTOM)
-        val Project1 = PROJECT_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, CUSTOM)
-        val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, CUSTOM)
-        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
-        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
+        val Project1 = PROJECT_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
+        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
     }
 
     fun String?.toResult() = when {
