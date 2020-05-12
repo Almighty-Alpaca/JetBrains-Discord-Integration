@@ -62,7 +62,7 @@ class RenderService : DisposableCoroutineScope {
             visible = false
         }
 
-        if (timeService.idle) {
+        if (timeService.idle && settings.timeoutEnabled.get(Renderer.Mode.NORMAL)) {
             visible = false
         }
 
