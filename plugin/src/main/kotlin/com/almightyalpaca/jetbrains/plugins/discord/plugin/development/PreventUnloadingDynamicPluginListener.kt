@@ -17,15 +17,16 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.development
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.extensions.PluginId
 
 class PreventUnloadingDynamicPluginListener : DynamicPluginListener {
     override fun checkUnloadPlugin(pluginDescriptor: IdeaPluginDescriptor) {
-        DiscordPlugin.LOG.debug("Processing unload event for ${pluginDescriptor.pluginId.idString}")
+        DiscordPlugin.LOG.debug("Processing unload event for ${pluginDescriptor.pluginId?.idString}")
 
-        if (pluginDescriptor.pluginId == PluginId.getId("")) {
+        if (pluginDescriptor.pluginId ==  Plugin.pluginId) {
             DiscordPlugin.LOG.info("Preventing plugin unload")
 
             val e = Class

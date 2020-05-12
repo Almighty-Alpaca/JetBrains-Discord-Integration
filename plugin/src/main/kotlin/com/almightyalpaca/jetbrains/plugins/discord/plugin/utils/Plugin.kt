@@ -21,7 +21,7 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 
 object Plugin {
-    private val pluginId: PluginId? by lazy { PluginId.getId("com.almightyalpaca.intellij.plugins.discord") }
+    val pluginId: PluginId? by lazy { PluginId.getId("com.almightyalpaca.intellij.plugins.discord") }
     private val plugin: IdeaPluginDescriptor? by lazy { PluginManagerCore.getPlugin(pluginId) }
 
     fun getId() = pluginId?.idString
