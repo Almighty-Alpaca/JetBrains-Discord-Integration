@@ -24,7 +24,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.throwing
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Source
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Source
 import com.intellij.openapi.util.JDOMExternalizerUtil
 import kotlinx.coroutines.future.asCompletableFuture
 import org.jdom.Element

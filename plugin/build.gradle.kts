@@ -34,7 +34,7 @@ dependencies {
     val versionRpc: String by project
     val versionCommonsIo: String by project
 
-    implementation(project(":shared")) {
+    implementation(project(":icons")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
@@ -50,10 +50,7 @@ dependencies {
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
-    implementation(
-        group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml",
-        version = versionJackson
-    )
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 }
 
 val isCI by lazy { System.getenv("CI") != null }
@@ -106,6 +103,9 @@ tasks {
 
         // use icons from specific bintray repo
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
+
+        // use local icons
+        environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
     }
 
     publishPlugin {

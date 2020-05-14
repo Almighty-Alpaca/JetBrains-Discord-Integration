@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractIconSet
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.retryAsync
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractIconSet
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.get
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kotlinx.coroutines.CoroutineScope

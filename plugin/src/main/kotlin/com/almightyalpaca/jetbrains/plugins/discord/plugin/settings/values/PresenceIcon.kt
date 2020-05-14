@@ -47,13 +47,13 @@ enum class PresenceIcon(override val text: String, override val description: Str
         val File = APPLICATION to arrayOf(APPLICATION, FILE, NONE)
     }
 
-    fun com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset?.toResult() = when (this) {
+    fun com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset?.toResult() = when (this) {
         null -> Result.Empty
         else -> Result.Asset(this)
     }
 
     sealed class Result {
         object Empty : Result()
-        data class Asset(val value: com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset) : Result()
+        data class Asset(val value: com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset) : Result()
     }
 }

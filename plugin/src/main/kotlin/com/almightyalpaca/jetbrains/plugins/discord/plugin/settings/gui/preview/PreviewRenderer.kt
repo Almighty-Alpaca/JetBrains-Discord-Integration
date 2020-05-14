@@ -89,6 +89,8 @@ class PreviewRenderer {
 
         val data = dataService.getData(Renderer.Mode.PREVIEW) ?: return ModifiedImage(false, image)
 
+        // TODO: Add example data to always have the required data available
+
         val context = RenderContext(sourceService.source, data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
         val presence = renderer.render()

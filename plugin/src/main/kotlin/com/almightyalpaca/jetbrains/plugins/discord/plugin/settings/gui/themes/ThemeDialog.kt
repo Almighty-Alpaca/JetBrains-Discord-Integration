@@ -16,8 +16,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.themes
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.ThemeMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeMap
 import com.intellij.openapi.ui.DialogWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

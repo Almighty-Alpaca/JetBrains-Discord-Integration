@@ -19,8 +19,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
-import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.toSet
+import com.almightyalpaca.jetbrains.plugins.discord.icons.matcher.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
 import org.apache.commons.io.FilenameUtils
 
 sealed class Data {

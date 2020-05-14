@@ -17,7 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Asset
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset
 import java.awt.image.BufferedImage
 import java.net.URL
 import java.time.OffsetDateTime

@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
-import com.almightyalpaca.jetbrains.plugins.discord.shared.matcher.Matcher
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.Language
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageMap
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.LanguageSource
-import com.almightyalpaca.jetbrains.plugins.discord.shared.source.abstract.AbstractLanguageSourceMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.matcher.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Language
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.LanguageMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.LanguageSource
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractLanguageSourceMap
 
 class BintrayLanguageSourceMap(map: Map<String, LanguageSource>) : AbstractLanguageSourceMap(map) {
     override fun createLanguageMap(languages: Map<String, Language>): LanguageMap = BintrayLanguageMap(languages.values)

@@ -17,7 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
-import com.almightyalpaca.jetbrains.plugins.discord.shared.utils.get
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.get
 import java.awt.*
 import java.awt.Color
 import java.awt.geom.Path2D
