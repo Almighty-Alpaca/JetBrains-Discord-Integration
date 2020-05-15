@@ -138,6 +138,7 @@ class DataService {
                 applicationTimeActive,
                 applicationSettings,
                 projectName,
+                projectSettings.description.toString(),
                 projectTimeOpened,
                 projectTimeActive,
                 projectSettings,

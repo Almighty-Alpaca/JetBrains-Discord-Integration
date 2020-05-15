@@ -41,6 +41,7 @@ sealed class Data {
         applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
         val projectName: String,
+        val projectDescription: String,
         val projectTimeOpened: Long,
         val projectTimeActive: Long,
         val projectSettings: ProjectSettings,
@@ -73,10 +74,11 @@ sealed class Data {
         applicationTimeActive,
         applicationSettings,
         projectName,
-        projectTimeOpened,
-        projectTimeActive,
-        projectSettings,
-        vcsBranch
+        projectDescription = projectSettings.description.toString(),
+        projectTimeOpened = projectTimeOpened,
+        projectTimeActive = projectTimeActive,
+        projectSettings = projectSettings,
+        vcsBranch = vcsBranch
     ), Matcher.Target.Provider {
         /** Path relative to the project directory */
         private val filePathRelative: String by lazy {
