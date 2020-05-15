@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
+import com.almightyalpaca.jetbrains.plugins.discord.uploader.utils.append
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.ktor.client.HttpClient
@@ -48,7 +49,6 @@ import java.nio.ByteBuffer
 import java.nio.file.Paths
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.stream.Stream
 
 @KtorExperimentalAPI
 @InternalAPI
@@ -170,10 +170,11 @@ private suspend fun HttpClient.uploadFile(
 private fun ClasspathSource.getClasspathFiles(): Set<Pair<String, String>> {
     val languages = listResources(pathLanguages, Regex(""".*\.yaml"""))
     val themes = listResources(pathThemes, Regex(""".*\.yaml"""))
+    val applications = listResources(pathApplications, Regex(""".*\.yaml"""))
 
     val base = Paths.get(pathBase)
 
-    return Stream.concat(languages, themes)
+    return languages.append(themes).append(applications)
         .map { p -> FilenameUtils.separatorsToUnix(base.relativize(Paths.get(p)).toString()) to p }
         .toSet()
 }

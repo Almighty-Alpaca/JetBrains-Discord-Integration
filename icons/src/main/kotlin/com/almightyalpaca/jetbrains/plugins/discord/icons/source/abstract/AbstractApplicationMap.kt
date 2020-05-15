@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
+package com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract
 
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Application
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ApplicationMap
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeSource
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractThemeSourceMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeMap
 
-class BintrayThemeSourceMap(private val source: BintraySource, map: Map<String, ThemeSource>) : AbstractThemeSourceMap(map) {
-    override fun createThemeMap(themes: Map<String, Theme>, default: Theme) = BintrayThemeMap(themes, default)
-    override fun createTheme(id: String, name: String, description: String, applications: Map<String, Long>) = BintrayTheme(id, name, description, applications)
+abstract class AbstractApplicationMap(private val applications: Map<String, Application>) : ApplicationMap, Map<String, Application> by applications {
+    override fun toString(): String {
+        return "AbstractApplicationMap(applications=$applications)"
+    }
 }

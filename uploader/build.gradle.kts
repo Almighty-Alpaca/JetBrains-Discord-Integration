@@ -120,7 +120,7 @@ tasks {
         }
     }
 
-    val uploadIcons by registering(JavaExec::class) task@{
+    val uploadDiscord by registering(JavaExec::class) task@{
         group = "upload"
 
         dependsOn(checkIcons)
@@ -136,7 +136,7 @@ tasks {
         }
     }
 
-    val uploadLanguages by registering(JavaExec::class) task@{
+    val uploadBintray by registering(JavaExec::class) task@{
         group = "upload"
 
         dependsOn(checkLanguages)
@@ -157,8 +157,8 @@ tasks {
 
         dependsOn(check)
 
-        dependsOn(uploadLanguages)
-        dependsOn(uploadIcons)
+        dependsOn(uploadBintray)
+        dependsOn(uploadDiscord)
     }
 }
 

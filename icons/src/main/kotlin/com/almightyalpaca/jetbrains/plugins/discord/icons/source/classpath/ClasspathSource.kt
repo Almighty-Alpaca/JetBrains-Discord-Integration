@@ -17,6 +17,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.local.LocalApplicationSourceMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.baseName
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.extension
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
@@ -29,6 +32,8 @@ import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.Closeable
 import java.io.InputStream
+import java.nio.file.Files
+import java.util.stream.Stream
 import kotlin.coroutines.CoroutineContext
 
 class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineScope {
@@ -52,8 +57,14 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
         false -> async { readThemes() }
     }
 
+    private val applicationJob: Deferred<ApplicationMap> = when (retry) {
+        true -> retryAsync { readApplications() }
+        false -> async { readApplications() }
+    }
+
     override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
+    override fun getApplicationsAsync(): Deferred<ApplicationMap> = applicationJob
 
     private fun readLanguages(): LanguageMap {
         val mapper = ObjectMapper(YAMLFactory())
@@ -83,11 +94,25 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
         return ClasspathThemeSourceMap(this, map).toThemeMap()
     }
 
+    private fun readApplications(): ApplicationMap {
+        val mapper = ObjectMapper(YAMLFactory())
+
+        val map = listResources(pathApplications, Regex(""".*\.yaml"""))
+            .map { p ->
+                val node: JsonNode = mapper.readTree(loadResource(p))
+                ApplicationSource(FilenameUtils.getBaseName(p), node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
+
+        return LocalApplicationSourceMap(map).toApplicationMap()
+    }
+
     fun loadResource(location: String): InputStream? = ClasspathSource::class.java.getResourceAsStream(location)
 
     fun checkResourceExists(location: String): Boolean = ClasspathSource::class.java.getResourceAsStream(location)?.run(Closeable::close) != null
 
-    fun listResources(path: String, @RegExp pattern: Regex) =
+    fun listResources(path: String, @RegExp pattern: Regex): Stream<String> =
         Reflections(path.substring(1).replace('/', '.'), ResourcesScanner())
             .getResources(pattern.toPattern())
             .stream()

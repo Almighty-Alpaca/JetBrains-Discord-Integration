@@ -18,15 +18,16 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.setWith
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.get
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.setWith
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 
-class ClasspathTheme(private val source: ClasspathSource, id: String, name: String, description: String, applications: Map<String, Long>) : AbstractTheme(id, name, description, applications) {
+class ClasspathTheme(private val source: ClasspathSource, id: String, name: String, description: String, applications: Map<String, Long>) :
+    AbstractTheme(id, name, description, applications) {
     private val sets = ConcurrentHashMap<String, ClasspathIconSet>()
 
     override fun getIconSet(applicationName: String): IconSet? {

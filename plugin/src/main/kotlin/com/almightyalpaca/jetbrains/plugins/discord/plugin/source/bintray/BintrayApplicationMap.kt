@@ -16,11 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeSource
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractThemeSourceMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Application
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractApplicationMap
 
-class BintrayThemeSourceMap(private val source: BintraySource, map: Map<String, ThemeSource>) : AbstractThemeSourceMap(map) {
-    override fun createThemeMap(themes: Map<String, Theme>, default: Theme) = BintrayThemeMap(themes, default)
-    override fun createTheme(id: String, name: String, description: String, applications: Map<String, Long>) = BintrayTheme(id, name, description, applications)
-}
+class BintrayApplicationMap(applications: Map<String, Application>) : AbstractApplicationMap(applications)

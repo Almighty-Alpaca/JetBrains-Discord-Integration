@@ -16,12 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeSource
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractThemeSourceMap
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Application
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ApplicationSource
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractApplicationSourceMap
 
-class ClasspathThemeSourceMap(private val source: ClasspathSource, map: Map<String, ThemeSource>) : AbstractThemeSourceMap(map) {
-    override fun createThemeMap(themes: Map<String, Theme>, default: Theme) = ClasspathThemeMap(themes, default)
-    override fun createTheme(id: String, name: String, description: String, applications: Map<String, Long>) =
-        ClasspathTheme(source, id, name, description, applications)
+class ClasspathApplicationSourceMap(map: Map<String, ApplicationSource>) : AbstractApplicationSourceMap(map) {
+    override fun createApplicationMap(applications: Map<String, Application>) = ClasspathApplicationMap(applications)
+    override fun createApplication(id: String, dummyFile: String) = ClasspathApplication(id, dummyFile)
 }

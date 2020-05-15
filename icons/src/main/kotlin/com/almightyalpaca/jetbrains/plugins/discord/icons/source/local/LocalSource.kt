@@ -35,10 +35,10 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + parentJob
 
-    val pathBase = location.resolve("icons")
-    val pathLanguages = pathBase.resolve("languages")
-    val pathThemes = pathBase.resolve("themes")
-    val pathApplications = pathBase.resolve("applications")
+    val pathBase: Path = location.resolve("icons")
+    val pathLanguages: Path = pathBase.resolve("languages")
+    val pathThemes: Path = pathBase.resolve("themes")
+    val pathApplications: Path = pathBase.resolve("applications")
 
     private val languageJob: Deferred<LanguageMap> = when (retry) {
         true -> retryAsync { readLanguages() }
@@ -50,8 +50,14 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
         false -> async { readThemes() }
     }
 
+    private val applicationJob: Deferred<ApplicationMap> = when (retry) {
+        true -> retryAsync { readApplications() }
+        false -> async { readApplications() }
+    }
+
     override fun getLanguagesAsync(): Deferred<LanguageMap> = languageJob
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
+    override fun getApplicationsAsync(): Deferred<ApplicationMap> = applicationJob
 
     private fun readLanguages(): LanguageMap {
         val mapper = ObjectMapper(YAMLFactory())
@@ -81,5 +87,20 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
             .toMap()
 
         return LocalThemeSourceMap(this, map).toThemeMap()
+    }
+
+    private fun readApplications(): ApplicationMap {
+        val mapper = ObjectMapper(YAMLFactory())
+
+        val map = Files.list(pathApplications)
+            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .map { p ->
+                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
+                ApplicationSource(p.baseName, node)
+            }
+            .map { p -> p.id to p }
+            .toMap()
+
+        return LocalApplicationSourceMap(map).toApplicationMap()
     }
 }
