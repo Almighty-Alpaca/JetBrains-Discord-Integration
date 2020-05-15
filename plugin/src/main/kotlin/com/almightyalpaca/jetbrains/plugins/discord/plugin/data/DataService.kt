@@ -75,6 +75,7 @@ class DataService {
 
         if (project != null && !project.isDefault && project.settings.show.get(mode).showProject) {
             val projectName = project.name
+            val projectDescription = project.settings.description.get(mode)
             val projectTimeOpened = project.timeOpened
             val projectTimeActive = project.timeActive
             val projectSettings = project.settings
@@ -114,16 +115,17 @@ class DataService {
                         applicationTimeActive,
                         applicationSettings,
                         projectName,
+                        projectDescription,
                         projectTimeOpened,
                         applicationTimeActive,
                         projectSettings,
+                        vcsBranch,
                         fileName,
                         fileUniqueName,
                         fileTimeOpened,
                         fileTimeActive,
                         filePath,
-                        fileIsWriteable,
-                        vcsBranch
+                        fileIsWriteable
                     )
                 }
             }
@@ -138,7 +140,7 @@ class DataService {
                 applicationTimeActive,
                 applicationSettings,
                 projectName,
-                projectSettings.description.toString(),
+                projectDescription,
                 projectTimeOpened,
                 projectTimeActive,
                 projectSettings,

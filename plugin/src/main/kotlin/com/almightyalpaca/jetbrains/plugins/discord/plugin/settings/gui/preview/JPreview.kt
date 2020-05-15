@@ -30,12 +30,10 @@ class JPreview : JLabel(), CoroutineScope {
 
     private val preview = PreviewRenderer()
 
-    var type: Renderer.Type
-        get() = preview.type
+    var type = Renderer.Type.APPLICATION
         set(value) {
-            preview.type = value
+            field = value
             update()
-
         }
 
     private var updateJob: Job? = null
@@ -52,7 +50,7 @@ class JPreview : JLabel(), CoroutineScope {
 
         updateJob = launch {
             if (isShowing) {
-                val (modified, image) = preview.draw(force)
+                val (modified, image) = preview.draw(type, force)
 
                 if (modified) {
                     icon = ImageIcon(image)

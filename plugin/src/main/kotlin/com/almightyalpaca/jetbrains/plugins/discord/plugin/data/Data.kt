@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
+import com.almightyalpaca.jetbrains.plugins.discord.icons.matcher.Matcher
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
-import com.almightyalpaca.jetbrains.plugins.discord.icons.matcher.Matcher
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
 import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
@@ -48,7 +48,7 @@ sealed class Data {
         val vcsBranch: String?
     ) : Application(applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
         override fun toString(): String {
-            return "Data.Project(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
+            return "Data.Project(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
         }
     }
 
@@ -58,33 +58,32 @@ sealed class Data {
         applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
         projectName: String,
+        projectDescription: String,
         projectTimeOpened: Long,
         projectTimeActive: Long,
         projectSettings: ProjectSettings,
+        vcsBranch: String?,
         val fileName: String,
-        val fileUniqueName: String,
+        val fileNameUnique: String,
         val fileTimeOpened: Long,
         val fileTimeActive: Long,
         val filePath: String,
-        val fileIsWriteable: Boolean,
-        vcsBranch: String?
+        val fileIsWriteable: Boolean
     ) : Project(
         applicationVersion,
         applicationTimeOpened,
         applicationTimeActive,
         applicationSettings,
         projectName,
-        projectDescription = projectSettings.description.toString(),
-        projectTimeOpened = projectTimeOpened,
-        projectTimeActive = projectTimeActive,
-        projectSettings = projectSettings,
-        vcsBranch = vcsBranch
+        projectDescription,
+        projectTimeOpened,
+        projectTimeActive,
+        projectSettings,
+        vcsBranch
     ), Matcher.Target.Provider {
         /** Path relative to the project directory */
         private val filePathRelative: String by lazy {
-            FilenameUtils.separatorsToUnix(
-                filePath
-            )
+            FilenameUtils.separatorsToUnix(filePath)
         }
 
         private val fileBaseNames: Collection<String> by lazy {
@@ -107,7 +106,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "Data.File(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileUniqueName', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "Data.File(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
         }
     }
 }
