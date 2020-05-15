@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.themes.ThemeDialog
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
@@ -24,7 +25,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.throwing
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Source
 import com.intellij.openapi.util.JDOMExternalizerUtil
 import kotlinx.coroutines.future.asCompletableFuture
 import org.jdom.Element
@@ -49,7 +49,11 @@ class ThemeOption(text: String, val description: String?) : Option<ThemeValue>(t
 
     var currentValue: String? = null
     var componentValue: String? = null
-        private set
+    set(value) {
+        field = value
+
+        componentImpl.text = source.getThemesOrNull()?.get(value)?.name ?: value
+    }
 
     private val componentImpl = JButton().apply button@{
         isEnabled = false
@@ -59,14 +63,13 @@ class ThemeOption(text: String, val description: String?) : Option<ThemeValue>(t
             val themes = this@ThemeOption.source.getThemesOrNull()
 
             if (themes != null) {
-                val dialog = ThemeDialog(themes, this@ThemeOption.componentValue)
+                val dialog = ThemeDialog(themes, componentValue)
                 val result = dialog.showAndGet()
 
                 if (result) {
                     val value = dialog.value
 
-                    this@ThemeOption.componentValue = value
-                    this.text = themes[value]!!.name
+                    componentValue = value
                 }
             }
         }
@@ -148,10 +151,13 @@ class ThemeOption(text: String, val description: String?) : Option<ThemeValue>(t
 }
 
 class ThemeValue(private val option: ThemeOption) : SimpleValue<String?>() {
-    override fun get() = this.option.currentValue
-    override fun getComponent() = this.option.componentValue
-    override fun set(value: String?) {
+    override fun getStoredValue() = this.option.currentValue
+    override fun getPreviewValue() = this.option.componentValue
+    override fun setStoredValue(value: String?) {
         this.option.currentValue = value
+    }
+    override fun setPreviewValue(value: String?) {
+        this.option.componentValue = value
     }
 
     override val text

@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
@@ -28,7 +29,7 @@ import java.time.ZoneId
 abstract class Renderer(private val context: RenderContext) {
     fun render(): RichPresence = context.render()
 
-    abstract fun RenderContext.render(): RichPresence
+    protected abstract fun RenderContext.render(): RichPresence
 
     protected fun RenderContext.render(
         details: LineValue?,
@@ -102,7 +103,13 @@ abstract class Renderer(private val context: RenderContext) {
 
     enum class Mode {
         NORMAL,
-        PREVIEW
+        PREVIEW;
+
+        fun <T> SimpleValue<T>.getValue() = getValue(this@Mode)
+
+        fun <T> SimpleValue<T>.setValue(value: T) = setValue(this@Mode, value)
+
+        fun <T> SimpleValue<T>.updateValue(block: (T) -> T) = updateValue(this@Mode, block)
     }
 
     enum class Type(val createRenderer: (RenderContext) -> Renderer) {

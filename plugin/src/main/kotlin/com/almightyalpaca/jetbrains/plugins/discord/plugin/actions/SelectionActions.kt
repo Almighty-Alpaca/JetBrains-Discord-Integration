@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SelectionValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
@@ -61,12 +60,11 @@ abstract class AbstractSelectionAction<T>(
 
     class ToggleAction<T>(val value: T, val currentValue: (Project) -> SelectionValue<T>) :
         DumbAwareToggleAction(value.text, value.description, null) where T : Enum<T>, T : UiValueType {
-        override fun isSelected(e: AnActionEvent) =
-            value == e.project?.let { currentValue(it).get(Renderer.Mode.NORMAL) }
+        override fun isSelected(e: AnActionEvent) = value == e.project?.let { currentValue(it).getStoredValue() }
 
         override fun setSelected(e: AnActionEvent, state: Boolean) {
             if (state) {
-                e.project?.let { currentValue(it).set(value) }
+                e.project?.let { currentValue(it).setStoredValue(value) }
             }
         }
 
@@ -83,7 +81,7 @@ abstract class AbstractSelectionAction<T>(
                 if (value in selectionValue.selectableValues) {
                     presentation.isEnabledAndVisible = true
                 } else {
-                    presentation.isVisible = value == selectionValue.get(Renderer.Mode.NORMAL)
+                    presentation.isVisible = value == selectionValue.getStoredValue()
                     presentation.isEnabled = false
                 }
             }

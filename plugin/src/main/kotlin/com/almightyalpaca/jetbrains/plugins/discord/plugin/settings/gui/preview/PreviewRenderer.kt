@@ -196,7 +196,7 @@ class PreviewRenderer {
                 }
             }
 
-            val applicationName = settings.applicationType.get(Renderer.Mode.PREVIEW).applicationNameReadable
+            val applicationName = settings.applicationType.getPreviewValue().applicationNameReadable
             if (force || lastApplicationName != applicationName || lastImagesEmpty != imagesEmpty) {
                 // IDE name
                 image.withGraphics {

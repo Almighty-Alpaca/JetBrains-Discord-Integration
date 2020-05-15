@@ -65,14 +65,30 @@ abstract class SimpleOption<T>(text: String, val description: String? = null, pr
 }
 
 abstract class SimpleValue<T> : Value() {
-    protected abstract fun get(): T
-    protected abstract fun getComponent(): T
-    abstract fun set(value: T)
+    abstract fun getStoredValue(): T
+    abstract fun getPreviewValue(): T
 
-    fun get(mode: Renderer.Mode) = when (mode) {
-        Renderer.Mode.PREVIEW -> getComponent()
-        Renderer.Mode.NORMAL -> get()
+    fun getValue(mode: Renderer.Mode) = when (mode) {
+        Renderer.Mode.PREVIEW -> getPreviewValue()
+        Renderer.Mode.NORMAL -> getStoredValue()
     }
+
+    abstract fun setStoredValue(value: T)
+    abstract fun setPreviewValue(value: T)
+
+    fun setValue(mode: Renderer.Mode, value: T) = when (mode) {
+        Renderer.Mode.NORMAL -> {
+            setStoredValue(value)
+            setPreviewValue(value)
+        }
+        Renderer.Mode.PREVIEW -> {
+            setPreviewValue(value)
+        }
+    }
+
+    fun updateStoredValue(block: (T) -> T) = setStoredValue(block(getStoredValue()))
+    fun updatePreviewValue(block: (T) -> T) = setPreviewValue(block(getPreviewValue()))
+    fun updateValue(mode: Renderer.Mode, block: (T) -> T) = setValue(mode, block(getValue(mode)))
 
     abstract val text: String
     abstract val description: String?
@@ -83,10 +99,13 @@ abstract class SimpleValue<T> : Value() {
 }
 
 open class SimpleValueImpl<T>(protected open val option: SimpleOption<T>) : SimpleValue<T>() {
-    override fun get() = option.currentValue
-    override fun getComponent() = option.componentValue
-    override fun set(value: T) {
+    override fun getStoredValue() = option.currentValue
+    override fun getPreviewValue() = option.componentValue
+    override fun setStoredValue(value: T) {
         option.currentValue = value
+    }
+
+    override fun setPreviewValue(value: T) {
         option.componentValue = value
     }
 

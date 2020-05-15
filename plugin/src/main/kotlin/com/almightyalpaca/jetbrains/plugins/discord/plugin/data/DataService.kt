@@ -42,7 +42,10 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(mode: Renderer.Mode): Data? = tryOrNull {
+    suspend fun getData(mode: Renderer.Mode) = mode.run { getData() }
+
+    @JvmName("getDataInternal")
+    private suspend fun (Renderer.Mode).getData(): Data? = tryOrNull {
         DiscordPlugin.LOG.debug("Getting data")
 
         val project: Project?
@@ -73,9 +76,9 @@ class DataService {
         val applicationTimeActive = application.timeActive
         val applicationSettings = settings
 
-        if (project != null && !project.isDefault && project.settings.show.get(mode).showProject) {
+        if (project != null && !project.isDefault && project.settings.show.getValue().showProject) {
             val projectName = project.name
-            val projectDescription = project.settings.description.get(mode)
+            val projectDescription = project.settings.description.getValue()
             val projectTimeOpened = project.timeOpened
             val projectTimeActive = project.timeActive
             val projectSettings = project.settings
@@ -84,8 +87,8 @@ class DataService {
                 val file = editor.file
 
                 if (file != null
-                    && project.settings.show.get(mode).showFiles
-                    && !(settings.fileHideVcsIgnored.get(mode) && isVcsIgnored(project, file))
+                    && project.settings.show.getValue().showFiles
+                    && !(settings.fileHideVcsIgnored.getValue() && isVcsIgnored(project, file))
                 ) {
                     val fileName = file.name
                     val fileUniqueName = when (DumbService.isDumb(project)) {

@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
@@ -31,7 +30,7 @@ import com.intellij.openapi.project.ProjectManager
 class ProjectSettingsImpl(override val project: Project) : ProjectSettings, PersistentStateOptionHolderImpl() {
     override val show by when (project.isDefault) {
         true -> selection("Show project", ProjectShow.ASK to ProjectShow.VALUES_DEFAULT)
-        false -> selection("Show project", ProjectManager.getInstance().defaultProject.settings.show.get(Renderer.Mode.NORMAL) to ProjectShow.VALUES)
+        false -> selection("Show project", ProjectManager.getInstance().defaultProject.settings.show.getStoredValue() to ProjectShow.VALUES)
     }
 
     private val nameOverrideToggle by toggleable<Boolean>()

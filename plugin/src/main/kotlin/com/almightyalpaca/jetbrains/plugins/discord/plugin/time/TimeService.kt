@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.time
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.intellij.ide.IdeEventQueue
@@ -164,7 +163,7 @@ class TimeService : Disposable {
             }
         }
 
-        val timeoutMillis = settings.timeoutMinutes.get(Renderer.Mode.NORMAL) * 60 * 1000
+        val timeoutMillis = settings.timeoutMinutes.getStoredValue() * 60 * 1000
         IdeEventQueue.getInstance().addIdleListener(idleListener, timeoutMillis)
     }
 

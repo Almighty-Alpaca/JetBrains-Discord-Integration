@@ -17,7 +17,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
@@ -43,10 +42,10 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
         DiscordPlugin.LOG.info("Checking for plugin update")
 
         val version = Plugin.version
-        if (version != null && version.toString() != settings.applicationLastUpdateNotification.get(Renderer.Mode.NORMAL) && version.isStable()) {
+        if (version != null && version.toString() != settings.applicationLastUpdateNotification.getStoredValue() && version.isStable()) {
             DiscordPlugin.LOG.info("Plugin update found, showing changelog")
 
-            settings.applicationLastUpdateNotification.set(version.toString())
+            settings.applicationLastUpdateNotification.setStoredValue(version.toString())
             launch { ApplicationUpdateNotification.show(version.toString()) }
         }
     }
@@ -56,14 +55,14 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
 
         val settings = project.settings
 
-        if (settings.show.get(Renderer.Mode.NORMAL) == ProjectShow.ASK) {
+        if (settings.show.getStoredValue() == ProjectShow.ASK) {
             DiscordPlugin.LOG.info("Showing project confirmation dialog")
 
             val result = ProjectShowNotification.show(project)
 
             DiscordPlugin.LOG.info("Project confirmation result=$result")
 
-            settings.show.set(result)
+            settings.show.setStoredValue(result)
             renderService.render()
         }
     }

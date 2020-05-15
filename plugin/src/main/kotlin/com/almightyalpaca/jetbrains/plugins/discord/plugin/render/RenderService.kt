@@ -66,11 +66,11 @@ class RenderService : DisposableCoroutineScope {
 
             var visible = true
 
-            if (!settings.show.get(Renderer.Mode.NORMAL)) {
+            if (!settings.show.getStoredValue()) {
                 visible = false
             }
 
-            if (timeService.idle && settings.timeoutEnabled.get(Renderer.Mode.NORMAL)) {
+            if (timeService.idle && settings.timeoutEnabled.getStoredValue()) {
                 visible = false
             }
 

@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -30,7 +29,7 @@ abstract class AbstractToggleAction(private val currentValue: (Project) -> Boole
     constructor(currentValue: BooleanValue, text: String, description: String?) : this({ currentValue }, text, description)
     constructor(currentValue: BooleanValue) : this(currentValue, currentValue.text, currentValue.description)
 
-    override fun isSelected(e: AnActionEvent) = e.project?.let { currentValue(it).get(Renderer.Mode.NORMAL) } == true
+    override fun isSelected(e: AnActionEvent) = e.project?.let { currentValue(it).getStoredValue() } == true
 
-    override fun setSelected(e: AnActionEvent, state: Boolean) = e.project?.let { currentValue(it).set(state) } ?: Unit
+    override fun setSelected(e: AnActionEvent, state: Boolean) = e.project?.let { currentValue(it).setStoredValue(state) } ?: Unit
 }
