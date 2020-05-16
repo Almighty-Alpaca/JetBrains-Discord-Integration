@@ -32,12 +32,12 @@ pluginManagement {
         this.load(java.nio.file.Files.newBufferedReader(settingsDir.toPath().resolve("gradle.properties")))
     }
 
-    val versionKotlin: String by properties
-    val versionGradleVersions: String by properties
+    val versionGradleExactDependencies: String by properties
+    val versionGradleGitVersions: String by properties
     val versionGradleIntelliJ: String by properties
     val versionGradleShadow: String by properties
-    val versionGradleGitVersions: String by properties
-    val versionGradleExactDependencies: String by properties
+    val versionGradleVersions: String by properties
+    val versionKotlin: String by properties
 
     plugins {
         kotlin("jvm") version versionKotlin
@@ -46,5 +46,21 @@ pluginManagement {
         id("com.github.johnrengelman.shadow") version versionGradleShadow
         id("com.palantir.git-version") version versionGradleGitVersions
         id("com.palantir.baseline-exact-dependencies") version versionGradleExactDependencies
+    }
+}
+
+buildscript {
+    val properties = java.util.Properties().apply {
+        this.load(java.nio.file.Files.newBufferedReader(settingsDir.toPath().resolve("gradle.properties")))
+    }
+
+    val versionGradlePngtastic: String by properties
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath(group = "com.github.depsypher", name = "pngtastic", version = versionGradlePngtastic)
     }
 }
