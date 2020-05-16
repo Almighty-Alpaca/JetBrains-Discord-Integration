@@ -43,4 +43,36 @@ tasks {
     checkImplicitDependencies {
         ignore("org.jetbrains", "annotations")
     }
+
+    val generateIcons = create("generate-icons") {
+        group = "icons"
+    }
+
+    val generateMaterialApplicationIcons = create<Exec>("generate-material-application-icons") {
+        workingDir(project.file("src/main/resources/discord/applications/material"))
+        commandLine = listOf(
+            "magick",
+            "mogrify",
+            "-resize",
+            "800x800",
+            "-gravity",
+            "center",
+            "-bordercolor",
+            "\"#23272A\"",
+            "-border",
+            "112x112",
+            "-path",
+            ".",
+            "../*.png"
+        )
+    }
+
+    val deleteMaterialApplicationIcons = create<Delete>("delete-material-application-icons") {
+        delete(fileTree("src/main/resources/discord/applications/material/") {
+            include("*.png")
+        })
+    }
+
+    generateIcons.dependsOn(generateMaterialApplicationIcons)
+    generateMaterialApplicationIcons.dependsOn(deleteMaterialApplicationIcons)
 }
