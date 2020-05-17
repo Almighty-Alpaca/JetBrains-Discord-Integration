@@ -200,9 +200,14 @@ tasks {
             val size = 128
             val quality = 0.9F
 
+            val includePaths = listOf(
+                Regex("""/?discord/applications/.*\.png"""),
+                Regex("""/?discord/themes/.*\.png""")
+            )
+
             override fun canTransformResource(element: FileTreeElement): Boolean {
                 val path = element.relativePath.pathString
-                return path.startsWith("discord") && path.endsWith(".png")
+                return includePaths.any { it.matches(path) }
             }
 
             override fun hasTransformedResource(): Boolean = files.isNotEmpty()
