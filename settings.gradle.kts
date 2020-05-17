@@ -55,6 +55,7 @@ buildscript {
     }
 
     val versionGradlePngtastic: String by properties
+    val versionGradleZeroAllocationHashing: String by properties
 
     repositories {
         mavenCentral()
@@ -62,5 +63,6 @@ buildscript {
 
     dependencies {
         classpath(group = "com.github.depsypher", name = "pngtastic", version = versionGradlePngtastic)
+        classpath(group = "net.openhft", name = "zero-allocation-hashing", version = versionGradleZeroAllocationHashing)
     }
 }
