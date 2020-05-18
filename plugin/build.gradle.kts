@@ -17,6 +17,7 @@
 @file:Suppress("SuspiciousCollectionReassignment")
 
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
+import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.googlecode.pngtastic.core.PngImage
 import com.googlecode.pngtastic.core.PngOptimizer
@@ -76,6 +77,7 @@ val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
     // https://www.jetbrains.com/intellij-repository/releases
+    // https://www.jetbrains.com/intellij-repository/snapshots
     version = "2020.1.1"
 
     downloadSources = !isCI
@@ -89,17 +91,7 @@ intellij {
     setPlugins("git4idea")
 
     // For testing with a custom theme
-    // setPlugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
-
-//    configureDefaultDependencies = false
-//
-//    afterEvaluate {
-//        project.dependencies {
-//            idea(files(ideaDependency.jarFiles.filter { f -> !f.name.matches(Regex("""(commons|kotlinx-coroutines).*""")) }))
-//            // TODO: fix when adding plugins
-//            // ideaPlugins(pluginDependencies.flatMap(PluginDependency::getJarFiles))
-//        }
-//    }
+    // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
 }
 
 tasks {
@@ -163,120 +155,25 @@ tasks {
 
         mergeServiceFiles()
 
-        prefix("org.yaml.snakeyaml")
-        prefix("org.scijava.nativelib")
-        prefix("org.newsclub") {
-            exclude("org.newsclub.net.unix.*")
-        }
-        prefix("org.kohsuke.github")
-        prefix("org.json")
-        prefix("org.jetbrains.annotations")
-        prefix("org.intellij.lang.annotations")
-        prefix("org.apache.logging.slf4j")
-        prefix("org.apache.logging.log4j")
-//        prefix("org.apache.commons.lang3")
-        prefix("org.apache.commons.io")
-        prefix("org.apache.commons.collections")
-        prefix("org.apache.commons.codec")
-        prefix("okio")
-        prefix("okhttp3")
-//        prefix("kotlinx.coroutines")
-//        prefix("kotlin")
-        prefix("com.jagrosh.discordipc")
-        prefix("com.fasterxml.jackson.dataformat.yaml")
-        prefix("com.fasterxml.jackson.databind")
-        prefix("com.fasterxml.jackson.core")
-        prefix("com.fasterxml.jackson.annotation")
         prefix("club.minnced.discord.rpc")
-        prefix("org.reflections")
+        prefix("com.fasterxml.jackson.annotation")
+        prefix("com.fasterxml.jackson.core")
+        prefix("com.fasterxml.jackson.databind")
+        prefix("com.fasterxml.jackson.dataformat.yaml")
+        prefix("com.jagrosh.discordipc")
         prefix("javassist")
+        prefix("okhttp3")
+        prefix("okio")
+        prefix("org.apache.commons.io")
+        prefix("org.reflections")
+        prefix("org.yaml.snakeyaml")
 
-        transform(object : com.github.jengelman.gradle.plugins.shadow.transformers.Transformer {
-            val files = mutableMapOf<String, Path>()
+        val iconPaths = listOf(
+            Regex("""/?discord/applications/.*\.png"""),
+            Regex("""/?discord/themes/.*\.png""")
+        )
 
-            val cacheDir = project.buildDir.toPath().resolve("cache/icons")
-            val cacheFileTemp = cacheDir.resolve("new")
-
-            val size = 128
-            val quality = 0.9F
-
-            val includePaths = listOf(
-                Regex("""/?discord/applications/.*\.png"""),
-                Regex("""/?discord/themes/.*\.png""")
-            )
-
-            override fun canTransformResource(element: FileTreeElement): Boolean {
-                val path = element.relativePath.pathString
-                return includePaths.any { it.matches(path) }
-            }
-
-            override fun hasTransformedResource(): Boolean = files.isNotEmpty()
-
-            val byteArrayOutputStream = ByteArrayOutputStream()
-
-            override fun transform(context: TransformerContext) {
-                val data = context.`is`.readAllBytes()
-
-                @Suppress("EXPERIMENTAL_API_USAGE")
-                val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
-
-                val cacheFile = cacheDir.resolve(hash)
-
-                if (!Files.exists(cacheFile)) {
-                    val image: BufferedImage = ImageIO.read(ByteArrayInputStream(data))
-
-                    val scaledImage: RenderedImage = image.getScaledInstance(size, size, Image.SCALE_SMOOTH).getRenderedImage()
-                    val imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)
-
-                    val writer = ImageIO.getImageWritersByFormatName("png").next()
-                    val param = writer.defaultWriteParam
-                    param.compressionMode = ImageWriteParam.MODE_EXPLICIT
-                    param.compressionQuality = quality
-
-                    writer.output = imageOutputStream
-                    writer.write(null, IIOImage(scaledImage, null, null), param)
-
-                    val pngImage = PngImage(byteArrayOutputStream.toByteArray())
-                    val optimizer = PngOptimizer()
-                    val optimizedPngImage: PngImage = optimizer.optimize(pngImage)
-
-                    byteArrayOutputStream.reset()
-
-                    Files.createDirectories(cacheDir)
-
-                    Files.newOutputStream(cacheFileTemp, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use {
-                        optimizedPngImage.writeDataOutputStream(it)
-                    }
-
-                    Files.move(cacheFileTemp, cacheFile, StandardCopyOption.REPLACE_EXISTING)
-                }
-
-                files[context.path] = cacheFile
-            }
-
-            override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
-                for ((path, cachePath) in files) {
-                    val entry = ZipEntry(path)
-                    entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
-                    os.putNextEntry(entry)
-                    IOUtils.copy(Files.newInputStream(cachePath), os)
-                }
-            }
-
-            private fun Image.getRenderedImage(): RenderedImage {
-                if (this is RenderedImage) return this
-
-                val image = BufferedImage(getWidth(null), getHeight(null), BufferedImage.TYPE_INT_ARGB)
-
-                // Draw the image on to the buffered image
-                val graphics = image.createGraphics()
-                graphics.drawImage(this, 0, 0, null)
-                graphics.dispose()
-
-                // Return the buffered image
-                return image
-            }
-        })
+        transform(PngOptimizeTransformer(128, 0.9F, iconPaths))
     }
 
     withType<KotlinCompile> {
@@ -344,4 +241,85 @@ fun readInfoFile(file: File): String {
 
         // Replace newlines
         .replace("\n", "<br>")
+}
+
+fun Project.PngOptimizeTransformer(size: Int, quality: Float, includePaths: List<Regex>) =
+    PngOptimizeTransformer(size, quality, includePaths, this.buildDir.toPath().resolve("cache/icons"))
+
+class PngOptimizeTransformer(private val size: Int, private val quality: Float, private val includePaths: List<Regex>, private val cacheDir: Path) : Transformer {
+    private val files = mutableMapOf<String, Path>()
+
+    private val cacheFileTemp: Path = cacheDir.resolve("new")
+
+    override fun canTransformResource(element: FileTreeElement): Boolean {
+        val path = element.relativePath.pathString
+        return includePaths.any { it.matches(path) }
+    }
+
+    override fun hasTransformedResource(): Boolean = files.isNotEmpty()
+
+    private val byteArrayOutputStream = ByteArrayOutputStream()
+
+    override fun transform(context: TransformerContext) {
+        val data = context.`is`.readAllBytes()
+
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
+
+        val cacheFile = cacheDir.resolve(hash)
+
+        if (!Files.exists(cacheFile)) {
+            val image: BufferedImage = ImageIO.read(ByteArrayInputStream(data))
+
+            val scaledImage: RenderedImage = image.getScaledInstance(size, size, Image.SCALE_SMOOTH).getRenderedImage()
+            val imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)
+
+            val writer = ImageIO.getImageWritersByFormatName("png").next()
+            val param = writer.defaultWriteParam
+            param.compressionMode = ImageWriteParam.MODE_EXPLICIT
+            param.compressionQuality = quality
+
+            writer.output = imageOutputStream
+            writer.write(null, IIOImage(scaledImage, null, null), param)
+
+            val pngImage = PngImage(byteArrayOutputStream.toByteArray())
+            val optimizer = PngOptimizer()
+            val optimizedPngImage: PngImage = optimizer.optimize(pngImage)
+
+            byteArrayOutputStream.reset()
+
+            Files.createDirectories(cacheDir)
+
+            Files.newOutputStream(cacheFileTemp, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use {
+                optimizedPngImage.writeDataOutputStream(it)
+            }
+
+            Files.move(cacheFileTemp, cacheFile, StandardCopyOption.REPLACE_EXISTING)
+        }
+
+        files[context.path] = cacheFile
+    }
+
+    override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
+        for ((path, cachePath) in files) {
+            val entry = ZipEntry(path)
+            entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
+            os.putNextEntry(entry)
+            IOUtils.copy(Files.newInputStream(cachePath), os)
+        }
+    }
+
+    private fun Image.getRenderedImage(): RenderedImage {
+        if (this is RenderedImage) return this
+
+        val image = BufferedImage(getWidth(null), getHeight(null), BufferedImage.TYPE_INT_ARGB)
+
+        // Draw the image on to the buffered image
+        val graphics = image.createGraphics()
+        graphics.drawImage(this, 0, 0, null)
+        graphics.dispose()
+
+        // Return the buffered image
+        return image
+    }
 }

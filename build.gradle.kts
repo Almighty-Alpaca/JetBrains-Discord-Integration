@@ -40,15 +40,6 @@ version += when (versionDetails.commitDistance) {
     else -> "+${versionDetails.commitDistance}"
 }
 
-//if (!versionDetails.isCleanTag) {
-//    version += "-dirty"
-//    allprojects {
-//        listOf("publishPlugin", "uploadIcons", "uploadLanguages").forEach { name ->
-//            tasks.findByName(name)?.enabled = false
-//        }
-//    }
-//}
-
 project.version = version
 
 allprojects {
