@@ -91,7 +91,7 @@
         <group id="DiscordActionGroup"
                text="Discord"
                popup="true"
-               icon="/discord/images/logo/blurple.png">
+               icon="/discord/images/logo/blurple.svg">
             <add-to-group group-id="ToolsMenu"/>
 
             <action id="DiscordActionGroup.ApplicationHideAction"
