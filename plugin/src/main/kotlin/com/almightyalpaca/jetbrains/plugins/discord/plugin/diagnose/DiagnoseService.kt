@@ -85,6 +85,9 @@ class DiagnoseService : DisposableCoroutineScope {
             lines.contains("/snap/discord/", true) -> {
                 Discord.SNAP
             }
+            lines.contains("/run/user/1000/app/com.discordapp.Discord/discord-ipc-0", false) -> {
+                Discord.FLATPAK
+            }
             lines.split(" ")[0] != System.getProperty("user.name") ->
                 Discord.DIFFERENT_USER
 
@@ -172,6 +175,7 @@ class DiagnoseService : DisposableCoroutineScope {
 
     enum class Discord(val message: String) {
         SNAP("It seems like Discord is running in a Snap package. This will most likely prevent the plugin from connecting to your Discord client!"),
+        FLATPAK("It seems like Discord is running in a Flatpak package. This will most likely prevent the plugin from connecting to your Discord client!"),
         BROWSER("It seems like Discord is running in the browser. The plugin will not be able to connect to the Discord client!"),
         CLOSED("Could not detect a running Discord client!"),
         DIFFERENT_USER("It seems like Discord wasn't started by the same user as your IDE was!"),
