@@ -5,7 +5,7 @@
 - Rework actions on toolbar
 - Detect Discord running in Flatpak
 - Enhance preview in settings
-- Fix exception when checking for other Discord plguins on startup
+- Fix exception when checking for other Discord plugins on startup
 - Fix idle timeout always being enabled
 
 ## v1.3.0
