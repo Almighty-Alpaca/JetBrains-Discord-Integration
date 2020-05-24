@@ -1,3 +1,13 @@
+## v1.4.0
+- Add ability to ignore files in .gitignore
+- Add option to show a project but hide files
+- Add support for showing the time the IDe was active instead of total time since startup 
+- Rework actions on toolbar
+- Detect Discord running in Flatpak
+- Enhance preview in settings
+- Fix exception when checking for other Discord plguins on startup
+- Fix idle timeout always being enabled
+
 ## v1.3.0
 - Add a button to force reconnect to Discord client
 - Add ability to show current git branch (#89)
