@@ -18,8 +18,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.local.LocalApplicationSourceMap
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.baseName
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.extension
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
@@ -32,7 +30,6 @@ import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.Closeable
 import java.io.InputStream
-import java.nio.file.Files
 import java.util.stream.Stream
 import kotlin.coroutines.CoroutineContext
 

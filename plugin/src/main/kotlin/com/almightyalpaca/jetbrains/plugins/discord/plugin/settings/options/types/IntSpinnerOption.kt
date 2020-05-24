@@ -28,13 +28,13 @@ import javax.swing.JPanel
 import javax.swing.JSpinner
 import javax.swing.SpinnerNumberModel
 
-fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled :Boolean = true) =
+fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled: Boolean = true) =
     OptionProviderImpl(this, IntSpinnerOption(text, description, initialValue, step, minValue, maxValue, format, enabled))
 
-fun OptionCreator<in Int>.spinner(text: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled :Boolean = true) =
+fun OptionCreator<in Int>.spinner(text: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled: Boolean = true) =
     OptionProviderImpl(this, IntSpinnerOption(text, null, initialValue, step, minValue, maxValue, format, enabled))
 
-fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#", enabled :Boolean = true) =
+fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#", enabled: Boolean = true) =
     spinner(text, description, initialValue, range.first, range.last, step, format, enabled)
 
 fun OptionCreator<in Int>.spinner(text: String, initialValue: Int, range: IntRange, step: Int = 1, format: String = "#", enabled: Boolean = true) =

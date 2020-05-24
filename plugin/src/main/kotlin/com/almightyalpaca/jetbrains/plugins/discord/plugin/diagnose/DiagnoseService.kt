@@ -79,16 +79,9 @@ class DiagnoseService : DisposableCoroutineScope {
         }
 
         return when {
-            lines.isBlank() -> {
-                Discord.CLOSED
-            }
-            lines.contains("/snap/discord/", true) -> {
-                Discord.SNAP
-            }
-            lines.contains("/app/com.discordapp.Discord/", true) -> {
-                Discord.FLATPAK
-            }
-
+            lines.isBlank() -> Discord.CLOSED
+            lines.contains("/snap/discord/", true) -> Discord.SNAP
+            lines.contains("/app/com.discordapp.Discord/", true) -> Discord.FLATPAK
             // TODO: Linux Discord browser detection
             else -> Discord.OTHER
         }

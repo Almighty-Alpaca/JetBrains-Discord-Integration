@@ -53,7 +53,7 @@ sealed class Matcher {
         BASENAME("basename"),
         PATH("path");
         // CONTENT("content") // TODO: implement content/magic byte matching
-
+        // EDITOR("editor") // TODO: implement matching the editor type
 
         interface Provider {
             fun getField(target: Target): Collection<String>

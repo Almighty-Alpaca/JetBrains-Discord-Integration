@@ -77,7 +77,7 @@ enum class PresenceLine(override val text: String, override val description: Str
             }.toResult()
         }
     },
-    FILE_NAME_PATH("File Name (+ Path)", "Additionally shows part of the path when there are multiple open files with the same name") {
+    FILE_NAME_PATH("File Name (unique)", "Additionally shows part of the path when there are multiple open files with the same name") {
         override fun RenderContext.getResult() = fileData?.let { getPrefix(fileData) + fileData.fileNameUnique }.toResult()
     },
     FILE_NAME("File Name", "Only shows the file name even when there are multiple open files with the same name") {

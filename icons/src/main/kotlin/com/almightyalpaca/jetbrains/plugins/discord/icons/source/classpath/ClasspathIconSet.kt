@@ -20,7 +20,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractIconSet
 
-class ClasspathIconSet(private val source: ClasspathSource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationName: String) : AbstractIconSet(theme, applicationId, icons, applicationName) {
+class ClasspathIconSet(private val source: ClasspathSource, theme: Theme, applicationId: Long?, icons: Set<String>, applicationName: String) :
+    AbstractIconSet(theme, applicationId, icons, applicationName) {
     override fun getAsset(assetId: String): Asset? = when (assetId in this) {
         true -> ClasspathAsset(source, assetId, theme, applicationName)
         false -> null

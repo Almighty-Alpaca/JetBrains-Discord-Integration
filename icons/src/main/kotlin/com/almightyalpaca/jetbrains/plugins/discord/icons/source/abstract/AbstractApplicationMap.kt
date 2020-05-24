@@ -18,8 +18,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Application
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ApplicationMap
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.ThemeMap
 
 abstract class AbstractApplicationMap(private val applications: Map<String, Application>) : ApplicationMap, Map<String, Application> by applications {
     override fun toString(): String {

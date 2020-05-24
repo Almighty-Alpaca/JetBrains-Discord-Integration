@@ -16,10 +16,10 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.roundToNextPowerOfTwo
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractAsset
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.get
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.getCompletedOrNull
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.roundToNextPowerOfTwo
 import java.awt.image.BufferedImage
 import java.net.URL
 import javax.imageio.ImageIO

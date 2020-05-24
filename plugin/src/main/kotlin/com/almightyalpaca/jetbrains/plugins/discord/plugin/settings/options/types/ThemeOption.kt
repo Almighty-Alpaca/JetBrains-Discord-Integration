@@ -49,11 +49,11 @@ class ThemeOption(text: String, val description: String?) : Option<ThemeValue>(t
 
     var currentValue: String? = null
     var componentValue: String? = null
-    set(value) {
-        field = value
+        set(value) {
+            field = value
 
-        componentImpl.text = source.getThemesOrNull()?.get(value)?.name ?: value
-    }
+            componentImpl.text = source.getThemesOrNull()?.get(value)?.name ?: value
+        }
 
     private val componentImpl = JButton().apply button@{
         isEnabled = false
@@ -156,6 +156,7 @@ class ThemeValue(private val option: ThemeOption) : SimpleValue<String?>() {
     override fun setStoredValue(value: String?) {
         this.option.currentValue = value
     }
+
     override fun setPreviewValue(value: String?) {
         this.option.componentValue = value
     }
