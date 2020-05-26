@@ -71,8 +71,9 @@ enum class PresenceLine(override val text: String, override val description: Str
                 else -> project.projectName
             }
 
-            return when (val vcsBranch = project.vcsBranch) {
-                "" -> name
+            val vcsBranch = project.vcsBranch
+            return when {
+                vcsBranch.isNullOrBlank() -> name
                 else -> "$name - $vcsBranch"
             }.toResult()
         }
