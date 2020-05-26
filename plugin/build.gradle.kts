@@ -261,7 +261,7 @@ class PngOptimizeTransformer(private val size: Int, private val quality: Float, 
     private val byteArrayOutputStream = ByteArrayOutputStream()
 
     override fun transform(context: TransformerContext) {
-        val data = context.`is`.readAllBytes()
+        val data = IOUtils.toByteArray(context.`is`)
 
         @Suppress("EXPERIMENTAL_API_USAGE")
         val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
