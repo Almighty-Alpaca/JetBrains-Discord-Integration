@@ -113,7 +113,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
 
     /* ---------- Hidden Settings ---------- */
 
-    private val hidden = hidden()
+    private val hidden by hidden()
 
     override val applicationLastUpdateNotification by hidden.text("<unused>", "")
 }

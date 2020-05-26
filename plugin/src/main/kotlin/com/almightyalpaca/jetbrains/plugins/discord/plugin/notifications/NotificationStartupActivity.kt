@@ -46,6 +46,7 @@ class NotificationStartupActivity : StartupActivity.Background, DisposableCorout
             DiscordPlugin.LOG.info("Plugin update found, showing changelog")
 
             settings.applicationLastUpdateNotification.setStoredValue(version.toString())
+
             launch { ApplicationUpdateNotification.show(version.toString()) }
         }
     }

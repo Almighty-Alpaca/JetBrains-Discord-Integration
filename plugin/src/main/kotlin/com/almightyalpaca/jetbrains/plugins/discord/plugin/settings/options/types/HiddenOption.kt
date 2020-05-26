@@ -17,6 +17,53 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.HiddenOptionHolderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
+import org.jdom.Element
+import javax.swing.JComponent
+import kotlin.reflect.KProperty
 
-fun OptionCreator<Any?>.hidden() = HiddenOptionHolderImpl()
+fun OptionCreator<Any?>.hidden() = OptionProviderImpl(this, HiddenOption())
+
+class HiddenOption : Option<Hidden>(""), OptionHolder, Hidden.Provider {
+    private val value = Hidden(this)
+    override fun getValue(thisRef: OptionHolder, property: KProperty<*>) = value
+
+    override fun addChangeListener(listener: (Hidden) -> Unit) = throw Exception("Cannot listen to hidden changes")
+
+    override val component: JComponent? = null
+
+    override var isComponentEnabled: Boolean
+        get() = false
+        set(value) {}
+
+    override val options: MutableMap<String, Option<*>> = LinkedHashMap()
+
+    override val isModified: Boolean
+        get() = options.values.any(Option<*>::isModified)
+    override val isDefault: Boolean
+        get() = options.values.all(Option<*>::isDefault)
+
+    override fun apply() = super.apply()
+    override fun reset() = super.reset()
+
+    override fun writeXml(element: Element, key: String) {
+        for ((childKey, option) in options) {
+            if (!option.isDefault) {
+                option.writeXml(element, childKey)
+            }
+        }
+    }
+
+    override fun readXml(element: Element, key: String) {
+        for ((childKey, option) in options) {
+            option.readXml(element, childKey)
+        }
+    }
+}
+
+class Hidden(private val option: HiddenOption) : Value(), OptionHolder by option {
+    interface Provider : Value.Provider {
+        override operator fun getValue(thisRef: OptionHolder, property: KProperty<*>): Hidden
+    }
+}

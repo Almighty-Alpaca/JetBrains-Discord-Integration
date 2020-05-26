@@ -61,7 +61,7 @@ abstract class SimpleOption<T>(text: String, val description: String? = null, pr
     }
 
     open fun writeString(): String = currentValue.toString()
-    open fun readString(string: String): Unit = throw Exception()
+    abstract fun readString(string: String)
 }
 
 abstract class SimpleValue<T> : Value() {
