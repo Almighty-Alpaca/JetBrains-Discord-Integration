@@ -44,6 +44,7 @@ import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.IOUtils
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.file.Paths
@@ -146,7 +147,7 @@ private suspend fun HttpClient.uploadFile(
 
         body = object : OutgoingContent.ReadChannelContent() {
             override fun readFrom(): ByteReadChannel {
-                val bytes = source.loadResource(sourcePath)!!.readAllBytes()
+                val bytes = IOUtils.toByteArray(source.loadResource(sourcePath)!!)
 
                 // Bintray has problems with small files so we just append some whitespace
                 return if (bytes.size < 32) {

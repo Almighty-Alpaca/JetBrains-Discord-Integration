@@ -132,7 +132,7 @@ private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: Str
         url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
 
         val data = JsonNodeFactory(false).objectNode().apply {
-            put("image", "data:image/png;base64," + Base64.getEncoder().encodeToString(source.loadResource(path)!!.readAllBytes()))
+            put("image", "data:image/png;base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(source.loadResource(path)!!)))
             put("name", name)
             put("type", 1)
         }
