@@ -16,16 +16,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-import com.intellij.dvcs.DvcsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vfs.VirtualFile
-import git4idea.repo.GitRepositoryManager
-
-// TODO: try to find a method that works for all VCS implementations
-fun getCurrentVcsBranch(project: Project, file: VirtualFile?): String? {
-    val manager = GitRepositoryManager.getInstance(project)
-    return DvcsUtil.guessRepositoryForFile(project, manager, file, null)?.currentBranchName
-}
 
 fun isVcsIgnored(project: Project, file: VirtualFile) = ChangeListManager.getInstance(project).isIgnoredFile(file)

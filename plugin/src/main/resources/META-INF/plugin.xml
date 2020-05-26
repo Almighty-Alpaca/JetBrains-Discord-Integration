@@ -23,7 +23,7 @@
 
     <depends>com.intellij.modules.lang</depends>
 
-    <depends optional="true" config-file="">Git4Idea</depends>
+    <depends optional="true" config-file="git-extension.xml">Git4Idea</depends>
 
     <application-components>
         <component>
@@ -108,4 +108,7 @@
         </group>
     </actions>
 
+    <extensionPoints>
+        <extensionPoint name="vcsInfo" interface="com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension" dynamic="true"/>
+    </extensionPoints>
 </idea-plugin>

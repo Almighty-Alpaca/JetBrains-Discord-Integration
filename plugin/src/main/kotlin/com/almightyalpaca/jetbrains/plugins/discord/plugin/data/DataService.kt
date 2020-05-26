@@ -17,11 +17,15 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
@@ -108,7 +112,7 @@ class DataService {
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
 
-                    val vcsBranch = getCurrentVcsBranch(project, file)
+                    val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
                     DiscordPlugin.LOG.debug("Returning file data")
 
@@ -133,7 +137,7 @@ class DataService {
                 }
             }
 
-            val vcsBranch = getCurrentVcsBranch(project, null)
+            val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, null)
 
             DiscordPlugin.LOG.debug("Returning project data")
 

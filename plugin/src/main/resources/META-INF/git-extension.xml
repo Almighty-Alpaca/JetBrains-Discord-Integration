@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.almightyalpaca.intellij.plugins.discord">
+        <vcsInfo implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.git.GitVcsInfoExtension"/>
+    </extensions>
+</idea-plugin>
