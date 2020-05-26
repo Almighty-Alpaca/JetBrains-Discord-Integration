@@ -1,8 +1,14 @@
+## v1.4.1
+- Fix error when the Git plugin is disabled
+- Fix update notification spam
+- Fix "null" branch when no vcs was found
+- Reduce log spam
+
 ## v1.4.0
 - Add ability to ignore files in .gitignore
 - Add option to show a project but hide files
 - Add support for showing the time the IDe was active instead of total time since startup 
-- Rework actions on toolbar
+- Rework actions in toolbar
 - Detect Discord running in Flatpak
 - Enhance preview in settings
 - Fix exception when checking for other Discord plugins on startup
