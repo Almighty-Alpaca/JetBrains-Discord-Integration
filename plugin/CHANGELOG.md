@@ -1,8 +1,9 @@
-## v1.4.1
+## v1.4.1 & 1.4.2
 - Fix error when the Git plugin is disabled
 - Fix update notification spam
 - Fix "null" branch when no vcs was found
 - Reduce log spam
+- Enable local icons and languages
 
 ## v1.4.0
 - Add ability to ignore files in .gitignore
