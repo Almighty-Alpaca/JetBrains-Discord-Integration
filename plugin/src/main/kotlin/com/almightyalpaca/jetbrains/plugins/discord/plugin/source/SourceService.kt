@@ -32,13 +32,15 @@ class SourceService {
     val source: Source
 
     init {
-        val icons: String? = System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.source")
-        val (platform, location) = icons?.split(':', limit = 2) ?: listOf("", "")
+        val env = System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.source")?.split(':', limit = 2) ?: listOf("")
+        val platform = env[0]
+        val location = env.getOrNull(1)
+
         source = when (platform.toLowerCase()) {
-            "bintray" -> BintraySource(location)
-            "local" -> LocalSource(Paths.get(location))
-            "classpath" -> ClasspathSource(location)
-            else -> BintraySource("almightyalpaca/JetBrains-Discord-Integration/Icons")
+            "bintray" -> BintraySource(location ?: "almightyalpaca/JetBrains-Discord-Integration/Icons")
+            "local" -> LocalSource(Paths.get(location ?: throw IllegalStateException("LocalSource needs a path")))
+            "classpath" -> ClasspathSource(location ?: "discord")
+            else -> ClasspathSource("discord")
         }
     }
 }

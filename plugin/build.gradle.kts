@@ -113,10 +113,10 @@ tasks {
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
 
         // use icons from specific bintray repo
-        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.icons.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
 
-        // use local icons
-        environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
+        // use classpath icons
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
     }
 
     publishPlugin {
