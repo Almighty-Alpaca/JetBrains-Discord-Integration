@@ -19,7 +19,10 @@
 .idea/*
 
 # Copyright settings
-!.idea/copyright/
+!.idea/copyright
+
+# Required plugins
+!.idea/externalDependencies.xml
 
 ## File-based project format
 *.iml
