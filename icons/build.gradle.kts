@@ -16,6 +16,7 @@
 
 plugins {
     kotlin("jvm")
+    id("com.palantir.baseline-exact-dependencies")
 }
 
 dependencies {

@@ -58,9 +58,12 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "com.palantir.baseline-exact-dependencies")
+    fun Project.buildGroup(): String = when (val parent = this.parent) {
+        null -> name
+        else -> parent.buildGroup() +"." + name
+    }
 
-    group = rootProject.group.toString() + "." + project.name.toLowerCase()
+    group = buildGroup()
     version = rootProject.version
 
     val secrets = rootProject.file("secrets.gradle.kts")

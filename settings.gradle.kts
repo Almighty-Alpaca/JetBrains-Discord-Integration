@@ -20,6 +20,9 @@ include("icons")
 include("plugin")
 include("uploader")
 
+include("analytics:model")
+include("analytics:server")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -41,6 +44,7 @@ pluginManagement {
 
     plugins {
         kotlin("jvm") version versionKotlin
+        kotlin ("plugin.serialization") version versionKotlin
         id("com.github.ben-manes.versions") version versionGradleVersions
         id("org.jetbrains.intellij") version versionGradleIntelliJ
         id("com.github.johnrengelman.shadow") version versionGradleShadow

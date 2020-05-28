@@ -18,6 +18,7 @@ import java.net.URI
 
 plugins {
     kotlin("jvm")
+    id("com.palantir.baseline-exact-dependencies")
 }
 
 version = "1.0.0-SNAPSHOT"

@@ -44,6 +44,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.intellij")
     id("com.github.johnrengelman.shadow")
+    id("com.palantir.baseline-exact-dependencies")
 }
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
@@ -58,6 +59,10 @@ dependencies {
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+    }
+
+    implementation(project(":analytics:model")) {
+        exclude(group = "org.jetbrains.kotlin", module = "stdlib-jdk8")
     }
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
