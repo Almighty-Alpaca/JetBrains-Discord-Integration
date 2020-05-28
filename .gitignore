@@ -15,39 +15,42 @@
 #
 
 ### Intellij ###
-# Folder-based project format
-.idea/
+## Folder-based project format
+.idea/*
 
-# File-based project format
+# Copyright settings
+!.idea/copyright/
+
+## File-based project format
 *.iml
 *.ipr
 *.iws
 
-# IntelliJ build output
+## IntelliJ build output
 out/
 
 ### Kotlin ###
-# Compiled class file
+## Compiled class file
 *.class
 
 ### Java ###
-# virtual machine crash logs, see https://www.java.com/en/download/help/error_hotspot.xml
+## virtual machine crash logs, see https://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 ### Gradle ###
-# Gradle cache
+## Gradle cache
 .gradle
 
-# Gradle build output
+## Gradle build output
 **/build/
 
 ### Project Files ###
 
-# Tokens
+## Tokens
 secrets.gradle.kts
 
-# IntelliJ Sandbox
+## IntelliJ Sandbox
 .sandbox/
 
-# Plugin .zip
+## Plugin .zip
 JetBrains-Discord-Integration-Plugin-*.zip
