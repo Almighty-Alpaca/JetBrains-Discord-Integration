@@ -209,7 +209,14 @@ private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: Classp
         url(remote)
     }
 
-    IOUtils.contentEquals(response.content.toInputStream(), source.loadResource(local))
+    try {
+        IOUtils.contentEquals(response.content.toInputStream(), source.loadResource(local))
+    } catch (e: Exception) {
+        println("Error comparing $local with $remote")
+        e.printStackTrace()
+
+        true
+    }
 }
 
 private fun getAssetUrl(appId: Long, iconId: Long?) = URL("https://cdn.discordapp.com/app-assets/$appId/$iconId.png?size=1024")
