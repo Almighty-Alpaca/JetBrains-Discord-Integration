@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     val versionLogback: String by project
+    val versionExposed: String by project
 
     implementation(project(":analytics:model"))
 
@@ -40,6 +41,8 @@ dependencies {
     implementation(ktor("locations"))
     implementation(ktor("auth"))
     implementation(ktor("serialization"))
+
+    implementation(group = "org.jetbrains.exposed", name= "exposed", version = versionExposed)
 
     testImplementation(ktor("server-tests"))
 }
