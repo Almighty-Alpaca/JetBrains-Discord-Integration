@@ -62,6 +62,7 @@ buildscript {
     val versionGradleZeroAllocationHashing: String by properties
 
     repositories {
+        jcenter()
         mavenCentral()
     }
 

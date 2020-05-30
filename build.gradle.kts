@@ -44,8 +44,8 @@ project.version = version
 
 allprojects {
     repositories {
-        mavenCentral()
         jcenter()
+        mavenCentral()
     }
 
     fun secret(name: String) {
@@ -88,7 +88,7 @@ tasks {
         gradleReleaseChannel = GradleReleaseChannel.CURRENT.toString()
 
         rejectVersionIf {
-            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", """M\d+""")
+            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", """M\d+""", "dev")
                 .map { qualifier -> Regex(""".*[.-]$qualifier(release|[.\d-_])*""", RegexOption.IGNORE_CASE) }
                 .any { regex -> regex.matches(candidate.version) }
         }

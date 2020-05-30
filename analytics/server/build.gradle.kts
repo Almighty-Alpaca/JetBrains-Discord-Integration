@@ -29,22 +29,37 @@ repositories {
 }
 
 dependencies {
+    val versionHikariCp: String by project
+    val versionKoin: String by project
+    val versionKtor: String by project
+    val versionKtorm: String by project
     val versionLogback: String by project
-    val versionExposed: String by project
+    val versionPgjdbc: String by project
 
     implementation(project(":analytics:model"))
 
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation(platform(ktor("bom", versionKtor)))
     implementation(ktor("server-netty"))
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
     implementation(ktor("server-core"))
     implementation(ktor("locations"))
     implementation(ktor("auth"))
     implementation(ktor("serialization"))
 
-    implementation(group = "org.jetbrains.exposed", name= "exposed", version = versionExposed)
+    implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
+
+    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = versionPgjdbc)
+
+    implementation(group = "com.zaxxer", name = "HikariCP", version = versionHikariCp)
+
+    implementation(group = "me.liuwj.ktorm", name = "ktorm-core", version = versionKtorm)
+    implementation(group = "me.liuwj.ktorm", name = "ktorm-support-postgresql", version = versionKtorm)
+
+    implementation(group = "org.koin", name = "koin-ktor", version = versionKoin)
+    implementation(group = "org.koin", name = "koin-logger-slf4j", version = versionKoin)
 
     testImplementation(ktor("server-tests"))
 }
 
-fun ktor(module: String): Any = "io.ktor:ktor-$module:${project.property("versionKtor")}"
+fun ktor(module: String, version: String? = null): Any = "io.ktor:ktor-$module:${version ?: ""}"

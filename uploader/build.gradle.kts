@@ -24,8 +24,8 @@ plugins {
 version = "1.0.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
     jcenter()
+    mavenCentral()
     maven { url = URI("https://kotlin.bintray.com/kotlinx") }
 }
 
@@ -44,13 +44,13 @@ dependencies {
     implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$versionCoroutines"))
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
 
-    implementation(platform("io.ktor:ktor-bom:$versionKtor"))
-    implementation(group = "io.ktor", name = "ktor-client-okhttp")
-    implementation(group = "io.ktor", name = "ktor-client-auth-jvm")
-    implementation(group = "io.ktor", name = "ktor-client-core-jvm")
-    implementation(group = "io.ktor", name = "ktor-http-jvm")
-    implementation(group = "io.ktor", name = "ktor-utils-jvm")
-    implementation(group = "io.ktor", name = "ktor-io-jvm")
+    implementation(platform(ktor("bom", versionKtor)))
+    implementation(ktor("client-okhttp"))
+    implementation(ktor("client-auth-jvm"))
+    implementation(ktor("client-core-jvm"))
+    implementation(ktor("http-jvm"))
+    implementation(ktor("utils-jvm"))
+    implementation(ktor("io-jvm"))
 
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
 
@@ -60,6 +60,8 @@ dependencies {
     implementation(platform("com.fasterxml.jackson:jackson-bom:$versionJackson"))
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
 }
+
+fun ktor(module: String, version: String? = null): Any = "io.ktor:ktor-$module:${version ?: ""}"
 
 tasks {
     checkImplicitDependencies {
