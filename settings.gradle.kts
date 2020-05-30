@@ -20,7 +20,7 @@ include("icons")
 include("plugin")
 include("uploader")
 
-include("analytics:model")
+include("analytics:interface")
 include("analytics:server")
 
 pluginManagement {

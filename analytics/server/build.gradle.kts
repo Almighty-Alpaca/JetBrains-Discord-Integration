@@ -36,7 +36,7 @@ dependencies {
     val versionLogback: String by project
     val versionPgjdbc: String by project
 
-    implementation(project(":analytics:model"))
+    implementation(project(":analytics:interface"))
 
     implementation(kotlin("stdlib-jdk8"))
 

@@ -61,7 +61,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
 
-    implementation(project(":analytics:model")) {
+    implementation(project(":analytics:interface")) {
         exclude(group = "org.jetbrains.kotlin", module = "stdlib-jdk8")
     }
 
