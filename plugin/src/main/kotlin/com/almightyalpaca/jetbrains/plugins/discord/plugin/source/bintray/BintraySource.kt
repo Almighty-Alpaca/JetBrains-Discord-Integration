@@ -18,7 +18,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toMap
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
 import com.fasterxml.jackson.databind.JsonNode
@@ -120,82 +119,29 @@ class BintraySource(location: String) : Source, CoroutineScope {
         }
     }
 
-    private suspend fun readLanguages(): LanguageMap = coroutineScope {
-        DiscordPlugin.LOG.info("Getting Bintray repo languages")
+    private suspend fun readLanguages() = BintrayLanguageSourceMap(read("languages", ::LanguageSource)).toLanguageMap()
+    private suspend fun readThemes() = BintrayThemeSourceMap(this, read("themes", ::ThemeSource)).toThemeMap()
+    private suspend fun readApplications() = BintrayApplicationSourceMap(read("applications", ::ApplicationSource)).toApplicationMap()
+
+    private suspend fun <T> read(type: String, factory: (String, JsonNode) -> T): Map<String, T> = coroutineScope {
+        DiscordPlugin.LOG.info("Getting Bintray repo $type")
 
         val mapper = ObjectMapper(YAMLFactory())
 
-        val version = versionJob.await()
-        val files = filesJob.await()
-
-        val languageFiles = files.filter { path -> path.startsWith("languages") }
-
-        val map = languageFiles.stream()
+        filesJob.await()
+            .asSequence()
+            .filter { path -> path.startsWith(type) }
             .map { path ->
-                async {
-                    getFile(user, repository, `package`, version, path) { body ->
+                val id = FilenameUtils.getBaseName(path)
+                id to async {
+                    getFile(user, repository, `package`, versionJob.await(), path) { body ->
                         val node: JsonNode = mapper.readTree(body.string())
-                        LanguageSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
+                        factory(id, node)
                     }
                 }
             }
-            .map { async -> async.asCompletableFuture().get() }
-            .map { p -> p.id to p }
+            .map { (id, async) -> id to async.asCompletableFuture().get() }
             .toMap()
-
-        BintrayLanguageSourceMap(map).toLanguageMap()
-    }
-
-    private suspend fun readThemes(): ThemeMap = coroutineScope {
-        DiscordPlugin.LOG.info("Getting Bintray repo themes")
-
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val version = versionJob.await()
-        val files = filesJob.await()
-
-        val languageFiles = files.filter { path -> path.startsWith("themes") }
-
-        val map = languageFiles.stream()
-            .map { path ->
-                async {
-                    getFile(user, repository, `package`, version, path) { body ->
-                        val node: JsonNode = mapper.readTree(body.string())
-                        ThemeSource(FilenameUtils.getBaseName(path).toLowerCase(), node)
-                    }
-                }
-            }
-            .map { async -> async.asCompletableFuture().get() }
-            .map { p -> p.id to p }
-            .toMap()
-
-        BintrayThemeSourceMap(this@BintraySource, map).toThemeMap()
-    }
-
-    private suspend fun readApplications(): ApplicationMap = coroutineScope {
-        DiscordPlugin.LOG.info("Getting Bintray repo applications")
-
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val version = versionJob.await()
-        val files = filesJob.await()
-
-        val applicationFiles = files.filter { path -> path.startsWith("applications") }
-
-        val map = applicationFiles.stream()
-            .map { path ->
-                async {
-                    getFile(user, repository, `package`, version, path) { body ->
-                        val node: JsonNode = mapper.readTree(body.string())
-                        ApplicationSource(FilenameUtils.getBaseName(path), node)
-                    }
-                }
-            }
-            .map { async -> async.asCompletableFuture().get() }
-            .map { p -> p.id to p }
-            .toMap()
-
-        BintrayApplicationSourceMap(map).toApplicationMap()
     }
 
     private suspend fun <T> get(url: String, handler: (ResponseBody) -> T) =

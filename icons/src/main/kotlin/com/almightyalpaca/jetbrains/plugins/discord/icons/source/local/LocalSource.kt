@@ -59,48 +59,20 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
     override fun getApplicationsAsync(): Deferred<ApplicationMap> = applicationJob
 
-    private fun readLanguages(): LanguageMap {
+    private fun readLanguages() = LocalLanguageSourceMap(this, read(pathLanguages, ::LanguageSource)).toLanguageMap()
+    private fun readThemes() = LocalThemeSourceMap(this, read(pathThemes, ::ThemeSource)).toThemeMap()
+    private fun readApplications() = LocalApplicationSourceMap(read(pathApplications, ::ApplicationSource)).toApplicationMap()
+
+    private fun <T> read(path: Path, factory: (String, JsonNode) -> T): Map<String, T> {
         val mapper = ObjectMapper(YAMLFactory())
 
-        val map = Files.list(pathLanguages)
+        return Files.list(path)
             .filter { p -> p.extension.toLowerCase() == "yaml" }
             .map { p ->
                 val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-                LanguageSource(p.baseName.toLowerCase(), node)
+                val id = p.baseName
+                id to factory(id, node)
             }
-            .map { p -> p.id to p }
             .toMap()
-
-        return LocalLanguageSourceMap(this, map).toLanguageMap()
-    }
-
-    private fun readThemes(): ThemeMap {
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val map = Files.list(pathThemes)
-            .filter { p -> p.extension.toLowerCase() == "yaml" }
-            .map { p ->
-                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-                ThemeSource(p.baseName.toLowerCase(), node)
-            }
-            .map { p -> p.id to p }
-            .toMap()
-
-        return LocalThemeSourceMap(this, map).toThemeMap()
-    }
-
-    private fun readApplications(): ApplicationMap {
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val map = Files.list(pathApplications)
-            .filter { p -> p.extension.toLowerCase() == "yaml" }
-            .map { p ->
-                val node: JsonNode = mapper.readTree(Files.newInputStream(p))
-                ApplicationSource(p.baseName, node)
-            }
-            .map { p -> p.id to p }
-            .toMap()
-
-        return LocalApplicationSourceMap(map).toApplicationMap()
     }
 }
