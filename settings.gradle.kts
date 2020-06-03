@@ -35,21 +35,21 @@ pluginManagement {
         this.load(java.nio.file.Files.newBufferedReader(settingsDir.toPath().resolve("gradle.properties")))
     }
 
-    val versionGradleExactDependencies: String by properties
-    val versionGradleGitVersions: String by properties
-    val versionGradleIntelliJ: String by properties
-    val versionGradleShadow: String by properties
-    val versionGradleVersions: String by properties
+    val versionExactDependencies: String by properties
+    val versionGitVersions: String by properties
+    val versionIntelliJGradle: String by properties
+    val versionShadow: String by properties
+    val versionVersions: String by properties
     val versionKotlin: String by properties
 
     plugins {
         kotlin("jvm") version versionKotlin
         kotlin ("plugin.serialization") version versionKotlin
-        id("com.github.ben-manes.versions") version versionGradleVersions
-        id("org.jetbrains.intellij") version versionGradleIntelliJ
-        id("com.github.johnrengelman.shadow") version versionGradleShadow
-        id("com.palantir.git-version") version versionGradleGitVersions
-        id("com.palantir.baseline-exact-dependencies") version versionGradleExactDependencies
+        id("com.github.ben-manes.versions") version versionVersions
+        id("org.jetbrains.intellij") version versionIntelliJGradle
+        id("com.github.johnrengelman.shadow") version versionShadow
+        id("com.palantir.git-version") version versionGitVersions
+        id("com.palantir.baseline-exact-dependencies") version versionExactDependencies
     }
 }
 
@@ -58,8 +58,8 @@ buildscript {
         this.load(java.nio.file.Files.newBufferedReader(settingsDir.toPath().resolve("gradle.properties")))
     }
 
-    val versionGradlePngtastic: String by properties
-    val versionGradleZeroAllocationHashing: String by properties
+    val versionPngtastic: String by properties
+    val versionZeroAllocationHashing: String by properties
 
     repositories {
         jcenter()
@@ -67,7 +67,7 @@ buildscript {
     }
 
     dependencies {
-        classpath(group = "com.github.depsypher", name = "pngtastic", version = versionGradlePngtastic)
-        classpath(group = "net.openhft", name = "zero-allocation-hashing", version = versionGradleZeroAllocationHashing)
+        classpath(group = "com.github.depsypher", name = "pngtastic", version = versionPngtastic)
+        classpath(group = "net.openhft", name = "zero-allocation-hashing", version = versionZeroAllocationHashing)
     }
 }

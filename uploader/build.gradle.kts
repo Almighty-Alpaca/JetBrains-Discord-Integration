@@ -41,8 +41,8 @@ dependencies {
 
     implementation(kotlin("stdlib"))
 
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$versionCoroutines"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
+    implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
+    implementation(kotlinx("coroutines-core"))
 
     implementation(platform(ktor("bom", versionKtor)))
     implementation(ktor("client-okhttp"))
@@ -79,15 +79,15 @@ tasks {
         dependsOn(graphsDot)
 
         doLast {
-            val files = project.file("build/graphs").listFiles()!!
+            project.file("build/graphs").listFiles()!!
                 .filter { f -> f.isFile }
                 .map { f -> f.nameWithoutExtension }
-            for (file in files) {
-                exec {
-                    workingDir = file("build/graphs")
-                    commandLine = listOf("dot", "-Tpng", "$file.dot", "-o", "$file.png")
+                .forEach { file ->
+                    exec {
+                        workingDir = file("build/graphs")
+                        commandLine = listOf("dot", "-Tpng", "$file.dot", "-o", "$file.png")
+                    }
                 }
-            }
         }
     }
 
@@ -164,5 +164,3 @@ tasks {
         dependsOn(uploadDiscord)
     }
 }
-
-operator fun ExtraPropertiesExtension.contains(key: String) = has(key)

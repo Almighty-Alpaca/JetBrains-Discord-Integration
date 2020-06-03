@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import kotlinx.coroutines.*
 import org.apache.commons.io.FilenameUtils
-import org.intellij.lang.annotations.RegExp
 import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.Closeable
@@ -63,53 +62,27 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
     override fun getThemesAsync(): Deferred<ThemeMap> = themeJob
     override fun getApplicationsAsync(): Deferred<ApplicationMap> = applicationJob
 
-    private fun readLanguages(): LanguageMap {
+    private fun readLanguages() = ClasspathLanguageSourceMap(this, read(pathLanguages, ::LanguageSource)).toLanguageMap()
+    private fun readThemes() = ClasspathThemeSourceMap(this, read(pathThemes, ::ThemeSource)).toThemeMap()
+    private fun readApplications() = LocalApplicationSourceMap(read(pathApplications, ::ApplicationSource)).toApplicationMap()
+
+    private fun <T> read(path: String, factory: (String, JsonNode) -> T): Map<String, T> {
         val mapper = ObjectMapper(YAMLFactory())
 
-        val map = listResources(pathLanguages, Regex(""".*\.yaml"""))
+        return listResources(path, Regex(""".*\.yaml"""))
             .map { p ->
                 val node: JsonNode = mapper.readTree(loadResource(p))
-                LanguageSource(FilenameUtils.getBaseName(p).toLowerCase(), node)
+                val id = FilenameUtils.getBaseName(p)
+                id to factory(id, node)
             }
-            .map { p -> p.id to p }
             .toMap()
-
-        return ClasspathLanguageSourceMap(this, map).toLanguageMap()
-    }
-
-    private fun readThemes(): ThemeMap {
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val map = listResources(pathThemes, Regex(""".*\.yaml"""))
-            .map { p ->
-                val node: JsonNode = mapper.readTree(loadResource(p))
-                ThemeSource(FilenameUtils.getBaseName(p).toLowerCase(), node)
-            }
-            .map { p -> p.id to p }
-            .toMap()
-
-        return ClasspathThemeSourceMap(this, map).toThemeMap()
-    }
-
-    private fun readApplications(): ApplicationMap {
-        val mapper = ObjectMapper(YAMLFactory())
-
-        val map = listResources(pathApplications, Regex(""".*\.yaml"""))
-            .map { p ->
-                val node: JsonNode = mapper.readTree(loadResource(p))
-                ApplicationSource(FilenameUtils.getBaseName(p), node)
-            }
-            .map { p -> p.id to p }
-            .toMap()
-
-        return LocalApplicationSourceMap(map).toApplicationMap()
     }
 
     fun loadResource(location: String): InputStream? = ClasspathSource::class.java.getResourceAsStream(location)
 
-    fun checkResourceExists(location: String): Boolean = ClasspathSource::class.java.getResourceAsStream(location)?.run(Closeable::close) != null
+    fun checkResourceExists(location: String): Boolean = loadResource(location)?.run(Closeable::close) != null
 
-    fun listResources(path: String, @RegExp pattern: Regex): Stream<String> =
+    fun listResources(path: String, pattern: Regex): Stream<String> =
         Reflections(path.substring(1).replace('/', '.'), ResourcesScanner())
             .getResources(pattern.toPattern())
             .stream()
