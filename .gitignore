@@ -24,6 +24,9 @@
 # Required plugins
 !.idea/externalDependencies.xml
 
+# Plugin icon
+!.idea/icon.png
+
 ## File-based project format
 *.iml
 *.ipr
