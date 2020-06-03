@@ -26,8 +26,8 @@ dependencies {
 
     implementation(kotlin(module = "stdlib"))
 
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$versionCoroutines"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
+    implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
+    implementation(kotlinx("coroutines-core"))
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 

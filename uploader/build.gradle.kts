@@ -40,16 +40,16 @@ dependencies {
 
     implementation(kotlin("stdlib"))
 
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$versionCoroutines"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
+    implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
+    implementation(kotlinx("coroutines-core"))
 
-    implementation(platform("io.ktor:ktor-bom:$versionKtor"))
-    implementation(group = "io.ktor", name = "ktor-client-okhttp")
-    implementation(group = "io.ktor", name = "ktor-client-auth-jvm")
-    implementation(group = "io.ktor", name = "ktor-client-core-jvm")
-    implementation(group = "io.ktor", name = "ktor-http-jvm")
-    implementation(group = "io.ktor", name = "ktor-utils-jvm")
-    implementation(group = "io.ktor", name = "ktor-io-jvm")
+    implementation(platform(ktor("bom", versionKtor)))
+    implementation(ktor("client-okhttp"))
+    implementation(ktor("client-auth-jvm"))
+    implementation(ktor("client-core-jvm"))
+    implementation(ktor("http-jvm"))
+    implementation(ktor("utils-jvm"))
+    implementation(ktor("io-jvm"))
 
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
 
@@ -76,15 +76,15 @@ tasks {
         dependsOn(graphsDot)
 
         doLast {
-            val files = project.file("build/graphs").listFiles()!!
+            project.file("build/graphs").listFiles()!!
                 .filter { f -> f.isFile }
                 .map { f -> f.nameWithoutExtension }
-            for (file in files) {
-                exec {
-                    workingDir = file("build/graphs")
-                    commandLine = listOf("dot", "-Tpng", "$file.dot", "-o", "$file.png")
+                .forEach { file ->
+                    exec {
+                        workingDir = file("build/graphs")
+                        commandLine = listOf("dot", "-Tpng", "$file.dot", "-o", "$file.png")
+                    }
                 }
-            }
         }
     }
 
@@ -161,5 +161,3 @@ tasks {
         dependsOn(uploadDiscord)
     }
 }
-
-operator fun ExtraPropertiesExtension.contains(key: String) = has(key)
