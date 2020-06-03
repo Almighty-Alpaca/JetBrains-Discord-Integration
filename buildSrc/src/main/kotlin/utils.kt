@@ -17,3 +17,5 @@
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
 operator fun ExtraPropertiesExtension.contains(key: String) = has(key)
+
+val isCI by lazy { System.getenv("CI") != null }

@@ -61,8 +61,6 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
 }
 
-fun ktor(module: String, version: String? = null): Any = "io.ktor:ktor-$module:${version ?: ""}"
-
 tasks {
     checkImplicitDependencies {
         ignore("org.jetbrains", "annotations")

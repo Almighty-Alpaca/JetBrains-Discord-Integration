@@ -35,7 +35,7 @@ class HiddenOption : Option<Hidden>(""), OptionHolder, Hidden.Provider {
 
     override var isComponentEnabled: Boolean
         get() = false
-        set(value) {}
+        set(_) {}
 
     override val options: MutableMap<String, Option<*>> = LinkedHashMap()
 

@@ -35,39 +35,28 @@ dependencies {
     val versionOkHttp: String by project
     val versionRpc: String by project
 
-    implementation(project(":icons")) {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-        excludeKotlinLibraries()
-    }
+    implementation(project(":icons"))
 
-    implementation(project(":analytics:interface")) {
-        excludeKotlinLibraries()
-    }
+    implementation(project(":analytics:interface"))
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
-        excludeKotlinLibraries()
-    }
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
-}
 
-fun ModuleDependency.excludeKotlinLibraries() {
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-test")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-test-common")
-    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-jdk8")
+    val versionKtor: String by project
+    implementation(platform(ktor("bom", versionKtor)))
+    implementation(ktor("client-okhttp"))
+    implementation(ktor("client-auth-jvm"))
+    implementation(ktor("client-core-jvm"))
+    implementation(ktor("client-json"))
+//    implementation(ktor("http-jvm"))
+//    implementation(ktor("utils-jvm"))
+//    implementation(ktor("io-jvm"))
 }
-
-val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
     // https://www.jetbrains.com/intellij-repository/releases
@@ -75,17 +64,47 @@ intellij {
     version = "2020.1.1"
 
     downloadSources = !isCI
-
     updateSinceUntilBuild = false
-
     sandboxDirectory = "${project.rootDir.absolutePath}/.sandbox"
-
     instrumentCode = false
 
     setPlugins("git4idea")
+}
 
-    // For testing with a custom theme
-    // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
+afterEvaluate {
+    configurations {
+        all {
+            if (name.contains("kotlin", ignoreCase = true)) {
+                return@all
+            }
+
+            resolutionStrategy.dependencySubstitution {
+                val ideaDependency = "com.jetbrains:${intellij.ideaDependency.name}:${intellij.ideaDependency.version}"
+
+                val ideaModules = listOf(
+                    "org.jetbrains.kotlin:kotlin-reflect",
+                    "org.jetbrains.kotlin:kotlin-stdlib",
+                    "org.jetbrains.kotlin:kotlin-stdlib-common",
+                    "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+                    "org.jetbrains.kotlin:kotlin-test",
+                    "org.jetbrains.kotlin:kotlin-test-common",
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
+                    "org.slf4j:slf4j-api"
+                )
+
+                all action@{
+                    val requested = requested as? ModuleComponentSelector ?: return@action
+
+                    if ("${requested.group}:${requested.module}" in ideaModules) {
+                        useTarget(ideaDependency)
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks {
