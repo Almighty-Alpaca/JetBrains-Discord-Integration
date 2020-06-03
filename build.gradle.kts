@@ -93,7 +93,7 @@ tasks {
 
     withType<Wrapper> {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.3"
+        gradleVersion = "6.5"
     }
 
     create<Delete>("clean") {
