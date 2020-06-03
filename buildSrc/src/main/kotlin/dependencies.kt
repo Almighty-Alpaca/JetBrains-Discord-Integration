@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-fun ktor(module: String, version: String? = null) = "io.ktor:ktor-$module:${version ?: ""}"
+fun koin(module: String, version: String) = "org.koin:koin-$module:$version"
 
 fun kotlinx(module: String, version: String? = null) = "org.jetbrains.kotlinx:kotlinx-$module:${version ?: ""}"
+
+fun ktor(module: String, version: String? = null) = "io.ktor:ktor-$module:${version ?: ""}"
+
+fun jooq(module: String? = null) = "org.jooq:jooq${module?.let { "-$it" } ?: ""}"

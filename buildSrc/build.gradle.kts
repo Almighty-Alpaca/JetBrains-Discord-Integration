@@ -33,6 +33,8 @@ dependencies {
     val versionCommonsIo: String by properties
     val versionPngtastic: String by properties
     val versionShadow: String by properties
+    val versionJooq: String by properties
+    val versionJooqGradle: String by properties
     val versionZeroAllocationHashing: String by properties
 
     implementation(group = "com.github.jengelman.gradle.plugins", name = "shadow", version = versionShadow)
@@ -41,4 +43,8 @@ dependencies {
     implementation(group = "net.openhft", name = "zero-allocation-hashing", version = versionZeroAllocationHashing)
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
+
+    implementation(group = "nu.studer", name = "gradle-jooq-plugin", version = versionJooqGradle)
+
+    implementation(group = "org.jooq", name = "jooq-codegen", version = versionJooq)
 }

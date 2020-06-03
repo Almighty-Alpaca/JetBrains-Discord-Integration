@@ -59,9 +59,10 @@ dependencies {
 }
 
 intellij {
+    val versionIntelliJ: String by project
     // https://www.jetbrains.com/intellij-repository/releases
     // https://www.jetbrains.com/intellij-repository/snapshots
-    version = "2020.1.1"
+    version = versionIntelliJ
 
     downloadSources = !isCI
     updateSinceUntilBuild = false
