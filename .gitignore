@@ -27,6 +27,9 @@
 # Plugin icon
 !.idea/icon.png
 
+# Plugin icon
+!.idea/runConfigurations
+
 ## File-based project format
 *.iml
 *.ipr
