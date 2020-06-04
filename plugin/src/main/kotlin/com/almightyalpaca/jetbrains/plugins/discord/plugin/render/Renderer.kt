@@ -38,8 +38,10 @@ abstract class Renderer(private val context: RenderContext) {
         stateCustom: StringValue?,
         largeIcon: IconValue?,
         largeIconText: IconTextValue?,
+        largeIconTextCustom: StringValue?,
         smallIcon: IconValue?,
         smallIconText: IconTextValue?,
+        smallIconTextCustom: StringValue?,
         startTimestamp: TimeValue?
     ): RichPresence {
         DiscordPlugin.LOG.debug("Rendering presence, data=${context.data}, mode=${context.mode}")
@@ -81,6 +83,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
                         null, PresenceIconText.Result.Empty -> null
                         is PresenceIconText.Result.String -> text.value
+                        PresenceIconText.Result.Custom -> largeIconTextCustom?.getValue()
                     }
                     RichPresence.Image(icon.value, caption)
                 }
@@ -92,6 +95,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {
                         null, PresenceIconText.Result.Empty -> null
                         is PresenceIconText.Result.String -> text.value
+                        PresenceIconText.Result.Custom -> smallIconTextCustom?.getValue()
                     }
                     RichPresence.Image(icon.value, caption)
                 }

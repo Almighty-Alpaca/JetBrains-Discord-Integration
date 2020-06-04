@@ -96,11 +96,15 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
 
     private val fileIconLargeToggle by fileTab.toggleable<PresenceIcon>()
     override val fileIconLarge by fileIconLargeToggle.disableOn(PresenceIcon.NONE).selection("Large icon", PresenceIcon.Large.File)
-    override val fileIconLargeText by fileIconLargeToggle.option.selection("Text", PresenceIconText.Large.File)
+    private val fileIconlargeTextToggle by fileIconLargeToggle.option.toggleable<PresenceIconText>()
+    override val fileIconLargeText by fileIconlargeTextToggle.enableOn(PresenceIconText.CUSTOM).selection("Text", PresenceIconText.Large.File)
+    override val fileIconLargeTextCustom by fileIconlargeTextToggle.option.text("Custom", "", 128)
 
     private val fileIconSmallToggle by fileTab.toggleable<PresenceIcon>()
     override val fileIconSmall by fileIconSmallToggle.disableOn(PresenceIcon.NONE).selection("Small icon", PresenceIcon.Small.File)
-    override val fileIconSmallText by fileIconSmallToggle.option.selection("Text", PresenceIconText.Small.File)
+    private val fileIconSmallTextToggle by fileIconSmallToggle.option.toggleable<PresenceIconText>()
+    override val fileIconSmallText by fileIconSmallTextToggle.enableOn(PresenceIconText.CUSTOM).selection("Text", PresenceIconText.Small.File)
+    override val fileIconSmallTextCustom by fileIconSmallTextToggle.option.text("Custom", "", 128)
 
     override val fileTime by fileTab.selection("Show elapsed time", PresenceTime.File)
 
