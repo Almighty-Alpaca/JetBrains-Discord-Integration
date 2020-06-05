@@ -97,7 +97,7 @@ class OptionToggle<T>(private val enabled: Boolean) : Option<Toggle<T>>(""), Tog
             field = value
 
             toggle.second.isComponentEnabled = value
-            option.second.isComponentEnabled = toggle.third(toggle.second.componentValue)
+            option.second.isComponentEnabled = value && toggle.third(toggle.second.componentValue)
         }
 
     override fun addChangeListener(listener: (Toggle<T>) -> Unit) =
