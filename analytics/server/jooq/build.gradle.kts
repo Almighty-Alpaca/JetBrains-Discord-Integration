@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.analytics.model
+import nu.studer.gradle.jooq.JooqEdition
 
-import kotlinx.serialization.Serializable
+plugins {
+    kotlin("jvm")
+    id("com.palantir.baseline-exact-dependencies")
+}
 
-@Serializable
-data class Data(val fileExtension: String) // TODO: Create proper model
+dependencies {
+    val versionJooq: String by project
+
+    implementation(kotlin("stdlib"))
+
+    implementation(jooq(module = "codegen", version = versionJooq))
+}

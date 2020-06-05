@@ -16,6 +16,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.analytics.server
 
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes.main
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
@@ -24,11 +26,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApplicationTest {
-    @Test
-    fun testRoot(): Unit = withTestApplication({ module(testing = true) }) {
-        handleRequest(HttpMethod.Get, "/example").apply {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals("HELLO WORLD!", response.content)
-        }
-    }
+//    val emptyConfig
+//        get() = Configuration(Configuration.Database("", "", ""), Configuration.Ktor(null, Configuration.Ktor.Deployment(null, null, null, null, null), null), null)
+//
+//    @Test
+//    fun testRoot(): Unit = withTestApplication({ main(emptyConfig) }) {
+//        handleRequest(HttpMethod.Get, "/example").apply {
+//            assertEquals(HttpStatusCode.OK, response.status())
+//            assertEquals("HELLO WORLD!", response.content)
+//        }
+//    }
 }

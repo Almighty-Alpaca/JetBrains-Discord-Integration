@@ -187,7 +187,7 @@ tasks {
             Regex("""/?discord/themes/.*\.png""")
         )
 
-        transform(PngOptimizingTransformer(128, 0.9F, iconPaths))
+        transform(PngOptimizingTransformer(128, 0.9F, iconPaths, buildDir.toPath().resolve("cache/icons")))
     }
 
     withType<KotlinCompile> {

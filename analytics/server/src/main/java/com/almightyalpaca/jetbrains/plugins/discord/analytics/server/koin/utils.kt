@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-    kotlin("plugin.serialization")
-    id("com.palantir.baseline-exact-dependencies")
-}
+package com.almightyalpaca.jetbrains.plugins.discord.analytics.server.koin
 
-dependencies {
-    val versionKotlinxSerialisation: String by project
+import io.ktor.application.ApplicationCall
+import io.ktor.application.application
+import io.ktor.util.pipeline.PipelineContext
+import org.koin.core.parameter.ParametersDefinition
+import org.koin.core.qualifier.Qualifier
+import org.koin.ktor.ext.inject
 
-    implementation(kotlin("stdlib-jdk8"))
-
-    implementation(kotlinx("serialization-runtime", version = versionKotlinxSerialisation))
-}
+inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.inject(
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null
+): Lazy<T> = application.inject(qualifier, parameters)

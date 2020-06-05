@@ -57,6 +57,7 @@ hs_err_pid*
 
 ## Tokens
 secrets.gradle.kts
+analytics/server/application.conf
 
 ## IntelliJ Sandbox
 .sandbox/

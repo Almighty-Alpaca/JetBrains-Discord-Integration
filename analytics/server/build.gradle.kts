@@ -1,5 +1,3 @@
-import nu.studer.gradle.jooq.JooqEdition
-
 /*
  * Copyright 2017-2020 Aljoscha Grebe
  *
@@ -16,6 +14,9 @@ import nu.studer.gradle.jooq.JooqEdition
  * limitations under the License.
  */
 
+import nu.studer.gradle.jooq.JooqEdition
+import nu.studer.gradle.jooq.JooqTask
+
 plugins {
     application
     kotlin("jvm")
@@ -24,16 +25,19 @@ plugins {
 }
 
 application {
-    mainClassName = "io.ktor.server.netty.EngineMain"
+    mainClassName = "com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ApplicationKt"
 }
 
 repositories {
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
+    maven(url = "https://jitpack.io")
+    maven(url = "https://kotlin.bintray.com/ktor")
 }
 
 dependencies {
+    val versionClikt: String by project
     val versionDatasourceProxy: String by project
     val versionHikariCp: String by project
+    val versionHoplite: String by project
     val versionKoin: String by project
     val versionKtor: String by project
     val versionLogback: String by project
@@ -52,8 +56,6 @@ dependencies {
 
     implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
 
-    // implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = versionPgjdbc)
-
     implementation(group = "org.postgresql", name = "postgresql", version = versionPostgres)
 
     implementation(group = "net.ttddyy", name = "datasource-proxy", version = versionDatasourceProxy)
@@ -62,17 +64,23 @@ dependencies {
 
     implementation(jooq())
     implementation(jooq(module = "meta"))
-    implementation(jooq(module = "codegen"))
     // Not yet released
     // implementation(jooq("kotlin"))
 
-    implementation(koin("ktor", version = versionKoin))
-    implementation(koin("logger-slf4j", version = versionKoin))
+    implementation(koin(module = "ktor", version = versionKoin))
+    implementation(koin(module = "logger-slf4j", version = versionKoin))
+
+    implementation(hoplite(module = "core", version = versionHoplite))
+    implementation(hoplite(module = "yaml", version = versionHoplite))
+    implementation(hoplite(module = "hocon", version = versionHoplite))
+    implementation(hoplite(module = "ktor", version = versionHoplite))
+
+    implementation(group = "com.github.ajalt", name = "clikt", version = versionClikt)
 
     testImplementation(ktor(module = "server-tests"))
 
-    jooqRuntime(group = "org.postgresql", name = "postgresql", version = versionPostgres)
-    jooqRuntime(jooq("meta-extensions"))
+    jooqRuntime(jooq(module = "meta-extensions"))
+    jooqRuntime(project(":analytics:server:jooq"))
 }
 
 jooq {
@@ -100,9 +108,31 @@ jooq {
                 packageName = "com.almightyalpaca.jetbrains.plugins.discord.analytics.server.database.generated"
             }
 
+            strategy {
+                name = "com.almightyalpaca.jetbrains.plugins.discord.analytics.server.jooq.codegen.SingularNameGeneratorStrategy"
+            }
+
             generate {
                 // TODO: customize generation
             }
         }
+    }
+}
+
+tasks {
+    "generateDatabaseJooqSchemaSource"(JooqTask::class) {
+        inputs.apply {
+            // property("javaExecSpec", javaExecSpec)
+            property("normalizedConfiguration", normalizedConfiguration)
+            normalizedConfiguration.generator.database.properties.find { it.key == "scripts" }?.value?.let { file(it) }
+            dir(normalizedConfiguration.generator.target.directory)
+            files(jooqClasspath)
+        }
+
+        outputs.apply {
+            dir(outputDirectory)
+        }
+
+        outputs.cacheIf { true }
     }
 }

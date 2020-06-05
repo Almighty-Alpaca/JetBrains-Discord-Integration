@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import java.net.URI
-
 plugins {
     kotlin("jvm")
     id("com.palantir.baseline-exact-dependencies")
@@ -26,7 +24,7 @@ version = "1.0.0-SNAPSHOT"
 repositories {
     jcenter()
     mavenCentral()
-    maven { url = URI("https://kotlin.bintray.com/kotlinx") }
+    maven(url = "https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {

@@ -36,11 +36,7 @@ import javax.imageio.IIOImage
 import javax.imageio.ImageIO
 import javax.imageio.ImageWriteParam
 
-@Suppress("FunctionName")
-fun Project.PngOptimizingTransformer(size: Int, quality: Float, includePaths: List<Regex>): Transformer =
-    PngOptimizingTransformer(size, quality, includePaths, buildDir.toPath().resolve("cache/icons"))
-
-class PngOptimizingTransformer(
+class PngOptimizingTransformer constructor(
     private val size: Int,
     private val quality: Float,
     private val includePaths: List<Regex>,
