@@ -37,8 +37,8 @@ enum class PresenceIconText(override val text: String, override val description:
     };
 
     object Large {
-        val Application = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, NONE)
-        val Project = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, NONE)
+        val Application = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
+        val Project = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
         val File = FILE_LANGUAGE to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, CUSTOM, NONE)
     }
 
