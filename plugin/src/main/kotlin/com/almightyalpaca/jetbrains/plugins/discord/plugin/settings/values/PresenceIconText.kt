@@ -29,23 +29,23 @@ enum class PresenceIconText(override val text: String, override val description:
     FILE_LANGUAGE("File Language") {
         override fun RenderContext.getResult() = language?.name.toResult()
     },
-    // CUSTOM("Custom") {
-    //     override fun get(context: RenderContext) = Result.Custom
-    // },
+    CUSTOM("Custom") {
+        override fun RenderContext.getResult() = Result.Custom
+    },
     NONE("None") {
         override fun RenderContext.getResult() = Result.Empty
     };
 
     object Large {
-        val Application = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, NONE)
-        val Project = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, NONE)
-        val File = FILE_LANGUAGE to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, NONE)
+        val Application = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
+        val Project = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
+        val File = FILE_LANGUAGE to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, CUSTOM, NONE)
     }
 
     object Small {
-        val Application = NONE to arrayOf(APPLICATION_VERSION, NONE)
-        val Project = NONE to arrayOf(APPLICATION_VERSION, NONE)
-        val File = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, NONE)
+        val Application = NONE to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
+        val Project = NONE to arrayOf(APPLICATION_VERSION, CUSTOM, NONE)
+        val File = APPLICATION_VERSION to arrayOf(APPLICATION_VERSION, FILE_LANGUAGE, CUSTOM, NONE)
     }
 
     fun String?.toResult() = when {
@@ -55,7 +55,7 @@ enum class PresenceIconText(override val text: String, override val description:
 
     sealed class Result {
         object Empty : Result()
-        // object Custom : Result()
+        object Custom : Result()
         data class String(val value: kotlin.String) : Result()
     }
 }

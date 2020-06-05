@@ -26,8 +26,10 @@ class ProjectRenderer(context: RenderContext) : Renderer(context) {
         stateCustom = settings.projectStateCustom,
         largeIcon = settings.projectIconLarge,
         largeIconText = settings.projectIconLargeText,
+        largeIconTextCustom = settings.projectIconLargeTextCustom,
         smallIcon = settings.projectIconSmall,
         smallIconText = settings.projectIconSmallText,
+        smallIconTextCustom = settings.projectIconLargeTextCustom,
         startTimestamp = settings.projectTime
     )
 }
