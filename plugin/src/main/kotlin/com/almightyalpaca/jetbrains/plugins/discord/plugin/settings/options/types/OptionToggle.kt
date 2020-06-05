@@ -58,7 +58,7 @@ class OptionToggle<T>(private val enabled: Boolean) : Option<Toggle<T>>(""), Tog
             val optionComponent = option.second.component
 
             if (enabled)
-                toggle.second.addChangeListener { value -> option.second.isComponentEnabled = toggle.third(value) }
+                toggle.second.addChangeListener { value -> option.second.isComponentEnabled = isComponentEnabled && toggle.third(value) }
 
             add(toggleComponent, gbc {
                 gridx = 0
@@ -97,7 +97,7 @@ class OptionToggle<T>(private val enabled: Boolean) : Option<Toggle<T>>(""), Tog
             field = value
 
             toggle.second.isComponentEnabled = value
-            option.second.isComponentEnabled = value
+            option.second.isComponentEnabled = toggle.third(toggle.second.componentValue)
         }
 
     override fun addChangeListener(listener: (Toggle<T>) -> Unit) =
