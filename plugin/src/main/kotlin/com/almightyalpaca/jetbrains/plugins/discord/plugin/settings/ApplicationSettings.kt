@@ -45,8 +45,10 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val applicationStateCustom: StringValue
     val applicationIconLarge: IconValue
     val applicationIconLargeText: IconTextValue
+    val applicationIconLargeTextCustom: StringValue
     val applicationIconSmall: IconValue
     val applicationIconSmallText: IconTextValue
+    val applicationIconSmallTextCustom: StringValue
     val applicationTime: TimeValue
 
     val projectDetails: LineValue
@@ -55,8 +57,10 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val projectStateCustom: StringValue
     val projectIconLarge: IconValue
     val projectIconLargeText: IconTextValue
+    val projectIconLargeTextCustom: StringValue
     val projectIconSmall: IconValue
     val projectIconSmallText: IconTextValue
+    val projectIconSmallTextCustom: StringValue
     val projectTime: TimeValue
 
     val fileDetails: LineValue
@@ -65,8 +69,10 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val fileStateCustom: StringValue
     val fileIconLarge: IconValue
     val fileIconLargeText: IconTextValue
+    val fileIconLargeTextCustom: StringValue
     val fileIconSmall: IconValue
     val fileIconSmallText: IconTextValue
+    val fileIconSmallTextCustom: StringValue
     val fileTime: TimeValue
 
     val applicationType: ApplicationTypeValue
