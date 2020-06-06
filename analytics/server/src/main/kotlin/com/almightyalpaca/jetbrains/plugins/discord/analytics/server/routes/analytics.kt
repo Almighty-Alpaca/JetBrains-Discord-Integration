@@ -23,10 +23,10 @@ import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
-import io.ktor.routing.Route
+import io.ktor.routing.Routing
 import io.ktor.routing.post
 
-fun Route.analytics() {
+fun Routing.analytics() {
     authenticate("analyticsAuth") {
         post("/analytics") { analytics: Analytics ->
             val database: Database by inject()

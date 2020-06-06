@@ -21,16 +21,12 @@ import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.token
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Database
 import io.ktor.application.Application
-import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.features.AutoHeadResponse
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
-import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.addShutdownHook
@@ -88,9 +84,7 @@ fun Application.main(configuration: Configuration) {
     }
 
     routing {
-        get("/example") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
+        test()
 
         analytics()
     }
