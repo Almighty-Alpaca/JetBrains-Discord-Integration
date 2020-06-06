@@ -19,6 +19,7 @@ rootProject.name = "JetBrains-Discord-Integration"
 include("icons")
 include("plugin")
 include("uploader")
+include("bot")
 
 pluginManagement {
     repositories {
