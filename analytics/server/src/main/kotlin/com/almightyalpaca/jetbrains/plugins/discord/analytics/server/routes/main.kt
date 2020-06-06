@@ -16,7 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes
 
-import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.hoplineEnvironment
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.configurationEnvironment
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.token
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Database
@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit
 
 @KtorExperimentalAPI
 fun runServer(configuration: Configuration) {
-    val environment = hoplineEnvironment(configuration.ktor) {
+    val environment = configurationEnvironment(configuration.ktor) {
         module { main(configuration) }
     }
 
