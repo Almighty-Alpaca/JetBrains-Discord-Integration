@@ -30,7 +30,7 @@ import java.security.KeyStore
 
 @Suppress("UNUSED_VARIABLE")
 @KtorExperimentalAPI
-fun hoplineEnvironment(config: Configuration.Ktor, configure: ApplicationEngineEnvironmentBuilder.() -> Unit): ApplicationEngineEnvironment {
+fun configurationEnvironment(config: Configuration.Ktor, configure: ApplicationEngineEnvironmentBuilder.() -> Unit): ApplicationEngineEnvironment {
     val applicationIdPath = "ktor.application.id"
 
     val hostConfigPath = "deployment.host"
