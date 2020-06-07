@@ -41,4 +41,8 @@ dependencies {
     implementation(group = "net.openhft", name = "zero-allocation-hashing", version = versionZeroAllocationHashing)
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
+
+    implementation(group = "com.github.docker-java", name = "docker-java", version = "3.2.1")
+    // Because docker-java includes an ancient version of guava
+    implementation(group = "com.google.guava", name = "guava", version = "29.0-jre")
 }

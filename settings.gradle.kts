@@ -24,9 +24,7 @@ include("bot")
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven {
-            url = java.net.URI("https://palantir.bintray.com/releases")
-        }
+        maven(url = "https://palantir.bintray.com/releases")
     }
 
     val properties = java.util.Properties().apply {
