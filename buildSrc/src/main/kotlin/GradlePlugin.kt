@@ -76,8 +76,7 @@ class DockerPlugin : Plugin<Project> {
                 isIgnoreExitValue = true
 
                 commandLine = listOf(
-                    "docker", "buildx",
-                    "create",
+                    "docker", "buildx", "create",
                     "--name", extension.buildContainerName
                 )
             }
@@ -121,8 +120,7 @@ class DockerPlugin : Plugin<Project> {
                 workingDir = dockerBuildDir
 
                 commandLine = listOf(
-                    "docker", "buildx",
-                    "build",
+                    "docker", "buildx", "build",
                     "--platform", "linux/amd64,linux/arm64,linux/arm/v7",
                     "--tag", extension.tag,
                     "."
@@ -138,10 +136,9 @@ class DockerPlugin : Plugin<Project> {
                 workingDir = dockerBuildDir
 
                 commandLine = listOf(
-                    "docker", "buildx",
-                    "build",
+                    "docker", "buildx", "build",
                     // TODO: build and export multi-arch manifest as soon as Docker supports it
-                    //                        "--platform", "linux/amd64,linux/arm/v7",
+                    // "--platform", "linux/amd64,linux/arm/v7",
                     "--platform", extension.localArchitecture,
                     "--tag", extension.tag,
                     "--load",
@@ -158,8 +155,7 @@ class DockerPlugin : Plugin<Project> {
                 workingDir = dockerBuildDir
 
                 commandLine = listOf(
-                    "docker", "buildx",
-                    "build",
+                    "docker", "buildx", "build",
                     "--platform", "linux/amd64,linux/arm64,linux/arm/v7",
                     "--tag", extension.tag,
                     "--push",
@@ -203,7 +199,8 @@ class DockerPlugin : Plugin<Project> {
                 description = "Shows stats about running Docker image"
 
                 commandLine = listOf(
-                    "docker", "container", "ls", "--filter", "name=${extension.devContainerName}"
+                    "docker", "container", "ls",
+                    "--filter", "name=${extension.devContainerName}"
                 )
             }
 
