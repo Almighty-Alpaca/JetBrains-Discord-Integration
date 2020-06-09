@@ -23,8 +23,9 @@ fun CharSequence.find(char: Char, ignoreCase: Boolean = false): IntStream =
     IntStream.range(0, length)
         .filter { i -> get(i).equals(char, ignoreCase) }
 
-fun String.limit(range: IntRange, dots: Boolean = true) =
-    when (length > range.last) {
+fun String?.limit(range: IntRange, dots: Boolean = true) = when {
+    this == null || isInvisible() -> null
+    else -> when (length > range.last) {
         true -> when (dots) {
             true -> "${substring(0, range.last - 1)}…"
             false -> substring(0, 128)
@@ -34,6 +35,7 @@ fun String.limit(range: IntRange, dots: Boolean = true) =
             false -> this
         }
     }
+}
 
 fun String.limitWidth(font: FontMetrics, limit: Int): String =
     when (font.stringWidth(this) <= limit) {
@@ -62,20 +64,12 @@ operator fun Char.times(n: Int): String = StringBuilder().apply {
     }
 }.toString()
 
-fun limitingLength(initialValue: String, range: IntRange, dots: Boolean) =
+fun limitingLength(initialValue: String?, range: IntRange, dots: Boolean) =
     modifying(initialValue) { it.limit(range, dots) }
 
-@JvmName("limitingLengthNullable")
-fun limitingLength(initialValue: String?, range: IntRange, dots: Boolean) =
-    modifying(initialValue) { it?.limit(range, dots) }
-
-fun verifyingLength(initialValue: String, range: IntRange) =
-    verifying(initialValue) { it.length in range }
-
-@JvmName("verifyingLengthNullable")
 fun verifyingLength(initialValue: String?, range: IntRange) =
     verifying(initialValue) { it == null || it.length in range }
 
 fun CharSequence.isInvisible(): Boolean {
-    return isBlank() || indices.all { this[it] == '\u200B' }
+    return indices.all { this[it].isWhitespace() || this[it] == '\u200B' }
 }
