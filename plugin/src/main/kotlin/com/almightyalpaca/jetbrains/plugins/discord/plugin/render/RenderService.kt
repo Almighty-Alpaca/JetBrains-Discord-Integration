@@ -26,6 +26,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCorou
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.AppExecutorUtil
 import kotlinx.coroutines.Job
@@ -97,6 +98,8 @@ class RenderService : DisposableCoroutineScope {
         this.renderClockJob = executor.scheduleWithFixedDelay(delay = 5, unit = TimeUnit.SECONDS) {
             try {
                 render()
+            } catch (e: ProcessCanceledException) {
+                throw e
             } catch (e: Exception) {
                 DiscordPlugin.LOG.error("Error rendering presence", e)
             }
