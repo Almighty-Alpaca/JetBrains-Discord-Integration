@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCorou
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -127,6 +128,8 @@ class RpcService : DisposableCoroutineScope {
 
                 connection?.send(presence)
             }
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             DiscordPlugin.LOG.error("Error while updating presence", e)
         }

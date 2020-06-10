@@ -64,3 +64,6 @@ analytics/server/application.conf
 
 ## Plugin .zip
 JetBrains-Discord-Integration-Plugin-*.zip
+
+## Bot config
+bot/config.yaml

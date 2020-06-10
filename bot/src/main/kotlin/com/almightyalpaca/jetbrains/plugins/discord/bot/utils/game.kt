@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
+package com.almightyalpaca.jetbrains.plugins.discord.bot.utils
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.intellij.openapi.progress.ProcessCanceledException
+import net.dv8tion.jda.api.entities.Activity
 
-inline fun <T> tryOrNull(print: Boolean = true, block: () -> T) = tryOrDefault(null, print, block)
+fun Activity.of(type: Activity.ActivityType? = null, name: String, url: String? = null): Activity? {
+    return when (type) {
+        Activity.ActivityType.STREAMING ->
+            when (url) {
+                null -> null
+                else -> Activity.streaming(name, url)
+            }
+        null -> null
+        else -> Activity.of(type, name)
 
-inline fun <T> tryOrDefault(default: T, print: Boolean = true, block: () -> T): T {
-    return try {
-        block()
-    } catch (e: ProcessCanceledException) {
-        throw e
-    } catch (e: Exception) {
-        if (print) {
-            DiscordPlugin.LOG.error(e)
-        }
-
-        default
     }
 }
+

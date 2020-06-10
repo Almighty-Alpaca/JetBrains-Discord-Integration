@@ -1,0 +1,30 @@
+token: "<TOKEN>"
+command_prefix: "<PREFIX>"
+owner: <ID>
+coCowners:?
+  - <ID>
+development:? true
+guilds:
+  - id: <ID>
+    groups:
+      - name:? "<NAME>"
+        roles:
+          - name:? "<NAME>"
+            id: <ID>
+            triggers:?
+              appIds:?
+                - <ID>
+              states:?
+                - "<TEXT>"
+              details:?
+                - "<TEXT>"
+              partyIds:?
+                - "<ID>"
+              largeImageKeys:?
+                - "<KEY>"
+              largeImageTexts:?
+                - "<TEXT>"
+              smallImageKeys:?
+                - "<KEY>"
+              smallImageTexts:?
+                - "<TEXT>"

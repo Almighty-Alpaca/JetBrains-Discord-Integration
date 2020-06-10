@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
+package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.intellij.openapi.progress.ProcessCanceledException
+import com.jagrosh.jdautilities.command.Command
+import com.jagrosh.jdautilities.command.CommandEvent
 
-inline fun <T> tryOrNull(print: Boolean = true, block: () -> T) = tryOrDefault(null, print, block)
-
-inline fun <T> tryOrDefault(default: T, print: Boolean = true, block: () -> T): T {
-    return try {
-        block()
-    } catch (e: ProcessCanceledException) {
-        throw e
-    } catch (e: Exception) {
-        if (print) {
-            DiscordPlugin.LOG.error(e)
-        }
-
-        default
+class PingCommand : Command() {
+    init {
+        name = "ping"
+        hidden = true
+        guildOnly = false
     }
+
+    override fun execute(event: CommandEvent) = event.reply("pong")
 }

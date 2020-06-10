@@ -48,3 +48,12 @@ dependencies {
 
     implementation(group = "org.jooq", name = "jooq-codegen", version = versionJooq)
 }
+
+gradlePlugin {
+    plugins {
+        create("DockerPlugin") {
+            id = "docker"
+            implementationClass = "DockerPlugin"
+        }
+    }
+}

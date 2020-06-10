@@ -31,13 +31,12 @@ plugins {
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
 
-@Suppress("UNCHECKED_CAST")
-val versionDetails = (project.extra["versionDetails"] as Closure<VersionDetails>)()
+val versionDetails: Closure<VersionDetails> by project.extra
 
-var version = versionDetails.lastTag.removePrefix("v")
-version += when (versionDetails.commitDistance) {
+var version = versionDetails().lastTag.removePrefix("v")
+version += when (versionDetails().commitDistance) {
     0 -> ""
-    else -> "+${versionDetails.commitDistance}"
+    else -> "+${versionDetails().commitDistance}"
 }
 
 project.version = version

@@ -31,6 +31,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.VirtualFile
+import java.time.OffsetDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.min
@@ -103,13 +104,30 @@ class TimeService : Disposable {
         if (idleSince != null) {
             val idleDuration = System.currentTimeMillis() - idleSince
 
-            ApplicationManager.getApplication().durationIdle += idleDuration
+            if (settings.timeoutResetTimeEnabled.getStoredValue()) {
+                val now = System.currentTimeMillis()
+                val application = ApplicationManager.getApplication()
+                application.durationIdle = 0
+                application.timeOpened = now
 
-            for (project in ProjectManager.getInstance().openProjects) {
-                project.durationIdle += idleDuration
+                for (project in ProjectManager.getInstance().openProjects) {
+                    project.durationIdle = 0
+                    project.timeOpened = now
 
-                for (file in FileEditorManager.getInstance(project).openFiles) {
-                    file.durationIdle += idleDuration
+                    for (file in FileEditorManager.getInstance(project).openFiles) {
+                        file.durationIdle = 0
+                        file.timeOpened = now
+                    }
+                }
+            } else {
+                ApplicationManager.getApplication().durationIdle += idleDuration
+
+                for (project in ProjectManager.getInstance().openProjects) {
+                    project.durationIdle += idleDuration
+
+                    for (file in FileEditorManager.getInstance(project).openFiles) {
+                        file.durationIdle += idleDuration
+                    }
                 }
             }
 
