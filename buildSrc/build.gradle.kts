@@ -46,3 +46,12 @@ dependencies {
     // Because docker-java includes an ancient version of guava
     implementation(group = "com.google.guava", name = "guava", version = "29.0-jre")
 }
+
+gradlePlugin {
+    plugins {
+        create("DockerPlugin") {
+            id = "docker"
+            implementationClass = "DockerPlugin"
+        }
+    }
+}

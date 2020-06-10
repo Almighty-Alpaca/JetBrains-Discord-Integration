@@ -19,9 +19,8 @@ plugins {
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
     id("com.palantir.baseline-exact-dependencies")
+    id("docker")
 }
-
-apply<DockerPlugin>()
 
 docker {
     "bot" {

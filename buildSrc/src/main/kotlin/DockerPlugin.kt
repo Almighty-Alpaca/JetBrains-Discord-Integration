@@ -47,7 +47,7 @@ class DockerConfiguration(val name: String, project: Project) {
     var devContainerName: String = "development"
     var buildContainerName: String = "builder"
     var localArchitecture: String = "linux/amd64"
-    var dockerfile = project.file("Dockerfile")
+    var dockerfile: File = project.file("Dockerfile")
 
     init {
         project.createTasks(this)
