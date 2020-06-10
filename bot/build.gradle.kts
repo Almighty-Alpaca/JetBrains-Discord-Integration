@@ -24,9 +24,11 @@ plugins {
 apply<DockerPlugin>()
 
 docker {
-    tag = "almightyalpaca/jetbrains-discord-integration-bot"
-    devContainerName = "${project.group}.dev"
-    buildContainerName = "${project.group}.builder"
+    "bot" {
+        tag = "almightyalpaca/jetbrains-discord-integration-bot"
+        devContainerName = "${project.group}.dev"
+        buildContainerName = "${project.group}.builder"
+    }
 }
 
 application {
