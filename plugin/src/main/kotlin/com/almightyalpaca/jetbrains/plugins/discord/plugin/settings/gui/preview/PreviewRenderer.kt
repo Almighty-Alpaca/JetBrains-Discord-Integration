@@ -488,6 +488,11 @@ private fun Data.completeMissingData(): Data.File {
         file?.fileTimeOpened ?: project?.projectTimeOpened ?: applicationTimeOpened,
         file?.fileTimeActive ?: project?.projectTimeActive ?: applicationTimeActive,
         file?.filePath ?: "dummy/$dummyFileName",
-        file?.fileIsWriteable ?: true
+        file?.fileIsWriteable ?: true,
+        file?.editorIsTextEditor ?: false,
+        file?.caretLine ?: 0,
+        file?.lineCount ?: 0,
+        file?.moduleName ?: "dummy-module",
+        file?.pathInModule ?: "/dummy/$dummyFileName"
     )
 }

@@ -35,9 +35,12 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.wm.IdeFocusManager
 
 val dataService: DataService
@@ -109,6 +112,21 @@ class DataService {
                         val fileTimeActive = file.timeActive
                         val filePath = file.path
                         val fileIsWriteable = file.isWritable
+                        val editorIsTextEditor = editor is TextEditor
+
+                        val caretLine =
+                            if (editor is TextEditor) // need smart cast here
+                                editor.editor.caretModel.primaryCaret.logicalPosition.line + 1
+                            else 0
+                        val lineCount =
+                            if (editor is TextEditor) // need smart cast here
+                                editor.editor.document.lineCount
+                            else 0
+
+                        val module = ModuleUtil.findModuleForFile(file, project)
+                        val moduleName = module?.name
+                        val moduleDirPath = module?.guessModuleDir()
+                        val pathInModule = if (moduleDirPath != null) file.path.removePrefix(moduleDirPath.path) else ""
 
                         val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
@@ -131,7 +149,12 @@ class DataService {
                             fileTimeOpened,
                             fileTimeActive,
                             filePath,
-                            fileIsWriteable
+                            fileIsWriteable,
+                            editorIsTextEditor,
+                            caretLine,
+                            lineCount,
+                            moduleName,
+                            pathInModule
                         )
                     }
                 }

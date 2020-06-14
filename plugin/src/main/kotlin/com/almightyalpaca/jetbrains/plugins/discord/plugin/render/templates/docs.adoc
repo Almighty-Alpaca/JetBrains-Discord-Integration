@@ -1,0 +1,65 @@
+= How to use custom templates
+
+== Variables
+
+The syntax for template variables is `${...}`.
+
+Here is a list of all the variables that you can use:
+
+- `${ApplicationVersion}`: The version of the IDE; for example `2020.1.2`
+- `${ProjectName}`: The name of the project
+- `${ProjectDescription}`: The project's description, as provided in `Discord -&gt; Project` (in Settings)
+- `${VcsBranch}`: The name of the git branch you're currently working on
+- `${FileName}`: The name of the file you're working on
+- `${FileNameUnique}`: The name of the file you're working on, but it is unique in all your open editors
+- `${CaretLine}`: The line the primary caret is on (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${LineCount}`: The number of lines in the currently open document (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${Language}`: The language of the file you are currently focused on
+- `${ModuleName}`: The name of the module the file currently in focus is; null in non-IDEA IDEs
+- `${PathInModule}`: The path relative to the root of the module of the file; for example `/src/Main.java`; empty if intellij couldn't guess the module directory
+
+TIP: although you can nest those, it's not guaranteed to work
+
+== Other stuff
+
+Most of the stuff here follows this pattern: `$Name{Arg1}{Arg2}{Arg3}...{ArgN}`
+
+Some other stuff you can do with templates:
+
+- `$FileIsWritable{text1}{text2}`: Evaluates to `text1`
+if the currently focused-on file in the editor is writable,
+or `text2` otherwise.
+
+Example: you can implement the `Prefix file names with Reading/Editing`
+option in the settings like this:
+
+`$FileIsWritable{Editing}{Reading} ...`
+
+- `$NotNull{variableName}{text1}{text2}`: Evaluates to `text1`
+if the variable `variableName` is not null, or `text2` otherwise.
+This was implemented mostly for `${VcsBranch}`, but given the power
+to work with other variables as well; nesting not allowed.
+`text1` is referred to as the `onNotNull` part, and `text2` is
+referred to as the `onNull` part.
+
+Example:
+`${ProjectName}$NotNull{VcsBranch}{, on branch: ${VcsBranch}}{}`
+will evaluate to `${ProjectName}, on branch ${VcsBranch}` when
+`${VcsBranch}` is not null or `${ProjectName}` when it is null.
+
+* `$IsTextEditor{text1}{text2}`: evaluates to `text1` if the currently
+open editor is a text editor or `text2` otherwise.
+
+Example: Add `(caretline/linecount)` next to file, if it is in a text editor:
+`${FileName}$IsTextEditor{(${CaretLine}/${LineCount})}{}`
+
+* `$RegexEscape{text}` can be used if `text` contains character that have special
+meaning in regex, and you want them escaped.
+
+Example: `$RegexEscape{A+}` will evaluate to the regex `A\+`.
+
+* `$Matches{text}{regex}{onMatch}{else}` evaluates to `onMatch` if `text`
+matches `regex` or `else` otherwise.
+
+Example: `$Matches{${ModuleName}}{$RegexEscape{${ProjectName}}}{}{, in module ${ModuleName}}` will
+add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}`
