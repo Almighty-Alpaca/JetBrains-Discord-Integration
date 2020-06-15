@@ -29,7 +29,7 @@ class FileRenderer(context: RenderContext) : Renderer(context) {
         largeIconTextCustom = settings.fileIconLargeTextCustom,
         smallIcon = settings.fileIconSmall,
         smallIconText = settings.fileIconSmallText,
-        smallIconTextCustom = settings.fileIconLargeTextCustom,
+        smallIconTextCustom = settings.fileIconSmallTextCustom,
         startTimestamp = settings.fileTime
     )
 }

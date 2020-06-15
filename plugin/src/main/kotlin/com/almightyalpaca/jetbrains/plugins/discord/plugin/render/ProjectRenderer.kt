@@ -29,7 +29,7 @@ class ProjectRenderer(context: RenderContext) : Renderer(context) {
         largeIconTextCustom = settings.projectIconLargeTextCustom,
         smallIcon = settings.projectIconSmall,
         smallIconText = settings.projectIconSmallText,
-        smallIconTextCustom = settings.projectIconLargeTextCustom,
+        smallIconTextCustom = settings.projectIconSmallTextCustom,
         startTimestamp = settings.projectTime
     )
 }
