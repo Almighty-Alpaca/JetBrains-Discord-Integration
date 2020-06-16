@@ -55,9 +55,8 @@ hs_err_pid*
 
 ### Project Files ###
 
-## Tokens
-secrets.gradle.kts
-analytics/server/application.conf
+## Secrets
+secrets.properties
 
 ## IntelliJ Sandbox
 .sandbox/

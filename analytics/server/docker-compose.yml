@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  server:
+    container_name: server
+    image: ${dockerImage}
+    ports:
+      - 8080:8080
+    volumes:
+      - ./application.conf:/config/application.conf
+    depends_on:
+      - database
+
+  database:
+    container_name: timescaledb
+    image: timescale/timescaledb:latest-pg12
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${databaseUser}
+      - POSTGRES_PASSWORD=${databasePassword}
+      - POSTGRES_DB=${databaseName}
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:7.0.0
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - database
+
+volumes:
+  timescaledb_data:
+  grafana_data:

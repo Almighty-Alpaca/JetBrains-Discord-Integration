@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import nu.studer.gradle.jooq.JooqEdition
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.jooq
 
 plugins {
     kotlin("jvm")

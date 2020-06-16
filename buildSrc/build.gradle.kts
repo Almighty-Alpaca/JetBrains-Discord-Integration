@@ -51,9 +51,19 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("DockerPlugin") {
+        register("Docker Plugin") {
             id = "docker"
-            implementationClass = "DockerPlugin"
+            implementationClass = "com.almightyalpaca.jetbrains.plugins.discord.gradle.DockerPlugin"
+        }
+
+        register("Docker-Compose Plugin") {
+            id = "docker-compose"
+            implementationClass = "com.almightyalpaca.jetbrains.plugins.discord.gradle.DockerComposePlugin"
+        }
+
+        register("Secrets Plugin") {
+            id = "secrets"
+            implementationClass = "com.almightyalpaca.jetbrains.plugins.discord.gradle.SecretsPlugin"
         }
     }
 }

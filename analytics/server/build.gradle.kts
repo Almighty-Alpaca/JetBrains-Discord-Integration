@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.*
 import nu.studer.gradle.jooq.JooqEdition
 import nu.studer.gradle.jooq.JooqTask
 
@@ -21,7 +22,10 @@ plugins {
     application
     kotlin("jvm")
     id("com.palantir.baseline-exact-dependencies")
-    id("nu.studer.jooq")
+    nu.studer.jooq
+    docker
+    `docker-compose`
+    secrets
 }
 
 application {
@@ -36,12 +40,13 @@ repositories {
 dependencies {
     val versionClikt: String by project
     val versionDatasourceProxy: String by project
+    val versionFlyway: String by project
     val versionHikariCp: String by project
     val versionHoplite: String by project
     val versionKoin: String by project
     val versionKtor: String by project
     val versionLogback: String by project
-    val versionPostgres: String by project
+    val versionPgjdbcNg: String by project
 
     implementation(project(":analytics:interface"))
 
@@ -56,23 +61,26 @@ dependencies {
 
     implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
 
-    implementation(group = "org.postgresql", name = "postgresql", version = versionPostgres)
+    // implementation(group = "org.postgresql", name = "postgresql", version = versionPostgres)
+    implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = versionPgjdbcNg)
 
     implementation(group = "net.ttddyy", name = "datasource-proxy", version = versionDatasourceProxy)
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = versionHikariCp)
 
+    implementation(group = "org.flywaydb", name = "flyway-core", version = versionFlyway)
+
     implementation(jooq())
     implementation(jooq(module = "meta"))
-    // Not yet released
+    // TODO: Add once released
     // implementation(jooq("kotlin"))
 
     implementation(koin(module = "ktor", version = versionKoin))
     implementation(koin(module = "logger-slf4j", version = versionKoin))
 
     implementation(hoplite(module = "core", version = versionHoplite))
-    implementation(hoplite(module = "yaml", version = versionHoplite))
     implementation(hoplite(module = "hocon", version = versionHoplite))
+    implementation(hoplite(module = "yaml", version = versionHoplite))
     implementation(hoplite(module = "ktor", version = versionHoplite))
 
     implementation(group = "com.github.ajalt", name = "clikt", version = versionClikt)
@@ -81,6 +89,50 @@ dependencies {
 
     jooqRuntime(jooq(module = "meta-extensions"))
     jooqRuntime(project(":analytics:server:jooq"))
+}
+
+docker {
+    "server" {
+        tag = "almightyalpaca/jetbrains-discord-integration-analytics-server"
+        devContainerName = "${project.group}.dev"
+        buildContainerName = "${rootProject.group}.docker.builder"
+
+        mount("type=bind,source=${project.file("application.conf").absolutePath},target=/config/application.conf")
+    }
+}
+
+dockerCompose {
+    "server" {
+        projectContainer = "server"
+
+        val dockerImage = docker["server"]!!
+
+        val properties: Map<String, String> = mutableMapOf<String, String>().apply {
+            put("dockerImage", dockerImage.tag)
+
+            secrets.server.database.user?.let { user -> put("databaseUser", user) }
+            secrets.server.database.password?.let { password -> put("databasePassword", password) }
+            secrets.server.database.name?.let { name ->
+                put("databaseName", name)
+                put("databaseUrl", "jdbc:pgsql://database/$name")
+            }
+            secrets.server.authentication.token?.let { token -> put("authenticationToken", token) }
+        }
+
+        inputs {
+            property("properties", properties)
+        }
+
+        copySpec {
+            from("application.conf")
+
+            expand(properties)
+        }
+
+        copyDependsOn(secrets.checkTask)
+
+        runDependsOn(dockerImage)
+    }
 }
 
 jooq {
@@ -97,7 +149,7 @@ jooq {
                 name = "org.jooq.meta.extensions.ddl.DDLDatabase"
 
                 properties {
-                    property(key = "scripts", value = "schema.sql")
+                    property(key = "scripts", value = "src/main/resources/db/migration/")
                     property(key = "sort", value = "semantic")
                     property(key = "unqualifiedSchema", value = "none")
                     property(key = "defaultNameCase", value = "lower")
@@ -120,13 +172,43 @@ jooq {
 }
 
 tasks {
-    "generateDatabaseJooqSchemaSource"(JooqTask::class) {
+    val runSystemProperties: Map<String, String> = mutableMapOf<String, String>().apply {
+        secrets.server.database.user?.let { user -> put("databaseUser", user) }
+        secrets.server.database.password?.let { password -> put("databasePassword", password) }
+        val jdbcUrl = when (val name = secrets.server.database.name) {
+            null -> when (val url = secrets.server.database.url) {
+                null -> "jdbc:pgsql:"
+                else -> "jdbc:pgsql://$url/"
+            }
+            else -> when (val url = secrets.server.database.url) {
+                null -> "jdbc:pgsql:$name"
+                else -> "jdbc:pgsql://$url/$name"
+            }
+        }
+        put("databaseUrl", jdbcUrl)
+        secrets.server.authentication.token?.let { token -> put("authenticationToken", token) }
+    }
+
+    "run"(JavaExec::class) {
+        dependsOn(secrets.checkTask)
+
+        systemProperties.putAll(runSystemProperties)
+    }
+
+    "runShadow"(JavaExec::class) {
+        dependsOn(secrets.checkTask)
+
+        systemProperties.putAll(runSystemProperties)
+    }
+
+    withType<JooqTask> {
         inputs.apply {
-            // property("javaExecSpec", javaExecSpec)
             property("normalizedConfiguration", normalizedConfiguration)
-            normalizedConfiguration.generator.database.properties.find { it.key == "scripts" }?.value?.let { file(it) }
-            dir(normalizedConfiguration.generator.target.directory)
             files(jooqClasspath)
+
+            if (normalizedConfiguration.generator.database.name == "org.jooq.meta.extensions.ddl.DDLDatabase") {
+                normalizedConfiguration.generator.database.properties.find { it.key == "scripts" }?.value?.let { files(it) }
+            }
         }
 
         outputs.apply {

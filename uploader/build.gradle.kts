@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.kotlinx
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.ktor
+
 plugins {
     kotlin("jvm")
     id("com.palantir.baseline-exact-dependencies")
+    secrets
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -69,7 +73,7 @@ tasks {
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.graphs.GraphsKt"
     }
 
-    create("graphs") {
+    register("graphs") {
         group = "icons"
 
         dependsOn(graphsDot)
@@ -106,32 +110,27 @@ tasks {
         dependsOn(checkIcons)
     }
 
-    create<JavaExec>("checkUnusedIcons") task@{
+    register<JavaExec>("checkUnusedIcons") task@{
         group = "verification"
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.find.UnusedIconFinderKt"
     }
 
-    fun Task.checkTokens() {
-        if (!project.extra.has("DISCORD_TOKEN") || !project.extra.has("BINTRAY_KEY")) {
-            enabled = false
-        }
-    }
-
     val uploadDiscord by registering(JavaExec::class) task@{
         group = "upload"
 
         dependsOn(checkIcons)
-        checkTokens()
+        dependsOn(secrets.checkTask)
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.DiscordUploaderKt"
 
-        if ("DISCORD_TOKEN" in project.extra) {
-            environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)
-        } else {
+        val discordToken = secrets.tokens.discord
+        if (discordToken == null) {
             enabled = false
+        } else {
+            environment("DISCORD_TOKEN", discordToken)
         }
     }
 
@@ -139,19 +138,20 @@ tasks {
         group = "upload"
 
         dependsOn(checkLanguages)
-        checkTokens()
+        dependsOn(secrets.checkTask)
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.BintrayUploaderKt"
 
-        if ("BINTRAY_KEY" in project.extra) {
-            environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
-        } else {
+        val bintrayToken = secrets.tokens.bintray
+        if (bintrayToken == null) {
             enabled = false
+        } else {
+            environment("BINTRAY_KEY", bintrayToken)
         }
     }
 
-    create("upload") {
+    register("upload") {
         group = "upload"
 
         dependsOn(check)

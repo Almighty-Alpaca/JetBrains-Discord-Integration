@@ -26,8 +26,10 @@ plugins {
     kotlin("jvm") apply false
     id("com.github.ben-manes.versions")
     id("com.palantir.git-version")
-    id("com.palantir.baseline-exact-dependencies")
+    id("com.palantir.baseline-exact-dependencies") apply false
 }
+
+val javaVersion = "1.8"
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
 
@@ -46,36 +48,28 @@ allprojects {
         jcenter()
         mavenCentral()
     }
-
-    fun secret(name: String) {
-        project.extra[name] = System.getenv(name) ?: return
-    }
-
-    secret("DISCORD_TOKEN")
-    secret("BINTRAY_KEY")
-    secret("JETBRAINS_TOKEN")
 }
 
 subprojects {
     fun Project.buildGroup(): String = when (val parent = this.parent) {
-        null -> name
-        else -> parent.buildGroup() +"." + name
+        null -> group.toString()
+        else -> parent.buildGroup() + "." + name
     }
 
     group = buildGroup()
     version = rootProject.version
 
-    val secrets = rootProject.file("secrets.gradle.kts")
-    if (secrets.exists()) {
-        apply(from = secrets)
-    }
-
     tasks {
         withType<KotlinCompile> {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = javaVersion
                 freeCompilerArgs += "-Xjvm-default=enable"
             }
+        }
+
+        withType<JavaCompile> {
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
         }
     }
 }
@@ -98,7 +92,7 @@ tasks {
         gradleVersion = "6.5"
     }
 
-    create<Delete>("clean") {
+    register<Delete>("clean") {
         group = "build"
 
         val regex = Regex("""JetBrains-Discord-Integration-Plugin-\d+.\d+.\d+(?:\+\d+)?.zip""")
@@ -110,7 +104,7 @@ tasks {
         delete(project.buildDir)
     }
 
-    create("default") {
+    register("default") {
         val buildPlugin = project.tasks.getByPath("plugin:buildPlugin") as Zip
 
         dependsOn(buildPlugin)
@@ -123,7 +117,7 @@ tasks {
         }
     }
 
-    create<Delete>("clean-sandbox") {
+    register<Delete>("clean-sandbox") {
         group = "build"
 
         delete(project.file(".sandbox"))

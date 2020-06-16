@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+package com.almightyalpaca.jetbrains.plugins.discord.gradle
+
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.googlecode.pngtastic.core.PngImage
 import com.googlecode.pngtastic.core.PngOptimizer
 import org.apache.commons.io.IOUtils
-import org.gradle.api.Project
 import org.gradle.api.file.FileTreeElement
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream

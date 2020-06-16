@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-/**
- * original source: https://github.com/etiennestuder/gradle-jooq-plugin/blob/master/example/use_kotlin_dsl/buildSrc/src/main/kotlin/JooqExtensionExts.kt
- */
+package com.almightyalpaca.jetbrains.plugins.discord.gradle
 
 import nu.studer.gradle.jooq.JooqConfiguration
 import nu.studer.gradle.jooq.JooqEdition
@@ -28,13 +26,17 @@ import org.gradle.kotlin.dsl.invoke
 import org.jooq.meta.jaxb.*
 import org.jooq.meta.jaxb.Target
 
+/*
+ * Original source: https://github.com/etiennestuder/gradle-jooq-plugin/blob/master/example/use_kotlin_dsl/buildSrc/src/main/kotlin/JooqExtensionExts.kt
+ */
+
 /**
  * Applies the supplied action to the Project's instance of [JooqExtensionKotlin]
  *
  * ```
  * jooq {
  *  val java = project.the<JavaPluginConvention>()
- *  "schema"(java.sourceSets.getByName("main")) {
+ *  "com.almightyalpaca.jetbrains.plugins.discord.gradle.schema"(java.sourceSets.getByName("main")) {
  *      jdbc {
  *          ....
  *      }
@@ -53,7 +55,7 @@ import org.jooq.meta.jaxb.Target
  */
 fun Project.jooq(action: JooqExtensionKotlin.() -> Unit) {
     project.configure<JooqExtension> {
-        JooqExtensionKotlin(this).apply(action)
+        JooqExtensionKotlin(project, this).apply(action)
     }
 }
 
@@ -108,7 +110,7 @@ fun Generator.strategy(action: Strategy.() -> Unit) {
 }
 
 /**
- * Applies matchers configuration to [Strategy]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.matchers configuration to [Strategy]
  *
  * @receiver the Jooq [Strategy]
  * @param action A configuration lambda to apply on a receiver of type [Strategy]
@@ -118,7 +120,7 @@ fun Strategy.matchers(action: Matchers.() -> Unit) {
 }
 
 /**
- * Applies tables configuration to [Matchers]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.tables configuration to [Matchers]
  *
  * @receiver the Jooq [Matchers]
  * @param action A configuration lambda to apply on a receiver of type [Matchers]
@@ -128,7 +130,7 @@ fun Matchers.tables(action: MutableList<MatchersTableType>.() -> Unit) {
 }
 
 /**
- * Applies table configuration to [MutableList] of [MatchersTableType]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.table configuration to [MutableList] of [MatchersTableType]
  *
  * @receiver the Jooq [MutableList] of [MatchersTableType]
  * @param action A configuration lambda to apply on a receiver of type [MutableList] of [MatchersTableType]
@@ -138,7 +140,7 @@ fun MutableList<MatchersTableType>.table(action: MatchersTableType.() -> Unit) {
 }
 
 /**
- * Applies pojoClass configuration to [MatchersTableType]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.pojoClass configuration to [MatchersTableType]
  *
  * @receiver the Jooq [MatchersTableType]
  * @param action A configuration lambda to apply on a receiver of type [MatchersTableType]
@@ -158,7 +160,7 @@ fun Generator.generate(action: Generate.() -> Unit) {
 }
 
 /**
- * Applies forcedTypes configuration to [Database]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.forcedTypes configuration to [Database]
  *
  * @receiver the Jooq [Database]
  * @param action A configuration lambda to apply on a receiver of type [Database]
@@ -168,7 +170,7 @@ fun Database.forcedTypes(action: MutableList<ForcedType>.() -> Unit) {
 }
 
 /**
- * Applies forcedType configuration to [MutableList] of [ForcedType]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.forcedType configuration to [MutableList] of [ForcedType]
  *
  * @receiver the Jooq [MutableList] of [ForcedType]
  * @param action A configuration lambda to apply on a receiver of type [MutableList] of [ForcedType]
@@ -178,7 +180,7 @@ fun MutableList<ForcedType>.forcedType(action: ForcedType.() -> Unit) {
 }
 
 /**
- * Applies schemata configuration to [Database]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.schemata configuration to [Database]
  *
  * @receiver the Jooq [Database]
  * @param action A configuration lambda to apply on a receiver of type [Database]
@@ -188,7 +190,7 @@ fun Database.schemata(action: MutableList<SchemaMappingType>.() -> Unit) {
 }
 
 /**
- * Applies schema configuration to [MutableList] of [SchemaMappingType]
+ * Applies com.almightyalpaca.jetbrains.plugins.discord.gradle.schema configuration to [MutableList] of [SchemaMappingType]
  *
  * @receiver the Jooq [MutableList] of [SchemaMappingType]
  * @param action A configuration lambda to apply on a receiver of type [MutableList] of [SchemaMappingType]
@@ -201,7 +203,7 @@ fun Database.properties(action: MutableList<Property>.() -> Unit) {
     this.withProperties((this.properties ?: mutableListOf()).apply(action))
 }
 
-fun MutableList<Property>.property(key: String, value:String) {
+fun MutableList<Property>.property(key: String, value: String) {
     this += Property().withKey(key).withValue(value)
 }
 
@@ -209,6 +211,7 @@ fun MutableList<Property>.property(key: String, value:String) {
  * JooqExtension Wrapper that allows us to dynamically create configurations
  */
 class JooqExtensionKotlin(
+    private val project: Project,
     private val jooq: JooqExtension
 ) {
 
@@ -237,6 +240,9 @@ class JooqExtensionKotlin(
             Configuration()
         )
         jooq.whenConfigAdded.invoke(jooqConfig)
+        if (jooq.generateSchemaSourceOnCompilation) {
+            project.tasks.getByName(sourceSet.getCompileTaskName("kotlin")).dependsOn(jooqConfig.jooqTaskName.toString())
+        }
         jooqConfig.configuration.apply(action)
     }
 }

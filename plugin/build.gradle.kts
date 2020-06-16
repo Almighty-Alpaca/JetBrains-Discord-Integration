@@ -16,6 +16,9 @@
 
 @file:Suppress("SuspiciousCollectionReassignment")
 
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.PngOptimizingTransformer
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.isCi
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.ktor
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
@@ -23,8 +26,9 @@ import org.jsoup.Jsoup
 plugins {
     kotlin("jvm")
     id("org.jetbrains.intellij")
-    id("com.github.johnrengelman.shadow")
+    com.github.johnrengelman.shadow
     id("com.palantir.baseline-exact-dependencies")
+    secrets
 }
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
@@ -64,7 +68,7 @@ intellij {
     // https://www.jetbrains.com/intellij-repository/snapshots
     version = versionIntelliJ
 
-    downloadSources = !isCI
+    downloadSources = !isCi
     updateSinceUntilBuild = false
     sandboxDirectory = "${project.rootDir.absolutePath}/.sandbox"
     instrumentCode = false
@@ -134,10 +138,13 @@ tasks {
     }
 
     publishPlugin {
-        if (project.extra.has("JETBRAINS_TOKEN")) {
-            token(project.extra["JETBRAINS_TOKEN"])
-        } else {
+        dependsOn(secrets.checkTask)
+
+        val jetbrainsToken = secrets.tokens.jetbrains
+        if (jetbrainsToken == null) {
             enabled = false
+        } else {
+            token(jetbrainsToken)
         }
 
         if (!(version as String).matches(Regex("""\d+\.\d+\.\d+"""))) {
@@ -214,7 +221,7 @@ tasks {
         }
     }
 
-    create("printChangelog") {
+    register("printChangelog") {
         group = "markdown"
 
         doLast {
@@ -222,7 +229,7 @@ tasks {
         }
     }
 
-    create("printDescription") {
+    register("printDescription") {
         group = "markdown"
 
         doLast {

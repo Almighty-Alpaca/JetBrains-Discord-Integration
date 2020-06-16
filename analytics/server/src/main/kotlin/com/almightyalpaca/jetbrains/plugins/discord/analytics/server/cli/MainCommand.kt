@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.analytics.server.cli
 
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.hoplite.FixedSystemPropertyPreprocessor
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes.runServer
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
 import com.github.ajalt.clikt.core.CliktCommand
@@ -34,6 +35,7 @@ class MainCommand : CliktCommand() {
     @KtorExperimentalAPI
     override fun run() {
         val configuration = ConfigLoader()
+            .withPreprocessor(FixedSystemPropertyPreprocessor)
             .loadConfigOrThrow<Configuration>(config)
 
         runServer(configuration)

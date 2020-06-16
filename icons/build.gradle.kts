@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.kotlinx
+
 plugins {
     kotlin("jvm")
     id("com.palantir.baseline-exact-dependencies")
@@ -45,11 +47,15 @@ tasks {
         ignore("org.jetbrains", "annotations")
     }
 
-    val generateIcons = create("generate-icons") {
-        group = "icons"
+    val deleteMaterialApplicationIcons = register<Delete>("delete-material-application-icons") {
+        delete(fileTree("src/main/resources/discord/applications/material/") {
+            include("*.png")
+        })
     }
 
-    val generateMaterialApplicationIcons = create<Exec>("generate-material-application-icons") {
+    val generateMaterialApplicationIcons = register<Exec>("generate-material-application-icons") {
+        dependsOn(deleteMaterialApplicationIcons)
+
         workingDir(project.file("src/main/resources/discord/applications/material"))
         commandLine = listOf(
             "magick",
@@ -68,12 +74,9 @@ tasks {
         )
     }
 
-    val deleteMaterialApplicationIcons = create<Delete>("delete-material-application-icons") {
-        delete(fileTree("src/main/resources/discord/applications/material/") {
-            include("*.png")
-        })
-    }
+    register("generate-icons") {
+        group = "icons"
 
-    generateIcons.dependsOn(generateMaterialApplicationIcons)
-    generateMaterialApplicationIcons.dependsOn(deleteMaterialApplicationIcons)
+        dependsOn(generateMaterialApplicationIcons)
+    }
 }

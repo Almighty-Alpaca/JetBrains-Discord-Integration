@@ -15,56 +15,56 @@
  */
 
 -- Versions
-CREATE TABLE IF NOT EXISTS versions
+CREATE TABLE versions
 (
     id      SMALLSERIAL PRIMARY KEY,
     version VARCHAR(16) NOT NULL UNIQUE
 );
 
 -- Application codes (IU, PY etc.)
-CREATE TABLE IF NOT EXISTS application_codes
+CREATE TABLE application_codes
 (
     id   SMALLSERIAL PRIMARY KEY,
     code VARCHAR(8) NOT NULL UNIQUE
 );
 
 -- Application names
-CREATE TABLE IF NOT EXISTS application_names
+CREATE TABLE application_names
 (
     id   SMALLSERIAL PRIMARY KEY,
     name VARCHAR(32) NOT NULL UNIQUE
 );
 
 -- Editors
-CREATE TABLE IF NOT EXISTS editors
+CREATE TABLE editors
 (
     id   SMALLSERIAL PRIMARY KEY,
     name VARCHAR(64) NOT NULL UNIQUE
 );
 
 -- File Extensions
-CREATE TABLE IF NOT EXISTS extensions
+CREATE TABLE extensions
 (
     id   SERIAL PRIMARY KEY,
     name VARCHAR(16) NOT NULL UNIQUE
 );
 
 -- Icons
-CREATE TABLE IF NOT EXISTS icons
+CREATE TABLE icons
 (
     id   SMALLSERIAL PRIMARY KEY,
     name VARCHAR(32) NOT NULL UNIQUE
 );
 
 -- Languages
-CREATE TABLE IF NOT EXISTS languages
+CREATE TABLE languages
 (
     id   SMALLSERIAL PRIMARY KEY,
     name VARCHAR(16) NOT NULL UNIQUE
 );
 
 -- Themes
-CREATE TABLE IF NOT EXISTS themes
+CREATE TABLE themes
 (
     id   SMALLSERIAL PRIMARY KEY,
     name VARCHAR(16) NOT NULL UNIQUE
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS themes
 
 -- Crowdsource unmatched file types and editors
 -- Once per file and day
-CREATE TABLE IF NOT EXISTS file_stats
+CREATE TABLE file_stats
 (
     time        TIMESTAMP WITH TIME ZONE NOT NULL,
     editor_id   SMALLINT                 NOT NULL REFERENCES editors,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS file_stats
 
 -- Track icon usage
 -- Once per matched file and day
-CREATE TABLE IF NOT EXISTS icon_stats
+CREATE TABLE icon_stats
 (
     time                TIMESTAMP WITH TIME ZONE NOT NULL,
     language_id         SMALLINT                 NOT NULL REFERENCES languages,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS icon_stats
 
 -- Track version
 -- Once per day
-CREATE TABLE IF NOT EXISTS version_stats
+CREATE TABLE version_stats
 (
     time                TIMESTAMP WITH TIME ZONE NOT NULL,
     version_id          SMALLINT                 NOT NULL REFERENCES versions,

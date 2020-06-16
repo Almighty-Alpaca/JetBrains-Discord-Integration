@@ -25,6 +25,7 @@ import net.ttddyy.dsproxy.ExecutionInfo
 import net.ttddyy.dsproxy.QueryInfo
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder
+import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.TransactionalRunnable
@@ -42,6 +43,7 @@ class Database : KoinComponent {
     private val configuration by inject<Configuration>()
 
     private val dataSource: DataSource
+    private val dsl: DSLContext
 
     init {
         val config = HikariConfig()
@@ -49,6 +51,8 @@ class Database : KoinComponent {
         config.jdbcUrl = configuration.database.url
         config.username = configuration.database.username
         config.password = configuration.database.password
+
+        config.initializationFailTimeout = 60_000
 
         val hikariDataSource = HikariDataSource(config)
 
@@ -62,13 +66,24 @@ class Database : KoinComponent {
             })
             .proxyResultSet()
             .build()
+
+        val flyway = Flyway
+            .configure()
+            .dataSource(dataSource)
+            .baselineOnMigrate(true)
+            .repeatableSqlMigrationPrefix("r")
+            .sqlMigrationPrefix("v")
+            .sqlMigrationSeparator("-")
+            .load()
+
+        flyway.migrate()
+
+        dsl = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
     private fun <T> withConnection(block: Connection.() -> T): T = dataSource.connection.use(block)
 
-    private fun <T> withContext(block: DSLContext.() -> T): T = withConnection {
-        block(DSL.using(this, SQLDialect.POSTGRES))
-    }
+    private fun <T> withContext(block: DSLContext.() -> T): T = block(dsl)
 
     private fun <T> withTransaction(block: DSLContext.() -> T): T = withContext {
         var result: T? = null

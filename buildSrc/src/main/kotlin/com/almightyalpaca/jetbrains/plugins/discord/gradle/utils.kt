@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+package com.almightyalpaca.jetbrains.plugins.discord.gradle
+
+import org.gradle.api.Action
+import org.gradle.api.Task
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+
 fun hoplite(module: String? = null, version: String) = "com.sksamuel.hoplite:hoplite-$module:$version"
 
 fun koin(module: String, version: String) = "org.koin:koin-$module:$version"
@@ -24,6 +32,9 @@ fun ktor(module: String, version: String? = null) = "io.ktor:ktor-$module:${vers
 
 fun jooq(module: String? = null, version: String? = null) = "org.jooq:jooq${module?.let { "-$it" } ?: ""}:${version ?: ""}"
 
+operator fun ExtraPropertiesExtension.contains(key: String) = has(key)
 
+val isCi by lazy { System.getenv("CI") != null }
 
-
+inline fun <reified T : Task> TaskContainer.register(name: String, action: Action<T>): TaskProvider<T> =
+    register(name, T::class.java, action)

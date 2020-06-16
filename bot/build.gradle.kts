@@ -26,7 +26,9 @@ docker {
     "bot" {
         tag = "almightyalpaca/jetbrains-discord-integration-bot"
         devContainerName = "${project.group}.dev"
-        buildContainerName = "${project.group}.builder"
+        buildContainerName = "${rootProject.group}.docker.builder"
+
+        mount("type=bind,source=${project.file("config.yaml").absolutePath},target=/config/config.yaml")
     }
 }
 

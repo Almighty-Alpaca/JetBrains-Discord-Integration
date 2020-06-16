@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.kotlinx
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")

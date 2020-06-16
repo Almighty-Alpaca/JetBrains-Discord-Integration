@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
+package com.almightyalpaca.jetbrains.plugins.discord.gradle
+
+import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskContainer
-import org.gradle.kotlin.dsl.configure
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.get
 import java.io.File
 
-fun Project.docker(action: DockerExtension.() -> Unit) = configure(action)
-
+@Suppress("unused")
 class DockerPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        target.plugins.apply(ShadowPlugin::class)
         target.extensions.add("docker", DockerExtension(target))
     }
 }
@@ -37,9 +38,11 @@ class DockerPlugin : Plugin<Project> {
 class DockerExtension(private val project: Project) {
     private val configurations = mutableMapOf<String, DockerConfiguration>()
 
-    operator fun String.invoke(action: DockerConfiguration.() -> Unit): DockerConfiguration {
+    operator fun String.invoke(action: DockerConfiguration.() -> Unit = {}): DockerConfiguration {
         return configurations.computeIfAbsent(this.toLowerCase()) { DockerConfiguration(this, project) }.apply(action)
     }
+
+    operator fun get(name: String) = configurations[name]
 }
 
 class DockerConfiguration(val name: String, project: Project) {
@@ -48,6 +51,12 @@ class DockerConfiguration(val name: String, project: Project) {
     var buildContainerName: String = "builder"
     var localArchitecture: String = "linux/amd64"
     var dockerfile: File = project.file("Dockerfile")
+
+    internal val mounts = mutableListOf<String>()
+    fun mount(mount: String) = mounts.add(mount)
+    fun mounts(mount: Iterable<String>) = mounts.addAll(mount)
+
+    internal lateinit var dependency: TaskProvider<*>
 
     init {
         project.createTasks(this)
@@ -158,6 +167,8 @@ private fun Project.createTasks(configuration: DockerConfiguration) {
             )
         }
 
+        configuration.dependency = dockerBuildLoad
+
         register<Exec>("docker${name}BuildPush") {
             group = "docker"
             description = "Builds Docker image and pushes it to Docker Hub"
@@ -175,19 +186,21 @@ private fun Project.createTasks(configuration: DockerConfiguration) {
             )
         }
 
+        val mounts = configuration.mounts.insertBefore { "--mount" }
+
         register<Exec>("docker${name}Run") {
             group = "docker"
             description = "Runs Docker image"
 
             dependsOn(dockerBuildLoad)
 
-            commandLine = listOf(
+            commandLine = mutableListOf(
                 "docker", "run",
                 "--name", configuration.devContainerName,
-                "--rm",
-                "--mount", "type=bind,source=${project.file("config.yaml").absolutePath},target=/config/config.yaml",
-                configuration.tag
+                "--rm"
             )
+            commandLine.addAll(mounts)
+            commandLine.add(configuration.tag)
         }
 
         register<Exec>("docker${name}RunDaemon") {
@@ -196,14 +209,14 @@ private fun Project.createTasks(configuration: DockerConfiguration) {
 
             dependsOn(dockerBuildLoad)
 
-            commandLine = listOf(
+            commandLine = mutableListOf(
                 "docker", "run",
                 "-d",
                 "--name", configuration.devContainerName,
-                "--rm",
-                "--mount", "type=bind,source=${project.file("config.yaml").absolutePath},target=/config/config.yaml",
-                configuration.tag
+                "--rm"
             )
+            commandLine.addAll(mounts)
+            commandLine.add(configuration.tag)
         }
 
         register<Exec>("docker${name}Status") {
@@ -227,5 +240,11 @@ private fun Project.createTasks(configuration: DockerConfiguration) {
     }
 }
 
-private inline fun <reified T : Task> TaskContainer.register(name: String, action: Action<T>) =
-    register(name, T::class.java, action)
+private fun <E> List<E>.insertBefore(function: (Int) -> E): List<E> {
+    return MutableList(size * 2) {
+        when (it % 2 == 0) {
+            true -> function(it / 2)
+            false -> this[it / 2]
+        }
+    }
+}
