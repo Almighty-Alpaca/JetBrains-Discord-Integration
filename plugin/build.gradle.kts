@@ -57,6 +57,7 @@ dependencies {
     implementation(ktor("client-auth-jvm"))
     implementation(ktor("client-core-jvm"))
     implementation(ktor("client-json"))
+    implementation(ktor("client-serialization-jvm"))
 //    implementation(ktor("http-jvm"))
 //    implementation(ktor("utils-jvm"))
 //    implementation(ktor("io-jvm"))
