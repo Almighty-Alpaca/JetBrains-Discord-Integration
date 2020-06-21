@@ -34,6 +34,7 @@ data class Configuration(
         val security: Security?
     ) {
         data class Application(val id: String)
+
         data class Deployment(
             val host: String?,
             val port: Int?,

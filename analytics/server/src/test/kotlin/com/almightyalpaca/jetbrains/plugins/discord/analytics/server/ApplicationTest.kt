@@ -22,18 +22,45 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 
+class KPostgreSQLContainer(dockerImageName: String?) : PostgreSQLContainer<KPostgreSQLContainer>(dockerImageName)
+
+@Testcontainers
 class ApplicationTest {
-//    val emptyConfig
-//        get() = Configuration(Configuration.Database("", "", ""), Configuration.Ktor(null, Configuration.Ktor.Deployment(null, null, null, null, null), null), null)
-//
-//    @Test
-//    fun testRoot(): Unit = withTestApplication({ main(emptyConfig) }) {
-//        handleRequest(HttpMethod.Get, "/example").apply {
-//            assertEquals(HttpStatusCode.OK, response.status())
-//            assertEquals("HELLO WORLD!", response.content)
-//        }
-//    }
+    private val databaseImage = "timescale/timescaledb:latest-pg12"
+    private val databaseUser = "postgres"
+    private val databasePassword = "12345678"
+    private val databaseName = "analytics"
+
+    @Container
+    val postgres: KPostgreSQLContainer = KPostgreSQLContainer(databaseImage)
+        .withUsername(databaseUser)
+        .withPassword(databasePassword)
+        .withDatabaseName(databaseName)
+
+    val config: Configuration
+        get() {
+            val databaseUrl = "jdbc:pgsql://${postgres.host}:${postgres.firstMappedPort}/$databaseName"
+
+            val database = Configuration.Database(databaseUrl, databaseUser, databasePassword)
+
+            val deployment = Configuration.Ktor.Deployment(null, 8080, null, null, null)
+
+            val ktor = Configuration.Ktor(null, deployment, null)
+
+            return Configuration(database, ktor, null)
+        }
+
+    @Test
+    fun testRoot(): Unit = withTestApplication({ main(config) }) {
+        with(handleRequest(HttpMethod.Get, "/test")) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("Hello World!", response.content)
+        }
+    }
 }

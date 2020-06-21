@@ -32,6 +32,8 @@ fun ktor(module: String, version: String? = null) = "io.ktor:ktor-$module:${vers
 
 fun jooq(module: String? = null, version: String? = null) = "org.jooq:jooq${module?.let { "-$it" } ?: ""}:${version ?: ""}"
 
+fun testcontainers(module: String, version: String? = null) = "org.testcontainers:$module:${version ?: ""}"
+
 operator fun ExtraPropertiesExtension.contains(key: String) = has(key)
 
 val isCi by lazy { System.getenv("CI") != null }

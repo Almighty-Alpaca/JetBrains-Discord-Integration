@@ -43,10 +43,12 @@ dependencies {
     val versionFlyway: String by project
     val versionHikariCp: String by project
     val versionHoplite: String by project
+    val versionJunit: String by project
     val versionKoin: String by project
     val versionKtor: String by project
     val versionLogback: String by project
     val versionPgjdbcNg: String by project
+    val versionTestcontainers: String by project
 
     implementation(project(":analytics:interface"))
 
@@ -61,7 +63,6 @@ dependencies {
 
     implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
 
-    // implementation(group = "org.postgresql", name = "postgresql", version = versionPostgres)
     implementation(group = "com.impossibl.pgjdbc-ng", name = "pgjdbc-ng", version = versionPgjdbcNg)
 
     implementation(group = "net.ttddyy", name = "datasource-proxy", version = versionDatasourceProxy)
@@ -85,7 +86,17 @@ dependencies {
 
     implementation(group = "com.github.ajalt", name = "clikt", version = versionClikt)
 
-    testImplementation(ktor(module = "server-tests"))
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = versionJunit)
+
+    testImplementation(ktor(module = "server-test-host"))
+
+    testImplementation(platform(testcontainers(module = "testcontainers-bom", version = versionTestcontainers)))
+    testImplementation(testcontainers(module = "junit-jupiter")) {
+        exclude(group = "junit", module = "junit")
+    }
+    testImplementation(testcontainers(module = "postgresql")) {
+        exclude(group = "junit", module = "junit")
+    }
 
     jooqRuntime(jooq(module = "meta-extensions"))
     jooqRuntime(project(":analytics:server:jooq"))
@@ -199,6 +210,10 @@ tasks {
         dependsOn(secrets.checkTask)
 
         systemProperties.putAll(runSystemProperties)
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     withType<JooqTask> {
