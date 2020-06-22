@@ -32,6 +32,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.greenTran
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent60
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent80
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.ProjectManager
 import org.apache.commons.lang3.time.DurationFormatUtils
 import java.awt.Color
@@ -484,6 +486,8 @@ private fun Data.completeMissingData(): Data {
         file?.fileTimeOpened ?: project?.projectTimeOpened ?: applicationTimeOpened,
         file?.fileTimeActive ?: project?.projectTimeActive ?: applicationTimeActive,
         file?.filePath ?: "dummy/$dummyFileName",
-        file?.fileIsWriteable ?: true
+        file?.fileIsWriteable ?: true,
+        file?.fileEditor ?: TextEditor::class.java.name,
+        file?.fileType ?: FileTypes.PLAIN_TEXT
     )
 }

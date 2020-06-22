@@ -16,12 +16,59 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.analytics
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.dataService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.vfs.VirtualFile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
-class AnalyticsFileEditorManagerListener : FileEditorManagerListener {
+class AnalyticsFileEditorManagerListener : FileEditorManagerListener, DisposableCoroutineScope {
+    override val parentJob: Job = SupervisorJob()
+
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        analyticsService.sendData(file)
+        val editor = source.getSelectedEditor(file)
+        val project = source.project
+
+        launch {
+            val data = dataService.getData(Renderer.Mode.NORMAL, project, editor) ?: return@launch
+            val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
+
+            with(context) {
+                if (mode == Renderer.Mode.NORMAL) {
+                    val iconWanted = language?.assetIds?.first()
+                    val iconUsed = icons?.let { language?.findIcon(it) }?.asset?.id
+
+                    if (language != null && theme != null && iconUsed != null && iconWanted != null) {
+                        val applicationName = settings.applicationType.getStoredValue().applicationName
+                        analyticsService.reportIcon(
+                            language = language.id,
+                            theme = theme.id,
+                            applicationName = applicationName,
+                            iconWanted = iconWanted,
+                            iconUsed = iconUsed
+                        )
+                    }
+
+                    if (fileData?.fileEditor != null && language != null) {
+                        val extension = fileData.fileExtensions.maxBy(String::length)
+                        if (extension != null) {
+                            analyticsService.reportFile(
+                                editor = fileData.fileEditor,
+                                type = fileData.fileType.name,
+                                extension = extension,
+                                language = language.id
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }

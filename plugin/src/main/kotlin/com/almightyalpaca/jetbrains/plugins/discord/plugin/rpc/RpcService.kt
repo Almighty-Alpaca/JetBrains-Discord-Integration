@@ -118,12 +118,11 @@ class RpcService : DisposableCoroutineScope {
                         connection = null
                     }
 
-                    connection = NativeRpcConnection(presence.appId, ::updateUser).apply {
-                        Disposer.register(this@RpcService, this@apply)
-                        connect()
+                    connection = NativeRpcConnection(presence.appId, ::updateUser).also {
+                        Disposer.register(this, it)
+                        it.connect()
                     }
                     connectionChecker = checkConnected()
-
                 }
 
                 connection?.send(presence)

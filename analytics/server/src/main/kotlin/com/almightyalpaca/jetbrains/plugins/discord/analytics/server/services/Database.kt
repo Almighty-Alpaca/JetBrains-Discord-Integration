@@ -97,12 +97,13 @@ class Database : KoinComponent {
 
     fun insert(file: Analytics.File) = withTransaction {
         val editorId = upsertNameReturningId(EDITORS, EDITORS.ID, EDITORS.NAME, file.editor.takeLast(64))
+        val typeId = upsertNameReturningId(TYPES, TYPES.ID, TYPES.NAME, file.type.takeLast(64))
         val extensionId = upsertNameReturningId(EXTENSIONS, EXTENSIONS.ID, EXTENSIONS.NAME, file.extension.takeLast(16))
         val languageId = upsertNameReturningId(LANGUAGES, LANGUAGES.ID, LANGUAGES.NAME, file.language.takeLast(16))
 
         insertInto(FILE_STATS)
-            .columns(FILE_STATS.TIME, FILE_STATS.EDITOR_ID, FILE_STATS.EXTENSION, FILE_STATS.LANGUAGE_ID)
-            .values(file.time, editorId, extensionId, languageId)
+            .columns(FILE_STATS.TIME, FILE_STATS.EDITOR_ID, FILE_STATS.TYPE_ID, FILE_STATS.EXTENSION_ID, FILE_STATS.LANGUAGE_ID)
+            .values(file.time, editorId, typeId, extensionId, languageId)
             .execute()
     }
 

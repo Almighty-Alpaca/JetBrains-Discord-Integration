@@ -20,6 +20,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Icon
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractLanguageMatch
 
-class LocalLanguageMatch(private val source: LocalSource, name: String, assetIds: Iterable<String>) : AbstractLanguageMatch(name, assetIds) {
+class LocalLanguageMatch(private val source: LocalSource, id: String, name: String, assetIds: Iterable<String>) : AbstractLanguageMatch(id, name, assetIds) {
     override fun findIcon(icons: IconSet): Icon? = assetIds.find { it in icons }?.let { assetId -> LocalIcon(source, name, assetId, icons.theme, icons.applicationName) }
 }

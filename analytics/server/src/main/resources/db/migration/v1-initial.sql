@@ -42,6 +42,13 @@ CREATE TABLE editors
     name VARCHAR(64) NOT NULL UNIQUE
 );
 
+-- File Types
+CREATE TABLE types
+(
+    id   SMALLSERIAL PRIMARY KEY,
+    name VARCHAR(64) NOT NULL UNIQUE
+);
+
 -- File Extensions
 CREATE TABLE extensions
 (
@@ -74,10 +81,11 @@ CREATE TABLE themes
 -- Once per file and day
 CREATE TABLE file_stats
 (
-    time        TIMESTAMP WITH TIME ZONE NOT NULL,
-    editor_id   SMALLINT                 NOT NULL REFERENCES editors,
-    extension   INT REFERENCES extensions,
-    language_id SMALLINT REFERENCES languages
+    time         TIMESTAMP WITH TIME ZONE NOT NULL,
+    editor_id    SMALLINT                 NOT NULL REFERENCES editors,
+    type_id      SMALLINT                 NOT NULL REFERENCES types,
+    extension_id INT REFERENCES extensions,
+    language_id  SMALLINT REFERENCES languages
 );
 
 -- Track icon usage

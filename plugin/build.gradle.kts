@@ -53,14 +53,11 @@ dependencies {
 
     val versionKtor: String by project
     implementation(platform(ktor("bom", versionKtor)))
-    implementation(ktor("client-okhttp"))
-    implementation(ktor("client-auth-jvm"))
     implementation(ktor("client-core-jvm"))
-    implementation(ktor("client-json"))
+    implementation(ktor("http-jvm"))
+    implementation(ktor("client-okhttp"))
+    implementation(ktor("client-json-jvm"))
     implementation(ktor("client-serialization-jvm"))
-//    implementation(ktor("http-jvm"))
-//    implementation(ktor("utils-jvm"))
-//    implementation(ktor("io-jvm"))
 }
 
 intellij {

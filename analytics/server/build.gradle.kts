@@ -232,4 +232,8 @@ tasks {
 
         outputs.cacheIf { true }
     }
+
+    checkImplicitDependencies {
+        ignore("org.jetbrains", "annotations")
+    }
 }

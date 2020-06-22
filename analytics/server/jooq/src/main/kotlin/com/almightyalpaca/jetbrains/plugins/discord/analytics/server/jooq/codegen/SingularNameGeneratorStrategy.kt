@@ -22,7 +22,7 @@ import org.jooq.meta.Definition
 
 @Suppress("unused")
 class SingularNameGeneratorStrategy : DefaultGeneratorStrategy() {
-    private val entityModes = listOf(
+    private val modes = listOf(
         GeneratorStrategy.Mode.RECORD,
         GeneratorStrategy.Mode.POJO,
         GeneratorStrategy.Mode.INTERFACE,
@@ -30,12 +30,12 @@ class SingularNameGeneratorStrategy : DefaultGeneratorStrategy() {
     )
 
     override fun getJavaClassName(definition: Definition, mode: GeneratorStrategy.Mode): String = when (mode) {
-        in entityModes -> super.getJavaClassName(SingularDifinition(definition), mode)
+        in modes -> super.getJavaClassName(SingularDefinition(definition), mode)
         else -> super.getJavaClassName(definition, mode)
     }
 }
 
-class SingularDifinition(definition: Definition) : Definition by definition {
+class SingularDefinition(definition: Definition) : Definition by definition {
     override fun getOutputName(): String = when {
         name.endsWith("s", ignoreCase = true) -> name.dropLast(1)
         else -> name

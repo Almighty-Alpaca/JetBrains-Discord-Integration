@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.icons.source
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-interface LanguageMatch {
-    val id: String
-    val name: String
-    val assetIds: Iterable<String>
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMessageBuilder
 
-    fun findIcon(icons: IconSet): Icon?
-}
+fun HttpMessageBuilder.authorization(content: String): Unit = headers.set(HttpHeaders.Authorization, content)

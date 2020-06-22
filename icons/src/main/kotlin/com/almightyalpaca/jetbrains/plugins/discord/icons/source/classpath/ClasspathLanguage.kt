@@ -21,13 +21,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Language
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractLanguage
 
-object ClasspathLanguage {
+interface ClasspathLanguage : Language {
     class Simple(source: ClasspathSource, id: String, name: String, parent: Language?, assetIds: List<String>?, matchers: Map<Matcher.Target, Matcher>) :
-        AbstractLanguage.Simple(id, name, parent, assetIds, matchers) {
-        override val match: LanguageMatch = ClasspathLanguageMatch(source, name, this.assetIds)
+        AbstractLanguage.Simple(id, name, parent, assetIds, matchers), ClasspathLanguage {
+        override val match: LanguageMatch = ClasspathLanguageMatch(source, id, name, this.assetIds)
     }
 
-    class Default(source: ClasspathSource, name: String, assetId: String) : AbstractLanguage.Default(name, assetId) {
-        override val match: LanguageMatch = ClasspathLanguageMatch(source, name, assetIds)
+    class Default(source: ClasspathSource, name: String, assetId: String) : AbstractLanguage.Default(name, assetId), ClasspathLanguage {
+        override val match: LanguageMatch = ClasspathLanguageMatch(source, id, name, assetIds)
     }
 }

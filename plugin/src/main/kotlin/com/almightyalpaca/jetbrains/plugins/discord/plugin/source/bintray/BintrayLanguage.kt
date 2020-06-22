@@ -21,12 +21,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Language
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.LanguageMatch
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractLanguage
 
-object BintrayLanguage {
-    class Simple(id: String, name: String, parent: Language?, assetIds: List<String>?, matchers: Map<Matcher.Target, Matcher>) : AbstractLanguage.Simple(id, name, parent, assetIds, matchers) {
-        override val match: LanguageMatch = BintrayLanguageMatch(name, this.assetIds)
+interface BintrayLanguage : Language {
+    class Simple(id: String, name: String, parent: Language?, assetIds: List<String>?, matchers: Map<Matcher.Target, Matcher>) :
+        AbstractLanguage.Simple(id, name, parent, assetIds, matchers), BintrayLanguage {
+        override val match: LanguageMatch = BintrayLanguageMatch(name, id, this.assetIds)
     }
 
-    class Default(name: String, assetId: String) : AbstractLanguage.Default(name, assetId) {
-        override val match: LanguageMatch = BintrayLanguageMatch(name, assetIds)
+    class Default(name: String, assetId: String) : AbstractLanguage.Default(name, assetId), BintrayLanguage {
+        override val match: LanguageMatch = BintrayLanguageMatch(name, id, assetIds)
     }
 }

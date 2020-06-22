@@ -20,7 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Icon
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractLanguageMatch
 
-class BintrayLanguageMatch(name: String, assetIds: Iterable<String>) : AbstractLanguageMatch(name, assetIds) {
+class BintrayLanguageMatch(id: String, name: String, assetIds: Iterable<String>) : AbstractLanguageMatch(id, name, assetIds) {
     override fun findIcon(icons: IconSet): Icon? = when (icons) {
         is BintrayIconSet -> assetIds
             .find { it in icons }

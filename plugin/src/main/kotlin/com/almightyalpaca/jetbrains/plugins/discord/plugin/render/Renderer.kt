@@ -55,29 +55,25 @@ abstract class Renderer(private val context: RenderContext) {
             DiscordPlugin.LOG.debug("RenderContext.icons=null")
         }
 
-        return RichPresence(context.icons?.applicationId) presence@{
-            this@presence.details = when (val line = details?.getValue()?.get(context)) {
+        return RichPresence(context.icons?.applicationId) {
+            this.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceLine.Result.Empty -> null
                 PresenceLine.Result.Custom -> detailsCustom?.getValue()
                 is PresenceLine.Result.String -> line.value
             }
 
-            this@presence.state = when (val line = state?.getValue()?.get(context)) {
+            this.state = when (val line = state?.getValue()?.get(context)) {
                 null, PresenceLine.Result.Empty -> null
                 PresenceLine.Result.Custom -> stateCustom?.getValue()
                 is PresenceLine.Result.String -> line.value
             }
 
-            this@presence.startTimestamp = when (val time = startTimestamp?.getValue()?.get(context)) {
+            this.startTimestamp = when (val time = startTimestamp?.getValue()?.get(context)) {
                 null, PresenceTime.Result.Empty -> null
-                is PresenceTime.Result.Time ->
-                    OffsetDateTime.ofInstant(
-                        Instant.ofEpochMilli(time.value),
-                        ZoneId.systemDefault()
-                    )
+                is PresenceTime.Result.Time -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(time.value), ZoneId.systemDefault())
             }
 
-            this@presence.largeImage = when (val icon = largeIcon?.getValue()?.get(context)) {
+            this.largeImage = when (val icon = largeIcon?.getValue()?.get(context)) {
                 null, PresenceIcon.Result.Empty -> null
                 is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
@@ -89,7 +85,7 @@ abstract class Renderer(private val context: RenderContext) {
                 }
             }
 
-            this@presence.smallImage = when (val icon = smallIcon?.getValue()?.get(context)) {
+            this.smallImage = when (val icon = smallIcon?.getValue()?.get(context)) {
                 null, PresenceIcon.Result.Empty -> null
                 is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {

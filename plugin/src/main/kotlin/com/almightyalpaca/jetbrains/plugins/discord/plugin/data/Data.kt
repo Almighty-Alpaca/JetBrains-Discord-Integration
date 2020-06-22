@@ -21,6 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
+import com.intellij.openapi.fileTypes.FileType
 import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
@@ -68,7 +69,9 @@ sealed class Data {
         val fileTimeOpened: Long,
         val fileTimeActive: Long,
         val filePath: String,
-        val fileIsWriteable: Boolean
+        val fileIsWriteable: Boolean,
+        val fileEditor: String,
+        val fileType: FileType
     ) : Project(
         applicationVersion,
         applicationTimeOpened,
@@ -82,17 +85,17 @@ sealed class Data {
         vcsBranch
     ), Matcher.Target.Provider {
         /** Path relative to the project directory */
-        private val filePathRelative: String by lazy {
+        val filePathRelative: String by lazy {
             FilenameUtils.separatorsToUnix(filePath)
         }
 
-        private val fileBaseNames: Collection<String> by lazy {
+        val fileBaseNames: Collection<String> by lazy {
             fileName.find('.')
                 .mapToObj { i -> fileName.substring(0, i) }
                 .toSet()
         }
 
-        private val fileExtensions: Collection<String> by lazy {
+        val fileExtensions: Collection<String> by lazy {
             fileName.find('.')
                 .mapToObj { i -> fileName.substring(i) }
                 .toSet()

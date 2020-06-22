@@ -32,6 +32,7 @@ data class Analytics(
     data class File(
         val time: OffsetDateTime,
         val editor: String,
+        val type: String,
         val extension: String,
         val language: String
     )

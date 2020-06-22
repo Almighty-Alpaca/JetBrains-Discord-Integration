@@ -23,17 +23,14 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
 class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode) {
-    val icons: IconSet? by lazy {
-        source.getThemesOrNull()
-            ?.get(settings.theme.getValue())
-            ?.getIconSet(settings.applicationType.getValue().applicationName)
-    }
+    val theme = source.getThemesOrNull()?.get(settings.theme.getValue())
+    val icons: IconSet? by lazy { theme?.getIconSet(settings.applicationType.getValue().applicationName) }
 
     val applicationData = data as? Data.Application
     val projectData = data as? Data.Project
     val fileData = data as? Data.File
 
-    val language by lazy { fileData?.let { source.getLanguagesOrNull()?.findLanguage(fileData) } }
+    val language = fileData?.let { source.getLanguagesOrNull()?.findLanguage(fileData) }
 
     fun createRenderer(): Renderer {
         val type = when (data) {

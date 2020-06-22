@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.icons.source
+package com.almightyalpaca.jetbrains.plugins.discord.plugin.analytics
 
-interface LanguageMatch {
-    val id: String
-    val name: String
-    val assetIds: Iterable<String>
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
+import com.intellij.ide.AppLifecycleListener
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.project.Project
 
-    fun findIcon(icons: IconSet): Icon?
+class AnalyticsAppLifecycleListener : AppLifecycleListener {
+    override fun appStarting(projectFromCommandLine: Project?) {
+        analyticsService.reportVersion(
+            applicationVersion = Plugin.version.toString(),
+            applicationCode = ApplicationInfo.getInstance().build.productCode
+        )
+    }
 }

@@ -36,6 +36,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
@@ -46,12 +47,7 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(mode: Renderer.Mode) = mode.run { getData() }
-
-    @JvmName("getDataInternal")
-    private suspend fun (Renderer.Mode).getData(): Data? = tryOrNull {
-        DiscordPlugin.LOG.debug("Getting data")
-
+    suspend fun getData(mode: Renderer.Mode): Data? {
         val project: Project?
         val editor: FileEditor?
 
@@ -71,6 +67,15 @@ class DataService {
                 else -> FileEditorManager.getInstance(project)?.selectedEditor
             }
         }
+
+        return getData(mode, project, editor)
+    }
+
+    suspend fun getData(mode: Renderer.Mode, project: Project?, editor: FileEditor?) = mode.run { getData(project, editor) }
+
+    @JvmName("getDataInternal")
+    private suspend fun (Renderer.Mode).getData(project: Project?, editor: FileEditor?): Data? = tryOrNull {
+        DiscordPlugin.LOG.debug("Getting data")
 
         val application = ApplicationManager.getApplication()
         val applicationInfo = ApplicationInfoEx.getInstance()
@@ -111,6 +116,8 @@ class DataService {
                     val fileTimeActive = file.timeActive
                     val filePath = file.path
                     val fileIsWriteable = file.isWritable
+                    val fileEditor = editor::class.java.name
+                    val fileType = FileTypeManager.getInstance().getFileTypeByFile(file)
 
                     val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
@@ -132,7 +139,9 @@ class DataService {
                         fileTimeOpened,
                         fileTimeActive,
                         filePath,
-                        fileIsWriteable
+                        fileIsWriteable,
+                        fileEditor,
+                        fileType
                     )
                 }
             }

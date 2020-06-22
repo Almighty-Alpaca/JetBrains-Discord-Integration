@@ -47,6 +47,16 @@
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
 
         <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.analytics.AnalyticsDynamicPluginListener"
+                topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+        <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.analytics.AnalyticsAppLifecycleListener"
+                topic="com.intellij.ide.AppLifecycleListener"/>
+        <listener
+                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.analytics.AnalyticsFileEditorManagerListener"
+                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+
+        <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
         <listener

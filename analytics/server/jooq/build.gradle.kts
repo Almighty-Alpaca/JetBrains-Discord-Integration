@@ -26,5 +26,13 @@ dependencies {
 
     implementation(kotlin("stdlib"))
 
+    implementation(jooq(version = versionJooq))
+    implementation(jooq(module = "meta", version = versionJooq))
     implementation(jooq(module = "codegen", version = versionJooq))
+}
+
+tasks {
+    checkImplicitDependencies {
+        ignore("org.jetbrains", "annotations")
+    }
 }
