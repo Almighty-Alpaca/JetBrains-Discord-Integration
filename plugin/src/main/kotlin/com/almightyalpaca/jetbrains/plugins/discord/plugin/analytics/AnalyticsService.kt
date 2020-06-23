@@ -47,6 +47,9 @@ import java.util.concurrent.TimeUnit
 val analyticsService: AnalyticsService
     get() = service()
 
+// TODO: make server url a build time property with environment variable override
+private const val ANALYTICS_URL = "http://localhost:8080/api/v1/analytics"
+
 @Service
 class AnalyticsService : DisposableCoroutineScope {
     override val parentJob: Job
@@ -78,11 +81,9 @@ class AnalyticsService : DisposableCoroutineScope {
     }
 
     private inline fun postAsync(crossinline block: suspend HttpRequestBuilder.() -> Unit = {}) {
-        val url = "http://localhost:8080/analytics"
-
         if (!Disposer.isDisposed(this)) {
             launch {
-                client.post<Unit>(url) {
+                client.post<Unit>(ANALYTICS_URL) {
                     authorization("abcdefghijklmnopqrstuvwxyz")
                     contentType(ContentType.Application.Json)
 

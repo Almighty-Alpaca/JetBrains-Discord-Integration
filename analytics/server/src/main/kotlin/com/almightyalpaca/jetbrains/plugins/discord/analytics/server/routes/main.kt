@@ -27,6 +27,7 @@ import io.ktor.features.AutoHeadResponse
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.addShutdownHook
@@ -86,6 +87,10 @@ fun Application.main(configuration: Configuration) {
     routing {
         test()
 
-        analytics()
+        route("api") {
+            route("v1") {
+                analytics()
+            }
+        }
     }
 }
