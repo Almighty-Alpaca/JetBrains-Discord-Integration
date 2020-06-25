@@ -27,20 +27,12 @@ import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
-import java.nio.file.Paths
-
-val isDocker by lazy { System.getenv("DOCKER") != null }
 
 fun main() {
-    val configFolder = when {
-        isDocker -> Paths.get("/config")
-        else -> Paths.get(".")
-    }
-
     val config = Config {
         addSpec(Settings)
     }
-        .from.yaml.file(configFolder.resolve("config.yaml").toFile())
+        .from.yaml.file("config.yaml")
         .from.env()
         .from.systemProperties()
 
