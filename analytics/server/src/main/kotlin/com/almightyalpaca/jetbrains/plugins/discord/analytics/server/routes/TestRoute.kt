@@ -22,8 +22,10 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 
-fun Routing.test() {
-    get("/test") {
-        call.respond(HttpStatusCode.OK, "Hello World!")
+object TestRoute {
+    fun Routing.test() {
+        get("/test") {
+            call.respond(HttpStatusCode.OK, "Hello World!")
+        }
     }
 }

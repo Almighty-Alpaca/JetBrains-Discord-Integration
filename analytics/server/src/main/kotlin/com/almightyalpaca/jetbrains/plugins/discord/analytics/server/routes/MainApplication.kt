@@ -18,6 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes
 
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.configurationEnvironment
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.ktor.token
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes.AnalyticsRoute.analytics
+import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes.TestRoute.test
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Database
 import io.ktor.application.Application

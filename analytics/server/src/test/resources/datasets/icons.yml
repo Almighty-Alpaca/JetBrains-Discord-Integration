@@ -1,0 +1,50 @@
+themes:
+  - id: 1
+    name: "classic"
+
+version_stats:
+
+extensions:
+
+types:
+
+icon_stats:
+  - time: "2020-07-01 21:51:09.01523"
+    language_id: 1
+    theme_id: 1
+    application_name_id: 1
+    icon_wanted_id: 1
+    icon_used_id: 1
+  - time: "2020-07-02 21:32:09.01523"
+    language_id: 2
+    theme_id: 1
+    application_name_id: 1
+    icon_wanted_id: 3
+    icon_used_id: 4
+
+languages:
+  - id: 1
+    name: "kotlin/0"
+  - id: 2
+    name: "react/0"
+
+application_codes:
+
+versions:
+
+file_stats:
+
+icons:
+  - id: 1
+    name: "kotlin"
+  - id: 3
+    name: "reactts"
+  - id: 4
+    name: "typescript"
+
+application_names:
+  - id: 1
+    name: "intellij_idea_community"
+
+editors:
+

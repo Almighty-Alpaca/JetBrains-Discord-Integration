@@ -1,0 +1,48 @@
+themes:
+
+version_stats:
+
+extensions:
+  - id: 1
+    name: ".kt"
+  - id: 2
+    name: ".js"
+
+types:
+  - id: 1
+    name: "kotlin"
+  - id: 2
+    name: "JavaScript"
+
+icon_stats:
+
+languages:
+  - id: 1
+    name: "kotlin/0"
+  - id: 2
+    name: "javascript"
+
+application_codes:
+
+versions:
+
+file_stats:
+  - time: "2020-07-01 21:51:09.01523"
+    editor_id: 1
+    type_id: 1
+    extension_id: 1
+    language_id: 1
+  - time: "2020-07-02 21:51:09.01523"
+    editor_id: 1
+    type_id: 2
+    extension_id: 2
+    language_id: 2
+
+icons:
+
+application_names:
+
+editors:
+  - id: 1
+    name: "com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl"
+

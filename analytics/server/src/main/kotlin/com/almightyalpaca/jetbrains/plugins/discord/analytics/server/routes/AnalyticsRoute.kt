@@ -25,25 +25,36 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
+import mu.KotlinLogging
 
-fun Route.analytics() {
-    authenticate("analyticsAuth") {
-        post("/analytics") { analytics: Analytics ->
-            val database: Database by inject()
+object AnalyticsRoute {
+    private val log = KotlinLogging.logger {}
 
-            analytics.files.forEach { file ->
-                database.insert(file)
+    fun Route.analytics() {
+        authenticate("analyticsAuth") {
+            post("/analytics") { analytics: Analytics ->
+                val database: Database by inject()
+
+                analytics.files.forEach { file ->
+                    log.info { "File: $file" }
+
+                    database.insert(file)
+                }
+
+                analytics.icons.forEach { icon ->
+                    log.info { "Icon: $icon" }
+
+                    database.insert(icon)
+                }
+
+                analytics.version?.let { version ->
+                    log.info { "Version: $version" }
+
+                    database.insert(version)
+                }
+
+                call.respond(HttpStatusCode.OK)
             }
-
-            analytics.icons.forEach { icon ->
-                database.insert(icon)
-            }
-
-            analytics.version?.let { version ->
-                database.insert(version)
-            }
-
-            call.respond(HttpStatusCode.OK)
         }
     }
 }

@@ -40,7 +40,8 @@ import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
@@ -65,17 +66,17 @@ class AnalyticsService : DisposableCoroutineScope {
         Disposer.register(this, it)
     }
 
-    fun reportIcon(time: OffsetDateTime = OffsetDateTime.now(), language: String, theme: String, applicationName: String, iconWanted: String, iconUsed: String) {
+    fun reportIcon(time: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC), language: String, theme: String, applicationName: String, iconWanted: String, iconUsed: String) {
         val icon = Analytics.Icon(time, language, theme, applicationName, iconWanted, iconUsed)
         collector.collectIcon(icon)
     }
 
-    fun reportFile(time: OffsetDateTime = OffsetDateTime.now(), editor: String, type: String, extension: String, language: String) {
+    fun reportFile(time: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC), editor: String, type: String, extension: String, language: String) {
         val file = Analytics.File(time, editor, type, extension, language)
         collector.collectFile(file)
     }
 
-    fun reportVersion(time: OffsetDateTime = OffsetDateTime.now(), applicationVersion: String, applicationCode: String) {
+    fun reportVersion(time: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC), applicationVersion: String, applicationCode: String) {
         val version = Analytics.Version(time, applicationVersion, applicationCode)
         collector.collectVersion(version)
     }

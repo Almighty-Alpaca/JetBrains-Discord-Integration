@@ -39,12 +39,14 @@ repositories {
 
 dependencies {
     val versionClikt: String by project
+    val versionDatabaseRider: String by project
     val versionDatasourceProxy: String by project
     val versionFlyway: String by project
     val versionHikariCp: String by project
     val versionHoplite: String by project
     val versionJunit: String by project
     val versionKoin: String by project
+    val versionKotlinLogging: String by project
     val versionKtor: String by project
     val versionLogback: String by project
     val versionPgjdbcNg: String by project
@@ -86,6 +88,8 @@ dependencies {
 
     implementation(group = "com.github.ajalt", name = "clikt", version = versionClikt)
 
+    implementation(group = "io.github.microutils", name = "kotlin-logging", version = versionKotlinLogging)
+
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = versionJunit)
 
     testImplementation(ktor(module = "server-test-host"))
@@ -97,6 +101,8 @@ dependencies {
     testImplementation(testcontainers(module = "postgresql")) {
         exclude(group = "junit", module = "junit")
     }
+
+    testImplementation(group = "com.github.database-rider", name = "rider-junit5", version = versionDatabaseRider)
 
     jooqRuntime(jooq(module = "meta-extensions"))
     jooqRuntime(project(":analytics:server:jooq"))

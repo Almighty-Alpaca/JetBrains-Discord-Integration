@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-@file:UseSerializers(OffsetDateTimeSerializer::class)
+@file:UseSerializers(LocalDateTimeSerializer::class)
 
 package com.almightyalpaca.jetbrains.plugins.discord.analytics.model
 
 import kotlinx.serialization.*
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
@@ -30,7 +30,7 @@ data class Analytics(
 ) {
     @Serializable
     data class File(
-        val time: OffsetDateTime,
+        val time: LocalDateTime,
         val editor: String,
         val type: String,
         val extension: String,
@@ -39,7 +39,7 @@ data class Analytics(
 
     @Serializable
     data class Icon(
-        val time: OffsetDateTime,
+        val time: LocalDateTime,
         val language: String,
         val theme: String,
         val applicationName: String,
@@ -49,18 +49,18 @@ data class Analytics(
 
     @Serializable
     data class Version(
-        val time: OffsetDateTime,
+        val time: LocalDateTime,
         val version: String,
         val applicationCode: String
     )
 }
 
-object OffsetDateTimeSerializer : KSerializer<OffsetDateTime> {
-    private val formatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-    override val descriptor: SerialDescriptor = PrimitiveDescriptor(OffsetDateTimeSerializer::class.qualifiedName!!, PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveDescriptor(LocalDateTimeSerializer::class.qualifiedName!!, PrimitiveKind.STRING)
 
-    override fun deserialize(decoder: Decoder): OffsetDateTime = OffsetDateTime.parse(decoder.decodeString(), formatter)
+    override fun deserialize(decoder: Decoder): LocalDateTime = LocalDateTime.parse(decoder.decodeString(), formatter)
 
-    override fun serialize(encoder: Encoder, value: OffsetDateTime) = encoder.encodeString(value.format(formatter))
+    override fun serialize(encoder: Encoder, value: LocalDateTime) = encoder.encodeString(value.format(formatter))
 }

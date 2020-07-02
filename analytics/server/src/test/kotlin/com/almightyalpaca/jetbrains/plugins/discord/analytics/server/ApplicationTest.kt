@@ -17,9 +17,13 @@
 package com.almightyalpaca.jetbrains.plugins.discord.analytics.server
 
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.model.Analytics
-import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.database.generated.Tables.FILE_STATS
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.routes.main
 import com.almightyalpaca.jetbrains.plugins.discord.analytics.server.services.Configuration
+import com.github.database.rider.core.api.configuration.DBUnit
+import com.github.database.rider.core.api.connection.ConnectionHolder
+import com.github.database.rider.core.api.dataset.ExpectedDataSet
+import com.github.database.rider.core.api.exporter.ExportDataSet
+import com.github.database.rider.junit5.api.DBRider
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -29,32 +33,37 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
-import org.jooq.impl.DSL
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.images.PullPolicy
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.time.OffsetDateTime
+import java.sql.Connection
+import java.sql.DriverManager
+import java.time.LocalDateTime
 
 class KPostgreSQLContainer(dockerImageName: String?) : PostgreSQLContainer<KPostgreSQLContainer>(dockerImageName)
 
+private val databaseImage = "postgres:12"
+private val databaseUser = "postgres"
+private val databasePassword = "12345678"
+private val databaseName = "analytics"
+
+private val token = "abcdefghijklmnopqrstuvwxyz"
+
 @Testcontainers
+@DBRider
+@DBUnit(cacheConnection = false, caseSensitiveTableNames = true)
 class ApplicationTest {
-    private val databaseImage = "timescale/timescaledb:latest-pg12"
-    private val databaseUser = "postgres"
-    private val databasePassword = "12345678"
-    private val databaseName = "analytics"
-
-    private val token = "abcdefghijklmnopqrstuvwxyz"
-
     @Container
     val postgres: KPostgreSQLContainer = KPostgreSQLContainer(databaseImage)
+        .withImagePullPolicy(PullPolicy.alwaysPull())
         .withUsername(databaseUser)
         .withPassword(databasePassword)
         .withDatabaseName(databaseName)
-        .withImagePullPolicy(PullPolicy.alwaysPull())
 
     private val databaseUrl
         get() = "jdbc:pgsql://${postgres.host}:${postgres.firstMappedPort}/$databaseName"
@@ -72,44 +81,67 @@ class ApplicationTest {
             return Configuration(database, ktor, authentication)
         }
 
-    private val testObject = Analytics(
-        listOf(
-            Analytics.File(
-                OffsetDateTime.now(),
-                "IntelliJ Idea",
-                "kotlin",
-                ".kt",
-                "kotlin"
-            )
-        ),
-        listOf(
-            Analytics.Icon(
-                OffsetDateTime.now(),
-                ".http",
-                "Atom",
-                "IntelliJ Idea",
-                "http",
-                "fallback"
-            )
-        ),
-        Analytics.Version(
-            OffsetDateTime.now(),
-            "2020.2.1",
-            "IJ"
-        )
-    )
+    private lateinit var connection: Connection
+
+    @Suppress("unused")
+    private val connectionHolder = ConnectionHolder { connection }
+
+    @BeforeEach
+    fun setUpConnection() {
+        connection = DriverManager.getConnection(databaseUrl, databaseUser, databasePassword)
+    }
+
+    @AfterEach
+    fun tearDownConnection() {
+        connection.close()
+    }
 
     @Test
+    @ExpectedDataSet("empty.yml")
+    //@ExportDataSet(
+    //    outputName = "src/test/resources/datasets/empty.yml",
+    //    includeTables = ["application_codes", "application_names", "editors", "extensions", "file_stats", "icon_stats", "icons", "languages", "themes", "types", "version_stats", "versions"]
+    //)
     fun `correct test endpoint response`(): Unit = withTestApplication({ main(config) }) {
-        with(handleRequest(HttpMethod.Get, "/test")) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals("Hello World!", response.content)
+        val call = handleRequest(HttpMethod.Get, "/test")
+
+        assertEquals(true, call.requestHandled)
+
+        with(call.response) {
+            assertEquals(HttpStatusCode.OK, status())
+            assertEquals("Hello World!", content)
         }
     }
 
     @Test
-    fun `receive and store valid analytics data`(): Unit = withTestApplication({ main(config) }) {
+    @ExpectedDataSet("files.yml")
+    //@ExportDataSet(
+    //    outputName = "src/test/resources/datasets/files.yml",
+    //    includeTables = ["application_codes", "application_names", "editors", "extensions", "file_stats", "icon_stats", "icons", "languages", "themes", "types", "version_stats", "versions"]
+    //)
+    fun `receive and store valid files`(): Unit = withTestApplication({ main(config) }) {
         val json = Json(JsonConfiguration.Stable)
+
+        val testObject = Analytics(
+            listOf(
+                Analytics.File(
+                    LocalDateTime.parse("2020-07-01T21:51:09.015229800"),
+                    "com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl",
+                    "kotlin",
+                    ".kt",
+                    "kotlin/0"
+                ),
+                Analytics.File(
+                    LocalDateTime.parse("2020-07-02T21:51:09.015229800"),
+                    "com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl",
+                    "JavaScript",
+                    ".js",
+                    "javascript"
+                )
+            ),
+            listOf(),
+            null
+        )
 
         val call = handleRequest(HttpMethod.Post, "api/v1/analytics") {
             addHeader(HttpHeaders.Authorization, token)
@@ -117,11 +149,87 @@ class ApplicationTest {
             setBody(json.stringify(Analytics.serializer(), testObject))
         }
 
-        with(call) {
-            assertEquals(HttpStatusCode.OK, response.status())
+        assertEquals(true, call.requestHandled)
+
+        with(call.response) {
+            assertEquals(HttpStatusCode.OK, status())
+        }
+    }
+
+    @Test
+    @ExpectedDataSet("icons.yml")
+    //@ExportDataSet(
+    //    outputName = "src/test/resources/datasets/icons.yml",
+    //    includeTables = ["application_codes", "application_names", "editors", "extensions", "file_stats", "icon_stats", "icons", "languages", "themes", "types", "version_stats", "versions"]
+    //)
+    fun `receive and store valid icons`(): Unit = withTestApplication({ main(config) }) {
+        val json = Json(JsonConfiguration.Stable)
+
+        val testObject = Analytics(
+            listOf(),
+            listOf(
+                Analytics.Icon(
+                    LocalDateTime.parse("2020-07-01T21:51:09.015229800"),
+                    "kotlin/0",
+                    "classic",
+                    "intellij_idea_community",
+                    "kotlin",
+                    "kotlin"
+                ),
+                Analytics.Icon(
+                    LocalDateTime.parse("2020-07-02T21:32:09.015229800"),
+                    "react/0",
+                    "classic",
+                    "intellij_idea_community",
+                    "reactts",
+                    "typescript"
+                )
+            ),
+            null
+        )
+
+        val call = handleRequest(HttpMethod.Post, "api/v1/analytics") {
+            addHeader(HttpHeaders.Authorization, token)
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(json.stringify(Analytics.serializer(), testObject))
         }
 
-        val dsl = DSL.using(databaseUrl, databaseUser, databasePassword)
-        println(dsl.select(DSL.asterisk()).from(FILE_STATS).fetch())
+        assertEquals(true, call.requestHandled)
+
+        with(call.response) {
+            assertEquals(HttpStatusCode.OK, status())
+        }
+    }
+
+    @Test
+    @ExpectedDataSet("versions.yml")
+    //@ExportDataSet(
+    //    outputName = "src/test/resources/datasets/versions.yml",
+    //    includeTables = ["application_codes", "application_names", "editors", "extensions", "file_stats", "icon_stats", "icons", "languages", "themes", "types", "version_stats", "versions"]
+    //)
+    fun `receive and store valid version`(): Unit = withTestApplication({ main(config) }) {
+        val json = Json(JsonConfiguration.Stable)
+
+        val testObject = Analytics(
+            listOf(),
+            listOf(),
+            Analytics.Version(
+                LocalDateTime.parse("2020-07-02T21:51:09.015229800"),
+                "1.4.2",
+                "IC"
+            )
+        )
+
+        val call = handleRequest(HttpMethod.Post, "api/v1/analytics") {
+            addHeader(HttpHeaders.Authorization, token)
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(json.stringify(Analytics.serializer(), testObject))
+        }
+
+        assertEquals(true, call.requestHandled)
+
+        with(call.response) {
+            assertEquals(HttpStatusCode.OK, status())
+        }
     }
 }

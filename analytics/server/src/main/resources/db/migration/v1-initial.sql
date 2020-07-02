@@ -81,9 +81,9 @@ CREATE TABLE themes
 -- Once per file and day
 CREATE TABLE file_stats
 (
-    time         TIMESTAMP WITH TIME ZONE NOT NULL,
-    editor_id    SMALLINT                 NOT NULL REFERENCES editors,
-    type_id      SMALLINT                 NOT NULL REFERENCES types,
+    time         TIMESTAMP,
+    editor_id    SMALLINT NOT NULL REFERENCES editors,
+    type_id      SMALLINT NOT NULL REFERENCES types,
     extension_id INT REFERENCES extensions,
     language_id  SMALLINT REFERENCES languages
 );
@@ -92,19 +92,19 @@ CREATE TABLE file_stats
 -- Once per matched file and day
 CREATE TABLE icon_stats
 (
-    time                TIMESTAMP WITH TIME ZONE NOT NULL,
-    language_id         SMALLINT                 NOT NULL REFERENCES languages,
-    theme_id            SMALLINT                 NOT NULL REFERENCES themes,
-    application_name_id SMALLINT                 NOT NULL REFERENCES application_names,
-    icon_wanted_id      SMALLINT                 NOT NULL REFERENCES icons,
-    icon_used_id        SMALLINT                 NOT NULL REFERENCES icons
+    time                TIMESTAMP,
+    language_id         SMALLINT NOT NULL REFERENCES languages,
+    theme_id            SMALLINT NOT NULL REFERENCES themes,
+    application_name_id SMALLINT NOT NULL REFERENCES application_names,
+    icon_wanted_id      SMALLINT NOT NULL REFERENCES icons,
+    icon_used_id        SMALLINT NOT NULL REFERENCES icons
 );
 
 -- Track version
 -- Once per day
 CREATE TABLE version_stats
 (
-    time                TIMESTAMP WITH TIME ZONE NOT NULL,
-    version_id          SMALLINT                 NOT NULL REFERENCES versions,
-    application_code_id SMALLINT                 NOT NULL REFERENCES application_codes
+    time                TIMESTAMP,
+    version_id          SMALLINT NOT NULL REFERENCES versions,
+    application_code_id SMALLINT NOT NULL REFERENCES application_codes
 );
