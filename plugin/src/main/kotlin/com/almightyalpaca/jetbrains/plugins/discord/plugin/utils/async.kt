@@ -24,10 +24,5 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-suspend fun <T> Promise<T>.toSuspendFunction(): T? = suspendCoroutine { continuation ->
-    onError(continuation::resumeWithException)
-    onProcessed(continuation::resume)
-}
-
 fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, command: () -> Unit): ScheduledFuture<*> =
     scheduleWithFixedDelay(Runnable(command), initialDelay, delay, unit)
