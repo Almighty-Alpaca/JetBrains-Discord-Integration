@@ -31,7 +31,7 @@ Go to the [GitHub release page](https://github.com/Almighty-Alpaca/JetBrains-Dis
 
 #### ...or compile from source
 
-As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this make take a bit as it needs to download the sources for IntelliJ first.
+As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this may take a bit as it needs to download the sources for IntelliJ first.
 Open your favorite terminal and execute the following commands:
 
 ```bash
