@@ -84,7 +84,7 @@ dependencies {
     implementation(hoplite(module = "core", version = versionHoplite))
     implementation(hoplite(module = "hocon", version = versionHoplite))
     implementation(hoplite(module = "yaml", version = versionHoplite))
-    implementation(hoplite(module = "ktor", version = versionHoplite))
+    // implementation(hoplite(module = "ktor", version = versionHoplite))
 
     implementation(group = "com.github.ajalt", name = "clikt", version = versionClikt)
 

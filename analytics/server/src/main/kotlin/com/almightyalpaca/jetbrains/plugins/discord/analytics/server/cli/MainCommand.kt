@@ -24,7 +24,7 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.path
 import com.sksamuel.hoplite.ConfigLoader
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.*
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -34,9 +34,12 @@ class MainCommand : CliktCommand() {
 
     @KtorExperimentalAPI
     override fun run() {
-        val configuration = ConfigLoader()
-            .withPreprocessor(FixedSystemPropertyPreprocessor)
-            .loadConfigOrThrow<Configuration>(config)
+        ConfigLoader()
+        val configuration =
+            ConfigLoader.Builder()
+                .addPreprocessor(FixedSystemPropertyPreprocessor)
+                .build()
+                .loadConfigOrThrow<Configuration>(config)
 
         runServer(configuration)
     }

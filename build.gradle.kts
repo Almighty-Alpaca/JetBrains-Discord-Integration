@@ -88,8 +88,10 @@ tasks {
     }
 
     withType<Wrapper> {
+        val versionGradle: String by project
+
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.5"
+        gradleVersion = versionGradle
     }
 
     register<Delete>("clean") {
