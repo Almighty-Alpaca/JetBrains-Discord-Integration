@@ -16,18 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.icons.utils
 
+import java.util.stream.Collectors
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
-
-inline fun <T, K, V> Iterable<T>.toMap(mapper: (T) -> Pair<K, V>) = iterator().toMap(mapper)
-
-inline fun <T, K, V> Iterator<T>.toMap(mapper: (T) -> Pair<K, V>): Map<K, V> {
-    val map = mutableMapOf<K, V>()
-
-    forEach { t -> map += mapper(t) }
-
-    return map
-}
 
 inline fun <K, V, N> Map<K, V>.map(mapper: (K, V) -> Pair<K, N>): Map<K, N> {
     val map = mutableMapOf<K, N>()
@@ -70,3 +61,11 @@ fun <T> concat(vararg collections: Iterable<T>?): List<T> {
 }
 
 fun <R> Iterable<R>.stream(): Stream<R> = StreamSupport.stream(this.spliterator(), false)
+
+fun <A, B, C> Sequence<Pair<A, B>>.mapValue(transform: (B) -> C): Sequence<Pair<A, C>> = map { (a, b) -> a to transform(b) }
+
+fun <K, V> Stream<Pair<K, V>>.toMap(): Map<K, V> =
+    collect(Collectors.toMap({ (key, _) -> key }, { (_, value) -> value }))
+
+fun <K> Stream<K>.toSet(): Set<K> =
+    collect(Collectors.toSet())
