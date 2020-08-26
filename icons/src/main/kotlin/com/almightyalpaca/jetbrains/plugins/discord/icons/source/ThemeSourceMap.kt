@@ -45,7 +45,7 @@ interface ThemeSourceMap : Map<String, ThemeSource> {
 
     private fun JsonNode.asApplications(): Map<String, Long> = when {
         isNull -> emptyMap()
-        isObject -> this.fields().toMap { (key, value) -> key to value.longValue() }
+        isObject -> this.fields().asSequence().associate { (key, value) -> key to value.longValue() }
         else -> throw RuntimeException()
     }
 }

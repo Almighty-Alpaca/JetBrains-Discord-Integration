@@ -22,12 +22,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeSuspend
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.toSuspendFunction
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.ex.ApplicationInfoEx
@@ -40,7 +38,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.openapi.wm.IdeFrame
 
 val dataService: DataService
     get() = service()
@@ -51,22 +48,11 @@ class DataService {
         val project: Project?
         val editor: FileEditor?
 
-        val window = IdeFocusManager.getGlobalInstance().lastFocusedIdeWindow as IdeFrame?
+        val window = IdeFocusManager.getGlobalInstance().lastFocusedFrame
 
-        if (window == null) {
-            val dataManager: DataManager? = DataManager.getInstanceIfCreated()
+        project = window?.project
 
-            val dataContext = dataManager?.dataContextFromFocusAsync?.toSuspendFunction() ?: return null
-
-            project = dataContext.getData(PlatformDataKeys.PROJECT)
-            editor = dataContext.getData(PlatformDataKeys.FILE_EDITOR)
-        } else {
-            project = window.project
-            editor = when (project) {
-                null -> null
-                else -> FileEditorManager.getInstance(project)?.selectedEditor
-            }
-        }
+        editor = project?.let { invokeSuspend { FileEditorManager.getInstance(project)?.selectedEditor } }
 
         return getData(mode, project, editor)
     }

@@ -23,7 +23,7 @@
 
 ### ...from the JetBrains Plugin Repository (this is what you want to do)
 
-Open your IDE, go to Settings > Plugins > Browse repositories... > Search for "Discord Integration" and select this plugin (be sure to select one with the right name, there a a total of 3 Discord plugins)
+Open your IDE, go to Settings > Plugins > Browse repositories... > Search for "Discord Integration" and select this plugin (be sure to select one with the right name, there a total of 3 Discord plugins)
 
 #### ...from the GitHub release page
 
@@ -31,13 +31,13 @@ Go to the [GitHub release page](https://github.com/Almighty-Alpaca/JetBrains-Dis
 
 #### ...or compile from source
 
-As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this make take a bit as it needs download the sources for IntelliJ first.
+As this project uses Gradle it's very easy to compile yourself. Be aware though that depending on your system this may take a bit as it needs to download the sources for IntelliJ first.
 Open your favorite terminal and execute the following commands:
 
 ```bash
 git clone https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration.git
 cd JetBrains-Discord-Integration
-# The next line is only neccesary on Linux to make the Gradle Wrapper executable
+# The next line is only necessary on Linux to make the Gradle Wrapper executable
 chmod +x gradlew
 ./gradlew
 ```

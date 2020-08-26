@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.mapValue
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -140,7 +141,7 @@ class BintraySource(location: String) : Source, CoroutineScope {
                     }
                 }
             }
-            .map { (id, async) -> id to async.asCompletableFuture().get() }
+            .mapValue { it.asCompletableFuture().get() }
             .toMap()
     }
 

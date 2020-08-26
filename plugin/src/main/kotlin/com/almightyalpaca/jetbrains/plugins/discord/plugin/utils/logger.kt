@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.debug
 
 inline fun Logger.traceLazy(lazyMessage: () -> String) {
     if (isTraceEnabled) {
@@ -38,7 +41,7 @@ inline fun Logger.debugLazy(lazyMessage: () -> String) {
 
 inline fun Logger.debugLazy(t: Throwable, lazyMessage: () -> String) {
     if (isDebugEnabled) {
-        debug(lazyMessage(), t)
+        debug(lazyMessage() as String?, t)
     }
 }
 
