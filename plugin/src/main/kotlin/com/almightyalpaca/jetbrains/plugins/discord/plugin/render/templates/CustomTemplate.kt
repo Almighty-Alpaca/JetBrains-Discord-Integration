@@ -128,16 +128,18 @@ object Patterns {
  * Represents a template
  * When executed, it should return a string with all the patterns replaced by values
  */
-class CustomTemplate(private val template: String?, private val context: CustomTemplateContext) {
-    @Throws(Patterns.ValidityCheckFailed::class)
-    fun execute(): String? {
-        if (template == null) return null
-
+class CustomTemplate(template: String?) {
+    private val rootNode: TemplateParser.Text_evalContext
+    init {
         val lexer = TemplateLexer(CharStreams.fromString(template))
         val tokens = CommonTokenStream(lexer)
         val parser = TemplateParser(tokens)
         parser.buildParseTree = true
-        return Patterns.Utils.evalVisitor(context, parser.template().text_eval())
+        rootNode = parser.template().text_eval()
+    }
+    @Throws(Patterns.ValidityCheckFailed::class)
+    fun execute(context: CustomTemplateContext): String? {
+        return Patterns.Utils.evalVisitor(context, rootNode)
     }
 }
 
