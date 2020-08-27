@@ -57,10 +57,10 @@ object Patterns {
             for (child in tree.children ?: listOf()) {
                 ret += when (child) {
                     is TemplateParser.VarContext -> {
-                        getVarValue(child.TEXT().text, context) ?: ""
+                        getVarValue(child.TEXT()?.text ?: "", context) ?: ""
                     }
                     is TemplateParser.FunContext -> {
-                        val name = child.TEXT().symbol.text
+                        val name = child.TEXT()?.symbol?.text ?: ""
                         val req = when (name) {
                             "RegexEscape" -> 1
                             "FileIsWritable", "IsTextEditor" -> 2
