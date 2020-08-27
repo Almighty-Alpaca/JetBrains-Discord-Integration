@@ -87,12 +87,13 @@ class Tests {
     fun normalText() {
         assertEquals(
             "abc", CustomTemplate(
-                "abc",
+                "abc"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createApplicationData()
                 )
-            ).execute(),
+            ),
             "Normal text test #1 failed"
         )
     }
@@ -104,83 +105,91 @@ class Tests {
     fun simpleVariableReplacement() {
         assertEquals(
             "Main.java, unique: a/Main.java", CustomTemplate(
-                "\${FileName}, unique: \${FileNameUnique}",
+                "\${FileName}, unique: \${FileNameUnique}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(fileName = "Main.java", fileNameUnique = "a/Main.java")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #1 failed"
         )
         assertEquals(
             // see the $NotNull{VcsBranch} test in the notNullTest below; just know this is what's supposed to happen when vcsBranch is null
             "JetBrains-Discord-Integration, on branch: ", CustomTemplate(
-                "\${ProjectName}, on branch: \${VcsBranch}",
+                "\${ProjectName}, on branch: \${VcsBranch}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = null)
                 )
-            ).execute(),
+            ),
             "Variable replacement test #2 failed"
         )
         assertEquals(
             "JetBrains-Discord-Integration, on branch: master", CustomTemplate(
-                "\${ProjectName}, on branch: \${VcsBranch}",
+                "\${ProjectName}, on branch: \${VcsBranch}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = "master")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #3 failed"
         )
         assertEquals(
             "JetBrains-Discord-Integration - Discord rich presence integration for all JetBrains IDEs", CustomTemplate(
-                "\${ProjectName} - \${ProjectDescription}",
+                "\${ProjectName} - \${ProjectDescription}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(projectName = "JetBrains-Discord-Integration", projectDescription = "Discord rich presence integration for all JetBrains IDEs")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #4 failed"
         )
         assertEquals(
             "2020.1.2 - JetBrains-Discord-Integration", CustomTemplate(
-                "\${ApplicationVersion} - \${ProjectName}",
+                "\${ApplicationVersion} - \${ProjectName}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(projectName = "JetBrains-Discord-Integration", applicationVersion = "2020.1.2")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #5 failed"
         )
         assertEquals(
             "src/Main.java, language: Java - 158/1237", CustomTemplate(
-                "\${FilePath}, language: \${Language} - \${CaretLine}/\${LineCount}",
+                "\${FilePath}, language: \${Language} - \${CaretLine}/\${LineCount}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(filePath = "src/Main.java", caretLine = 158, lineCount = 1237)
                 )
-            ).execute(),
+            ),
             "Variable replacement test #6 failed"
         )
         assertEquals(
             "src/Main.java, in module core", CustomTemplate(
-                "\${FilePath}, in module \${ModuleName}",
+                "\${FilePath}, in module \${ModuleName}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(filePath = "src/Main.java", moduleName = "core")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #7 failed"
         )
         assertEquals(
             "Main.java, in module test-module, with path in module '/src/Main.java'", CustomTemplate(
-                "\${FileName}, in module \${ModuleName}, with path in module '\${PathInModule}'",
+                "\${FileName}, in module \${ModuleName}, with path in module '\${PathInModule}'"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(fileName = "Main.java", moduleName = "test-module", pathInModule = "/src/Main.java")
                 )
-            ).execute(),
+            ),
             "Variable replacement test #8 failed"
         )
     }
@@ -192,42 +201,46 @@ class Tests {
     fun fileReadableWritableTest() {
         assertEquals(
             "a", CustomTemplate(
-                "\$FileIsWritable{a}{b}",
+                "\$FileIsWritable{a}{b}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(fileIsWriteable = true)
                 )
-            ).execute(),
+            ),
             "File readable/writable test #1 failed"
         )
         assertEquals(
             "def", CustomTemplate(
-                "\$FileIsWritable{abc}{def}",
+                "\$FileIsWritable{abc}{def}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(fileIsWriteable = false)
                 )
-            ).execute(),
+            ),
             "File readable/writable test #2 failed"
         )
         assertEquals(
             "Reading AbcDef.java", CustomTemplate(
-                "\$FileIsWritable{Editing}{Reading} \${FileName}",
+                "\$FileIsWritable{Editing}{Reading} \${FileName}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(fileName = "AbcDef.java", fileIsWriteable = false)
                 )
-            ).execute(),
+            ),
             "File readable/writable test #3 failed"
         )
         assertEquals(
             "Editing AbcDef.java", CustomTemplate(
-                "\$FileIsWritable{Editing}{Reading} \${FileName}",
+                "\$FileIsWritable{Editing}{Reading} \${FileName}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(fileName = "AbcDef.java", fileIsWriteable = true)
                 )
-            ).execute(),
+            ),
             "File readable/writable test #4 failed"
         )
     }
@@ -239,42 +252,46 @@ class Tests {
     fun notNullTest() {
         assertEquals(
             "on branch abc", CustomTemplate(
-                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}",
+                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(vcsBranch = "abc")
                 )
-            ).execute(),
+            ),
             "NotNull test #1 failed"
         )
         assertEquals(
             "with no VCS detected", CustomTemplate(
-                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}",
+                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createProjectData(vcsBranch = null)
                 )
-            ).execute(),
+            ),
             "NotNull test #2 failed"
         )
         assertEquals(
             "in module core", CustomTemplate(
-                "\$NotNull{ModuleName}{in module \${ModuleName}}{}",
+                "\$NotNull{ModuleName}{in module \${ModuleName}}{}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(moduleName = "core")
                 )
-            ).execute(),
+            ),
             "NotNull test #3 failed"
         )
         assertEquals(
             "", CustomTemplate(
-                "\$NotNull{ModuleName}{in module \${ModuleName}}{}",
+                "\$NotNull{ModuleName}{in module \${ModuleName}}{}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(moduleName = null)
                 )
-            ).execute(),
+            ),
             "NotNull test #4 failed"
         )
     }
@@ -286,22 +303,24 @@ class Tests {
     fun isTextEditorTest() {
         assertEquals(
             "Java: Main.java, (1563/1921)", CustomTemplate(
-                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}",
+                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(editorIsTextEditor = true, fileName = "Main.java", caretLine = 1563, lineCount = 1921)
                 )
-            ).execute(),
+            ),
             "IsTextEditor test #1 failed"
         )
         assertEquals(
             "Java: Main.java, not in a text editor", CustomTemplate(
-                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}",
+                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}"
+            ).execute(
                 CustomTemplateContext(
                     "Java",
                     createFileData(editorIsTextEditor = false, fileName = "Main.java", caretLine = 1563, lineCount = 1921)
                 )
-            ).execute(),
+            ),
             "IsTextEditor test #2 failed"
         )
     }
@@ -311,12 +330,13 @@ class Tests {
         // this uses Java/Kotlin's implementation of escaping regex with \Q and \E
         assertEquals(
             "\\QA+\\E", CustomTemplate(
-                "\$RegexEscape{A+}",
+                "\$RegexEscape{A+}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData()
                 )
-            ).execute(),
+            ),
             "RegexEscape test #1 failed"
         )
     }
@@ -325,22 +345,24 @@ class Tests {
     fun matchesTest() {
         assertEquals(
             ", in module plugin", CustomTemplate(
-                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}",
+                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(moduleName = "plugin", projectName = "JetBrains-Discord-Integration")
                 )
-            ).execute(),
+            ),
             "Matches test #1 failed"
         )
         assertEquals(
             "", CustomTemplate(
-                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}",
+                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}"
+            ).execute(
                 CustomTemplateContext(
                     null,
                     createFileData(moduleName = "JetBrains-Discord-Integration", projectName = "JetBrains-Discord-Integration")
                 )
-            ).execute(),
+            ),
             "Matches test #2 failed"
         )
     }
