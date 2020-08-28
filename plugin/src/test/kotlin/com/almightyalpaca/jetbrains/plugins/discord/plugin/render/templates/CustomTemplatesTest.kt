@@ -366,4 +366,76 @@ class Tests {
             "Matches test #2 failed"
         )
     }
+
+    @Test
+    fun raw_text_test() {
+        assertEquals(
+            "Some weird text{ \$That's'{ \${\$DefinitelyNotValid{", CustomTemplate(
+                "#\"Some weird text{ \$That's'{ \${\$DefinitelyNotValid{\"#"
+            ).execute(
+                CustomTemplateContext(null, createFileData())
+            ),
+            "Raw text test #1 failed"
+        )
+        assertEquals(
+            "Some weird text{ \$That's'{ \${\$DefinitelyNotValid{ and some normal text x", CustomTemplate(
+                "#\"Some weird text{ \$That's'{ \${\$DefinitelyNotValid{\"# and some normal text \$Matches{A}{A}{x}{y}"
+            ).execute(
+                CustomTemplateContext(null, createFileData())
+            ),
+            "Raw text test #2 failed"
+        )
+    }
+
+    @Test
+    fun replace_test() {
+        assertEquals(
+            "b c d e f", CustomTemplate(
+                "\$ReplaceAll{a b c d e f}{#\"a \"#}{}"
+            ).execute(
+                CustomTemplateContext(null, createFileData())
+            ),
+            "Replace test #1 failed"
+        )
+        assertEquals(
+            "/Main.java", CustomTemplate(
+                "\$ReplaceFirst{\${PathInModule}}{/src}{}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(pathInModule = "/src/Main.java"))
+            ),
+            "Replace test #2 failed"
+        )
+        assertEquals(
+            "/Main.java", CustomTemplate(
+                "\$ReplaceAll{\${PathInModule}}{#\"(/src){3}\"#}{}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+            ),
+            "Replace test #3 failed"
+        )
+        assertEquals(
+            "/src/src/src/Main.java", CustomTemplate(
+                "\$ReplaceAll{\${PathInModule}}{#\"(/src){4}\"#}{}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+            ),
+            "Replace test #3 failed"
+        )
+        assertEquals(
+            "Main.java", CustomTemplate(
+                "\$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\\#\"/([a-z]+/)*\"#}{}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+            ),
+            "Replace test #4 failed"
+        )
+        assertEquals(
+            "/src_x/a_x/b_x/c_x/d_x/e_x/f_x/g_x/h_x/Main.java", CustomTemplate(
+                "\$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{#\"([a-z]+)/\"#}{#\"\$1_x/\"#}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+            ),
+            "Replace test #5 failed"
+        )
+    }
 }

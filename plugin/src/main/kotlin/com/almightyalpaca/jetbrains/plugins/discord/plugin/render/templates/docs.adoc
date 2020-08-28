@@ -20,6 +20,9 @@ Here is a list of all the variables that you can use:
 
 TIP: although you can nest those, it's not guaranteed to work
 
+== Raw strings
+`\#" ... "#` will allow you to use `$`, `{` and `}`, while not interpreting them.
+
 == Other stuff
 
 Most of the stuff here follows this pattern: `$Name{Arg1}{Arg2}{Arg3}...{ArgN}`
@@ -63,3 +66,21 @@ matches `regex` or `else` otherwise.
 
 Example: `$Matches{${ModuleName}}{$RegexEscape{${ProjectName}}}{}{, in module ${ModuleName}}` will
 add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}`
+
+* `$ReplaceFirst{text}{regex}{replacement}` replaces the first
+occurrence of regex expression `regex` in `text` with `replacement`.
+
+Some examples:
+
+`$ReplaceFirst{1234bcd}{234}{a} = 1abcd`
+
+`$ReplaceFirst{/src/Main.java}{/src}{} = /Main.java` (Path in source folder from path in module)
+`$ReplaceFirst{aaaa}{\#"a{3}"#}{bcd} = bcda` (Replace the first occurrence of 3 'a's in a row with bcd)
+
+* `$ReplaceAll{text}{regex}{replacement}` replaces all the
+occurrences of regex expression `regex` in `text` with `replacement`.
+
+Examples:
+`$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\#"/([a-z]+/)*"#}{} = Main.java`
+
+`$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\#"([a-z]+)/"#}{\#"$1_x/"#} = /src_x/a_x/b_x/c_x/d_x/e_x/f_x/g_x/h_x/Main.java` (append _x to all folders in a path)

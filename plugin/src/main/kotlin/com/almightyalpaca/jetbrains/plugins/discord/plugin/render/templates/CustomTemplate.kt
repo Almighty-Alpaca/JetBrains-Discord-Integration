@@ -64,6 +64,7 @@ object Patterns {
                         val req = when (name) {
                             "RegexEscape" -> 1
                             "FileIsWritable", "IsTextEditor" -> 2
+                            "ReplaceFirst", "ReplaceAll" -> 3
                             "NotNull" -> 3
                             "Matches" -> 4
                             else -> 0
@@ -94,6 +95,12 @@ object Patterns {
                                         }
                                     )
                                 }
+                                "ReplaceFirst" -> {
+                                    evalVisitor(context, arr[0]).replaceFirst(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                                }
+                                "ReplaceAll" -> {
+                                    evalVisitor(context, arr[0]).replace(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                                }
                                 "NotNull" -> {
                                     evalVisitor(
                                         context, if (varNullCheck(context, evalVisitor(context, arr[0]))) {
@@ -116,6 +123,11 @@ object Patterns {
                             }
                         }
                     }
+                    is TemplateParser.Raw_textContext -> {
+                        val txt = child.text
+                        txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
+                        // and '"#' at the end)
+                    }
                     else -> child.text // TEXT from the grammar: [^\${}]+
                 }
             }
@@ -130,6 +142,7 @@ object Patterns {
  */
 class CustomTemplate(template: String?) {
     private val rootNode: TemplateParser.Text_evalContext
+
     init {
         val lexer = TemplateLexer(CharStreams.fromString(template))
         val tokens = CommonTokenStream(lexer)
@@ -137,6 +150,7 @@ class CustomTemplate(template: String?) {
         parser.buildParseTree = true
         rootNode = parser.template().text_eval()
     }
+
     @Throws(Patterns.ValidityCheckFailed::class)
     fun execute(context: CustomTemplateContext): String? {
         return Patterns.Utils.evalVisitor(context, rootNode)
