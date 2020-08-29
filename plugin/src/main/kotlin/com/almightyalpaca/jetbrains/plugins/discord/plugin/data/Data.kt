@@ -25,6 +25,7 @@ import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
     open class Application(
+        val applicationName: String,
         val applicationVersion: String,
         val applicationTimeOpened: Long,
         val applicationTimeActive: Long,
@@ -36,6 +37,7 @@ sealed class Data {
     }
 
     open class Project(
+        applicationName: String,
         applicationVersion: String,
         applicationTimeOpened: Long,
         applicationTimeActive: Long,
@@ -46,13 +48,14 @@ sealed class Data {
         val projectTimeActive: Long,
         val projectSettings: ProjectSettings,
         val vcsBranch: String?
-    ) : Application(applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
+    ) : Application(applicationName, applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
         override fun toString(): String {
-            return "Data.Project(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
+            return "Data.Project(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
         }
     }
 
     open class File(
+        applicationName: String,
         applicationVersion: String,
         applicationTimeOpened: Long,
         applicationTimeActive: Long,
@@ -70,6 +73,7 @@ sealed class Data {
         val filePath: String,
         val fileIsWriteable: Boolean
     ) : Project(
+        applicationName,
         applicationVersion,
         applicationTimeOpened,
         applicationTimeActive,
@@ -106,7 +110,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "Data.File(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "Data.File(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
         }
     }
 }

@@ -32,15 +32,15 @@ abstract class Renderer(private val context: RenderContext) {
     protected abstract fun RenderContext.render(): RichPresence
 
     protected fun RenderContext.render(
-        details: LineValue?,
+        details: TextValue?,
         detailsCustom: StringValue?,
-        state: LineValue?,
+        state: TextValue?,
         stateCustom: StringValue?,
         largeIcon: IconValue?,
-        largeIconText: IconTextValue?,
+        largeIconText: TextValue?,
         largeIconTextCustom: StringValue?,
         smallIcon: IconValue?,
-        smallIconText: IconTextValue?,
+        smallIconText: TextValue?,
         smallIconTextCustom: StringValue?,
         startTimestamp: TimeValue?
     ): RichPresence {
@@ -57,15 +57,15 @@ abstract class Renderer(private val context: RenderContext) {
 
         return RichPresence(context.icons?.applicationId) presence@{
             this@presence.details = when (val line = details?.getValue()?.get(context)) {
-                null, PresenceLine.Result.Empty -> null
-                PresenceLine.Result.Custom -> detailsCustom?.getValue()
-                is PresenceLine.Result.String -> line.value
+                null, PresenceText.Result.Empty -> null
+                PresenceText.Result.Custom -> detailsCustom?.getValue()
+                is PresenceText.Result.String -> line.value
             }
 
             this@presence.state = when (val line = state?.getValue()?.get(context)) {
-                null, PresenceLine.Result.Empty -> null
-                PresenceLine.Result.Custom -> stateCustom?.getValue()
-                is PresenceLine.Result.String -> line.value
+                null, PresenceText.Result.Empty -> null
+                PresenceText.Result.Custom -> stateCustom?.getValue()
+                is PresenceText.Result.String -> line.value
             }
 
             this@presence.startTimestamp = when (val time = startTimestamp?.getValue()?.get(context)) {
@@ -81,9 +81,9 @@ abstract class Renderer(private val context: RenderContext) {
                 null, PresenceIcon.Result.Empty -> null
                 is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
-                        null, PresenceIconText.Result.Empty -> null
-                        is PresenceIconText.Result.String -> text.value
-                        PresenceIconText.Result.Custom -> largeIconTextCustom?.getValue()
+                        null, PresenceText.Result.Empty -> null
+                        is PresenceText.Result.String -> text.value
+                        PresenceText.Result.Custom -> largeIconTextCustom?.getValue()
                     }
                     RichPresence.Image(icon.value, caption)
                 }
@@ -93,9 +93,9 @@ abstract class Renderer(private val context: RenderContext) {
                 null, PresenceIcon.Result.Empty -> null
                 is PresenceIcon.Result.Asset -> {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {
-                        null, PresenceIconText.Result.Empty -> null
-                        is PresenceIconText.Result.String -> text.value
-                        PresenceIconText.Result.Custom -> smallIconTextCustom?.getValue()
+                        null, PresenceText.Result.Empty -> null
+                        is PresenceText.Result.String -> text.value
+                        PresenceText.Result.Custom -> smallIconTextCustom?.getValue()
                     }
                     RichPresence.Image(icon.value, caption)
                 }

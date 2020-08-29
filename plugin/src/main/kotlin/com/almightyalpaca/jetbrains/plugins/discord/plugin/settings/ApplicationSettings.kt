@@ -39,39 +39,39 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val filePrefixEnabled: BooleanValue
     val fileHideVcsIgnored: BooleanValue
 
-    val applicationDetails: LineValue
+    val applicationDetails: TextValue
     val applicationDetailsCustom: StringValue
-    val applicationState: LineValue
+    val applicationState: TextValue
     val applicationStateCustom: StringValue
     val applicationIconLarge: IconValue
-    val applicationIconLargeText: IconTextValue
+    val applicationIconLargeText: TextValue
     val applicationIconLargeTextCustom: StringValue
     val applicationIconSmall: IconValue
-    val applicationIconSmallText: IconTextValue
+    val applicationIconSmallText: TextValue
     val applicationIconSmallTextCustom: StringValue
     val applicationTime: TimeValue
 
-    val projectDetails: LineValue
+    val projectDetails: TextValue
     val projectDetailsCustom: StringValue
-    val projectState: LineValue
+    val projectState: TextValue
     val projectStateCustom: StringValue
     val projectIconLarge: IconValue
-    val projectIconLargeText: IconTextValue
+    val projectIconLargeText: TextValue
     val projectIconLargeTextCustom: StringValue
     val projectIconSmall: IconValue
-    val projectIconSmallText: IconTextValue
+    val projectIconSmallText: TextValue
     val projectIconSmallTextCustom: StringValue
     val projectTime: TimeValue
 
-    val fileDetails: LineValue
+    val fileDetails: TextValue
     val fileDetailsCustom: StringValue
-    val fileState: LineValue
+    val fileState: TextValue
     val fileStateCustom: StringValue
     val fileIconLarge: IconValue
-    val fileIconLargeText: IconTextValue
+    val fileIconLargeText: TextValue
     val fileIconLargeTextCustom: StringValue
     val fileIconSmall: IconValue
-    val fileIconSmallText: IconTextValue
+    val fileIconSmallText: TextValue
     val fileIconSmallTextCustom: StringValue
     val fileTime: TimeValue
 

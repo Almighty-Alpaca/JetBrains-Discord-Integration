@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeSuspend
@@ -61,6 +62,7 @@ class DataService {
         val application = ApplicationManager.getApplication()
         val applicationInfo = ApplicationInfoEx.getInstance()
 
+        val applicationName = settings.applicationType.getValue().applicationNameReadable
         val applicationVersion = applicationInfo.fullVersion
         val applicationTimeOpened = application.timeOpened
         val applicationTimeActive = application.timeActive
@@ -103,6 +105,7 @@ class DataService {
                     DiscordPlugin.LOG.debug("Returning file data")
 
                     return Data.File(
+                        applicationName,
                         applicationVersion,
                         applicationTimeOpened,
                         applicationTimeActive,
@@ -128,6 +131,7 @@ class DataService {
             DiscordPlugin.LOG.debug("Returning project data")
 
             return Data.Project(
+                applicationName,
                 applicationVersion,
                 applicationTimeOpened,
                 applicationTimeActive,
@@ -144,6 +148,7 @@ class DataService {
         DiscordPlugin.LOG.debug("Returning application data")
 
         return Data.Application(
+            applicationName,
             applicationVersion,
             applicationTimeOpened,
             applicationTimeActive,

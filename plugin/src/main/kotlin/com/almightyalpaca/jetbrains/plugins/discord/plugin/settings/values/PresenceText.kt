@@ -22,11 +22,17 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 
-typealias LineValue = SimpleValue<PresenceLine>
+typealias TextValue = SimpleValue<PresenceText>
 
-enum class PresenceLine(override val text: String, override val description: String? = null) : RenderedValue<PresenceLine.Result>, UiValueType {
+enum class PresenceText(override val text: String, override val description: String? = null) : RenderedValue<PresenceText.Result>, UiValueType {
     NONE("Empty") {
         override fun RenderContext.getResult(): Result = Result.Empty
+    },
+    APPLICATION_NAME("Application Name") {
+        override fun RenderContext.getResult() = applicationData?.applicationName.toResult()
+    },
+    APPLICATION_VERSION("Application Version") {
+        override fun RenderContext.getResult() = applicationData?.applicationVersion.toResult()
     },
     PROJECT_DESCRIPTION("Project Description") {
         override fun RenderContext.getResult(): Result = projectData?.projectDescription.toResult()
@@ -84,17 +90,26 @@ enum class PresenceLine(override val text: String, override val description: Str
     FILE_NAME("File Name", "Only shows the file name even when there are multiple open files with the same name") {
         override fun RenderContext.getResult() = fileData?.let { getPrefix(fileData) + fileData.fileName }.toResult()
     },
+    FILE_LANGUAGE("File Language") {
+        override fun RenderContext.getResult() = language?.name.toResult()
+    },
     CUSTOM("Custom") {
         override fun RenderContext.getResult() = Result.Custom
     };
 
     companion object {
-        val Application1 = NONE to arrayOf(NONE, CUSTOM)
-        val Application2 = NONE to arrayOf(NONE, CUSTOM)
-        val Project1 = PROJECT_NAME to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
-        val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
-        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
-        val File2 = FILE_NAME_PATH to arrayOf(NONE, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, CUSTOM)
+        val Application1 = NONE to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME, CUSTOM)
+        val Application2 = NONE to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME,  CUSTOM)
+        val ApplicationIconLarge = APPLICATION_VERSION to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME, CUSTOM)
+        val ApplicationIconSmall = NONE to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME,  CUSTOM)
+        val Project1 = PROJECT_NAME to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val Project2 = PROJECT_DESCRIPTION to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val ProjectIconLarge = APPLICATION_VERSION to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val ProjectIconSmall = NONE to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, CUSTOM)
+        val File1 = PROJECT_NAME_DESCRIPTION to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME,  PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, FILE_LANGUAGE, CUSTOM)
+        val File2 = FILE_NAME_PATH to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, FILE_LANGUAGE, CUSTOM)
+        val FileIconLarge = FILE_LANGUAGE to arrayOf(NONE, APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, FILE_LANGUAGE, CUSTOM)
+        val FileIconSmall = APPLICATION_VERSION to arrayOf(NONE,  APPLICATION_VERSION, APPLICATION_NAME, PROJECT_DESCRIPTION, PROJECT_NAME, PROJECT_NAME_DESCRIPTION, PROJECT_VCS_BRANCH, PROJECT_NAME_VCS_BRANCH, FILE_NAME_PATH, FILE_NAME, FILE_LANGUAGE, CUSTOM)
     }
 
     fun String?.toResult() = when {
