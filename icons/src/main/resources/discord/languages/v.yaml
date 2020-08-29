@@ -1,0 +1,8 @@
+name: V
+asset: v
+parent: text
+match:
+  name:
+    equals: v.mod
+  extension:
+    equals: .v

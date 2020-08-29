@@ -4,5 +4,5 @@ parent: php
 match:
   extension:
     equals:
-      - .hh
+#      - .hh
       - .hhconfig

@@ -3,7 +3,7 @@ asset: git
 parent: text
 match:
   path:
-    startsWith:
+    contains:
       - .git/
 flavors:
   - name: Git Submodules
