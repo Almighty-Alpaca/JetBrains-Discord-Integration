@@ -60,7 +60,8 @@ class Tests {
             caretLine: Int = 172,
             lineCount: Int = 526,
             moduleName: String? = "dummy-module",
-            pathInModule: String? = "/src/Main.java"
+            pathInModule: String? = "/src/Main.java",
+            fileSize: Int = 0
         ): TemplateData.File {
             return TemplateData.File(
                 applicationVersion,
@@ -75,7 +76,8 @@ class Tests {
                 caretLine,
                 lineCount,
                 moduleName,
-                pathInModule
+                pathInModule,
+                fileSize
             )
         }
     }
@@ -368,7 +370,7 @@ class Tests {
     }
 
     @Test
-    fun raw_text_test() {
+    fun rawTextTest() {
         assertEquals(
             "Some weird text{ \$That's'{ \${\$DefinitelyNotValid{", CustomTemplate(
                 "#\"Some weird text{ \$That's'{ \${\$DefinitelyNotValid{\"#"
@@ -388,7 +390,7 @@ class Tests {
     }
 
     @Test
-    fun replace_test() {
+    fun replaceTest() {
         assertEquals(
             "b c d e f", CustomTemplate(
                 "\$ReplaceAll{a b c d e f}{#\"a \"#}{}"
@@ -425,7 +427,7 @@ class Tests {
             "Main.java", CustomTemplate(
                 "\$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\\#\"/([a-z]+/)*\"#}{}"
             ).execute(
-                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+                CustomTemplateContext(null, createFileData())
             ),
             "Replace test #4 failed"
         )
@@ -433,9 +435,85 @@ class Tests {
             "/src_x/a_x/b_x/c_x/d_x/e_x/f_x/g_x/h_x/Main.java", CustomTemplate(
                 "\$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{#\"([a-z]+)/\"#}{#\"\$1_x/\"#}"
             ).execute(
-                CustomTemplateContext(null, createFileData(pathInModule = "/src/src/src/Main.java"))
+                CustomTemplateContext(null, createFileData())
             ),
             "Replace test #5 failed"
+        )
+    }
+
+    @Test
+    fun fileSizeTests() {
+        assertEquals(
+            "100 bytes", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 100))
+            ),
+            "File size test #1 failed"
+        )
+        assertEquals(
+            "1000 bytes", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 1000))
+            ),
+            "File size test #2 failed"
+        )
+        assertEquals(
+            "2047 bytes", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = (2 shl 10) - 1))
+            ),
+            "File size test #3 failed"
+        )
+        assertEquals(
+            "2.0 KiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 2 shl 10))
+            ),
+            "File size test #4 failed"
+        )
+        assertEquals(
+            "1000.0 KiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 1000 shl 10))
+            ),
+            "File size test #5 failed"
+        )
+        assertEquals(
+            "2047.0 KiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = (2 shl 20) - (1 shl 10)))
+            ),
+            "File size test #6 failed"
+        )
+        assertEquals(
+            "2.0 MiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 2 shl 20))
+            ),
+            "File size test #7 failed"
+        )
+        assertEquals(
+            "1023.0 MiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = (1 shl 30) - (1 shl 20)))
+            ),
+            "File size test #8 failed"
+        )
+        assertEquals(
+            "1.0 GiB", CustomTemplate(
+                "\${FileSize}"
+            ).execute(
+                CustomTemplateContext(null, createFileData(fileSize = 1 shl 30))
+            ),
+            "File size test #9 failed"
         )
     }
 }

@@ -84,7 +84,8 @@ sealed class Data {
         val caretLine: Int,
         val lineCount: Int,
         val moduleName: String?,
-        val pathInModule: String?
+        val pathInModule: String?,
+        val fileSize: Int
     ) : Project(
         applicationName,
         applicationVersion,

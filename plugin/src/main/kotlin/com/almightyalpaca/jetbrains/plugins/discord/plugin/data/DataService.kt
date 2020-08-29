@@ -128,6 +128,8 @@ class DataService {
                         val moduleDirPath = module?.guessModuleDir()
                         val pathInModule = if (moduleDirPath != null) file.path.removePrefix(moduleDirPath.path) else ""
 
+                        val fileSize = if (editor is TextEditor) editor.editor.document.textLength else 0
+
                         val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
                         DiscordPlugin.LOG.debug("Returning file data")
@@ -154,7 +156,8 @@ class DataService {
                             caretLine,
                             lineCount,
                             moduleName,
-                            pathInModule
+                            pathInModule,
+                            fileSize
                         )
                     }
                 }

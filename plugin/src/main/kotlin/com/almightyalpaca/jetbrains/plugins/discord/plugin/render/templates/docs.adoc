@@ -17,6 +17,7 @@ Here is a list of all the variables that you can use:
 - `${Language}`: The language of the file you are currently focused on
 - `${ModuleName}`: The name of the module the file currently in focus is; null in non-IDEA IDEs
 - `${PathInModule}`: The path relative to the root of the module of the file; for example `/src/Main.java`; empty if intellij couldn't guess the module directory
+- `${FileSize}`: The size of the file currently open in the editor, in human readable format(appends "bytes", "KiB", "MiB" and "GiB", depending on the size of it).
 
 TIP: although you can nest those, it's not guaranteed to work
 

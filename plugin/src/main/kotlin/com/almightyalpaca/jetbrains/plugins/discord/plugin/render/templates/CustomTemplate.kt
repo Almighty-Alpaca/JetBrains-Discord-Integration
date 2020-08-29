@@ -25,11 +25,6 @@ import org.antlr.v4.runtime.CommonTokenStream
 
 object Patterns {
     /**
-     * Thrown on invalid input
-     */
-    class ValidityCheckFailed(reason: String) : RuntimeException(reason)
-
-    /**
      * Some utils
      */
     object Utils {
@@ -47,10 +42,19 @@ object Patterns {
                 "ModuleName" -> context.fileData?.moduleName
                 "PathInModule" -> context.fileData?.pathInModule
                 "Language" -> context.language
+                "FileSize" -> sizeAsString(context.fileData?.fileSize)
                 else -> null
             }
 
-        fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
+        private fun sizeAsString(size: Int?): String? {
+            if (size == null) return null
+            if (size < 2 shl 10) return "$size bytes" // 0 .. 2 KiB
+            if (size < 2 shl 20) return "${size.toFloat() / (1 shl 10)} KiB" // 2 KiB .. 2 MiB
+            if (size < 1 shl 30) return "${size.toFloat() / (1 shl 20)} MiB" // 2 MiB .. 1 GiB
+            return "${size.toFloat() / (1 shl 30)} GiB" // 1 GiB ..
+        }
+
+        private fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
 
         fun evalVisitor(context: CustomTemplateContext, tree: TemplateParser.Text_evalContext): String {
             var ret = ""
@@ -151,7 +155,6 @@ class CustomTemplate(template: String?) {
         rootNode = parser.template().text_eval()
     }
 
-    @Throws(Patterns.ValidityCheckFailed::class)
     fun execute(context: CustomTemplateContext): String? {
         return Patterns.Utils.evalVisitor(context, rootNode)
     }
@@ -183,7 +186,8 @@ private fun Data.asTemplateData(): TemplateData {
                 this.caretLine,
                 this.lineCount,
                 this.moduleName,
-                this.pathInModule
+                this.pathInModule,
+                this.fileSize
             )
         }
         is Data.Project -> {
@@ -232,7 +236,8 @@ sealed class TemplateData {
         val caretLine: Int,
         val lineCount: Int,
         val moduleName: String?,
-        val pathInModule: String?
+        val pathInModule: String?,
+        val fileSize: Int
     ) : Project(
         applicationVersion,
         projectName,
