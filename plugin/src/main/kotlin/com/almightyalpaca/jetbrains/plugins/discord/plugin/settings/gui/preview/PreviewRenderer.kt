@@ -439,7 +439,10 @@ class PreviewRenderer {
 
                             if (time != null) {
                                 val millis = Duration.between(time, timeNow).toMillis()
-                                val formatted = DurationFormatUtils.formatDuration(millis, "HH:mm:ss")
+                                val formatted = when {
+                                    millis < 1 * 60 * 60 * 1000 -> DurationFormatUtils.formatDuration(millis, "mm:ss")
+                                    else -> DurationFormatUtils.formatDuration(millis, "HH:mm:ss")
+                                }
 
                                 font = font14Medium
                                 color = whiteTranslucent80
@@ -469,6 +472,7 @@ private fun Data.completeMissingData(): Data {
     val dummyFileName = sourceService.source.getApplicationsOrNull()?.get(applicationCode)?.dummyFile ?: "dummy.txt"
 
     return Data.File(
+        application.applicationName,
         application.applicationVersion,
         application.applicationTimeOpened,
         application.applicationTimeActive,
