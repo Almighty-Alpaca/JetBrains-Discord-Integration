@@ -19,24 +19,18 @@ package com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.mapWith
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toMap
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.features.UserAgent
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.readBytes
-import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.utils.io.jvm.javaio.toInputStream
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.content.*
+import io.ktor.http.*
+import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.*
 import okhttp3.Cache
 import okhttp3.ConnectionPool
@@ -49,7 +43,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.stream.Stream
 
 @ExperimentalCoroutinesApi
 suspend fun main() {
@@ -227,12 +220,12 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
         application = "${source.pathApplications}/$appCode.png"
     }
 
-    val applicationStream = Stream.of("application" to application)
+    val applicationStream = sequenceOf("application" to application)
 
-    val iconStream = source.listResources("${source.pathThemes}/$theme", Regex(""".*\.png"""))
+    val iconStream = source.listResources("${source.pathThemes}/$theme/", ".png")
         .map { p -> FilenameUtils.getBaseName(p) to p }
 
-    Stream.concat(applicationStream, iconStream).toMap()
+    (applicationStream + iconStream).toMap()
 }
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {

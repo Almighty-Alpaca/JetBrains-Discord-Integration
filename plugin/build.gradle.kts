@@ -145,7 +145,6 @@ tasks {
         prefix("okhttp3")
         prefix("okio")
         prefix("org.apache.commons.io")
-        prefix("org.reflections")
         prefix("org.yaml.snakeyaml")
 
         val iconPaths = listOf(

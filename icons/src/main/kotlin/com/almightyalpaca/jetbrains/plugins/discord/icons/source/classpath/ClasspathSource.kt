@@ -19,17 +19,13 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.local.LocalApplicationSourceMap
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toMap
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import kotlinx.coroutines.*
 import org.apache.commons.io.FilenameUtils
-import org.reflections.Reflections
-import org.reflections.scanners.ResourcesScanner
 import java.io.Closeable
 import java.io.InputStream
-import java.util.stream.Stream
 import kotlin.coroutines.CoroutineContext
 
 class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineScope {
@@ -38,10 +34,10 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + parentJob
 
-    val pathBase = "/$path"
-    val pathLanguages = "$pathBase/languages"
-    val pathThemes = "$pathBase/themes"
-    val pathApplications = "$pathBase/applications"
+    val basePath = "/$path"
+    val pathLanguages = "$basePath/languages/"
+    val pathThemes = "$basePath/themes/"
+    val pathApplications = "$basePath/applications/"
 
     private val languageJob: Deferred<LanguageMap> = when (retry) {
         true -> retryAsync { readLanguages() }
@@ -69,7 +65,7 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
     private fun <T> read(path: String, factory: (String, JsonNode) -> T): Map<String, T> {
         val mapper = ObjectMapper(YAMLFactory())
 
-        return listResources(path, Regex(""".*\.yaml"""))
+        return listResources(path, ".yaml")
             .map { p ->
                 val node: JsonNode = mapper.readTree(loadResource(p))
                 val id = FilenameUtils.getBaseName(p)
@@ -82,9 +78,12 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
 
     fun checkResourceExists(location: String): Boolean = loadResource(location)?.run(Closeable::close) != null
 
-    fun listResources(path: String, pattern: Regex): Stream<String> =
-        Reflections(path.substring(1).replace('/', '.'), ResourcesScanner())
-            .getResources(pattern.toPattern())
-            .stream()
-            .map { p -> "/$p" }
+    fun listResources(path: String, extension: String): Sequence<String> {
+        return (loadResource("$path/index")
+            ?.bufferedReader()
+            ?.lineSequence()
+            ?: throw IllegalStateException("could not find index for $path"))
+            .filter { it.endsWith(extension) }
+            .map { p -> "$path$p" }
+    }
 }

@@ -53,5 +53,10 @@ gradlePlugin {
             id = "docker"
             implementationClass = "DockerPlugin"
         }
+
+        create("FileIndicesPlugin") {
+            id = "fileIndices"
+            implementationClass = "FileIndicesPlugin"
+        }
     }
 }
