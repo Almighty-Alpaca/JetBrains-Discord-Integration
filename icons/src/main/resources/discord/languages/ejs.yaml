@@ -1,6 +1,6 @@
 name: EJS
 asset: ejs
-parent: js
+parent: javascript
 match:
   extension:
     equals: .ejs

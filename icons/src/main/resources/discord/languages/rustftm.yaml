@@ -1,6 +1,6 @@
 name: rustfmt
-asset: rustftm
+asset: rustfmt
 parent: toml
 match:
   name:
-    equals: rustftm.toml
+    equals: rustfmt.toml
