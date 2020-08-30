@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.googlecode.pngtastic.core.PngImage
 import com.googlecode.pngtastic.core.PngOptimizer
+import net.openhft.hashing.LongHashFunction
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 import org.gradle.api.file.FileTreeElement
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 import java.awt.Image
@@ -40,10 +44,15 @@ import javax.imageio.ImageWriteParam
 fun Project.PngOptimizingTransformer(size: Int, quality: Float, includePaths: List<Regex>): Transformer =
     PngOptimizingTransformer(size, quality, includePaths, buildDir.toPath().resolve("cache/icons"))
 
+@CacheableTransformer
 class PngOptimizingTransformer(
+    @Input
     private val size: Int,
+    @Input
     private val quality: Float,
+    @Input
     private val includePaths: List<Regex>,
+    @InputDirectory
     private val cacheDir: Path
 ) : Transformer {
     private val files = mutableMapOf<String, Path>()
@@ -63,12 +72,12 @@ class PngOptimizingTransformer(
         val data = IOUtils.toByteArray(context.`is`)
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        val hash = net.openhft.hashing.LongHashFunction.xx().hashBytes(data).toULong().toString()
+        val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
 
-        val cacheFile = cacheDir.resolve(hash)
+        val cacheFile = cacheDir.resolve("$hash-$size-$quality")
 
         if (!Files.exists(cacheFile)) {
-            val image: BufferedImage = ImageIO.read(ByteArrayInputStream(data))
+            val image: BufferedImage = ImageIO.read(ByteArrayInputStream(data)) ?: return
 
             val scaledImage: RenderedImage = image.getScaledInstance(size, size, Image.SCALE_SMOOTH).getRenderedImage()
             val imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)
