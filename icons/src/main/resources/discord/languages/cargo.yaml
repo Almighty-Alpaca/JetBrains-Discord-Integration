@@ -1,0 +1,11 @@
+name: Cargo
+asset: cargo
+parent: toml
+match:
+  name:
+    equals:
+      - Cargo.toml
+      - Cargo.lock
+  path:
+    contains:
+      - .cargo/

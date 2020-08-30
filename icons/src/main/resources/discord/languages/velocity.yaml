@@ -1,0 +1,11 @@
+name: Velocity
+asset: velocity
+parent: apache
+match:
+  extension:
+    equals:
+      - .wm
+      - .vtl
+      - .vstl
+      - .dvsl
+      - .vstl

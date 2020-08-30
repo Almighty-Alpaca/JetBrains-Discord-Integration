@@ -33,7 +33,7 @@ fun LocalSource.getIcons(theme: String): Set<String> {
 }
 
 fun ClasspathSource.getIcons(theme: String): Set<String> {
-    return listResources("$pathThemes.$theme", Regex(""".*\.png"""))
+    return listResources("$pathThemes.$theme", ".png")
         .map { p -> FilenameUtils.getBaseName(p) }
         .toSet()
 }

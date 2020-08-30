@@ -19,13 +19,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.gradle.kotlinx
 plugins {
     kotlin("jvm")
     id("com.palantir.baseline-exact-dependencies")
+    fileIndices
 }
 
 dependencies {
     val versionCoroutines: String by project
     val versionCommonsIo: String by project
     val versionJackson: String by project
-    val versionReflections: String by project
 
     implementation(kotlin(module = "stdlib"))
 
@@ -38,11 +38,15 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-core")
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml")
-
-    implementation(group = "org.reflections", name = "reflections", version = versionReflections)
 }
 
 tasks {
+    generateFileIndices {
+        paths += "discord/applications"
+        paths += "discord/languages"
+        paths += "discord/themes"
+    }
+
     checkImplicitDependencies {
         ignore("org.jetbrains", "annotations")
     }

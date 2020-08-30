@@ -18,13 +18,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.get
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.setWith
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import java.net.URL
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
+import org.apache.commons.io.FilenameUtils
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.Map
+import kotlin.collections.set
 
 class ClasspathTheme(private val source: ClasspathSource, id: String, name: String, description: String, applications: Map<String, Long>) :
     AbstractTheme(id, name, description, applications) {
@@ -35,21 +33,14 @@ class ClasspathTheme(private val source: ClasspathSource, id: String, name: Stri
         if (set == null) {
             val applicationId = applications[applicationName]
             if (applicationId != null) {
-                val icons = getIcons(applicationId)
-                if (icons != null) {
-                    set = ClasspathIconSet(source, this, applicationId, icons, applicationName)
-                    sets[applicationName] = set
-                }
+                val resources = source.listResources("${source.pathThemes}/$id/", ".png")
+                val icons = resources
+                    .map(FilenameUtils::getBaseName)
+                    .toSet() + "application"
+                set = ClasspathIconSet(source, this, applicationId, icons, applicationName)
+                sets[applicationName] = set
             }
         }
         return set
-    }
-
-    private fun getIcons(appId: Long): Set<String>? = URL("https://discordapp.com/api/oauth2/applications/$appId/assets").get { inputStream ->
-        val array = ObjectMapper().readTree(inputStream) as ArrayNode
-
-        setWith(array.size()) { i ->
-            (array[i] as ObjectNode)["name"].asText()
-        }
     }
 }

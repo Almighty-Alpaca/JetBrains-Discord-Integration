@@ -31,10 +31,11 @@ val properties = Properties().apply {
 
 dependencies {
     val versionCommonsIo: String by properties
-    val versionPngtastic: String by properties
-    val versionShadow: String by properties
+    val versionGuava: String by properties
     val versionJooq: String by properties
     val versionJooqGradle: String by properties
+    val versionPngtastic: String by properties
+    val versionShadow: String by properties
     val versionZeroAllocationHashing: String by properties
 
     implementation(group = "com.github.jengelman.gradle.plugins", name = "shadow", version = versionShadow)
@@ -47,6 +48,8 @@ dependencies {
     implementation(group = "nu.studer", name = "gradle-jooq-plugin", version = versionJooqGradle)
 
     implementation(group = "org.jooq", name = "jooq-codegen", version = versionJooq)
+
+    implementation(group = "com.google.guava", name = "guava", version = versionGuava)
 }
 
 gradlePlugin {
@@ -64,6 +67,11 @@ gradlePlugin {
         register("Secrets Plugin") {
             id = "secrets"
             implementationClass = "com.almightyalpaca.jetbrains.plugins.discord.gradle.SecretsPlugin"
+        }
+
+        create("File Indices Plugin") {
+            id = "fileIndices"
+            implementationClass = "com.almightyalpaca.jetbrains.plugins.discord.gradle.FileIndicesPlugin"
         }
     }
 }

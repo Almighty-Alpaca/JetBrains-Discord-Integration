@@ -3,7 +3,7 @@ parent: text
 asset: gradle
 match:
   path:
-    startsWith: .gradle/
+    contains: .gradle/
 flavors:
   - name: Gradle Groovy
     parent: groovy

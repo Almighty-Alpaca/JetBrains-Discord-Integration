@@ -1,0 +1,6 @@
+name: rustfmt
+asset: rustfmt
+parent: toml
+match:
+  name:
+    equals: rustfmt.toml

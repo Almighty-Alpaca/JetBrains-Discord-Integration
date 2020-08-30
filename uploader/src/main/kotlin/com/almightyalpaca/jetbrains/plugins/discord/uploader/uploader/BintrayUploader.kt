@@ -17,26 +17,20 @@
 package com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
-import com.almightyalpaca.jetbrains.plugins.discord.uploader.utils.append
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.features.ResponseException
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.basic
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.features.*
+import io.ktor.client.features.auth.*
+import io.ktor.client.features.auth.providers.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.http.content.OutgoingContent
-import io.ktor.util.InternalAPI
-import io.ktor.util.KtorExperimentalAPI
-import io.ktor.utils.io.ByteReadChannel
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.util.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
@@ -169,13 +163,13 @@ private suspend fun HttpClient.uploadFile(
 }
 
 private fun ClasspathSource.getClasspathFiles(): Set<Pair<String, String>> {
-    val languages = listResources(pathLanguages, Regex(""".*\.yaml"""))
-    val themes = listResources(pathThemes, Regex(""".*\.yaml"""))
-    val applications = listResources(pathApplications, Regex(""".*\.yaml"""))
+    val languages = listResources(pathLanguages, ".yaml")
+    val themes = listResources(pathThemes, ".yaml")
+    val applications = listResources(pathApplications, ".yaml")
 
-    val base = Paths.get(pathBase)
+    val base = Paths.get(basePath)
 
-    return languages.append(themes).append(applications)
+    return (languages + themes + applications)
         .map { p -> FilenameUtils.separatorsToUnix(base.relativize(Paths.get(p)).toString()) to p }
         .toSet()
 }
