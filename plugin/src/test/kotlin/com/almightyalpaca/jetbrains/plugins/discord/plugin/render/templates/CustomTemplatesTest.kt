@@ -114,7 +114,7 @@ class Tests {
                     createFileData(fileName = "Main.java", fileNameUnique = "a/Main.java")
                 )
             ),
-            "Variable replacement test #1 failed"
+            "\${var} Variable replacement test #1 failed"
         )
         assertEquals(
             // see the $NotNull{VcsBranch} test in the notNullTest below; just know this is what's supposed to happen when vcsBranch is null
@@ -126,7 +126,7 @@ class Tests {
                     createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = null)
                 )
             ),
-            "Variable replacement test #2 failed"
+            "\${var} Variable replacement test #2 failed"
         )
         assertEquals(
             "JetBrains-Discord-Integration, on branch: master", CustomTemplate(
@@ -137,7 +137,7 @@ class Tests {
                     createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = "master")
                 )
             ),
-            "Variable replacement test #3 failed"
+            "\${var} Variable replacement test #3 failed"
         )
         assertEquals(
             "JetBrains-Discord-Integration - Discord rich presence integration for all JetBrains IDEs", CustomTemplate(
@@ -148,7 +148,7 @@ class Tests {
                     createProjectData(projectName = "JetBrains-Discord-Integration", projectDescription = "Discord rich presence integration for all JetBrains IDEs")
                 )
             ),
-            "Variable replacement test #4 failed"
+            "\${var} Variable replacement test #4 failed"
         )
         assertEquals(
             "2020.1.2 - JetBrains-Discord-Integration", CustomTemplate(
@@ -159,7 +159,7 @@ class Tests {
                     createProjectData(projectName = "JetBrains-Discord-Integration", applicationVersion = "2020.1.2")
                 )
             ),
-            "Variable replacement test #5 failed"
+            "\${var} Variable replacement test #5 failed"
         )
         assertEquals(
             "src/Main.java, language: Java - 158/1237", CustomTemplate(
@@ -170,7 +170,7 @@ class Tests {
                     createFileData(filePath = "src/Main.java", caretLine = 158, lineCount = 1237)
                 )
             ),
-            "Variable replacement test #6 failed"
+            "\${var} Variable replacement test #6 failed"
         )
         assertEquals(
             "src/Main.java, in module core", CustomTemplate(
@@ -181,7 +181,7 @@ class Tests {
                     createFileData(filePath = "src/Main.java", moduleName = "core")
                 )
             ),
-            "Variable replacement test #7 failed"
+            "\${var} Variable replacement test #7 failed"
         )
         assertEquals(
             "Main.java, in module test-module, with path in module '/src/Main.java'", CustomTemplate(
@@ -192,7 +192,99 @@ class Tests {
                     createFileData(fileName = "Main.java", moduleName = "test-module", pathInModule = "/src/Main.java")
                 )
             ),
-            "Variable replacement test #8 failed"
+            "\${var} Variable replacement test #8 failed"
+        )
+
+        ///////////////////////////// Tests above, but using `$var` syntax instead of `${var}` ////////////////////////
+
+        assertEquals(
+            "Main.java, unique: a/Main.java", CustomTemplate(
+                "\$FileName, unique: \$FileNameUnique"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createFileData(fileName = "Main.java", fileNameUnique = "a/Main.java")
+                )
+            ),
+            "\$var Variable replacement test #1 failed"
+        )
+        assertEquals(
+            // see the $NotNull{VcsBranch} test in the notNullTest below; just know this is what's supposed to happen when vcsBranch is null
+            "JetBrains-Discord-Integration, on branch: ", CustomTemplate(
+                "\$ProjectName, on branch: \$VcsBranch"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = null)
+                )
+            ),
+            "\$var Variable replacement test #2 failed"
+        )
+        assertEquals(
+            "JetBrains-Discord-Integration, on branch: master", CustomTemplate(
+                "\$ProjectName, on branch: \$VcsBranch"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createProjectData(projectName = "JetBrains-Discord-Integration", vcsBranch = "master")
+                )
+            ),
+            "\$var Variable replacement test #3 failed"
+        )
+        assertEquals(
+            "JetBrains-Discord-Integration - Discord rich presence integration for all JetBrains IDEs", CustomTemplate(
+                "\$ProjectName - \$ProjectDescription"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createProjectData(projectName = "JetBrains-Discord-Integration", projectDescription = "Discord rich presence integration for all JetBrains IDEs")
+                )
+            ),
+            "\$var Variable replacement test #4 failed"
+        )
+        assertEquals(
+            "2020.1.2 - JetBrains-Discord-Integration", CustomTemplate(
+                "\$ApplicationVersion - \$ProjectName"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createProjectData(projectName = "JetBrains-Discord-Integration", applicationVersion = "2020.1.2")
+                )
+            ),
+            "\$var Variable replacement test #5 failed"
+        )
+        assertEquals(
+            "src/Main.java, language: Java - 158/1237", CustomTemplate(
+                "\$FilePath, language: \$Language - \$CaretLine/\$LineCount"
+            ).execute(
+                CustomTemplateContext(
+                    "Java",
+                    createFileData(filePath = "src/Main.java", caretLine = 158, lineCount = 1237)
+                )
+            ),
+            "\$var Variable replacement test #6 failed"
+        )
+        assertEquals(
+            "src/Main.java, in module core", CustomTemplate(
+                "\$FilePath, in module \$ModuleName"
+            ).execute(
+                CustomTemplateContext(
+                    "Java",
+                    createFileData(filePath = "src/Main.java", moduleName = "core")
+                )
+            ),
+            "\$var Variable replacement test #7 failed"
+        )
+        assertEquals(
+            "Main.java, in module test-module, with path in module '/src/Main.java'", CustomTemplate(
+                "\$FileName, in module \$ModuleName, with path in module '\$PathInModule'"
+            ).execute(
+                CustomTemplateContext(
+                    "Java",
+                    createFileData(fileName = "Main.java", moduleName = "test-module", pathInModule = "/src/Main.java")
+                )
+            ),
+            "\$var Variable replacement test #8 failed"
         )
     }
 
