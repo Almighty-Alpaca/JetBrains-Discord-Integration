@@ -2,24 +2,22 @@
 
 == Variables
 
-The syntax for template variables is `${...}`.
+The syntax for template variables is `${...}`(shorthand version `$...`, ends with a non-letter character).
 
 Here is a list of all the variables that you can use:
 
-- `${ApplicationVersion}`: The version of the IDE; for example `2020.1.2`
-- `${ProjectName}`: The name of the project
-- `${ProjectDescription}`: The project's description, as provided in `Discord -&gt; Project` (in Settings)
-- `${VcsBranch}`: The name of the git branch you're currently working on
-- `${FileName}`: The name of the file you're working on
-- `${FileNameUnique}`: The name of the file you're working on, but it is unique in all your open editors
-- `${CaretLine}`: The line the primary caret is on (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
-- `${LineCount}`: The number of lines in the currently open document (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
-- `${Language}`: The language of the file you are currently focused on
-- `${ModuleName}`: The name of the module the file currently in focus is; null in non-IDEA IDEs
-- `${PathInModule}`: The path relative to the root of the module of the file; for example `/src/Main.java`; empty if intellij couldn't guess the module directory
-- `${FileSize}`: The size of the file currently open in the editor, in human readable format(appends "bytes", "KiB", "MiB" and "GiB", depending on the size of it).
-
-TIP: although you can nest those, it's not guaranteed to work
+- `${ApplicationVersion}`/`$ApplicationVersion`: The version of the IDE; for example `2020.1.2`
+- `${ProjectName}`/`$ProjectName`: The name of the project
+- `${ProjectDescription}`/`$ProjectDescription`: The project's description, as provided in `Discord -&gt; Project` (in Settings)
+- `${VcsBranch}`/`$VcsBranch`: The name of the git branch you're currently working on
+- `${FileName}`/`$FileName`: The name of the file you're working on
+- `${FileNameUnique}`/`$FileNameUnique`: The name of the file you're working on, but it is unique in all your open editors
+- `${CaretLine}`/`$CaretLine`: The line the primary caret is on (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${LineCount}`/`$LineCount`: The number of lines in the currently open document (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${Language}`/`$Language`: The language of the file you are currently focused on
+- `${ModuleName}`/`$ModuleName`: The name of the module the file currently in focus is; null in non-IDEA IDEs
+- `${PathInModule}`/`$PathInModule`: The path relative to the root of the module of the file; for example `/src/Main.java`; empty if intellij couldn't guess the module directory
+- `${FileSize}`/`$FileSize`: The size of the file currently open in the editor, in human readable format(appends "bytes", "KiB", "MiB" and "GiB", depending on the size of it).
 
 == Raw strings
 `\#" ... "#` will allow you to use `$`, `{` and `}`, while not interpreting them.
