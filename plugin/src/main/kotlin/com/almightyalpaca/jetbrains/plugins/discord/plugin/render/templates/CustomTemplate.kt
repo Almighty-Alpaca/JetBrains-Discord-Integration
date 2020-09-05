@@ -23,120 +23,118 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antl
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
-object Patterns {
-    /**
-     * Some utils
-     */
-    object Utils {
-        fun getVarValue(varName: String, context: CustomTemplateContext): String? =
-            when (varName) {
-                "ApplicationVersion" -> context.applicationData?.applicationVersion
-                "ProjectName" -> context.projectData?.projectName
-                "ProjectDescription" -> context.projectData?.projectDescription
-                "VcsBranch" -> context.projectData?.vcsBranch
-                "FileName" -> context.fileData?.fileName
-                "FileNameUnique" -> context.fileData?.fileNameUnique
-                "FilePath" -> context.fileData?.filePath
-                "CaretLine" -> context.fileData?.caretLine?.toString()
-                "LineCount" -> context.fileData?.lineCount?.toString()
-                "ModuleName" -> context.fileData?.moduleName
-                "PathInModule" -> context.fileData?.pathInModule
-                "Language" -> context.language
-                "FileSize" -> sizeAsString(context.fileData?.fileSize)
-                else -> null
-            }
-
-        private fun sizeAsString(size: Int?): String? {
-            if (size == null) return null
-            if (size < 2 shl 10) return "$size bytes" // 0 .. 2 KiB
-            if (size < 2 shl 20) return "${size.toFloat() / (1 shl 10)} KiB" // 2 KiB .. 2 MiB
-            if (size < 1 shl 30) return "${size.toFloat() / (1 shl 20)} MiB" // 2 MiB .. 1 GiB
-            return "${size.toFloat() / (1 shl 30)} GiB" // 1 GiB ..
+/**
+ * Some utils
+ */
+object Utils {
+    fun getVarValue(varName: String, context: CustomTemplateContext): String? =
+        when (varName) {
+            "ApplicationVersion" -> context.applicationData?.applicationVersion
+            "ProjectName" -> context.projectData?.projectName
+            "ProjectDescription" -> context.projectData?.projectDescription
+            "VcsBranch" -> context.projectData?.vcsBranch
+            "FileName" -> context.fileData?.fileName
+            "FileNameUnique" -> context.fileData?.fileNameUnique
+            "FilePath" -> context.fileData?.filePath
+            "CaretLine" -> context.fileData?.caretLine?.toString()
+            "LineCount" -> context.fileData?.lineCount?.toString()
+            "ModuleName" -> context.fileData?.moduleName
+            "PathInModule" -> context.fileData?.pathInModule
+            "Language" -> context.language
+            "FileSize" -> sizeAsString(context.fileData?.fileSize)
+            else -> null
         }
 
-        private fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
+    private fun sizeAsString(size: Int?): String? {
+        if (size == null) return null
+        if (size < 2 shl 10) return "$size bytes" // 0 .. 2 KiB
+        if (size < 2 shl 20) return "${size.toFloat() / (1 shl 10)} KiB" // 2 KiB .. 2 MiB
+        if (size < 1 shl 30) return "${size.toFloat() / (1 shl 20)} MiB" // 2 MiB .. 1 GiB
+        return "${size.toFloat() / (1 shl 30)} GiB" // 1 GiB ..
+    }
 
-        fun evalVisitor(context: CustomTemplateContext, tree: TemplateParser.Text_evalContext): String {
-            var ret = ""
-            for (child in tree.children ?: listOf()) {
-                ret += when (child) {
-                    is TemplateParser.VarContext -> {
-                        getVarValue(child.NAME()?.text ?: "", context) ?: ""
-                    }
-                    is TemplateParser.FunContext -> {
-                        val name = child.NAME()?.symbol?.text ?: ""
-                        val req = when (name) {
-                            "RegexEscape" -> 1
-                            "FileIsWritable", "IsTextEditor" -> 2
-                            "ReplaceFirst", "ReplaceAll" -> 3
-                            "NotNull" -> 3
-                            "Matches" -> 4
-                            else -> 0
-                        }
-                        if (child.text_eval().size < req) {
-                            child.text
-                        } else {
-                            val arr = child.text_eval()
-                            when (name) {
-                                "RegexEscape" -> {
-                                    Regex.escape(evalVisitor(context, arr[0]))
-                                }
-                                "FileIsWritable" -> {
-                                    evalVisitor(
-                                        context, if (context.fileData?.fileIsWriteable == true) {
-                                            arr[0]
-                                        } else {
-                                            arr[1]
-                                        }
-                                    )
-                                }
-                                "IsTextEditor" -> {
-                                    evalVisitor(
-                                        context, if (context.fileData?.editorIsTextEditor == true) {
-                                            arr[0]
-                                        } else {
-                                            arr[1]
-                                        }
-                                    )
-                                }
-                                "ReplaceFirst" -> {
-                                    evalVisitor(context, arr[0]).replaceFirst(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
-                                }
-                                "ReplaceAll" -> {
-                                    evalVisitor(context, arr[0]).replace(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
-                                }
-                                "NotNull" -> {
-                                    evalVisitor(
-                                        context, if (varNullCheck(context, evalVisitor(context, arr[0]))) {
-                                            arr[1]
-                                        } else {
-                                            arr[2]
-                                        }
-                                    )
-                                }
-                                "Matches" -> {
-                                    evalVisitor(
-                                        context, if (evalVisitor(context, arr[0]).matches(Regex(evalVisitor(context, arr[1])))) {
-                                            arr[2]
-                                        } else {
-                                            arr[3]
-                                        }
-                                    )
-                                }
-                                else -> ""
-                            }
-                        }
-                    }
-                    is TemplateParser.Raw_textContext -> {
-                        val txt = child.text
-                        txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
-                        // and '"#' at the end)
-                    }
-                    else -> child.text // TEXT from the grammar: [^\${}]+
+    private fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
+
+    fun evalVisitor(context: CustomTemplateContext, tree: TemplateParser.Text_evalContext): String {
+        var ret = ""
+        for (child in tree.children ?: listOf()) {
+            ret += when (child) {
+                is TemplateParser.VarContext -> {
+                    getVarValue(child.NAME()?.text ?: "", context) ?: ""
                 }
+                is TemplateParser.FunContext -> {
+                    val name = child.NAME()?.symbol?.text ?: ""
+                    val req = when (name) {
+                        "RegexEscape" -> 1
+                        "FileIsWritable", "IsTextEditor" -> 2
+                        "ReplaceFirst", "ReplaceAll" -> 3
+                        "NotNull" -> 3
+                        "Matches" -> 4
+                        else -> 0
+                    }
+                    if (child.text_eval().size < req) {
+                        child.text
+                    } else {
+                        val arr = child.text_eval()
+                        when (name) {
+                            "RegexEscape" -> {
+                                Regex.escape(evalVisitor(context, arr[0]))
+                            }
+                            "FileIsWritable" -> {
+                                evalVisitor(
+                                    context, if (context.fileData?.fileIsWriteable == true) {
+                                        arr[0]
+                                    } else {
+                                        arr[1]
+                                    }
+                                )
+                            }
+                            "IsTextEditor" -> {
+                                evalVisitor(
+                                    context, if (context.fileData?.editorIsTextEditor == true) {
+                                        arr[0]
+                                    } else {
+                                        arr[1]
+                                    }
+                                )
+                            }
+                            "ReplaceFirst" -> {
+                                evalVisitor(context, arr[0]).replaceFirst(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                            }
+                            "ReplaceAll" -> {
+                                evalVisitor(context, arr[0]).replace(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                            }
+                            "NotNull" -> {
+                                evalVisitor(
+                                    context, if (varNullCheck(context, evalVisitor(context, arr[0]))) {
+                                        arr[1]
+                                    } else {
+                                        arr[2]
+                                    }
+                                )
+                            }
+                            "Matches" -> {
+                                evalVisitor(
+                                    context, if (evalVisitor(context, arr[0]).matches(Regex(evalVisitor(context, arr[1])))) {
+                                        arr[2]
+                                    } else {
+                                        arr[3]
+                                    }
+                                )
+                            }
+                            else -> ""
+                        }
+                    }
+                }
+                is TemplateParser.Raw_textContext -> {
+                    val txt = child.text
+                    txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
+                    // and '"#' at the end)
+                }
+                else -> child.text // TEXT from the grammar: [^\${}]+
             }
-            return ret
         }
+        return ret
     }
 }
 
@@ -156,7 +154,7 @@ class CustomTemplate(template: String?) {
     }
 
     fun execute(context: CustomTemplateContext): String? {
-        return Patterns.Utils.evalVisitor(context, rootNode)
+        return Utils.evalVisitor(context, rootNode)
     }
 }
 
