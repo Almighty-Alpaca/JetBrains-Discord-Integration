@@ -56,9 +56,9 @@ dependencies {
 val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
-    // https://www.jetbrains.com/intellij-repository/releases
-    // https://www.jetbrains.com/intellij-repository/snapshots
-    version = "2020.1.1"
+    val versionIde: String by project
+
+    version = versionIde
 
     downloadSources = !isCI
 
