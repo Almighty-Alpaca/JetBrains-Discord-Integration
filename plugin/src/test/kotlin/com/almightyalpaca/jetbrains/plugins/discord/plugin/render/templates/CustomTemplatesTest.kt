@@ -295,7 +295,7 @@ class Tests {
     fun fileReadableWritableTest() {
         assertEquals(
             "a", CustomTemplate(
-                "\$FileIsWritable{a}{b}"
+                "%if(\$FileIsWritable){a}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -306,7 +306,7 @@ class Tests {
         )
         assertEquals(
             "def", CustomTemplate(
-                "\$FileIsWritable{abc}{def}"
+                "%if(\$FileIsWritable){abc}{def}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -317,7 +317,7 @@ class Tests {
         )
         assertEquals(
             "Reading AbcDef.java", CustomTemplate(
-                "\$FileIsWritable{Editing}{Reading} \${FileName}"
+                "%if(\$FileIsWritable){Editing}{Reading} \${FileName}"
             ).execute(
                 CustomTemplateContext(
                     "Java",
@@ -328,7 +328,7 @@ class Tests {
         )
         assertEquals(
             "Editing AbcDef.java", CustomTemplate(
-                "\$FileIsWritable{Editing}{Reading} \${FileName}"
+                "%if(\$FileIsWritable){Editing}{Reading} \${FileName}"
             ).execute(
                 CustomTemplateContext(
                     "Java",
@@ -346,7 +346,7 @@ class Tests {
     fun notNullTest() {
         assertEquals(
             "on branch abc", CustomTemplate(
-                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}"
+                "%if(\$NotNull{VcsBranch}){on branch \${VcsBranch}}{with no VCS detected}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -357,7 +357,7 @@ class Tests {
         )
         assertEquals(
             "with no VCS detected", CustomTemplate(
-                "\$NotNull{VcsBranch}{on branch \${VcsBranch}}{with no VCS detected}"
+                "%if(\$NotNull{VcsBranch}){on branch \${VcsBranch}}{with no VCS detected}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -368,7 +368,7 @@ class Tests {
         )
         assertEquals(
             "in module core", CustomTemplate(
-                "\$NotNull{ModuleName}{in module \${ModuleName}}{}"
+                "%if(\$NotNull{ModuleName}){in module \${ModuleName}}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -379,7 +379,7 @@ class Tests {
         )
         assertEquals(
             "", CustomTemplate(
-                "\$NotNull{ModuleName}{in module \${ModuleName}}{}"
+                "%if(\$NotNull{ModuleName}){in module \${ModuleName}}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -397,7 +397,7 @@ class Tests {
     fun isTextEditorTest() {
         assertEquals(
             "Java: Main.java, (1563/1921)", CustomTemplate(
-                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}"
+                "\${Language}: \${FileName}, %if(\$IsTextEditor){(\${CaretLine}/\${LineCount})}{not in a text editor}"
             ).execute(
                 CustomTemplateContext(
                     "Java",
@@ -408,7 +408,7 @@ class Tests {
         )
         assertEquals(
             "Java: Main.java, not in a text editor", CustomTemplate(
-                "\${Language}: \${FileName}, \$IsTextEditor{(\${CaretLine}/\${LineCount})}{not in a text editor}"
+                "\${Language}: \${FileName}, %if(\$IsTextEditor){(\${CaretLine}/\${LineCount})}{not in a text editor}"
             ).execute(
                 CustomTemplateContext(
                     "Java",
@@ -439,7 +439,7 @@ class Tests {
     fun matchesTest() {
         assertEquals(
             ", in module plugin", CustomTemplate(
-                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}"
+                "%if(\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}){}{, in module \${ModuleName}}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -450,7 +450,7 @@ class Tests {
         )
         assertEquals(
             "", CustomTemplate(
-                "\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}{}{, in module \${ModuleName}}"
+                "%if(\$Matches{\${ModuleName}}{\$RegexEscape{\${ProjectName}}}){}{, in module \${ModuleName}}"
             ).execute(
                 CustomTemplateContext(
                     null,
@@ -470,14 +470,6 @@ class Tests {
                 CustomTemplateContext(null, createFileData())
             ),
             "Raw text test #1 failed"
-        )
-        assertEquals(
-            "Some weird text{ \$That's'{ \${\$DefinitelyNotValid{ and some normal text x", CustomTemplate(
-                "#\"Some weird text{ \$That's'{ \${\$DefinitelyNotValid{\"# and some normal text \$Matches{A}{A}{x}{y}"
-            ).execute(
-                CustomTemplateContext(null, createFileData())
-            ),
-            "Raw text test #2 failed"
         )
     }
 
