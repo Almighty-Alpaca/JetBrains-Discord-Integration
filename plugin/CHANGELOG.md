@@ -1,3 +1,11 @@
+## v1.5.0
+- Icon text is now more customizable
+- Fix sporadic ProcessCanceledException when updating presence
+- Fix invisible lines
+- Fix resetting open time
+- Fix read action required error when getting Git info
+- Fix access error when getting current editor
+
 ## v1.4.1 & 1.4.2
 - Fix error when the Git plugin is disabled
 - Fix update notification spam
