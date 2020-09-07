@@ -61,9 +61,10 @@ dependencies {
 }
 
 intellij {
-    val versionIntelliJ: String by project
     // https://www.jetbrains.com/intellij-repository/releases
     // https://www.jetbrains.com/intellij-repository/snapshots
+    val versionIntelliJ: String by project
+
     version = versionIntelliJ
 
     downloadSources = !isCi
