@@ -35,9 +35,9 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
         get() = Dispatchers.IO + parentJob
 
     val basePath = "/$path"
-    val pathLanguages = "$basePath/languages/"
-    val pathThemes = "$basePath/themes/"
-    val pathApplications = "$basePath/applications/"
+    val pathLanguages = "$basePath/languages"
+    val pathThemes = "$basePath/themes"
+    val pathApplications = "$basePath/applications"
 
     private val languageJob: Deferred<LanguageMap> = when (retry) {
         true -> retryAsync { readLanguages() }
@@ -67,9 +67,13 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
 
         return listResources(path, ".yaml")
             .map { p ->
-                val node: JsonNode = mapper.readTree(loadResource(p))
-                val id = FilenameUtils.getBaseName(p)
-                id to factory(id, node)
+                try {
+                    val node: JsonNode = mapper.readTree(loadResource(p))
+                    val id = FilenameUtils.getBaseName(p)
+                    id to factory(id, node)
+                } catch (e: Exception) {
+                    throw IllegalStateException("Error while generating $p")
+                }
             }
             .toMap()
     }
@@ -84,6 +88,6 @@ class ClasspathSource(path: String, retry: Boolean = true) : Source, CoroutineSc
             ?.lineSequence()
             ?: throw IllegalStateException("could not find index for $path"))
             .filter { it.endsWith(extension) }
-            .map { p -> "$path$p" }
+            .map { p -> "$path/$p" }
     }
 }

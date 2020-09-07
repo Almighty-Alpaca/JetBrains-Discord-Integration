@@ -81,37 +81,39 @@ suspend fun main() {
         }
     }.use { client ->
         runBlocking {
-            val source = ClasspathSource("discord", retry = false)
-            val themes = source.getThemes()
+            withContext(Dispatchers.IO) {
+                val source = ClasspathSource("discord", retry = false)
+                val themes = source.getThemes()
 
-            for (theme in themes.values) {
-                println("Starting with ${theme.name}")
+                for (theme in themes.values) {
+                    println("Starting with ${theme.name}")
 
-                val changes = calculateChangesAsync(client, source, theme)
+                    val changes = calculateChangesAsync(client, source, theme)
 
-                supervisorScope {
-                    for (change in changes.await()) {
-                        if (change is DiscordChange.Delete) {
-                            deleteIcon(client, change.appId, change.iconId)
-                        }
-                    }
-                }
-
-                supervisorScope {
-                    for (change in changes.await()) {
-                        if (change is DiscordChange.Override) {
-                            coroutineScope {
+                    supervisorScope {
+                        for (change in changes.await()) {
+                            if (change is DiscordChange.Delete) {
                                 deleteIcon(client, change.appId, change.iconId)
-                                createIcon(client, change.appId, change.name, source, change.path)
                             }
                         }
                     }
-                }
 
-                supervisorScope {
-                    for (change in changes.await()) {
-                        if (change is DiscordChange.Create) {
-                            createIcon(client, change.appId, change.name, source, change.source)
+                    supervisorScope {
+                        for (change in changes.await()) {
+                            if (change is DiscordChange.Override) {
+                                coroutineScope {
+                                    deleteIcon(client, change.appId, change.iconId)
+                                    createIcon(client, change.appId, change.name, source, change.path)
+                                }
+                            }
+                        }
+                    }
+
+                    supervisorScope {
+                        for (change in changes.await()) {
+                            if (change is DiscordChange.Create) {
+                                createIcon(client, change.appId, change.name, source, change.source)
+                            }
                         }
                     }
                 }
@@ -222,7 +224,7 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
 
     val applicationStream = sequenceOf("application" to application)
 
-    val iconStream = source.listResources("${source.pathThemes}/$theme/", ".png")
+    val iconStream = source.listResources("${source.pathThemes}/$theme", ".png")
         .map { p -> FilenameUtils.getBaseName(p) to p }
 
     (applicationStream + iconStream).toMap()
