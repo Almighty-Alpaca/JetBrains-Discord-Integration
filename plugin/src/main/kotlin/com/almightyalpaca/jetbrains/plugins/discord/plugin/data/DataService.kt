@@ -31,6 +31,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.ex.ApplicationInfoEx
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
@@ -123,10 +124,16 @@ class DataService {
                                 editor.editor.document.lineCount
                             else 0
 
-                        val module = ModuleUtil.findModuleForFile(file, project)
-                        val moduleName = module?.name
-                        val moduleDirPath = module?.guessModuleDir()
-                        val pathInModule = if (moduleDirPath != null) file.path.removePrefix(moduleDirPath.path) else ""
+                        data class ModuleData(val moduleName: String?, val pathInModule: String);
+
+                        val moduleData = runReadAction {
+                            val module = ModuleUtil.findModuleForFile(file, project)
+                            val moduleName = module?.name
+                            val moduleDirPath = module?.guessModuleDir()
+                            val pathInModule = if (moduleDirPath != null) file.path.removePrefix(moduleDirPath.path) else ""
+
+                            return@runReadAction ModuleData(moduleName, pathInModule)
+                        }
 
                         val fileSize = if (editor is TextEditor) editor.editor.document.textLength else 0
 
@@ -155,8 +162,8 @@ class DataService {
                             editorIsTextEditor,
                             caretLine,
                             lineCount,
-                            moduleName,
-                            pathInModule,
+                            moduleData.moduleName,
+                            moduleData.pathInModule,
                             fileSize
                         )
                     }
