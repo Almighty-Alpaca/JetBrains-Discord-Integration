@@ -23,19 +23,19 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 typealias TimeValue = SimpleValue<PresenceTime>
 
 enum class PresenceTime(override val text: String, override val description: String? = null) : RenderedValue<PresenceTime.Result>, UiValueType {
-    APPLICATION("Application (active)", "Time since the application has been opened and has not been idle") {
+    APPLICATION("Application (active)", "Time since the application has been opened and the IDE has not been idle") {
         override fun RenderContext.getResult() = applicationData?.applicationTimeActive.toResult()
     },
     APPLICATION_TOTAL("Application (total)", "Time since the application has been started") {
         override fun RenderContext.getResult() = applicationData?.applicationTimeOpened.toResult()
     },
-    PROJECT("Project (active)", "Time since the project has been opened and has not been idle") {
+    PROJECT("Project (active)", "Time since the project has been opened and the IDE has not been idle") {
         override fun RenderContext.getResult() = projectData?.projectTimeActive.toResult()
     },
     PROJECT_TOTAL("Project (total)", "Time since the project has been opened") {
         override fun RenderContext.getResult() = projectData?.projectTimeOpened.toResult()
     },
-    FILE("File (active)", "Time since the file has been opened and has not been idle") {
+    FILE("File (active)", "Time since the file has been opened and the IDE has not been idle") {
         override fun RenderContext.getResult() = fileData?.fileTimeActive.toResult()
     },
     FILE_TOTAL("File (total)", "Time since the file has been opened") {
