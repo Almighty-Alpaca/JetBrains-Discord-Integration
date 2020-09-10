@@ -21,7 +21,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.IntValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationTypeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TextValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TimeValue
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.service
 import org.jdom.Element

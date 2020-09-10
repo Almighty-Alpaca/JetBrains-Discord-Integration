@@ -20,7 +20,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeSuspend
