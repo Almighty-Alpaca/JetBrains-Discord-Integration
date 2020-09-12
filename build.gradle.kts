@@ -74,6 +74,13 @@ subprojects {
                 freeCompilerArgs += "-Xjvm-default=enable"
             }
         }
+
+        withType<JavaCompile> {
+            targetCompatibility = "1.8"
+            sourceCompatibility = "1.8"
+
+            options.compilerArgs as MutableList<String> += listOf("--release", "8")
+        }
     }
 }
 
