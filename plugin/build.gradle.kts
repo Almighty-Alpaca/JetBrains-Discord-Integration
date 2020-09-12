@@ -55,15 +55,19 @@ dependencies {
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 
-    antlr("org.antlr:antlr4:${versionAntlr}")
+    antlr("org.antlr", name = "antlr4", version = versionAntlr)
+
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
 }
 
+val generatedSourceDir = project.file("src/generated")
+val generatedJavaSourceDir = generatedSourceDir.resolve("java")
+
 sourceSets {
-     main {
+    main {
         java {
-            srcDir("src/gen")
+            srcDir(generatedJavaSourceDir)
         }
     }
 }
@@ -181,9 +185,14 @@ tasks {
     }
 
     generateGrammarSource {
-        maxHeapSize = "64m"
-        arguments = arguments + listOf("-package", "com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr")
-        outputDirectory = File("src/gen/com/almightyalpaca/jetbrains/plugins/discord/plugin/render/templates/antlr")
+        val packageName = "com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr"
+
+        arguments = arguments + listOf("-package", packageName, "-no-listener")
+        outputDirectory = generatedJavaSourceDir.resolve(packageName.replace('.', File.separatorChar))
+    }
+
+    clean {
+        delete(generatedSourceDir)
     }
 
     processResources {
