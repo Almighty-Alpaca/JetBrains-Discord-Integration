@@ -107,13 +107,21 @@ object Utils {
                 is TemplateParser.If_ruleContext -> {
                     val args = child.text_eval()
 
-                    val conditionValue = when (evalVisitor(context, args[0])) {
-                        "null", "false", "" -> false
-                        else -> true
-                    }
+
+                    // while writing the if, args.size might be 0, and it
+                    // could throw an index out of bounds exception.
+                    // This if is meant to prevent that
+                    val conditionValue =
+                        if (args.size > 0)
+                            when (evalVisitor(context, args[0])) {
+                                "null", "false", "" -> false
+                                else -> true
+                            }
+                        else false
 
                     if (conditionValue) {
-                        evalVisitor(context, args[1])
+                        // same as above, meant to prevent index out of bounds.
+                        if (args.size > 1) evalVisitor(context, args[1]) else ""
                     } else {
                         if (args.size >= 3) {
                             evalVisitor(context, args[2])
@@ -127,7 +135,7 @@ object Utils {
                     txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
                     // and '"#' at the end)
                 }
-                else -> child.text // NAME/TEXT from the grammar
+                else -> child.text // NAME/TEXT/parentheses from the grammar
             }
         }
         return ret
