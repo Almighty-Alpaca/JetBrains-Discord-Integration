@@ -49,7 +49,7 @@ Example: `$RegexEscape{A+}` will evaluate to the regex `A\+`.
 matches `regex` or `false` otherwise. Meant to be used with `%if`.
 
 Example: `%if($Matches{${ModuleName}}{$RegexEscape{${ProjectName}}}){}{, in module ${ModuleName}}` will
-add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}(see link:#If[if] below)`
+add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}`(see link:#If[if] below)
 
 * `$ReplaceFirst{text}{regex}{replacement}` replaces the first
 occurrence of regex expression `regex` in `text` with `replacement`.
