@@ -30,17 +30,15 @@ Most of the stuff here follows this pattern: `$Name{Arg1}{Arg2}{Arg3}...{ArgN}`
 
 Some other stuff you can do with templates:
 
-- `$NotNull{variableName}{text1}{text2}`: Evaluates to `text1`
-if the variable `variableName` is not null, or `text2` otherwise.
+- `$NotNull{variableName}`: Evaluates to `true`
+if the variable `variableName` is not null, or `false` otherwise.
 This was implemented mostly for `${VcsBranch}`, but given the power
-to work with other variables as well; nesting not allowed.
-`text1` is referred to as the `onNotNull` part, and `text2` is
-referred to as the `onNull` part.
+to work with other variables as well.
 
 Example:
-`${ProjectName}$NotNull{VcsBranch}{, on branch: ${VcsBranch}}{}`
+`${ProjectName}%if($NotNull{VcsBranch}){, on branch: ${VcsBranch}}`
 will evaluate to `${ProjectName}, on branch ${VcsBranch}` when
-`${VcsBranch}` is not null or `${ProjectName}` when it is null.
+`${VcsBranch}` is not null or `${ProjectName}` when it is null(see link:#If[if] below).
 
 * `$RegexEscape{text}` can be used if `text` contains character that have special
 meaning in regex, and you want them escaped.
@@ -51,7 +49,7 @@ Example: `$RegexEscape{A+}` will evaluate to the regex `A\+`.
 matches `regex` or `false` otherwise. Meant to be used with `%if`.
 
 Example: `%if($Matches{${ModuleName}}{$RegexEscape{${ProjectName}}}){}{, in module ${ModuleName}}` will
-add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}`
+add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}(see link:#If[if] below)`
 
 * `$ReplaceFirst{text}{regex}{replacement}` replaces the first
 occurrence of regex expression `regex` in `text` with `replacement`.
