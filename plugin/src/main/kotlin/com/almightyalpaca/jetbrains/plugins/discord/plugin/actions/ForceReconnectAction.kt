@@ -17,12 +17,13 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.i18n.DiscordBundle
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class ForceReconnectAction : DumbAwareAction("Force reconnect") {
+class ForceReconnectAction : DumbAwareAction(DiscordBundle("action.forceReconnect")) {
     override fun actionPerformed(e: AnActionEvent) {
         DiscordPlugin.LOG.info("Forcing manual reconnect")
 

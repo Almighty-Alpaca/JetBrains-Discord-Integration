@@ -17,11 +17,12 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.actions
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.i18n.DiscordBundle
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class ForceRenderUpdateAction : DumbAwareAction("Force render update") {
+class ForceRenderUpdateAction : DumbAwareAction(DiscordBundle("action.forceRenderUpdate")) {
     override fun actionPerformed(e: AnActionEvent) {
         DiscordPlugin.LOG.info("Forcing manual render")
 
