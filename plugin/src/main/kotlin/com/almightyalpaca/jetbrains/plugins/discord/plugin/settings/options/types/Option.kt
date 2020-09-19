@@ -43,7 +43,17 @@ abstract class Value {
     }
 }
 
+/**
+ * Marks a type to be displayed on the UI. Usually used together with enums and [SelectionOption].
+ */
 interface UiValueType {
+    /**
+     * The display name of the item.
+     */
     val text: String
+
+    /**
+     * The tooltip of the item.
+     */
     val description: String?
 }

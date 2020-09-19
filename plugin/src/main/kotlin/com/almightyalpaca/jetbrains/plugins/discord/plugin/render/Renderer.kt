@@ -116,9 +116,31 @@ abstract class Renderer(private val context: RenderContext) {
         fun <T> SimpleValue<T>.updateValue(block: (T) -> T) = updateValue(this@Mode, block)
     }
 
-    enum class Type(val createRenderer: (RenderContext) -> Renderer) {
-        APPLICATION({ context -> ApplicationRenderer(context) }),
-        PROJECT({ context -> ProjectRenderer(context) }),
-        FILE({ context -> FileRenderer(context) });
+    sealed class Type {
+        abstract fun createRenderer(context: RenderContext): Renderer?
+
+        open class None protected constructor() : Type() {
+            override fun createRenderer(context: RenderContext): Renderer? = null
+
+            companion object : None()
+        }
+
+        open class Application protected constructor() : None() {
+            override fun createRenderer(context: RenderContext): Renderer = ApplicationRenderer(context)
+
+            companion object : Application()
+        }
+
+        open class Project protected constructor() : Application() {
+            override fun createRenderer(context: RenderContext): Renderer = ProjectRenderer(context)
+
+            companion object : Project()
+        }
+
+        open class File protected constructor() : Project() {
+            override fun createRenderer(context: RenderContext): Renderer = FileRenderer(context)
+
+            companion object : File()
+        }
     }
 }

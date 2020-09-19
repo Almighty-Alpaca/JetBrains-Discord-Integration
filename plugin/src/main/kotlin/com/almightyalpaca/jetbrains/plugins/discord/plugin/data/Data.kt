@@ -24,6 +24,14 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.find
 import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
+    open class None private constructor() : Data() {
+        companion object : None()
+
+        override fun toString(): String {
+            return "Data.None"
+        }
+    }
+
     open class Application(
         val applicationName: String,
         val applicationVersion: String,

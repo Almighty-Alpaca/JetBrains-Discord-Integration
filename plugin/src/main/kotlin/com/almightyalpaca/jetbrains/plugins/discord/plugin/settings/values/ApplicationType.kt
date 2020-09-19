@@ -33,7 +33,7 @@ enum class ApplicationType(override val text: String, override val description: 
                 .fullProductName
         }
     },
-    IDE_EDITION("IDE Name and Edition", description = """e.g. IntelliJ IDEA Ultimate""""") {
+    IDE_EDITION("IDE Name and Edition", description = "e.g. IntelliJ IDEA Ultimate") {
         override val applicationNameReadable: String by lazy {
             ApplicationNamesInfo.getInstance()
                 .fullProductNameWithEdition

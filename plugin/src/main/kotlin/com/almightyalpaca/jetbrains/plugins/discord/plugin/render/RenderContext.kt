@@ -35,11 +35,12 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
 
     val language by lazy { fileData?.let { source.getLanguagesOrNull()?.findLanguage(fileData) } }
 
-    fun createRenderer(): Renderer {
+    fun createRenderer(): Renderer? {
         val type = when (data) {
-            is Data.File -> Renderer.Type.FILE
-            is Data.Project -> Renderer.Type.PROJECT
-            is Data.Application -> Renderer.Type.APPLICATION
+            is Data.None -> Renderer.Type.None
+            is Data.File -> Renderer.Type.File
+            is Data.Project -> Renderer.Type.Project
+            is Data.Application -> Renderer.Type.Application
         }
 
         return type.createRenderer(this)

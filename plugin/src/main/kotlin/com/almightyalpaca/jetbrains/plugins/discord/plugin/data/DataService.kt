@@ -20,8 +20,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeSuspend
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
@@ -43,11 +45,26 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(mode: Renderer.Mode) = mode.run { getData() }
+    suspend fun getData(mode: Renderer.Mode) = tryOrNull { mode.run { getData() } }
 
     @JvmName("getDataInternal")
-    private suspend fun (Renderer.Mode).getData(): Data? = tryOrNull {
+    private suspend fun (Renderer.Mode).getData(): Data {
         DiscordPlugin.LOG.debug("Getting data")
+
+        val applicationSettings = settings
+
+        if (!settings.show.getStoredValue()) {
+            return Data.None
+        } else if (timeService.idle && settings.timeoutEnabled.getStoredValue()) {
+            return Data.None
+        }
+
+        val application = ApplicationManager.getApplication()
+        val applicationInfo = ApplicationInfoEx.getInstance()
+        val applicationName = settings.applicationType.getValue().applicationNameReadable
+        val applicationVersion = applicationInfo.fullVersion
+        val applicationTimeOpened = application.timeOpened
+        val applicationTimeActive = application.timeActive
 
         val project: Project?
         val editor: FileEditor?
@@ -58,90 +75,85 @@ class DataService {
 
         editor = project?.let { invokeSuspend { FileEditorManager.getInstance(project)?.selectedEditor } }
 
-        val application = ApplicationManager.getApplication()
-        val applicationInfo = ApplicationInfoEx.getInstance()
+        if (project != null) {
+            if (project.settings.show.getValue() <= ProjectShow.DISABLE) {
+                return Data.None
+            } else if (!project.isDefault && project.settings.show.getValue() >= ProjectShow.PROJECT) {
+                val projectName = project.name
+                val projectDescription = project.settings.description.getValue()
+                val projectTimeOpened = project.timeOpened
+                val projectTimeActive = project.timeActive
+                val projectSettings = project.settings
 
-        val applicationName = settings.applicationType.getValue().applicationNameReadable
-        val applicationVersion = applicationInfo.fullVersion
-        val applicationTimeOpened = application.timeOpened
-        val applicationTimeActive = application.timeActive
-        val applicationSettings = settings
+                if (editor != null) {
+                    val file = editor.file
 
-        if (project != null && !project.isDefault && project.settings.show.getValue().showProject) {
-            val projectName = project.name
-            val projectDescription = project.settings.description.getValue()
-            val projectTimeOpened = project.timeOpened
-            val projectTimeActive = project.timeActive
-            val projectSettings = project.settings
-
-            if (editor != null) {
-                val file = editor.file
-
-                if (file != null
-                    && project.settings.show.getValue().showFiles
-                    && !(settings.fileHideVcsIgnored.getValue() && isVcsIgnored(project, file))
-                ) {
-                    val fileName = file.name
-                    val fileUniqueName = when (DumbService.isDumb(project)) {
-                        true -> fileName
-                        false -> ReadAction.compute<String, Exception> {
-                            tryOrDefault(fileName) {
-                                if (!project.isDisposed) {
-                                    EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
-                                } else {
-                                    fileName
+                    if (file != null
+                        && project.settings.show.getValue() >= ProjectShow.PROJECT_FILES
+                        && !(settings.fileHideVcsIgnored.getValue() && isVcsIgnored(project, file))
+                    ) {
+                        val fileName = file.name
+                        val fileUniqueName = when (DumbService.isDumb(project)) {
+                            true -> fileName
+                            false -> ReadAction.compute<String, Exception> {
+                                tryOrDefault(fileName) {
+                                    if (!project.isDisposed) {
+                                        EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
+                                    } else {
+                                        fileName
+                                    }
                                 }
                             }
                         }
+                        val fileTimeOpened = file.timeOpened
+                        val fileTimeActive = file.timeActive
+                        val filePath = file.path
+                        val fileIsWriteable = file.isWritable
+
+                        val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
+
+                        DiscordPlugin.LOG.debug("Returning file data")
+
+                        return Data.File(
+                            applicationName,
+                            applicationVersion,
+                            applicationTimeOpened,
+                            applicationTimeActive,
+                            applicationSettings,
+                            projectName,
+                            projectDescription,
+                            projectTimeOpened,
+                            applicationTimeActive,
+                            projectSettings,
+                            vcsBranch,
+                            fileName,
+                            fileUniqueName,
+                            fileTimeOpened,
+                            fileTimeActive,
+                            filePath,
+                            fileIsWriteable
+                        )
                     }
-                    val fileTimeOpened = file.timeOpened
-                    val fileTimeActive = file.timeActive
-                    val filePath = file.path
-                    val fileIsWriteable = file.isWritable
-
-                    val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
-
-                    DiscordPlugin.LOG.debug("Returning file data")
-
-                    return Data.File(
-                        applicationName,
-                        applicationVersion,
-                        applicationTimeOpened,
-                        applicationTimeActive,
-                        applicationSettings,
-                        projectName,
-                        projectDescription,
-                        projectTimeOpened,
-                        applicationTimeActive,
-                        projectSettings,
-                        vcsBranch,
-                        fileName,
-                        fileUniqueName,
-                        fileTimeOpened,
-                        fileTimeActive,
-                        filePath,
-                        fileIsWriteable
-                    )
                 }
+
+                val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, null)
+
+                DiscordPlugin.LOG.debug("Returning project data")
+
+                return Data.Project(
+                    applicationName,
+                    applicationVersion,
+                    applicationTimeOpened,
+                    applicationTimeActive,
+                    applicationSettings,
+                    projectName,
+                    projectDescription,
+                    projectTimeOpened,
+                    projectTimeActive,
+                    projectSettings,
+                    vcsBranch
+                )
             }
-
-            val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, null)
-
-            DiscordPlugin.LOG.debug("Returning project data")
-
-            return Data.Project(
-                applicationName,
-                applicationVersion,
-                applicationTimeOpened,
-                applicationTimeActive,
-                applicationSettings,
-                projectName,
-                projectDescription,
-                projectTimeOpened,
-                projectTimeActive,
-                projectSettings,
-                vcsBranch
-            )
         }
 
         DiscordPlugin.LOG.debug("Returning application data")
