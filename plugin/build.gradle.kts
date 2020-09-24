@@ -147,12 +147,12 @@ tasks {
         prefix("org.apache.commons.io")
         prefix("org.yaml.snakeyaml")
 
-        val iconPaths = listOf(
+        val iconPaths = arrayOf(
             Regex("""/?discord/applications/.*\.png"""),
             Regex("""/?discord/themes/.*\.png""")
         )
 
-        transform(PngOptimizingTransformer(128, 0.9F, iconPaths))
+        transform(PngOptimizingTransformer(128, *iconPaths))
     }
 
     withType<KotlinCompile> {

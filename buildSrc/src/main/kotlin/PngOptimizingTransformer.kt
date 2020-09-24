@@ -41,19 +41,17 @@ import javax.imageio.ImageIO
 import javax.imageio.ImageWriteParam
 
 @Suppress("FunctionName")
-fun Project.PngOptimizingTransformer(size: Int, quality: Float, includePaths: List<Regex>): Transformer =
-    PngOptimizingTransformer(size, quality, includePaths, buildDir.toPath().resolve("cache/icons"))
+fun Project.PngOptimizingTransformer(size: Int, vararg includePaths: Regex): Transformer =
+    PngOptimizingTransformer(size, buildDir.toPath().resolve("cache/icons"), *includePaths)
 
 @CacheableTransformer
 class PngOptimizingTransformer(
     @Input
     private val size: Int,
-    @Input
-    private val quality: Float,
-    @Input
-    private val includePaths: List<Regex>,
     @InputDirectory
-    private val cacheDir: Path
+    private val cacheDir: Path,
+    @Input
+    private vararg val includePaths: Regex
 ) : Transformer {
     private val files = mutableMapOf<String, Path>()
 
@@ -74,7 +72,7 @@ class PngOptimizingTransformer(
         @Suppress("EXPERIMENTAL_API_USAGE")
         val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
 
-        val cacheFile = cacheDir.resolve("$hash-$size-$quality")
+        val cacheFile = cacheDir.resolve("$hash-$size")
 
         if (!Files.exists(cacheFile)) {
             val image: BufferedImage = ImageIO.read(ByteArrayInputStream(data)) ?: return
@@ -84,8 +82,7 @@ class PngOptimizingTransformer(
 
             val writer = ImageIO.getImageWritersByFormatName("png").next()
             val param = writer.defaultWriteParam
-            param.compressionMode = ImageWriteParam.MODE_EXPLICIT
-            param.compressionQuality = quality
+            param.compressionMode = ImageWriteParam.MODE_DISABLED
 
             writer.output = imageOutputStream
             writer.write(null, IIOImage(scaledImage, null, null), param)
