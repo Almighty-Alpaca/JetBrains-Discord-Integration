@@ -130,7 +130,7 @@ object Utils {
                         }
                     }
                 }
-                is TemplateParser.Raw_textContext -> {
+                is TemplateParser.Raw_text_ruleContext -> {
                     val txt = child.text
                     txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
                     // and '"#' at the end)
