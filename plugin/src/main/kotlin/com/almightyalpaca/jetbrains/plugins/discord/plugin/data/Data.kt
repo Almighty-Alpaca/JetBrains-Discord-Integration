@@ -79,7 +79,13 @@ sealed class Data {
         val fileTimeOpened: Long,
         val fileTimeActive: Long,
         val filePath: String,
-        val fileIsWriteable: Boolean
+        val fileIsWriteable: Boolean,
+        val editorIsTextEditor: Boolean,
+        val caretLine: Int,
+        val lineCount: Int,
+        val moduleName: String?,
+        val pathInModule: String?,
+        val fileSize: Int
     ) : Project(
         applicationName,
         applicationVersion,

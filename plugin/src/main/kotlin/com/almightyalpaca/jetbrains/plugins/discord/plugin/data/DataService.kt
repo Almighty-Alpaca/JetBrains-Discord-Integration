@@ -31,13 +31,17 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.ex.ApplicationInfoEx
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.wm.IdeFocusManager
 
 val dataService: DataService
@@ -109,6 +113,29 @@ class DataService {
                         val fileTimeActive = file.timeActive
                         val filePath = file.path
                         val fileIsWriteable = file.isWritable
+                        val editorIsTextEditor = editor is TextEditor
+
+                        val caretLine =
+                            if (editor is TextEditor) // need smart cast here
+                                editor.editor.caretModel.primaryCaret.logicalPosition.line + 1
+                            else 0
+                        val lineCount =
+                            if (editor is TextEditor) // need smart cast here
+                                editor.editor.document.lineCount
+                            else 0
+
+                        data class ModuleData(val moduleName: String?, val pathInModule: String);
+
+                        val moduleData = runReadAction {
+                            val module = ModuleUtil.findModuleForFile(file, project)
+                            val moduleName = module?.name
+                            val moduleDirPath = module?.guessModuleDir()
+                            val pathInModule = if (moduleDirPath != null) file.path.removePrefix(moduleDirPath.path) else ""
+
+                            return@runReadAction ModuleData(moduleName, pathInModule)
+                        }
+
+                        val fileSize = if (editor is TextEditor) editor.editor.document.textLength else 0
 
                         val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
@@ -131,7 +158,13 @@ class DataService {
                             fileTimeOpened,
                             fileTimeActive,
                             filePath,
-                            fileIsWriteable
+                            fileIsWriteable,
+                            editorIsTextEditor,
+                            caretLine,
+                            lineCount,
+                            moduleData.moduleName,
+                            moduleData.pathInModule,
+                            fileSize
                         )
                     }
                 }

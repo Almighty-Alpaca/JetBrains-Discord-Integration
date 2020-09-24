@@ -1,0 +1,90 @@
+= How to use custom templates
+
+== Variables
+
+The syntax for template variables is `${...}`(shorthand version `$...`, ends with a non-letter character).
+
+Here is a list of all the variables that you can use:
+
+- `${ApplicationVersion}`/`$ApplicationVersion`: The version of the IDE; for example `2020.1.2`
+- `${ProjectName}`/`$ProjectName`: The name of the project
+- `${ProjectDescription}`/`$ProjectDescription`: The project's description, as provided in `Discord -&gt; Project` (in Settings)
+- `${VcsBranch}`/`$VcsBranch`: The name of the git branch you're currently working on
+- `${FileName}`/`$FileName`: The name of the file you're working on
+- `${FileNameUnique}`/`$FileNameUnique`: The name of the file you're working on, but it is unique in all your open editors
+- `${CaretLine}`/`$CaretLine`: The line the primary caret is on (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${LineCount}`/`$LineCount`: The number of lines in the currently open document (should only be used on text editors, see `IsTextEditor` below, else it is `0`)
+- `${Language}`/`$Language`: The language of the file you are currently focused on
+- `${ModuleName}`/`$ModuleName`: The name of the module the file currently in focus is; null in non-IDEA IDEs
+- `${PathInModule}`/`$PathInModule`: The path relative to the root of the module of the file; for example `/src/Main.java`; empty if intellij couldn't guess the module directory
+- `${FileSize}`/`$FileSize`: The size of the file currently open in the editor, in human readable format(appends "bytes", "KiB", "MiB" and "GiB", depending on the size of it).
+- `${FileIsWritable}/$FileIsWritable`: `true` if the currently edited file isn't readonly and `false` otherwise. Meant to be used with `%if`.
+- `${IsTextEditor}`/`$IsTextEditor`: `true` if the currently opened editor is a text editor. Meant to be used with `%if`.
+
+== Raw strings
+`\#" ... "#` will allow you to use `%`, `(`, `)`, `$`, `{` and `}`, while not interpreting them.
+
+== Other stuff
+
+Most of the stuff here follows this pattern: `$Name{Arg1}{Arg2}{Arg3}...{ArgN}`
+
+Some other stuff you can do with templates:
+
+- `$NotNull{variableName}`: Evaluates to `true`
+if the variable `variableName` is not null, or `false` otherwise.
+This was implemented mostly for `${VcsBranch}`, but given the power
+to work with other variables as well.
+
+Example:
+`${ProjectName}%if($NotNull{VcsBranch}){, on branch: ${VcsBranch}}`
+will evaluate to `${ProjectName}, on branch ${VcsBranch}` when
+`${VcsBranch}` is not null or `${ProjectName}` when it is null(see link:#If[if] below).
+
+* `$RegexEscape{text}` can be used if `text` contains character that have special
+meaning in regex, and you want them escaped.
+
+Example: `$RegexEscape{A+}` will evaluate to the regex `A\+`.
+
+* `$Matches{text}{regex}` evaluates to `true` if `text`
+matches `regex` or `false` otherwise. Meant to be used with `%if`.
+
+Example: `%if($Matches{${ModuleName}}{$RegexEscape{${ProjectName}}}){}{, in module ${ModuleName}}` will
+add `, in module ${ModuleName}` if `${ModuleName}` is different from `${ProjectName}`(see link:#If[if] below)
+
+* `$ReplaceFirst{text}{regex}{replacement}` replaces the first
+occurrence of regex expression `regex` in `text` with `replacement`.
+
+Some examples:
+
+`$ReplaceFirst{1234bcd}{234}{a} = 1abcd`
+
+`$ReplaceFirst{/src/Main.java}{/src}{} = /Main.java` (Path in source folder from path in module)
+`$ReplaceFirst{aaaa}{\#"a{3}"#}{bcd} = bcda` (Replace the first occurrence of 3 'a's in a row with bcd)
+
+* `$ReplaceAll{text}{regex}{replacement}` replaces all the
+occurrences of regex expression `regex` in `text` with `replacement`.
+
+Examples:
+`$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\#"/([a-z]+/)*"#}{} = Main.java`
+
+`$ReplaceAll{/src/a/b/c/d/e/f/g/h/Main.java}{\#"([a-z]+)/"#}{\#"$1_x/"#} = /src_x/a_x/b_x/c_x/d_x/e_x/f_x/g_x/h_x/Main.java` (append _x to all folders in a path)
+
+=== If
+`%if(some_value){onTrue}{onFalse}`. Evaluates to `onTrue` if
+`some_value` is not `false`, `null` or an empty string.
+
+The `{onFalse}` part can be omitted, leaving `%if(some_value){onTrue}`,
+which evaluates to an empty string if `some_value` is `false`, `null`,
+or an empty string.
+
+Examples:
+
+* you can implement the `Prefix file names with Reading/Editing`
+option in the settings like this:
+
+`%if($FileIsWritable){Editing}{Reading} ...`
+
+
+* Add `(caretline/linecount)` next to file, if it is in a text editor:
+
+`${FileName}%if($IsTextEditor){(${CaretLine}/${LineCount})}`

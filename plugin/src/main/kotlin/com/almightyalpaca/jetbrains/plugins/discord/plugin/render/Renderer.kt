@@ -17,6 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.CustomTemplate
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.asCustomTemplateContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
@@ -56,15 +58,16 @@ abstract class Renderer(private val context: RenderContext) {
         }
 
         return RichPresence(context.icons?.applicationId) presence@{
+            val customTemplateContext = context.asCustomTemplateContext()
             this@presence.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceText.Result.Empty -> null
-                PresenceText.Result.Custom -> detailsCustom?.getValue()
+                PresenceText.Result.Custom -> CustomTemplate(detailsCustom?.getValue()).execute(customTemplateContext)
                 is PresenceText.Result.String -> line.value
             }
 
             this@presence.state = when (val line = state?.getValue()?.get(context)) {
                 null, PresenceText.Result.Empty -> null
-                PresenceText.Result.Custom -> stateCustom?.getValue()
+                PresenceText.Result.Custom -> CustomTemplate(stateCustom?.getValue()).execute(customTemplateContext)
                 is PresenceText.Result.String -> line.value
             }
 
@@ -83,7 +86,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
                         null, PresenceText.Result.Empty -> null
                         is PresenceText.Result.String -> text.value
-                        PresenceText.Result.Custom -> largeIconTextCustom?.getValue()
+                        PresenceText.Result.Custom -> CustomTemplate(largeIconTextCustom?.getValue() ?: "").execute(customTemplateContext)
                     }
                     RichPresence.Image(icon.value, caption)
                 }
@@ -95,7 +98,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {
                         null, PresenceText.Result.Empty -> null
                         is PresenceText.Result.String -> text.value
-                        PresenceText.Result.Custom -> smallIconTextCustom?.getValue()
+                        PresenceText.Result.Custom -> CustomTemplate(smallIconTextCustom?.getValue() ?: "").execute(customTemplateContext)
                     }
                     RichPresence.Image(icon.value, caption)
                 }

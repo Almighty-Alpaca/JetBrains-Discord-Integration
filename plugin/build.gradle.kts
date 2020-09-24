@@ -24,6 +24,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.intellij")
     id("com.github.johnrengelman.shadow")
+    antlr
 }
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
@@ -33,6 +34,8 @@ dependencies {
     val versionJackson: String by project
     val versionOkHttp: String by project
     val versionRpc: String by project
+    val versionJUnit: String by project
+    val versionAntlr: String by project
 
     implementation(project(":icons")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
@@ -51,6 +54,22 @@ dependencies {
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
+
+    antlr("org.antlr", name = "antlr4", version = versionAntlr)
+
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
+}
+
+val generatedSourceDir = project.file("src/generated")
+val generatedJavaSourceDir = generatedSourceDir.resolve("java")
+
+sourceSets {
+    main {
+        java {
+            srcDir(generatedJavaSourceDir)
+        }
+    }
 }
 
 val isCI by lazy { System.getenv("CI") != null }
@@ -165,6 +184,17 @@ tasks {
         archiveBaseName.set("${rootProject.name}-${project.name.capitalize()}")
     }
 
+    generateGrammarSource {
+        val packageName = "com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr"
+
+        arguments = arguments + listOf("-package", packageName, "-no-listener")
+        outputDirectory = generatedJavaSourceDir.resolve(packageName.replace('.', File.separatorChar))
+    }
+
+    clean {
+        delete(generatedSourceDir)
+    }
+
     processResources {
         filesMatching("/discord/changes.html") {
             val document = Jsoup.parse(readInfoFile(project.file("CHANGELOG.md")))
@@ -189,6 +219,12 @@ tasks {
         doLast {
             println(readInfoFile(project.file("DESCRIPTION.md")))
         }
+    }
+
+    test {
+        useJUnitPlatform()
+
+        maxHeapSize = "1G"
     }
 }
 
