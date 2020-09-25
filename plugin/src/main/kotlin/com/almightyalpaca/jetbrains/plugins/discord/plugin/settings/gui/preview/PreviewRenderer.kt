@@ -88,7 +88,7 @@ class PreviewRenderer {
     private val font14MediumMaxHeight: Int = font14MediumMetrics.maxAscent + font14MediumMetrics.leading + font14MediumMetrics.maxDescent
 
     @Synchronized
-    suspend fun draw(type: Renderer.Type, force: Boolean = false): ModifiedImage {
+    suspend fun draw(type: Renderer.Type.Application, force: Boolean = false): ModifiedImage {
         val data = dataService.getData(Renderer.Mode.PREVIEW)?.completeMissingData() ?: return ModifiedImage(false, image)
 
         val context = RenderContext(sourceService.source, data, Renderer.Mode.PREVIEW)
@@ -464,7 +464,7 @@ class PreviewRenderer {
 
 private val applicationCode = ApplicationInfo.getInstance().build.productCode
 
-private fun Data.completeMissingData(): Data {
+private fun Data.completeMissingData(): Data.File {
     val application = this as Data.Application
     val project = this as? Data.Project
     val file = this as? Data.File
@@ -492,6 +492,12 @@ private fun Data.completeMissingData(): Data {
         file?.filePath ?: "dummy/$dummyFileName",
         file?.fileIsWriteable ?: true,
         file?.fileEditor ?: TextEditor::class.java.name,
-        file?.fileType ?: FileTypes.PLAIN_TEXT
+        file?.fileType ?: FileTypes.PLAIN_TEXT,
+        file?.editorIsTextEditor ?: false,
+        file?.caretLine ?: 0,
+        file?.lineCount ?: 0,
+        file?.moduleName ?: "dummy-module",
+        file?.pathInModule ?: "/dummy/$dummyFileName",
+        file?.fileSize ?: 0
     )
 }

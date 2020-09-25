@@ -19,6 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
+import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset as SourceAsset
 
 typealias IconValue = SimpleValue<PresenceIcon>
 
@@ -47,13 +48,13 @@ enum class PresenceIcon(override val text: String, override val description: Str
         val File = APPLICATION to arrayOf(APPLICATION, FILE, NONE)
     }
 
-    fun com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset?.toResult() = when (this) {
+    fun SourceAsset?.toResult() = when (this) {
         null -> Result.Empty
         else -> Result.Asset(this)
     }
 
     sealed class Result {
         object Empty : Result()
-        data class Asset(val value: com.almightyalpaca.jetbrains.plugins.discord.icons.source.Asset) : Result()
+        data class Asset(val value: SourceAsset) : Result()
     }
 }

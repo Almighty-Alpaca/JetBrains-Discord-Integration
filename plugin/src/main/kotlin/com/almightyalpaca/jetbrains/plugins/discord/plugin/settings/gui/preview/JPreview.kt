@@ -30,7 +30,7 @@ class JPreview : JLabel(), CoroutineScope {
 
     private val preview = PreviewRenderer()
 
-    var type = Renderer.Type.APPLICATION
+    var type: Renderer.Type.Application = Renderer.Type.Application
         set(value) {
             field = value
             update()

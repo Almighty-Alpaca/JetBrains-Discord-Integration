@@ -87,10 +87,10 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider
 
             tabsOption.addChangeListener { tabs ->
                 previewImpl.type = when (tabs.selected) {
-                    0 -> Renderer.Type.APPLICATION
-                    1 -> Renderer.Type.PROJECT
-                    2 -> Renderer.Type.FILE
-                    else -> Renderer.Type.APPLICATION // TODO: should never happen but nevertheless handled better
+                    0 -> Renderer.Type.Application
+                    1 -> Renderer.Type.Project
+                    2 -> Renderer.Type.File
+                    else -> Renderer.Type.Application // should never happen
                 }
             }
         }

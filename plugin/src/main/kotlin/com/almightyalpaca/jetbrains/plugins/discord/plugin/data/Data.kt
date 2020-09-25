@@ -25,6 +25,14 @@ import com.intellij.openapi.fileTypes.FileType
 import org.apache.commons.io.FilenameUtils
 
 sealed class Data {
+    open class None private constructor() : Data() {
+        companion object : None()
+
+        override fun toString(): String {
+            return "Data.None"
+        }
+    }
+
     open class Application(
         val applicationName: String,
         val applicationVersion: String,
@@ -74,7 +82,13 @@ sealed class Data {
         val filePath: String,
         val fileIsWriteable: Boolean,
         val fileEditor: String,
-        val fileType: FileType
+        val fileType: FileType,
+        val editorIsTextEditor: Boolean,
+        val caretLine: Int,
+        val lineCount: Int,
+        val moduleName: String?,
+        val pathInModule: String?,
+        val fileSize: Int
     ) : Project(
         applicationName,
         applicationVersion,

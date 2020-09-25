@@ -16,13 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
-import org.jetbrains.concurrency.Promise
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, command: () -> Unit): ScheduledFuture<*> =
     scheduleWithFixedDelay(Runnable(command), initialDelay, delay, unit)

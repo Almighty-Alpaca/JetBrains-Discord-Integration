@@ -66,3 +66,6 @@ JetBrains-Discord-Integration-Plugin-*.zip
 
 ## Bot config
 bot/config.yaml
+
+## ANTLR-generated sources
+plugin/src/generated/

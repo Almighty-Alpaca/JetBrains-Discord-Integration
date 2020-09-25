@@ -17,6 +17,8 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.CustomTemplate
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.asCustomTemplateContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
@@ -55,16 +57,17 @@ abstract class Renderer(private val context: RenderContext) {
             DiscordPlugin.LOG.debug("RenderContext.icons=null")
         }
 
-        return RichPresence(context.icons?.applicationId) {
-            this.details = when (val line = details?.getValue()?.get(context)) {
+        return RichPresence(context.icons?.applicationId) presence@{
+            val customTemplateContext = context.asCustomTemplateContext()
+            this@presence.details = when (val line = details?.getValue()?.get(context)) {
                 null, PresenceText.Result.Empty -> null
-                PresenceText.Result.Custom -> detailsCustom?.getValue()
+                PresenceText.Result.Custom -> CustomTemplate(detailsCustom?.getValue()).execute(customTemplateContext)
                 is PresenceText.Result.String -> line.value
             }
 
             this.state = when (val line = state?.getValue()?.get(context)) {
                 null, PresenceText.Result.Empty -> null
-                PresenceText.Result.Custom -> stateCustom?.getValue()
+                PresenceText.Result.Custom -> CustomTemplate(stateCustom?.getValue()).execute(customTemplateContext)
                 is PresenceText.Result.String -> line.value
             }
 
@@ -79,7 +82,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = largeIconText?.getValue()?.get(context)) {
                         null, PresenceText.Result.Empty -> null
                         is PresenceText.Result.String -> text.value
-                        PresenceText.Result.Custom -> largeIconTextCustom?.getValue()
+                        PresenceText.Result.Custom -> CustomTemplate(largeIconTextCustom?.getValue() ?: "").execute(customTemplateContext)
                     }
                     RichPresence.Image(icon.value, caption)
                 }
@@ -91,7 +94,7 @@ abstract class Renderer(private val context: RenderContext) {
                     val caption = when (val text = smallIconText?.getValue()?.get(context)) {
                         null, PresenceText.Result.Empty -> null
                         is PresenceText.Result.String -> text.value
-                        PresenceText.Result.Custom -> smallIconTextCustom?.getValue()
+                        PresenceText.Result.Custom -> CustomTemplate(smallIconTextCustom?.getValue() ?: "").execute(customTemplateContext)
                     }
                     RichPresence.Image(icon.value, caption)
                 }
@@ -112,9 +115,31 @@ abstract class Renderer(private val context: RenderContext) {
         fun <T> SimpleValue<T>.updateValue(block: (T) -> T) = updateValue(this@Mode, block)
     }
 
-    enum class Type(val createRenderer: (RenderContext) -> Renderer) {
-        APPLICATION({ context -> ApplicationRenderer(context) }),
-        PROJECT({ context -> ProjectRenderer(context) }),
-        FILE({ context -> FileRenderer(context) });
+    sealed class Type {
+        abstract fun createRenderer(context: RenderContext): Renderer?
+
+        open class None protected constructor() : Type() {
+            override fun createRenderer(context: RenderContext): Renderer? = null
+
+            companion object : None()
+        }
+
+        open class Application protected constructor() : None() {
+            override fun createRenderer(context: RenderContext): Renderer = ApplicationRenderer(context)
+
+            companion object : Application()
+        }
+
+        open class Project protected constructor() : Application() {
+            override fun createRenderer(context: RenderContext): Renderer = ProjectRenderer(context)
+
+            companion object : Project()
+        }
+
+        open class File protected constructor() : Project() {
+            override fun createRenderer(context: RenderContext): Renderer = FileRenderer(context)
+
+            companion object : File()
+        }
     }
 }

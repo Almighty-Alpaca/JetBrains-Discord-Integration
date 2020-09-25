@@ -19,7 +19,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.debug
 
 inline fun Logger.traceLazy(lazyMessage: () -> String) {
     if (isTraceEnabled) {

@@ -31,7 +31,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.VirtualFile
-import java.time.OffsetDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.min
@@ -39,14 +38,23 @@ import kotlin.math.min
 private val TIME_OPENED = Key.create<Long>("discord.time.opened")
 private val TIME_IDLE = Key.create<Long>("discord.time.idle")
 
+/**
+ * Timestamp of when the application was opened
+ */
 var Application.timeOpened
     get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
     private set(value) = putUserData(TIME_OPENED, value)
 
+/**
+ * Timestamp of when the project was opened
+ */
 var Project.timeOpened
     get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
     private set(value) = putUserData(TIME_OPENED, value)
 
+/**
+ * Timestamp of when the file was opened
+ */
 var VirtualFile.timeOpened
     get() = getUserData(TIME_OPENED) ?: System.currentTimeMillis()
     private set(value) = putUserData(TIME_OPENED, value)
@@ -63,18 +71,34 @@ var VirtualFile.durationIdle
     get() = getUserData(TIME_IDLE) ?: 0
     private set(value) = putUserData(TIME_IDLE, value)
 
+/**
+ * Calculated timestamp of the start of the active time of the application.
+ * Another way to express this would be `now() - activeDuration`
+ */
 val Application.timeActive
     get() = timeOpened + durationIdle
 
+/**
+ * Calculated timestamp of the start of the active time of the project.
+ * Another way to express this would be `now() - activeDuration`
+ */
 val Project.timeActive
     get() = timeOpened + durationIdle
 
+/**
+ * Calculated timestamp of the start of the active time of the file.
+ * Another way to express this would be `now() - activeDuration`
+ */
 val VirtualFile.timeActive
     get() = timeOpened + durationIdle
 
 val timeService: TimeService
     get() = service()
 
+/**
+ * The TimeService keeps track of when the application/projects/files are opened
+ * and when the IDE is idle.
+ */
 @Service
 class TimeService : Disposable {
 //    internal var status: Status = Status.None
@@ -85,6 +109,10 @@ class TimeService : Disposable {
     val idle
         get() = idleSince.get() != null
 
+    /**
+     * Timestamp of when the IDE went into idle mode.
+     * Null means the IDE is currently active.
+     */
     private val idleSince = AtomicReference<Long?>(null)
 
     private val idleListener = Runnable {
@@ -98,6 +126,11 @@ class TimeService : Disposable {
         renderService.render(true)
     }
 
+    /**
+     * This listener is called whenever the user interacts with the IDE.
+     * **This is called very often, don't do too much stuff in here.**
+     * Especially not outside the `if` statement.
+     */
     private val activityListener = Runnable {
         val idleSince = idleSince.getAndSet(null)
 

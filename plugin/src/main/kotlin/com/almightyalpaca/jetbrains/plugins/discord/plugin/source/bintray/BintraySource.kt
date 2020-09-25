@@ -17,10 +17,10 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.source.bintray
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.*
+import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.mapValue
 import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.retryAsync
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.mapValue
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory

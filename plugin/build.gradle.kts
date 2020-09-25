@@ -29,6 +29,7 @@ plugins {
     com.github.johnrengelman.shadow
     id("com.palantir.baseline-exact-dependencies")
     secrets
+    antlr
 }
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
@@ -38,6 +39,8 @@ dependencies {
     val versionJackson: String by project
     val versionOkHttp: String by project
     val versionRpc: String by project
+    val versionJunit: String by project
+    val versionAntlr: String by project
 
     implementation(project(":icons"))
 
@@ -58,6 +61,22 @@ dependencies {
     implementation(ktor("client-okhttp"))
     implementation(ktor("client-json-jvm"))
     implementation(ktor("client-serialization-jvm"))
+
+    antlr("org.antlr", name = "antlr4", version = versionAntlr)
+
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJunit)
+    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJunit)
+}
+
+val generatedSourceDir = project.file("src/generated")
+val generatedJavaSourceDir = generatedSourceDir.resolve("java")
+
+sourceSets {
+    main {
+        java {
+            srcDir(generatedJavaSourceDir)
+        }
+    }
 }
 
 intellij {
@@ -191,12 +210,12 @@ tasks {
         prefix("org.apache.commons.io")
         prefix("org.yaml.snakeyaml")
 
-        val iconPaths = listOf(
+        val iconPaths = arrayOf(
             Regex("""/?discord/applications/.*\.png"""),
             Regex("""/?discord/themes/.*\.png""")
         )
 
-        transform(PngOptimizingTransformer(128, 0.9F, iconPaths, buildDir.toPath().resolve("cache/icons")))
+        transform(PngOptimizingTransformer(128, *iconPaths))
     }
 
     withType<KotlinCompile> {
@@ -207,6 +226,17 @@ tasks {
 
     withType<AbstractArchiveTask> {
         archiveBaseName.set("${rootProject.name}-${project.name.capitalize()}")
+    }
+
+    generateGrammarSource {
+        val packageName = "com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr"
+
+        arguments = arguments + listOf("-package", packageName, "-no-listener")
+        outputDirectory = generatedJavaSourceDir.resolve(packageName.replace('.', File.separatorChar))
+    }
+
+    clean {
+        delete(generatedSourceDir)
     }
 
     processResources {
@@ -233,6 +263,12 @@ tasks {
         doLast {
             println(readInfoFile(project.file("DESCRIPTION.md")))
         }
+    }
+
+    test {
+        useJUnitPlatform()
+
+        maxHeapSize = "1G"
     }
 }
 

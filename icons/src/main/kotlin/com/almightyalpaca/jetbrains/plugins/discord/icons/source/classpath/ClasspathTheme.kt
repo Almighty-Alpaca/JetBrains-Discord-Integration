@@ -18,10 +18,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.IconSet
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.abstract.AbstractTheme
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.toSet
 import org.apache.commons.io.FilenameUtils
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.Map
 import kotlin.collections.set
 
 class ClasspathTheme(private val source: ClasspathSource, id: String, name: String, description: String, applications: Map<String, Long>) :
@@ -33,7 +31,7 @@ class ClasspathTheme(private val source: ClasspathSource, id: String, name: Stri
         if (set == null) {
             val applicationId = applications[applicationName]
             if (applicationId != null) {
-                val resources = source.listResources("${source.pathThemes}/$id/", ".png")
+                val resources = source.listResources("${source.pathThemes}/$id", ".png")
                 val icons = resources
                     .map(FilenameUtils::getBaseName)
                     .toSet() + "application"

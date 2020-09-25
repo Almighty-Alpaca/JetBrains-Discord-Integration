@@ -70,6 +70,8 @@ subprojects {
         withType<JavaCompile> {
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
+
+            options.compilerArgs as MutableList<String> += listOf("--release", "8")
         }
     }
 }

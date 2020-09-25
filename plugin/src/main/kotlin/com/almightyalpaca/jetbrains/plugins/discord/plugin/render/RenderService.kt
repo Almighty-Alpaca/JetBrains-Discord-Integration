@@ -19,9 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.dataService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
 import com.intellij.openapi.components.Service
@@ -65,28 +63,16 @@ class RenderService : DisposableCoroutineScope {
 
             val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
-            var visible = true
+            val renderer = context.createRenderer()
+            val presence = renderer?.render()
 
-            if (!settings.show.getStoredValue()) {
-                visible = false
-            }
-
-            if (timeService.idle && settings.timeoutEnabled.getStoredValue()) {
-                visible = false
-            }
-
-            if (visible) {
+            if (presence == null) {
                 DiscordPlugin.LOG.debug("Render result: visible")
-
-                val renderer = context.createRenderer()
-                val presence = renderer.render()
-
-                rpcService.update(presence, force)
             } else {
                 DiscordPlugin.LOG.debug("Render result: hidden")
-
-                rpcService.update(null, force)
             }
+
+            rpcService.update(presence, force)
 
             renderJob = null
         }

@@ -19,7 +19,10 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIcon
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceText
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceTime
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 

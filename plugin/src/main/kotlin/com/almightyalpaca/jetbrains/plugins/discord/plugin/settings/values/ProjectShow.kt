@@ -22,18 +22,18 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 typealias ProjectShowValue = SelectionValue<ProjectShow>
 
 enum class ProjectShow(
-    val showProject: Boolean,
-    val showFiles: Boolean,
     override val text: String,
     override val description: String? = null
 ) : UiValueType {
-    ASK(false, false, "Ask", "Show notification when first opening a new project"),
-    PROJECT(true, false, "Project only"),
-    PROJECT_FILES(true, true, "Project and Files"),
-    HIDE(false, false, "Hide");
+    // Do not reorder these, some logic depends on the order
+    DISABLE("Hide Completely"),
+    APPLICATION("Show Application"),
+    PROJECT("Show Project"),
+    ASK("Ask", "Show notification when first opening a new project"),
+    PROJECT_FILES("Show Project and Files");
 
     companion object {
-        val VALUES = arrayOf(PROJECT, PROJECT_FILES, HIDE)
-        val VALUES_DEFAULT = arrayOf(ASK, PROJECT, PROJECT_FILES, HIDE)
+        val VALUES = arrayOf(PROJECT_FILES, PROJECT, APPLICATION, DISABLE)
+        val VALUES_DEFAULT = arrayOf(ASK, PROJECT_FILES, PROJECT, APPLICATION, DISABLE)
     }
 }
