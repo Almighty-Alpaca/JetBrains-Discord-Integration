@@ -17,10 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.BooleanValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.IntValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.ThemeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationTypeValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TextValue
@@ -43,39 +40,39 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val fileHideVcsIgnored: BooleanValue
 
     val applicationDetails: TextValue
-    val applicationDetailsCustom: StringValue
+    val applicationDetailsCustom: TemplateValue
     val applicationState: TextValue
-    val applicationStateCustom: StringValue
+    val applicationStateCustom: TemplateValue
     val applicationIconLarge: IconValue
     val applicationIconLargeText: TextValue
-    val applicationIconLargeTextCustom: StringValue
+    val applicationIconLargeTextCustom: TemplateValue
     val applicationIconSmall: IconValue
     val applicationIconSmallText: TextValue
-    val applicationIconSmallTextCustom: StringValue
+    val applicationIconSmallTextCustom: TemplateValue
     val applicationTime: TimeValue
 
     val projectDetails: TextValue
-    val projectDetailsCustom: StringValue
+    val projectDetailsCustom: TemplateValue
     val projectState: TextValue
-    val projectStateCustom: StringValue
+    val projectStateCustom: TemplateValue
     val projectIconLarge: IconValue
     val projectIconLargeText: TextValue
-    val projectIconLargeTextCustom: StringValue
+    val projectIconLargeTextCustom: TemplateValue
     val projectIconSmall: IconValue
     val projectIconSmallText: TextValue
-    val projectIconSmallTextCustom: StringValue
+    val projectIconSmallTextCustom: TemplateValue
     val projectTime: TimeValue
 
     val fileDetails: TextValue
-    val fileDetailsCustom: StringValue
+    val fileDetailsCustom: TemplateValue
     val fileState: TextValue
-    val fileStateCustom: StringValue
+    val fileStateCustom: TemplateValue
     val fileIconLarge: IconValue
     val fileIconLargeText: TextValue
-    val fileIconLargeTextCustom: StringValue
+    val fileIconLargeTextCustom: TemplateValue
     val fileIconSmall: IconValue
     val fileIconSmallText: TextValue
-    val fileIconSmallTextCustom: StringValue
+    val fileIconSmallTextCustom: TemplateValue
     val fileTime: TimeValue
 
     val applicationType: ApplicationTypeValue

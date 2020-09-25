@@ -146,7 +146,7 @@ object Utils {
  * Represents a template
  * When executed, it should return a string with all the patterns replaced by values
  */
-class CustomTemplate(template: String?) {
+class CustomTemplate(val template: String) {
     private val rootNode: TemplateParser.Text_evalContext
 
     init {
