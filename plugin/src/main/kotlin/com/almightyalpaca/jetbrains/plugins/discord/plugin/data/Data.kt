@@ -124,7 +124,7 @@ sealed class Data {
         }
 
         override fun toString(): String {
-            return "Data.File(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileUniqueName='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable)"
+            return "Data.File(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileNameUnique='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable, editorIsTextEditor=$editorIsTextEditor, caretLine=$caretLine, lineCount=$lineCount, moduleName=$moduleName, pathInModule=$pathInModule, fileSize=$fileSize)"
         }
     }
 }
