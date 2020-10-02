@@ -21,7 +21,6 @@ match:
       - .pyp
       - .pyt
       - .xpy
-      - .ipynb
 flavors:
   - name: Python Test
     match:
@@ -44,7 +43,6 @@ flavors:
           - .test.pyp
           - .test.pyt
           - .test.xpy
-          - .test.ipynb
           - .spec.python
           - .spec.py
           - .spec.py3
@@ -62,7 +60,6 @@ flavors:
           - .spec.pyp
           - .spec.pyt
           - .spec.xpy
-          - .spec.ipynb
 
 # TODO: sort extensions
 #
@@ -84,7 +81,6 @@ flavors:
 # *.pyp - Py4D Python Plugin
 # *.pyt - Python declaration file
 # *.xpy - Unknown
-# *.ipynb - Jupyter Notebook file
 
 # .py
 # .ipy

@@ -4,7 +4,5 @@ parent: xml
 match:
   extension:
     equals:
-      - .r
-      - .rd
-      - .rsx
-      - .Rprofile
+      - .rss
+     # - .xml # Disabled
