@@ -35,13 +35,15 @@ class Tests {
             applicationVersion: String = "2020.1.2",
             projectName: String = "Dummy project",
             projectDescription: String = "A dummy project description",
-            vcsBranch: String? = "master"
+            vcsBranch: String? = "master",
+            debbuggerActive: Boolean = false
         ): TemplateData.Project {
             return TemplateData.Project(
                 applicationVersion,
                 projectName,
                 projectDescription,
-                vcsBranch
+                vcsBranch,
+                debbuggerActive
             )
         }
 
@@ -50,6 +52,7 @@ class Tests {
             projectName: String = "Dummy project",
             projectDescription: String = "A dummy project description",
             vcsBranch: String? = "master",
+            debuggerActive: Boolean = false,
             fileName: String = "Main.java",
             fileNameUnique: String = "Main.java",
             filePath: String = "src/Main.java",
@@ -68,6 +71,7 @@ class Tests {
                 projectName,
                 projectDescription,
                 vcsBranch,
+                debuggerActive,
                 fileName,
                 fileNameUnique,
                 filePath,
@@ -289,7 +293,7 @@ class Tests {
     }
 
     /**
-     * Test cases involving $FileIsWritable{}{}
+     * Test cases involving $FileIsWritable
      */
     @Test
     fun fileReadableWritableTest() {
@@ -340,7 +344,7 @@ class Tests {
     }
 
     /**
-     * Test cases involving $NotNull{}{}{}
+     * Test cases involving $NotNull{}
      */
     @Test
     fun notNullTest() {
@@ -391,7 +395,7 @@ class Tests {
     }
 
     /**
-     * Test cases involving $IsTextEditor{}{}
+     * Test cases involving $IsTextEditor
      */
     @Test
     fun isTextEditorTest() {
@@ -416,6 +420,35 @@ class Tests {
                 )
             ),
             "IsTextEditor test #2 failed"
+        )
+    }
+
+    /**
+     * Test cases involving $DebuggerActive
+     */
+    @Test
+    fun debuggerActiveTest() {
+        assertEquals(
+            "Main.java", CustomTemplate(
+                "%if(\$DebuggerActive){Debugging }\$FileName"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createFileData(fileName = "Main.java", debuggerActive = false)
+                )
+            ),
+            "DebuggerActive test #1 failed"
+        )
+        assertEquals(
+            "Debugging Main.java", CustomTemplate(
+                "%if(\$DebuggerActive){Debugging }\$FileName"
+            ).execute(
+                CustomTemplateContext(
+                    null,
+                    createFileData(fileName = "Main.java", debuggerActive = true)
+                )
+            ),
+            "DebuggerActive test #1 failed"
         )
     }
 
