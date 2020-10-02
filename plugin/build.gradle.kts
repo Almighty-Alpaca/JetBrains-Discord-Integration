@@ -221,6 +221,10 @@ tasks {
         }
     }
 
+    check {
+        dependsOn(":uploader:check")
+    }
+
     test {
         useJUnitPlatform()
 

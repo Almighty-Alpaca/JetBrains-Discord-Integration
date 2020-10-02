@@ -111,6 +111,7 @@ tasks {
 
     check {
         dependsOn(checkLanguages)
+        dependsOn(checkExtensions)
         dependsOn(checkIcons)
     }
 
