@@ -44,6 +44,7 @@ object Utils {
             "FileSize" -> sizeAsString(context.fileData?.fileSize)
             "IsTextEditor" -> context.fileData?.editorIsTextEditor.toString()
             "FileIsWritable" -> context.fileData?.fileIsWriteable.toString()
+            "DebuggerActive" -> context.projectData?.debuggerActive.toString()
             else -> null
         }
 
@@ -130,7 +131,7 @@ object Utils {
                         }
                     }
                 }
-                is TemplateParser.Raw_textContext -> {
+                is TemplateParser.Raw_text_ruleContext -> {
                     val txt = child.text
                     txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
                     // and '"#' at the end)
@@ -146,7 +147,7 @@ object Utils {
  * Represents a template
  * When executed, it should return a string with all the patterns replaced by values
  */
-class CustomTemplate(template: String?) {
+class CustomTemplate(val template: String) {
     private val rootNode: TemplateParser.Text_evalContext
 
     init {
@@ -180,6 +181,7 @@ private fun Data.asTemplateData(): TemplateData {
                 this.projectName,
                 this.projectDescription,
                 this.vcsBranch,
+                this.debuggerActive,
                 this.fileName,
                 this.fileNameUnique,
                 this.filePath,
@@ -194,7 +196,7 @@ private fun Data.asTemplateData(): TemplateData {
         }
         is Data.Project -> {
             return TemplateData.Project(
-                this.applicationVersion, this.projectName, this.projectDescription, this.vcsBranch
+                this.applicationVersion, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
             )
         }
         is Data.Application -> {
@@ -221,7 +223,8 @@ sealed class TemplateData {
         applicationVersion: String,
         val projectName: String,
         val projectDescription: String,
-        val vcsBranch: String?
+        val vcsBranch: String?,
+        val debuggerActive: Boolean
     ) : Application(applicationVersion)
 
     open class File(
@@ -229,6 +232,7 @@ sealed class TemplateData {
         projectName: String,
         projectDescription: String,
         vcsBranch: String?,
+        debuggerActive: Boolean,
         val fileName: String,
         val fileNameUnique: String,
         val filePath: String,
@@ -244,6 +248,7 @@ sealed class TemplateData {
         applicationVersion,
         projectName,
         projectDescription,
-        vcsBranch
+        vcsBranch,
+        debuggerActive
     )
 }

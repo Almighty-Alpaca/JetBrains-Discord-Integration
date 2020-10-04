@@ -24,6 +24,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.source.sourceService
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.blurple
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.darkOverlay
@@ -32,6 +34,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.greenTran
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent60
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Color.whiteTranslucent80
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.ProjectManager
@@ -465,7 +469,7 @@ class PreviewRenderer {
 private val applicationCode = ApplicationInfo.getInstance().build.productCode
 
 private fun Data.completeMissingData(): Data.File {
-    val application = this as Data.Application
+    val application = this as? Data.Application
     val project = this as? Data.Project
     val file = this as? Data.File
 
@@ -473,18 +477,22 @@ private fun Data.completeMissingData(): Data.File {
 
     val dummyFileName = sourceService.source.getApplicationsOrNull()?.get(applicationCode)?.dummyFile ?: "dummy.txt"
 
+    val applicationTimeOpened = application?.applicationTimeOpened ?: ApplicationManager.getApplication().timeOpened
+    val applicationTimeActive = application?.applicationTimeActive ?: ApplicationManager.getApplication().timeActive
+
     return Data.File(
-        application.applicationName,
-        application.applicationVersion,
-        application.applicationTimeOpened,
-        application.applicationTimeActive,
-        application.applicationSettings,
+        application?.applicationName ?: settings.applicationType.getPreviewValue().applicationNameReadable,
+        application?.applicationVersion ?: ApplicationInfoEx.getInstance().fullVersion,
+        applicationTimeOpened,
+        applicationTimeActive,
+        application?.applicationSettings ?: settings,
         project?.projectName ?: "Dummy project",
         if (projectDescription.isNullOrBlank()) "Dummies are very nice test objects" else projectDescription,
         project?.projectTimeOpened ?: applicationTimeOpened,
         project?.projectTimeActive ?: applicationTimeActive,
         project?.projectSettings ?: ProjectManager.getInstance().defaultProject.settings,
         project?.vcsBranch ?: "master",
+        project?.debuggerActive ?: false,
         file?.fileName ?: dummyFileName,
         file?.fileNameUnique ?: dummyFileName,
         file?.fileTimeOpened ?: project?.projectTimeOpened ?: applicationTimeOpened,

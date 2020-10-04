@@ -146,15 +146,15 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         throw RuntimeException("Unknown matcher type")
     }
 
-    private fun JsonNode.asStartsWithMatcher() = Matcher.StartsWith(asStrings())
+    private fun JsonNode.asStartsWithMatcher() = Matcher.Text.StartsWith(asStrings())
 
-    private fun JsonNode.asEndsWithMatcher() = Matcher.EndsWith(asStrings())
+    private fun JsonNode.asEndsWithMatcher() = Matcher.Text.EndsWith(asStrings())
 
-    private fun JsonNode.asContainsMatcher() = Matcher.Contains(asStrings())
+    private fun JsonNode.asContainsMatcher() = Matcher.Text.Contains(asStrings())
 
-    private fun JsonNode.asEqualsMatcher() = Matcher.Equals(asStrings())
+    private fun JsonNode.asEqualsMatcher() = Matcher.Text.Equals(asStrings())
 
-    private fun JsonNode.asRegExMatcher() = Matcher.RegEx(asStrings())
+    private fun JsonNode.asRegExMatcher() = Matcher.Text.RegEx(asStrings())
 
     private fun JsonNode.asStrings(): Set<String> = when {
         isNull -> emptySet()
@@ -163,7 +163,7 @@ interface LanguageSourceMap : Map<String, LanguageSource> {
         else -> throw RuntimeException("invalid type")
     }
 
-    private fun JsonNode.asAny() = Matcher.Any(asMatchers())
+    private fun JsonNode.asAny() = Matcher.Combining.Any(asMatchers())
 
-    private fun JsonNode.asAll() = Matcher.All(asMatchers())
+    private fun JsonNode.asAll() = Matcher.Combining.All(asMatchers())
 }

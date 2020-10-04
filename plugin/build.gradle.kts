@@ -140,8 +140,8 @@ tasks {
     }
 
     patchPluginXml {
-        changeNotes(readInfoFile(project.file("CHANGELOG.md")))
-        pluginDescription(readInfoFile(project.file("DESCRIPTION.md")))
+        changeNotes(readInfoFile(project.file("changelog.md")))
+        pluginDescription(readInfoFile(project.file("description.md")))
     }
 
     runIde {
@@ -241,7 +241,7 @@ tasks {
 
     processResources {
         filesMatching("/discord/changes.html") {
-            val document = Jsoup.parse(readInfoFile(project.file("CHANGELOG.md")))
+            val document = Jsoup.parse(readInfoFile(project.file("changelog.md")))
             val body = document.getElementsByTag("body")[0]
             val list = body.getElementsByTag("ul")[0]
 
@@ -253,7 +253,7 @@ tasks {
         group = "markdown"
 
         doLast {
-            println(readInfoFile(project.file("CHANGELOG.md")))
+            println(readInfoFile(project.file("changelog.md")))
         }
     }
 
@@ -261,8 +261,12 @@ tasks {
         group = "markdown"
 
         doLast {
-            println(readInfoFile(project.file("DESCRIPTION.md")))
+            println(readInfoFile(project.file("description.md")))
         }
+    }
+
+    check {
+        dependsOn(":uploader:check")
     }
 
     test {

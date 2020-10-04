@@ -4,5 +4,6 @@ parent: text
 match:
   extension:
     equals:
-      - .h
+      # Disabled due to conflict with C headers
+      # - .h
       - .objh

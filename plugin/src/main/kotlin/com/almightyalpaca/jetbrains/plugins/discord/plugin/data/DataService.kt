@@ -43,6 +43,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.xdebugger.XDebuggerManager
 
 val dataService: DataService
     get() = service()
@@ -92,6 +93,7 @@ class DataService {
                 val projectTimeOpened = project.timeOpened
                 val projectTimeActive = project.timeActive
                 val projectSettings = project.settings
+                val debuggerActive: Boolean = XDebuggerManager.getInstance(project).currentSession != null
 
                 if (editor != null) {
                     val file = editor.file
@@ -163,6 +165,7 @@ class DataService {
                             applicationTimeActive,
                             projectSettings,
                             vcsBranch,
+                            debuggerActive,
                             fileName,
                             fileUniqueName,
                             fileTimeOpened,
@@ -197,7 +200,8 @@ class DataService {
                     projectTimeOpened,
                     projectTimeActive,
                     projectSettings,
-                    vcsBranch
+                    vcsBranch,
+                    debuggerActive
                 )
             }
         }

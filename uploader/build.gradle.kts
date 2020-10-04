@@ -98,6 +98,13 @@ tasks {
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.LanguageValidatorKt"
     }
 
+    val checkExtensions by registering(JavaExec::class) task@{
+        group = "verification"
+
+        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
+        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.FileExtensionDuplicateFinderKt"
+    }
+
     val checkIcons by registering(JavaExec::class) task@{
         group = "verification"
 
@@ -107,6 +114,7 @@ tasks {
 
     check {
         dependsOn(checkLanguages)
+        dependsOn(checkExtensions)
         dependsOn(checkIcons)
     }
 

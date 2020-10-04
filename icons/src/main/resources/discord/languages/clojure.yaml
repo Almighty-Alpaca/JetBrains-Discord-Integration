@@ -11,3 +11,4 @@ match:
       - .hic
       - .cljs
       - .clojure
+      - .cljscm

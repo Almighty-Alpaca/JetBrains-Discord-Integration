@@ -71,10 +71,8 @@ class ThemeDialog(private val themes: ThemeMap, private val initialValue: String
             override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
 
-                val theme = (value as Theme)
+                val theme = value as Theme
                 text = "<html><b>${theme.name}</b><br>${theme.description}</html>"
-
-
 
                 return this
             }

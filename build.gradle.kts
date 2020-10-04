@@ -71,7 +71,9 @@ subprojects {
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
 
-            options.compilerArgs as MutableList<String> += listOf("--release", "8")
+            if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
+                options.compilerArgs as MutableList<String> += listOf("--release", "8")
+            }
         }
     }
 }
