@@ -19,11 +19,16 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.typ
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.CustomTemplate
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionCreator
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.OptionProviderImpl
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
+import com.intellij.icons.AllIcons
+import com.intellij.ui.components.fields.ExtendableTextComponent
 import com.intellij.ui.components.fields.ExtendableTextField
+import java.awt.Desktop
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.net.URI
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -34,9 +39,16 @@ fun OptionCreator<in CustomTemplate>.template(text: String, initialValue: String
     OptionProviderImpl(this, TemplateOption(text, null, initialValue))
 
 class TemplateOption(text: String, description: String?, initialValue: String) : SimpleOption<CustomTemplate>(text, description, CustomTemplate(initialValue)) {
+
+    private val textFieldInfoExtension = ExtendableTextComponent.Extension.create(AllIcons.General.Information, "Supports templates") {
+        Desktop.getDesktop().browse(URI.create(Plugin.branchBase + "/plugin/templates.adoc"))
+    }
+
     override val componentImpl by lazy {
         ExtendableTextField().apply {
             this.text = currentValue.template
+
+            this.addExtension(textFieldInfoExtension)
 
             // TODO: Add dialog box with more info about templates, overview of methods/variables etc.
 
@@ -52,6 +64,13 @@ class TemplateOption(text: String, description: String?, initialValue: String) :
             //     }
             // })
 
+            addPropertyChangeListener("enabled") { event ->
+                if (event.newValue == true) {
+                    addExtension(textFieldInfoExtension)
+                } else {
+                    removeExtension(textFieldInfoExtension)
+                }
+            }
         }
     }
 
