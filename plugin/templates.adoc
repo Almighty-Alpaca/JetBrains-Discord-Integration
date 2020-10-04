@@ -20,6 +20,7 @@ Here is a list of all the variables that you can use:
 - `${FileSize}`/`$FileSize`: The size of the file currently open in the editor, in human readable format(appends "bytes", "KiB", "MiB" and "GiB", depending on the size of it).
 - `${FileIsWritable}/$FileIsWritable`: `true` if the currently edited file isn't readonly and `false` otherwise. Meant to be used with `%if`.
 - `${IsTextEditor}`/`$IsTextEditor`: `true` if the currently opened editor is a text editor. Meant to be used with `%if`.
+- `${DebbuggerActive}`/`$DebuggerActive`: `true` if the current project is in a debugging session. Meant to be used with `%if`.
 
 == Raw strings
 `\#" ... "#` will allow you to use `%`, `(`, `)`, `$`, `{` and `}`, while not interpreting them.

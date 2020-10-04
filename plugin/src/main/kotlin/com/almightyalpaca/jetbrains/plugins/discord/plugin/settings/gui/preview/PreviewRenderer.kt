@@ -490,6 +490,7 @@ private fun Data.completeMissingData(): Data.File {
         project?.projectTimeActive ?: applicationTimeActive,
         project?.projectSettings ?: ProjectManager.getInstance().defaultProject.settings,
         project?.vcsBranch ?: "master",
+        project?.debuggerActive ?: false,
         file?.fileName ?: dummyFileName,
         file?.fileNameUnique ?: dummyFileName,
         file?.fileTimeOpened ?: project?.projectTimeOpened ?: applicationTimeOpened,
