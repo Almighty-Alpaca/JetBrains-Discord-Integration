@@ -24,10 +24,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.Proje
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeSuspend
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.application.runReadAction
@@ -77,7 +74,7 @@ class DataService {
 
         project = window?.project
 
-        editor = project?.let { invokeSuspend { FileEditorManager.getInstance(project)?.selectedEditor } }
+        editor = project?.let { invokeOnEventThread { FileEditorManager.getInstance(project)?.selectedEditor } }
 
         if (project != null) {
             if (project.settings.show.getValue() <= ProjectShow.DISABLE) {
@@ -100,13 +97,9 @@ class DataService {
                         val fileName = file.name
                         val fileUniqueName = when (DumbService.isDumb(project)) {
                             true -> fileName
-                            false -> runReadAction {
+                            false -> invokeReadAction {
                                 tryOrDefault(fileName) {
-                                    if (!project.isDisposed) {
-                                        EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
-                                    } else {
-                                        fileName
-                                    }
+                                    EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
                                 }
                             }
                         }
