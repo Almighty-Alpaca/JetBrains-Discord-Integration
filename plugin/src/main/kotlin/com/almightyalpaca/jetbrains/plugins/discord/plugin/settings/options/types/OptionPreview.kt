@@ -90,6 +90,7 @@ class OptionPreview : Option<Preview>(""), OptionCreator<Tabs>, Preview.Provider
                     0 -> Renderer.Type.Application
                     1 -> Renderer.Type.Project
                     2 -> Renderer.Type.File
+                    3 -> Renderer.Type.Idle
                     else -> Renderer.Type.Application // should never happen
                 }
             }

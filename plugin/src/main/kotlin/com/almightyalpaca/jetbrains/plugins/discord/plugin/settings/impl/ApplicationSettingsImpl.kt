@@ -37,6 +37,8 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
     override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true)
 
+    // TODO: Maybe make a toggleable for enabling/disabling idles and use it in DataService.kt:70
+
     private val group by group("Rich Presence Layout")
     private val preview by group.preview()
     private val tabs by preview.tabbed()
@@ -122,6 +124,32 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val filePrefixEnabled by fileTab.check("Prefix files names with Reading/Editing", true)
 
     override val fileHideVcsIgnored by fileTab.check("Hide VCS ignored files", false)
+
+    /* ---------- Idle Tab ---------- */
+
+    private val idleTab = tabs["Idle"]
+
+    private val idleDetailsToggle by idleTab.toggleable<PresenceText>()
+    override val idleDetails by idleDetailsToggle.enableOn(PresenceText.CUSTOM).selection("First line", PresenceText.CUSTOM)
+    override val idleDetailsCustom by idleDetailsToggle.option.template("Custom", "Idling")
+
+    private val idleStateToggle by idleTab.toggleable<PresenceText>()
+    override val idleState by idleStateToggle.enableOn(PresenceText.CUSTOM).selection("Second line", PresenceText.CUSTOM)
+    override val idleStateCustom by idleStateToggle.option.template("Custom", "Idling")
+
+    private val idleIconLargeToggle by idleTab.toggleable<PresenceIcon>()
+    override val idleIconLarge by idleIconLargeToggle.disableOn(PresenceIcon.NONE).selection("Large icon", PresenceIcon.Large.Application)
+    private val idleIconLargeTextToggle by idleIconLargeToggle.option.toggleable<PresenceText>()
+    override val idleIconLargeText by idleIconLargeTextToggle.enableOn(PresenceText.CUSTOM).selection("Text", PresenceText.ApplicationIconLarge)
+    override val idleIconLargeTextCustom by idleIconLargeTextToggle.option.template("Custom", "")
+
+    private val idleIconSmallToggle by idleTab.toggleable<PresenceIcon>()
+    override val idleIconSmall by idleIconSmallToggle.disableOn(PresenceIcon.NONE).selection("Small icon", PresenceIcon.Small.Application)
+    private val idleIconSmallTextToggle by idleIconSmallToggle.option.toggleable<PresenceText>()
+    override val idleIconSmallText by idleIconSmallTextToggle.enableOn(PresenceText.CUSTOM).selection("Text", PresenceText.ApplicationIconSmall)
+    override val idleIconSmallTextCustom by idleIconSmallTextToggle.option.template("Custom", "")
+
+    override val idleTime by idleTab.selection("Show elapsed time", PresenceTime.Idle)
 
     override val applicationType by selection("Application name", ApplicationType.IDE_EDITION)
     override val theme by themeChooser("Theme")

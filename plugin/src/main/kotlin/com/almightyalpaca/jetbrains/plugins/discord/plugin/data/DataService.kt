@@ -67,6 +67,18 @@ class DataService {
         val applicationTimeOpened = application.timeOpened
         val applicationTimeActive = application.timeActive
 
+        if (timeService.idle) {
+            val applicationIdle = System.currentTimeMillis() - application.idleTime
+            return Data.Idle(
+                applicationName,
+                applicationVersion,
+                applicationTimeOpened,
+                applicationTimeActive,
+                applicationSettings,
+                applicationIdle
+            )
+        }
+
         val project: Project?
         val editor: FileEditor?
 

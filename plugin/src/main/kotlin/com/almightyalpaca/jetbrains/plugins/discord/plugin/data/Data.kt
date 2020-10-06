@@ -130,4 +130,17 @@ sealed class Data {
             return "Data.File(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileNameUnique='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable, editorIsTextEditor=$editorIsTextEditor, caretLine=$caretLine, lineCount=$lineCount, moduleName=$moduleName, pathInModule=$pathInModule, fileSize=$fileSize)"
         }
     }
+
+    open class Idle(
+        applicationName: String,
+        applicationVersion: String,
+        applicationTimeOpened: Long,
+        applicationTimeActive: Long,
+        applicationSettings: ApplicationSettings,
+        var idleTime: Long
+    ) : Application(applicationName, applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
+        override fun toString(): String {
+            return "Data.Idle(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTImeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, applicationSettings=$applicationSettings, idleTime=$idleTime)"
+        }
+    }
 }

@@ -32,6 +32,7 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
     val applicationData = data as? Data.Application
     val projectData = data as? Data.Project
     val fileData = data as? Data.File
+    val idleData = data as? Data.Idle
 
     val language by lazy { fileData?.let { source.getLanguagesOrNull()?.findLanguage(fileData) } }
 
@@ -40,6 +41,7 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
             is Data.None -> Renderer.Type.None
             is Data.File -> Renderer.Type.File
             is Data.Project -> Renderer.Type.Project
+            is Data.Idle -> Renderer.Type.Idle
             is Data.Application -> Renderer.Type.Application
         }
 

@@ -147,5 +147,11 @@ abstract class Renderer(private val context: RenderContext) {
 
             companion object : File()
         }
+
+        open class Idle protected constructor() : Application() {
+            override fun createRenderer(context: RenderContext): Renderer = IdleRenderer(context)
+
+            companion object : Idle()
+        }
     }
 }

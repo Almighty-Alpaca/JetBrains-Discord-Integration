@@ -29,7 +29,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 object Utils {
     fun getVarValue(varName: String, context: CustomTemplateContext): String? =
         when (varName) {
-            "ApplicationVersion" -> context.applicationData?.applicationVersion
+            "ApplicationVersion" -> context.applicationData?.applicationVersion ?: context.idleData?.applicationVersion
             "ProjectName" -> context.projectData?.projectName
             "ProjectDescription" -> context.projectData?.projectDescription
             "VcsBranch" -> context.projectData?.vcsBranch
@@ -167,6 +167,7 @@ data class CustomTemplateContext(val language: String?, val data: TemplateData) 
     val applicationData = data as? TemplateData.Application
     val projectData = data as? TemplateData.Project
     val fileData = data as? TemplateData.File
+    val idleData = data as? TemplateData.Idle
 
     companion object {
         fun from(context: RenderContext): CustomTemplateContext = CustomTemplateContext(context.language?.name, context.data.asTemplateData())
@@ -203,6 +204,9 @@ private fun Data.asTemplateData(): TemplateData {
             return TemplateData.Application(
                 this.applicationVersion
             )
+        }
+        is Data.Idle -> {
+            return TemplateData.Idle(this.applicationName, this.applicationVersion)
         }
         else -> {
             throw IllegalArgumentException()
@@ -251,4 +255,6 @@ sealed class TemplateData {
         vcsBranch,
         debuggerActive
     )
+
+    open class Idle(val applicationName: String, val applicationVersion: String) : TemplateData()
 }

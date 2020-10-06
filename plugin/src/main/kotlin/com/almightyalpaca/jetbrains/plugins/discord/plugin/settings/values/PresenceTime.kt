@@ -41,6 +41,9 @@ enum class PresenceTime(override val text: String, override val description: Str
     FILE_TOTAL("File (total)", "Time since the file has been opened") {
         override fun RenderContext.getResult() = fileData?.fileTimeOpened.toResult()
     },
+    IDLE("Idle", "Time since the IDE didn't receive any events") {
+        override fun RenderContext.getResult() = idleData?.idleTime.toResult()
+    },
     HIDE("Hide") {
         override fun RenderContext.getResult() = Result.Empty
     };
@@ -49,6 +52,7 @@ enum class PresenceTime(override val text: String, override val description: Str
         val Application = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, HIDE)
         val Project = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, PROJECT, PROJECT_TOTAL, HIDE)
         val File = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, PROJECT, PROJECT_TOTAL, FILE, FILE_TOTAL, HIDE)
+        val Idle = APPLICATION to arrayOf(APPLICATION, APPLICATION_TOTAL, IDLE)
     }
 
     fun Long?.toResult() = when (this) {

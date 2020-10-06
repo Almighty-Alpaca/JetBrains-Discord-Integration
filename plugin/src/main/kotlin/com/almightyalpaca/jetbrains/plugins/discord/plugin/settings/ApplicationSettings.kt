@@ -75,6 +75,18 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val fileIconSmallTextCustom: TemplateValue
     val fileTime: TimeValue
 
+    val idleDetails: TextValue
+    val idleDetailsCustom: TemplateValue
+    val idleState: TextValue
+    val idleStateCustom: TemplateValue
+    val idleIconLarge: IconValue
+    val idleIconLargeText: TextValue
+    val idleIconLargeTextCustom: TemplateValue
+    val idleIconSmall: IconValue
+    val idleIconSmallText: TextValue
+    val idleIconSmallTextCustom: TemplateValue
+    val idleTime: TimeValue
+
     val applicationType: ApplicationTypeValue
     val theme: ThemeValue
 
