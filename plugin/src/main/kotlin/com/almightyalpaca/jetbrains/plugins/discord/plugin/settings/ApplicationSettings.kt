@@ -36,6 +36,8 @@ interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder 
     val timeoutMinutes: IntValue
     val timeoutResetTimeEnabled: BooleanValue
 
+    val idlesEnabled: BooleanValue
+
     val filePrefixEnabled: BooleanValue
     val fileHideVcsIgnored: BooleanValue
 

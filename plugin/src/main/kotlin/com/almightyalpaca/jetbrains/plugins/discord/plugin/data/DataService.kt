@@ -67,7 +67,7 @@ class DataService {
         val applicationTimeOpened = application.timeOpened
         val applicationTimeActive = application.timeActive
 
-        if (timeService.idle) {
+        if (timeService.idle && settings.idlesEnabled.getStoredValue()) {
             val applicationIdle = System.currentTimeMillis() - application.idleTime
             return Data.Idle(
                 applicationName,

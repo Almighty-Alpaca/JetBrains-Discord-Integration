@@ -37,7 +37,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
     override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true)
 
-    // TODO: Maybe make a toggleable for enabling/disabling idles and use it in DataService.kt:70
+    override val idlesEnabled by check("Enable idle states", false)
 
     private val group by group("Rich Presence Layout")
     private val preview by group.preview()
