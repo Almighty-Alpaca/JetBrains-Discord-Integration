@@ -130,11 +130,11 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     private val idleTab = tabs["Idle"]
 
     private val idleDetailsToggle by idleTab.toggleable<PresenceText>()
-    override val idleDetails by idleDetailsToggle.enableOn(PresenceText.CUSTOM).selection("First line", PresenceText.CUSTOM)
+    override val idleDetails by idleDetailsToggle.enableOn(PresenceText.CUSTOM).selection("First line", PresenceText.Idle1)
     override val idleDetailsCustom by idleDetailsToggle.option.template("Custom", "Idling")
 
     private val idleStateToggle by idleTab.toggleable<PresenceText>()
-    override val idleState by idleStateToggle.enableOn(PresenceText.CUSTOM).selection("Second line", PresenceText.CUSTOM)
+    override val idleState by idleStateToggle.enableOn(PresenceText.CUSTOM).selection("Second line", PresenceText.Idle2)
     override val idleStateCustom by idleStateToggle.option.template("Custom", "Idling")
 
     private val idleIconLargeToggle by idleTab.toggleable<PresenceIcon>()
