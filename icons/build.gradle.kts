@@ -24,6 +24,7 @@ dependencies {
     val versionCommonsIo: String by project
     val versionJackson: String by project
 
+    implementation(platform(kotlin(module = "bom")))
     implementation(kotlin(module = "stdlib"))
 
     implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))

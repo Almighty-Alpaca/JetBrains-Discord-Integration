@@ -45,6 +45,9 @@ dependencies {
     val versionKonf: String by project
     val versionLogback: String by project
 
+    // Kotlin BOM
+    implementation(platform(kotlin(module = "bom")))
+
     // Kotlin standard library
     implementation(kotlin(module = "stdlib"))
 

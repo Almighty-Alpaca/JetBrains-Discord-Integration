@@ -55,7 +55,7 @@ dependencies {
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 
-    antlr("org.antlr", name = "antlr4", version = versionAntlr)
+    antlr(group = "org.antlr", name = "antlr4", version = versionAntlr)
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)

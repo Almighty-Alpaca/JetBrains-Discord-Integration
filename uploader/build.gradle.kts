@@ -38,6 +38,7 @@ dependencies {
 
     implementation(project(":icons"))
 
+    implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
 
     implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
