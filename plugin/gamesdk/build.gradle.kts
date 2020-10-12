@@ -61,6 +61,22 @@ tasks {
     }
 }
 
+library {
+    targetMachines.set(
+        listOf(
+            machines.windows.x86_64,
+            machines.windows.x86,
+            machines.linux.x86_64,
+            machines.macOS.x86_64
+        )
+    )
+
+    variants.configureEach {
+        val prebuiltLibraryFile = file(getLibraryFilePathFor(targetMachine))
+        nativeRuntimeFiles.from(prebuiltLibraryFile)
+    }
+}
+
 fun getLibraryFilePathFor(targetMachine: TargetMachine): String {
     val os = targetMachine.operatingSystemFamily
 
@@ -76,21 +92,5 @@ fun getLibraryFilePathFor(targetMachine: TargetMachine): String {
         os.isLinux -> "lib/x86_64/discord_game_sdk.so"
         os.isMacOs -> "lib/x86_64/discord_game_sdk.dylib"
         else -> throw GradleException("Unknown operating system family '${os}'.")
-    }
-}
-
-library {
-    targetMachines.set(
-        listOf(
-            machines.windows.x86_64,
-            machines.windows.x86,
-            machines.linux.x86_64,
-            machines.macOS.x86_64
-        )
-    )
-
-    variants.configureEach {
-        val prebuiltLibraryFile = file(getLibraryFilePathFor(targetMachine))
-        nativeRuntimeFiles.from(prebuiltLibraryFile)
     }
 }

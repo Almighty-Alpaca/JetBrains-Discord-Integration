@@ -1,3 +1,4 @@
+import org.apache.commons.io.FilenameUtils
 import org.glavo.javah.JavahTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
@@ -49,7 +50,8 @@ open class KotlinJniHeadersTask : DefaultTask() {
             .filter { Files.isRegularFile(it) }
             .map(kotlinClassesDir::relativize)
             .map(Path::toString)
-            .map { it.replace('\\', '.') }
+            .map(FilenameUtils::separatorsToUnix)
+            .map { it.replace('/', '.') }
             .filter { it.endsWith(".class") }
             .map { it.removeSuffix(".class") }
             .toList()
