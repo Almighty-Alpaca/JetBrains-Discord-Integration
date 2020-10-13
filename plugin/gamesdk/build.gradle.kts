@@ -39,6 +39,7 @@ dependencies {
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
+    compileOnly(group = "javax.validation", name = "validation-api", version = "2.0.1.Final")
 }
 
 tasks {
@@ -58,6 +59,12 @@ tasks {
 
     withType<CCompile> {
         dependsOn(kotlinJniHeaders)
+    }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        }
     }
 }
 
