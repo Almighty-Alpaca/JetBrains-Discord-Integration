@@ -166,3 +166,5 @@ class DiscordUserAchievement(
 
 typealias DiscordApplicationEvents = @VoidPointer Long
 typealias DiscordImageEvents = @VoidPointer Long
+typealias DiscordStorageEvents = @VoidPointer Long
+typealias DiscordCoreEvents = @VoidPointer Long

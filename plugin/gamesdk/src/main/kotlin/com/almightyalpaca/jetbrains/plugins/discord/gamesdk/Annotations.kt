@@ -48,21 +48,21 @@ class StringLengthValidator : ConstraintValidator<StringLength, String> {
 
 /**
  * Just a visible hint that this is a pointer T* to help readability
- * It is only used to mark annotate longs.
+ * It is only used to annotate longs.
  */
 @Target(AnnotationTarget.TYPE)
 annotation class Pointer<T>
 
 /**
  * Just a visible hint that this is a pointer T** to help readability
- * It is only used to mark annotate longs.
+ * It is only used to annotate longs.
  */
 @Target(AnnotationTarget.TYPE)
 annotation class DoublePointer<T>
 
 /**
  * Just a visible hint that this is a void* pointer to help readability
- * It is only used to mark annotate longs.
+ * It is only used to annotate longs.
  */
 @Target(AnnotationTarget.TYPE)
 annotation class VoidPointer
