@@ -8,6 +8,7 @@ match:
       - .es6
       - .es
       - .mjs
+      - .cjs
 flavors:
   - name: JavaScript Minified
     match:
