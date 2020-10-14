@@ -164,3 +164,5 @@ class DiscordUserAchievement(
     val unlockedAt: DiscordDateTime
 )
 
+typealias DiscordApplicationEvents = @VoidPointer Long
+typealias DiscordImageEvents = @VoidPointer Long

@@ -24,22 +24,45 @@ import kotlin.properties.Delegates
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 @Constraint(validatedBy = [StringLengthValidator::class])
-annotation class StringLength(val min: Int = 0, val max: Int = 1 shl 20, val allowNull: Boolean = false)
+annotation class StringLength(val min: Int = 0, val max: Int = 1 shl 20, val includingNullTerminator: Boolean = true, val allowNull: Boolean = false)
 
 class StringLengthValidator : ConstraintValidator<StringLength, String> {
     var min by Delegates.notNull<Int>()
     var max by Delegates.notNull<Int>()
+    var includingNullTerminator by Delegates.notNull<Boolean>()
     var allowNull by Delegates.notNull<Boolean>()
 
     override fun initialize(constraintAnnotation: StringLength) {
         super.initialize(constraintAnnotation)
         min = constraintAnnotation.min
         max = constraintAnnotation.max
+        includingNullTerminator = constraintAnnotation.includingNullTerminator
         allowNull = constraintAnnotation.allowNull
     }
 
     override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
         if (value == null) return allowNull
-        return (value.length >= min) && (value.length < max)
+        return (value.length >= min) && (value.length + (if (includingNullTerminator) 1 else 0) <= max)
     }
 }
+
+/**
+ * Just a visible hint that this is a pointer T* to help readability
+ * It is only used to mark annotate longs.
+ */
+@Target(AnnotationTarget.TYPE)
+annotation class Pointer<T>
+
+/**
+ * Just a visible hint that this is a pointer T** to help readability
+ * It is only used to mark annotate longs.
+ */
+@Target(AnnotationTarget.TYPE)
+annotation class DoublePointer<T>
+
+/**
+ * Just a visible hint that this is a void* pointer to help readability
+ * It is only used to mark annotate longs.
+ */
+@Target(AnnotationTarget.TYPE)
+annotation class VoidPointer

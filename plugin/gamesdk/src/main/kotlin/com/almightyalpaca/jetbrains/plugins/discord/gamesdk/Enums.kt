@@ -87,7 +87,7 @@ const val DiscordUserFlag_HypeSquadHouse1 = 64
 const val DiscordUserFlag_HypeSquadHouse2 = 128
 const val DiscordUserFlag_HypeSquadHouse3 = 256
 
-enum class EDiscordPremiumType {
+enum class DiscordPremiumType {
     None,
     Tier1,
     Tier2,
