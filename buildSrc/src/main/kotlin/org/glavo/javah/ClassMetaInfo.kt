@@ -30,7 +30,7 @@ internal class ClassMetaInfo : ClassVisitor(Opcodes.ASM7) {
     }
 
     override fun visitField(access: Int, name: String, descriptor: String, signature: String?, value: Any?): FieldVisitor? {
-        if (value != null && value !is String) {
+        if (value != null && Constant.isValid(name, value)) {
             constants.add(Constant.of(name, value))
         }
 

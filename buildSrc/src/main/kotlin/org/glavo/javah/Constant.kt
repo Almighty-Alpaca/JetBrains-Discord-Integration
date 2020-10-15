@@ -15,20 +15,37 @@ class Constant private constructor(val name: String, val value: Any) {
 
     fun valueToString(): String {
         return when (value) {
-            is Double -> value.toString()
-            is Float -> value.toString() + "f"
-            is Long -> value.toString() + "i64"
-            is Char -> value.toInt().toString() + "L"
-            else -> value.toString() + "L"
+            is Boolean -> "$value"
+            is Byte -> "${value.toInt()}L"
+            is Char -> "${value.toInt()}L"
+            is Double -> "$value"
+            is Float -> "${value}f"
+            is Int -> "${value.toInt()}L"
+            is Long -> "${value}i64"
+            is Short -> "${value.toInt()}L"
+            is String -> "\"${value}\""
+            else -> throw IllegalStateException("Unknown type: ${value.javaClass}")
         }
     }
 
     companion object {
-        private val TYPES = listOf<Class<*>>(Byte::class.java, Short::class.java, Int::class.java, Long::class.java, Char::class.java, Float::class.java, Double::class.java)
+        private val TYPES: List<Class<*>> = listOf(
+            Boolean::class.javaObjectType,
+            Byte::class.javaObjectType,
+            Char::class.javaObjectType,
+            Double::class.javaObjectType,
+            Float::class.javaObjectType,
+            Int::class.javaObjectType,
+            Long::class.javaObjectType,
+            Short::class.javaObjectType,
+            String::class.javaObjectType // Because we're better than Java
+        )
+
+        fun isValid(name: String, value: Any) = TYPES.contains(value.javaClass) && SIMPLE_NAME_PATTERN.matcher(name).matches()
 
         fun of(name: String, value: Any): Constant {
-            require(TYPES.contains(value.javaClass))
-            require(SIMPLE_NAME_PATTERN.matcher(name).matches()) { String.format("\"%s\" is not a qualified constant name", name) }
+            require(TYPES.contains(value.javaClass)) { "Invalid type ${value.javaClass}" }
+            require(SIMPLE_NAME_PATTERN.matcher(name).matches()) { """"$name" is not a qualified constant name""" }
 
             return Constant(name, value)
         }
