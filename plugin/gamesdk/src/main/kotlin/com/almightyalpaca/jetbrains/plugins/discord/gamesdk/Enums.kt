@@ -63,8 +63,16 @@ enum class DiscordResult {
     InvalidGiftCode,
     PurchaseError,
     TransactionAborted,
-}
+    ;
 
+    fun toInt(): Int {
+        return this.ordinal
+    }
+    
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
+}
 
 enum class DiscordCreateFlags {
     Default,
@@ -81,6 +89,7 @@ enum class DiscordLogLevel {
 
 // well this is just masks so we need ints.
 typealias DiscordUserFlag = Int
+
 const val DiscordUserFlag_Partner = 2
 const val DiscordUserFlag_HypeSquadEvents = 4
 const val DiscordUserFlag_HypeSquadHouse1 = 64

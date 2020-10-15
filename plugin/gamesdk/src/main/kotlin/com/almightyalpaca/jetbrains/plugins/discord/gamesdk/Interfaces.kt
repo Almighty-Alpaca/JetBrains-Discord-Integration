@@ -65,20 +65,20 @@ interface DiscordLobbySearchQuery {
 
 interface DiscordApplicationManager {
     fun <T> validateOrExit(
-        callbackData: @Pointer<T> Long,
-        callback: (callbackData: @Pointer<T> Long, result: DiscordResult) -> Unit
+        callbackData: T,
+        callback: (callbackData: T, result: DiscordResult) -> Unit
     )
 
-    fun getCurrentLocale(locale: @Pointer<DiscordLocale> Long)
+    fun getCurrentLocale(): DiscordLocale
 
-    fun getCurrentBranch(branch: @Pointer<DiscordBranch> Long)
+    fun getCurrentBranch(): DiscordBranch
 
-    fun getOAuth2Token(token: @Pointer<DiscordOAuth2Token> Long)
+    fun getOAuth2Token(): DiscordOAuth2Token
 
     fun <T> getTicket(
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult,
             ticket: String
         ) -> Unit
@@ -90,48 +90,41 @@ interface DiscordUserEvents {
 }
 
 interface DiscordUserManager {
-    fun getCurrentUser(user: @Pointer<DiscordUser> Long): DiscordResult
+    fun getCurrentUser(): Pair<DiscordResult, DiscordUser?>
 
     fun <T> getUser(
         userId: DiscordUserId,
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult,
-            user: @Pointer<DiscordUser> Long
+            user: DiscordUser?
         ) -> Unit
     )
 
-    fun getCurrentUserPremiumType(premiumType: @Pointer<DiscordPremiumType> Long): DiscordResult
+    fun getCurrentUserPremiumType(): Pair<DiscordResult, DiscordPremiumType?>
 
-    fun currentUserHasFlag(
-        flag: DiscordUserFlag,
-        hasFlag: Boolean
-    ): DiscordResult
+    fun currentUserHasFlag(flag: DiscordUserFlag): Pair<DiscordResult, Boolean>
 }
 
 interface DiscordImageManager {
     fun <T> fetch(
         handle: DiscordImageHandle,
         refresh: Boolean,
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult,
             result_handle: DiscordImageHandle
         ) -> Unit
     )
 
-    fun getDimensions(
-        handle: DiscordImageHandle,
-        dimensions: @Pointer<DiscordImageDimensions> Long
-    )
+    fun getDimensions(handle: DiscordImageHandle): DiscordImageDimensions
 
     fun getData(
         handle: DiscordImageHandle,
-        data: @Pointer<uint8_t> Long,
-        data_length: uint32_t
-    )
+        dataLength: uint32_t
+    ): Array<uint8_t>
 }
 
 interface DiscordActivityEvents {
@@ -164,18 +157,18 @@ interface DiscordActivityManager {
     fun registerSteam(steamId: uint32_t): DiscordResult
 
     fun <T> updateActivity(
-        activity: @Pointer<DiscordActivity> Long,
-        callbackData: @Pointer<T> Long,
+        activity: DiscordActivity,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
     fun <T> clearActivity(
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
@@ -183,9 +176,9 @@ interface DiscordActivityManager {
     fun <T> sendRequestReply(
         userId: DiscordUserId,
         reply: DiscordActivityJoinRequestReply,
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
@@ -194,18 +187,18 @@ interface DiscordActivityManager {
         userId: DiscordUserId,
         type: DiscordActivityActionType,
         content: String,
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
     fun <T> acceptInvite(
         userId: DiscordUserId,
-        callbackData: @Pointer<T> Long,
+        callbackData: T,
         callback: (
-            callbackData: @Pointer<T> Long,
+            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
@@ -222,24 +215,18 @@ interface DiscordRelationshipEvents {
 
 interface DiscordRelationshipManager {
     fun <T> filter(
-        filterData: @Pointer<T> Long,
+        filterData: T,
         filter: (
-            filterData: @Pointer<T> Long,
-            relationship: @Pointer<DiscordRelationship> Long
+            filterData: T,
+            relationship: DiscordRelationship
         ) -> Boolean
     )
 
-    fun count(count: @Pointer<int32_t> Long): DiscordResult
+    fun count(): Pair<DiscordResult, int32_t>
 
-    fun get(
-        userId: DiscordUserId,
-        relationship: @Pointer<DiscordRelationship> Long
-    ): DiscordResult
+    fun get(userId: DiscordUserId): Pair<DiscordResult, DiscordRelationship?>
 
-    fun getAt(
-        index: uint32_t,
-        relationship: @Pointer<DiscordRelationship> Long
-    ): DiscordResult
+    fun getAt(index: uint32_t): Pair<DiscordResult, DiscordRelationship?>
 }
 
 interface DiscordLobbyEvents {
@@ -682,7 +669,7 @@ interface DiscordStorageManager {
             callbackData: @Pointer<T> Long,
             result: DiscordResult
         ) -> Unit
-    );
+    )
 
     fun delete(name: String): DiscordResult
 
@@ -771,8 +758,8 @@ interface DiscordStoreManager {
             callbackData: @Pointer<T> Long,
             result: DiscordResult
         ) -> Unit
-    );
-};
+    )
+}
 
 interface DiscordVoiceEvents {
     fun onSettingsUpdate(eventData: @VoidPointer Long)
@@ -866,7 +853,7 @@ interface DiscordCore {
     fun getStoreManager(): @Pointer<DiscordStoreManager> Long
     fun getVoiceManager(): @Pointer<DiscordVoiceManager> Long
     fun getAchievementManager(): @Pointer<DiscordAchievementManager> Long
-};
+}
 
 class DiscordCreateParams<EventDataType>(
     val clientId: DiscordClientId,
