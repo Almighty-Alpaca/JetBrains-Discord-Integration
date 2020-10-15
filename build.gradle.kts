@@ -106,7 +106,7 @@ tasks {
         gradleVersion = versionGradle
     }
 
-    create<Delete>("clean") {
+    register<Delete>("clean") {
         group = "build"
 
         val regex = Regex("""JetBrains-Discord-Integration-Plugin-\d+.\d+.\d+(?:\+\d+)?.zip""")
@@ -118,7 +118,7 @@ tasks {
         delete(project.buildDir)
     }
 
-    create("default") {
+    register("default") {
         val buildPlugin = project.tasks.getByPath("plugin:buildPlugin") as Zip
 
         dependsOn(buildPlugin)
@@ -131,7 +131,7 @@ tasks {
         }
     }
 
-    create<Delete>("clean-sandbox") {
+    register<Delete>("clean-sandbox") {
         group = "build"
 
         delete(project.file(".sandbox"))

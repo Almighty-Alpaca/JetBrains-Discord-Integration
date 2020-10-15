@@ -22,7 +22,6 @@ import dev.nokee.runtime.nativebase.TargetMachine
 
 plugins {
     kotlin("jvm")
-    id("dev.nokee.c-language")
     id("dev.nokee.cpp-language")
     id("dev.nokee.jni-library")
 }
@@ -55,10 +54,17 @@ tasks {
         headerSearchPaths.add(HeaderSearchPath { project.buildDir.resolve("generated/jni-headers") })
     }
 
-    val kotlinJniHeaders by registering(KotlinJniHeadersTask::class)
+    val generateJniHeadersKotlin by registering(KotlinJniHeadersTask::class)
+
+    val generateJniHeaders by registering {
+        group = "build"
+
+        dependsOn(generateJniHeadersKotlin)
+        dependsOn(compileJava)
+    }
 
     withType<CCompile> {
-        dependsOn(kotlinJniHeaders)
+        dependsOn(generateJniHeaders)
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
