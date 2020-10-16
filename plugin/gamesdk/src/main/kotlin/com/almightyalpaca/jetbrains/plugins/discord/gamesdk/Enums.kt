@@ -16,8 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
-/// TODO: Implement a toInt() for all enums, reflecting the values in the native code
-
 enum class DiscordResult {
     Ok,
     ServiceUnavailable,
@@ -68,7 +66,7 @@ enum class DiscordResult {
     fun toInt(): Int {
         return this.ordinal
     }
-    
+
     companion object {
         fun fromInt(i: Int) = values()[i]
     }
@@ -83,7 +81,14 @@ enum class DiscordLogLevel {
     Error,
     Warn,
     Info,
-    Debug
+    Debug,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 
@@ -100,28 +105,63 @@ enum class DiscordPremiumType {
     None,
     Tier1,
     Tier2,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordImageType {
-    User
+    User,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordActivityType {
     Playing,
     Streaming,
     Listening,
-    Watching
+    Watching,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordActivityActionType {
     Join,
     Spectate,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 enum class DiscordActivityJoinRequestReply {
     No,
     Yes,
     Ignore,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordStatus {
@@ -129,6 +169,13 @@ enum class DiscordStatus {
     Online,
     Idle,
     DoNotDisturb,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordRelationshipType {
@@ -138,11 +185,25 @@ enum class DiscordRelationshipType {
     PendingIncoming,
     PendingOutgoing,
     Implicit,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordLobbyType {
     Private,
     Public,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 enum class DiscordLobbySearchComparison {
@@ -152,11 +213,25 @@ enum class DiscordLobbySearchComparison {
     GreaterThan,
     GreaterThanOrEqual,
     NotEqual,
+    ;
+
+    fun toInt() = this.ordinal - 2
+
+    companion object {
+        fun fromInt(i: Int) = values()[i + 2]
+    }
 }
 
 enum class DiscordLobbySearchCast {
     String,
     Number,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 enum class DiscordLobbySearchDistance {
@@ -164,6 +239,13 @@ enum class DiscordLobbySearchDistance {
     Default,
     Extended,
     Global,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordEntitlementType {
@@ -174,6 +256,13 @@ enum class DiscordEntitlementType {
     FreePurchase,
     UserGift,
     PremiumPurchase,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 enum class DiscordSkuType {
@@ -181,9 +270,23 @@ enum class DiscordSkuType {
     DLC,
     Consumable,
     Bundle,
+    ;
+
+    fun toInt() = this.ordinal + 1
+
+    companion object {
+        fun fromInt(i: Int) = values()[i - 1]
+    }
 }
 
 enum class DiscordInputModeType {
     VoiceActivity,
     PushToTalk,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }

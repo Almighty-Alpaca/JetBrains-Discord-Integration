@@ -19,14 +19,14 @@ package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.mapFirst
 
 class DiscordLobbyTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyTransaction {
-    override fun setType(type: DiscordLobbyType) = DiscordResult.fromInt(native_setType(type))
+    override fun setType(type: DiscordLobbyType) = DiscordResult.fromInt(native_setType(type.toInt()))
     override fun setOwner(ownerId: DiscordUserId) = DiscordResult.fromInt(native_setOwner(ownerId))
     override fun setCapacity(capacity: uint32_t) = DiscordResult.fromInt(native_setCapacity(capacity))
     override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = DiscordResult.fromInt(native_setMetadata(metadataKey, metadataValue))
     override fun deleteMetadata(metadataKey: DiscordMetadataKey) = DiscordResult.fromInt(native_deleteMetadata(metadataKey))
     override fun setLocked(locked: Boolean) = DiscordResult.fromInt(native_setLocked(locked))
 
-    private external fun native_setType(type: DiscordLobbyType): Int
+    private external fun native_setType(type: Int): Int
     private external fun native_setOwner(ownerId: DiscordUserId): Int
     private external fun native_setCapacity(capacity: uint32_t): Int
     private external fun native_setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue): Int
@@ -44,16 +44,16 @@ class DiscordLobbyMemberTransactionImpl(private val internalThisPointer: Long) :
 
 class DiscordLobbySearchQueryImpl(private val internalThisPointer: Long) : DiscordLobbySearchQuery {
     override fun filter(key: DiscordMetadataKey, comparison: DiscordLobbySearchComparison, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(native_filter(key,
-        comparison, cast, value))
+        comparison.toInt(), cast.toInt(), value))
 
-    override fun sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(native_sort(key, cast, value))
+    override fun sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(native_sort(key, cast.toInt(), value))
     override fun limit(limit: uint32_t) = DiscordResult.fromInt(native_limit(limit))
-    override fun distance(distance: DiscordLobbySearchDistance) = DiscordResult.fromInt(native_distance(distance))
+    override fun distance(distance: DiscordLobbySearchDistance) = DiscordResult.fromInt(native_distance(distance.toInt()))
 
-    private external fun native_filter(key: DiscordMetadataKey, comparison: DiscordLobbySearchComparison, cast: DiscordLobbySearchCast, value: DiscordMetadataValue): Int
-    private external fun native_sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue): Int
+    private external fun native_filter(key: DiscordMetadataKey, comparison: Int, cast: Int, value: DiscordMetadataValue): Int
+    private external fun native_sort(key: DiscordMetadataKey, cast: Int, value: DiscordMetadataValue): Int
     private external fun native_limit(limit: uint32_t): Int
-    private external fun native_distance(distance: DiscordLobbySearchDistance): Int
+    private external fun native_distance(distance: Int): Int
 }
 
 class DiscordApplicationManagerImpl(private val internalThisPointer: Long) : DiscordApplicationManager {
@@ -91,14 +91,15 @@ class DiscordUserManagerImpl(private val internalThisPointer: Long) : DiscordUse
 
 class DiscordImageManagerImpl(private val internalThisPointer: Long) : DiscordImageManager {
     override fun <T> fetch(handle: DiscordImageHandle, refresh: Boolean, callbackData: T, callback: (callbackData: T, result: DiscordResult, result_handle: DiscordImageHandle) -> Unit) =
-        native_fetch(handle, refresh, callbackData) { pCallbackData, result, resultHandle -> callback(pCallbackData, DiscordResult.fromInt(result), resultHandle) }
+        native_fetch(handle.deconstruct(), refresh, callbackData) { pCallbackData, result, resultHandle -> callback(pCallbackData, DiscordResult.fromInt(result), resultHandle.construct()) }
 
-    override fun getDimensions(handle: DiscordImageHandle) = native_getDimensions(handle)
-    override fun getData(handle: DiscordImageHandle, dataLength: uint32_t) = native_getData(handle, dataLength)
+    override fun getDimensions(handle: DiscordImageHandle) = native_getDimensions(handle.deconstruct())
+    override fun getData(handle: DiscordImageHandle, dataLength: uint32_t) = native_getData(handle.deconstruct(), dataLength)
 
-    private external fun <T> native_fetch(handle: DiscordImageHandle, refresh: Boolean, callbackData: T, callback: (callbackData: T, result: Int, result_handle: DiscordImageHandle) -> Unit)
-    private external fun native_getDimensions(handle: DiscordImageHandle): DiscordImageDimensions
-    private external fun native_getData(handle: DiscordImageHandle, dataLength: uint32_t): Array<uint8_t>
+    private external fun <T> native_fetch(handle: DeconstructedDiscordImageHandle, refresh: Boolean, callbackData: T, callback: (callbackData: T, result: Int, result_handle:
+    DeconstructedDiscordImageHandle) -> Unit)
+    private external fun native_getDimensions(handle: DeconstructedDiscordImageHandle): DiscordImageDimensions
+    private external fun native_getData(handle: DeconstructedDiscordImageHandle, dataLength: uint32_t): Array<uint8_t>
 }
 
 class DiscordActivityManagerImpl(private val internalThisPointer: Long) : DiscordActivityManager {
@@ -107,17 +108,17 @@ class DiscordActivityManagerImpl(private val internalThisPointer: Long) : Discor
     override fun registerSteam(steamId: uint32_t) = DiscordResult.fromInt(native_registerSteam(steamId))
 
     override fun <T> updateActivity(activity: DiscordActivity, callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) =
-        native_updateActivity(activity, callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
+        native_updateActivity(activity.deconstruct(), callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
 
     override fun <T> clearActivity(callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) = native_clearActivity(callbackData) { pCallbackData: T, result: Int ->
         callback(pCallbackData, DiscordResult.fromInt(result))
     }
 
     override fun <T> sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) =
-        native_sendRequestReply(userId, reply, callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
+        native_sendRequestReply(userId, reply.toInt(), callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
 
     override fun <T> sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) =
-        native_sendInvite(userId, type, content, callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
+        native_sendInvite(userId, type.toInt(), content, callbackData) { pCallbackData, result -> callback(pCallbackData, DiscordResult.fromInt(result)) }
 
     override fun <T> acceptInvite(userId: DiscordUserId, callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) =
         native_acceptInvite(userId, callbackData) { pCallbackData, result ->
@@ -126,10 +127,10 @@ class DiscordActivityManagerImpl(private val internalThisPointer: Long) : Discor
 
     private external fun native_registerCommand(command: String): Int
     private external fun native_registerSteam(steamId: uint32_t): Int
-    private external fun <T> native_updateActivity(activity: DiscordActivity, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
+    private external fun <T> native_updateActivity(activity: DeconstructedDiscordActivity, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
     private external fun <T> native_clearActivity(callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
-    private external fun <T> native_sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
-    private external fun <T> native_sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
+    private external fun <T> native_sendRequestReply(userId: DiscordUserId, reply: Int, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
+    private external fun <T> native_sendInvite(userId: DiscordUserId, type: Int, content: String, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
     private external fun <T> native_acceptInvite(userId: DiscordUserId, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
 }
 
