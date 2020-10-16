@@ -18,7 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
 /*
     To simplify the native interface, this file contains "deconstructed" classes,
-    which are only made out only of primitives and Strings
+    which are made out only of primitives and Strings
  */
 
 internal class DeconstructedDiscordImageHandle internal constructor(
