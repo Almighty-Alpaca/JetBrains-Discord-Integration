@@ -75,6 +75,13 @@ enum class DiscordResult {
 enum class DiscordCreateFlags {
     Default,
     NoRequireDiscord,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
 }
 
 enum class DiscordLogLevel {

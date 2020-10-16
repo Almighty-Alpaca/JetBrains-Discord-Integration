@@ -2,6 +2,8 @@
 #include "discord_game_sdk.h"
 #include "commons.h"
 
+IDiscordActivityEvents       activity_manager_events;
+
 /**
   Activity is an jobject of type DeconstructedDiscordActivity
  */

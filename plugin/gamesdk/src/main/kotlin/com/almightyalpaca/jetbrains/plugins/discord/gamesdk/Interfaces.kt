@@ -840,19 +840,19 @@ interface DiscordAchievementManager {
 interface DiscordCore {
     fun destroy()
     fun runCallbacks(): DiscordResult
-    fun <T> setLogHook(minLevel: DiscordLogLevel, hookData: @Pointer<T> Long, hook: (hookData: @Pointer<T> Long, level: DiscordLogLevel, message: String) -> Unit)
-    fun getApplicationManager(): @Pointer<DiscordApplicationManager> Long
-    fun getUserManager(): @Pointer<DiscordUserManager> Long
-    fun getImageManager(): @Pointer<DiscordImageManager> Long
-    fun getActivityManager(): @Pointer<DiscordActivityManager> Long
-    fun getRelationshipManager(): @Pointer<DiscordRelationshipManager> Long
-    fun getLobbyManager(): @Pointer<DiscordLobbyManager> Long
-    fun getNetworkManager(): @Pointer<DiscordNetworkManager> Long
-    fun getOverlayManager(): @Pointer<DiscordOverlayManager> Long
-    fun getStorageManager(): @Pointer<DiscordStorageManager> Long
-    fun getStoreManager(): @Pointer<DiscordStoreManager> Long
-    fun getVoiceManager(): @Pointer<DiscordVoiceManager> Long
-    fun getAchievementManager(): @Pointer<DiscordAchievementManager> Long
+    fun <T> setLogHook(minLevel: DiscordLogLevel, hookData: T, hook: (hookData: T, level: DiscordLogLevel, message: String) -> Unit)
+    fun getApplicationManager(): DiscordApplicationManager
+    fun getUserManager(): DiscordUserManager
+    fun getImageManager(): DiscordImageManager
+    fun getActivityManager(): DiscordActivityManager
+    fun getRelationshipManager(): DiscordRelationshipManager
+    fun getLobbyManager(): DiscordLobbyManager
+    fun getNetworkManager(): DiscordNetworkManager
+    fun getOverlayManager(): DiscordOverlayManager
+    fun getStorageManager(): DiscordStorageManager
+    fun getStoreManager(): DiscordStoreManager
+    fun getVoiceManager(): DiscordVoiceManager
+    fun getAchievementManager(): DiscordAchievementManager
 }
 
 class DiscordCreateParams<EventDataType>(

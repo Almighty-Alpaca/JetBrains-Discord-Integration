@@ -18,7 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.mapFirst
 
-class DiscordLobbyTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyTransaction {
+class DiscordLobbyTransactionImpl internal constructor(private val internalThisPointer: Long) : DiscordLobbyTransaction {
     override fun setType(type: DiscordLobbyType) = DiscordResult.fromInt(native_setType(type.toInt()))
     override fun setOwner(ownerId: DiscordUserId) = DiscordResult.fromInt(native_setOwner(ownerId))
     override fun setCapacity(capacity: uint32_t) = DiscordResult.fromInt(native_setCapacity(capacity))
@@ -34,7 +34,7 @@ class DiscordLobbyTransactionImpl(private val internalThisPointer: Long) : Disco
     private external fun native_setLocked(locked: Boolean): Int
 }
 
-class DiscordLobbyMemberTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyMemberTransaction {
+class DiscordLobbyMemberTransactionImpl internal constructor(private val internalThisPointer: Long) : DiscordLobbyMemberTransaction {
     override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = DiscordResult.fromInt(native_setMetadata(metadataKey, metadataValue))
     override fun deleteMetadata(metadataKey: DiscordMetadataKey) = DiscordResult.fromInt(native_deleteMetadata(metadataKey))
 
@@ -42,9 +42,13 @@ class DiscordLobbyMemberTransactionImpl(private val internalThisPointer: Long) :
     private external fun native_deleteMetadata(metadataKey: DiscordMetadataKey): Int
 }
 
-class DiscordLobbySearchQueryImpl(private val internalThisPointer: Long) : DiscordLobbySearchQuery {
-    override fun filter(key: DiscordMetadataKey, comparison: DiscordLobbySearchComparison, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(native_filter(key,
-        comparison.toInt(), cast.toInt(), value))
+class DiscordLobbySearchQueryImpl internal constructor(private val internalThisPointer: Long) : DiscordLobbySearchQuery {
+    override fun filter(key: DiscordMetadataKey, comparison: DiscordLobbySearchComparison, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(
+        native_filter(
+            key,
+            comparison.toInt(), cast.toInt(), value
+        )
+    )
 
     override fun sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = DiscordResult.fromInt(native_sort(key, cast.toInt(), value))
     override fun limit(limit: uint32_t) = DiscordResult.fromInt(native_limit(limit))
@@ -56,10 +60,12 @@ class DiscordLobbySearchQueryImpl(private val internalThisPointer: Long) : Disco
     private external fun native_distance(distance: Int): Int
 }
 
-class DiscordApplicationManagerImpl(private val internalThisPointer: Long) : DiscordApplicationManager {
+class DiscordApplicationManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordApplicationManager {
     override fun <T> validateOrExit(callbackData: T, callback: (callbackData: T, result: DiscordResult) -> Unit) = native_validateOrExit(callbackData) { pCallbackData, result ->
-        callback(pCallbackData,
-            DiscordResult.fromInt(result))
+        callback(
+            pCallbackData,
+            DiscordResult.fromInt(result)
+        )
     }
 
     override fun getCurrentLocale() = native_getCurrentLocale()
@@ -75,7 +81,7 @@ class DiscordApplicationManagerImpl(private val internalThisPointer: Long) : Dis
     private external fun <T> native_getTicked(callbackData: T, callback: (callbackData: T, result: Int, ticket: String) -> Unit)
 }
 
-class DiscordUserManagerImpl(private val internalThisPointer: Long) : DiscordUserManager {
+class DiscordUserManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordUserManager {
     override fun getCurrentUser() = native_getCurrentUser().mapFirst(DiscordResult.Companion::fromInt)
     override fun <T> getUser(userId: DiscordUserId, callbackData: T, callback: (callbackData: T, result: DiscordResult, user: DiscordUser?) -> Unit) =
         native_getUser(userId, callbackData) { pCallbackData, result, user -> callback(pCallbackData, DiscordResult.fromInt(result), user) }
@@ -89,20 +95,25 @@ class DiscordUserManagerImpl(private val internalThisPointer: Long) : DiscordUse
     private external fun native_currentUserHasFlag(flag: DiscordUserFlag): Pair<Int, Boolean>
 }
 
-class DiscordImageManagerImpl(private val internalThisPointer: Long) : DiscordImageManager {
+class DiscordImageManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordImageManager {
     override fun <T> fetch(handle: DiscordImageHandle, refresh: Boolean, callbackData: T, callback: (callbackData: T, result: DiscordResult, result_handle: DiscordImageHandle) -> Unit) =
         native_fetch(handle.deconstruct(), refresh, callbackData) { pCallbackData, result, resultHandle -> callback(pCallbackData, DiscordResult.fromInt(result), resultHandle.construct()) }
 
     override fun getDimensions(handle: DiscordImageHandle) = native_getDimensions(handle.deconstruct())
     override fun getData(handle: DiscordImageHandle, dataLength: uint32_t) = native_getData(handle.deconstruct(), dataLength)
 
-    private external fun <T> native_fetch(handle: DeconstructedDiscordImageHandle, refresh: Boolean, callbackData: T, callback: (callbackData: T, result: Int, result_handle:
-    DeconstructedDiscordImageHandle) -> Unit)
+    private external fun <T> native_fetch(
+        handle: DeconstructedDiscordImageHandle, refresh: Boolean, callbackData: T, callback: (
+            callbackData: T, result: Int, result_handle:
+            DeconstructedDiscordImageHandle
+        ) -> Unit
+    )
+
     private external fun native_getDimensions(handle: DeconstructedDiscordImageHandle): DiscordImageDimensions
     private external fun native_getData(handle: DeconstructedDiscordImageHandle, dataLength: uint32_t): Array<uint8_t>
 }
 
-class DiscordActivityManagerImpl(private val internalThisPointer: Long) : DiscordActivityManager {
+class DiscordActivityManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordActivityManager {
     override fun registerCommand(command: String) = DiscordResult.fromInt(native_registerCommand(command))
 
     override fun registerSteam(steamId: uint32_t) = DiscordResult.fromInt(native_registerSteam(steamId))
@@ -134,7 +145,7 @@ class DiscordActivityManagerImpl(private val internalThisPointer: Long) : Discor
     private external fun <T> native_acceptInvite(userId: DiscordUserId, callbackData: T, callback: (callbackData: T, result: Int) -> Unit)
 }
 
-class DiscordRelationshipManagerImpl(private val internalThisPointer: Long): DiscordRelationshipManager {
+class DiscordRelationshipManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordRelationshipManager {
     override fun <T> filter(filterData: T, filter: (filterData: T, relationship: DiscordRelationship) -> Boolean) = native_filter(filterData, filter)
     override fun count() = native_count()
     override fun get(userId: DiscordUserId): Pair<DiscordResult, DiscordRelationship?> = native_get(userId).mapFirst(DiscordResult.Companion::fromInt)
@@ -144,4 +155,66 @@ class DiscordRelationshipManagerImpl(private val internalThisPointer: Long): Dis
     private external fun native_count(): Pair<DiscordResult, int32_t>
     private external fun native_get(userId: DiscordUserId): Pair<Int, DiscordRelationship?>
     private external fun native_getAt(index: uint32_t): Pair<Int, DiscordRelationship?>
+}
+
+class DiscordCoreImpl internal constructor(private val internalThisPointer: Long) : DiscordCore {
+    override fun destroy() = native_destroy()
+    override fun runCallbacks() = DiscordResult.fromInt(native_runCallbacks())
+    override fun <T> setLogHook(minLevel: DiscordLogLevel, hookData: T, hook: (hookData: T, level: DiscordLogLevel, message: String) -> Unit) = native_setLogHook(minLevel.toInt(), hookData)
+    { p_hookData, level, message -> hook(p_hookData, DiscordLogLevel.fromInt(level), message) }
+    override fun getApplicationManager() = DiscordApplicationManagerImpl(native_getApplicationManager())
+    override fun getUserManager() = DiscordUserManagerImpl(native_getUserManager())
+    override fun getImageManager() = DiscordImageManagerImpl(native_getImageManager())
+    override fun getActivityManager() = DiscordActivityManagerImpl(native_getActivityManager())
+    override fun getRelationshipManager() = DiscordRelationshipManagerImpl(native_getRelationshipManager())
+
+    override fun getLobbyManager(): DiscordLobbyManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getNetworkManager(): DiscordNetworkManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOverlayManager(): DiscordOverlayManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getStorageManager(): DiscordStorageManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getStoreManager(): DiscordStoreManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getVoiceManager(): DiscordVoiceManager {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAchievementManager(): DiscordAchievementManager {
+        TODO("Not yet implemented")
+    }
+
+    private external fun native_destroy()
+    private external fun native_runCallbacks(): Int
+    private external fun <T> native_setLogHook(minLevel: Int, hookData: T, function: (hookData: T, level: Int, message: String) -> Unit)
+    private external fun native_getApplicationManager(): Long
+    private external fun native_getUserManager(): Long
+    private external fun native_getImageManager(): Long
+    private external fun native_getActivityManager(): Long
+    private external fun native_getRelationshipManager(): Long
+    private external fun native_getLobbyManager(): Long
+    private external fun native_getNetworkManager(): Long
+    private external fun native_getOverlayManager(): Long
+    private external fun native_getStorageManager(): Long
+    private external fun native_getStoreManager(): Long
+    private external fun native_getVoiceManager(): Long
+    private external fun native_getAchievementManager(): Long
+
+    companion object {
+        fun create(clientId: DiscordClientId, flags: DiscordCreateFlags) = DiscordCoreImpl(native_create(clientId, flags.toInt()))
+
+        @JvmStatic private external fun native_create(clientId: DiscordClientId, flags: Int): Long
+    }
 }
