@@ -26,8 +26,10 @@ import gamesdk.impl.utils.NativeLoader
 internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlags) : CloseableNativeObject(nativeCreate(clientId, createFlags.toInt())), Core {
     override val activityManager: ActivityManager by nativeLazy { NativeActivityManagerImpl(this) }
 
-    init {
-        NativeLoader.loadLibraries(NativeCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+    companion object {
+        init {
+            NativeLoader.loadLibraries(NativeCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+        }
     }
 }
 

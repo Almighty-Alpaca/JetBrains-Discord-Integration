@@ -17,6 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.mapFirst
+import gamesdk.impl.utils.NativeLoader
 
 class DiscordLobbyTransactionImpl internal constructor(private val internalThisPointer: Long) : DiscordLobbyTransaction {
     override fun setType(type: DiscordLobbyType) = DiscordResult.fromInt(native_setType(type.toInt()))
@@ -213,6 +214,10 @@ class DiscordCoreImpl internal constructor(private val internalThisPointer: Long
     private external fun native_getAchievementManager(): Long
 
     companion object {
+        init {
+            NativeLoader.loadLibraries(DiscordCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+        }
+
         fun create(clientId: DiscordClientId, flags: DiscordCreateFlags) = DiscordCoreImpl(native_create(clientId, flags.toInt()))
 
         @JvmStatic private external fun native_create(clientId: DiscordClientId, flags: Int): Long
