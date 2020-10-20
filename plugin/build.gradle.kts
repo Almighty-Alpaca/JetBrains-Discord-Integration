@@ -51,6 +51,8 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
 
+    implementation(project(":discord-game-sdk:jvm"))
+
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)

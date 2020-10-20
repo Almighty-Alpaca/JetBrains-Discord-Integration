@@ -21,6 +21,9 @@ include("plugin")
 include("plugin:gamesdk")
 include("uploader")
 include("bot")
+include("discord-game-sdk:jvm")
+include("discord-game-sdk:native")
+include("discord-game-sdk:discord-game-sdk-cpp")
 
 pluginManagement {
     repositories {
@@ -37,7 +40,6 @@ pluginManagement {
     val versionIntelliJ: String by properties
     val versionShadow: String by properties
     val versionVersions: String by properties
-    val versionNokee: String by properties
     val versionKotlin: String by properties
 
     plugins {
@@ -47,8 +49,5 @@ pluginManagement {
         id("com.github.johnrengelman.shadow") version versionShadow
         id("com.palantir.git-version") version versionGitVersions
         id("com.palantir.baseline-exact-dependencies") version versionExactDependencies
-        id("dev.nokee.jni-library") version versionNokee
-        id("dev.nokee.c-language") version versionNokee
-        id("dev.nokee.cpp-language") version versionNokee
     }
 }

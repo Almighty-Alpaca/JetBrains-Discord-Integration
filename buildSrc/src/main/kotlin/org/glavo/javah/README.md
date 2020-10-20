@@ -5,3 +5,5 @@ The code in this folder was taken from [gjavah](https://github.com/Glavo/gjavah)
  - Convert code to Kotlin 
  - Only produce output files for classes with at least one native method or constant
  - Remove Main class to eliminate dependency on picocli
+ - Support more constant types
+ - Minor stylistic changes to the output

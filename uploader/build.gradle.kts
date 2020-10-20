@@ -20,8 +20,6 @@ plugins {
     kotlin("jvm")
 }
 
-version = "1.0.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
     jcenter()
@@ -57,8 +55,8 @@ dependencies {
     implementation(group = "org.apache.commons", name = "commons-text", version = versionCommonsText)
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
-    implementation(platform("com.fasterxml.jackson:jackson-bom:$versionJackson"))
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
+    implementation(platform(jackson("bom", versionJackson)))
+    implementation(jacksonCore("databind"))
 }
 
 tasks {

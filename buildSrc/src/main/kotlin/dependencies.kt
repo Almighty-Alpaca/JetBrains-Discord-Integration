@@ -17,3 +17,6 @@
 fun ktor(module: String, version: String? = null) = "io.ktor:ktor-$module:${version ?: ""}"
 
 fun kotlinx(module: String, version: String? = null) = "org.jetbrains.kotlinx:kotlinx-$module:${version ?: ""}"
+
+fun jackson(module: String, version: String? = null) = "com.fasterxml.jackson:jackson-$module:${version ?: ""}"
+fun jacksonCore(module: String) = "com.fasterxml.jackson.core:jackson-$module"

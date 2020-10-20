@@ -226,6 +226,3 @@ private fun Project.createTasks(configuration: DockerConfiguration) {
         }
     }
 }
-
-private inline fun <reified T : Task> TaskContainer.register(name: String, action: Action<T>) =
-    register(name, T::class.java, action)

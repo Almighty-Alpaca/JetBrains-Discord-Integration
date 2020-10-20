@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+import org.gradle.api.Action
+import org.gradle.api.Task
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.tasks.TaskContainer
 
 operator fun ExtraPropertiesExtension.contains(key: String) = has(key)
+
+internal inline fun <reified T : Task> TaskContainer.register(name: String, action: Action<T>) =
+    register(name, T::class.java, action)

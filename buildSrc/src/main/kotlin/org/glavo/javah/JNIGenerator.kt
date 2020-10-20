@@ -79,6 +79,7 @@ class JNIGenerator @JvmOverloads constructor(private val outputDir: Path, search
             out.println("#ifdef __cplusplus")
             out.println("extern \"C\" {")
             out.println("#endif")
+            out.println()
 
             for (constant in meta.constants) {
                 val cn = name.mangledName + "_" + constant.mangledName
@@ -98,8 +99,7 @@ class JNIGenerator @JvmOverloads constructor(private val outputDir: Path, search
                 out.println(" * Method:     " + method.mangledName)
                 out.println(" * Signature:  " + Utils.escape(method.type.toString()))
                 out.println(" */")
-                out.println("JNIEXPORT $ret JNICALL $methodName")
-                out.println("  (" + java.lang.String.join(", ", args) + ");")
+                out.println("JNIEXPORT $ret JNICALL $methodName(" + java.lang.String.join(", ", args) + ");")
                 out.println()
             }
 
