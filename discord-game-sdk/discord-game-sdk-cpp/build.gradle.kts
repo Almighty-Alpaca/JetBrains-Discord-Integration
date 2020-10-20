@@ -18,6 +18,24 @@ plugins {
     `cpp-library`
 }
 
+toolChains {
+    withType<Gcc> {
+        eachPlatform {
+            cppCompiler.withArguments {
+                add("-std=c++17")
+            }
+        }
+    }
+
+    withType<Clang> {
+        eachPlatform {
+            cppCompiler.withArguments {
+                add("-std=c++17")
+            }
+        }
+    }
+}
+
 library {
     baseName.set("discord_game_sdk_cpp")
 

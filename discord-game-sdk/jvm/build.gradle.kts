@@ -76,8 +76,7 @@ tasks {
         dependsOn(":discord-game-sdk:discord-game-sdk-cpp:assemble")
 
         filesMatching("shared/**/*.*") {
-            println(relativePath)
-            this.relativePath = RelativePath(true, relativeSourcePath.segmentIterator().asSequence().drop(1).joinToString("/"))
+            path = path.substringAfter('/')
         }
     }
 
