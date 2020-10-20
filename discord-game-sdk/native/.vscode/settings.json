@@ -1,0 +1,11 @@
+{
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/src/main/public",
+        "${workspaceFolder:discord-game-sdk-cpp}/src/main/public",
+        "${workspaceFolder:jvm}/build/generated/headers",
+        "${env:JAVA_HOME}/include",
+        "${env:JAVA_HOME}/include/win32",
+        "${env:JAVA_HOME}/include/darwin",
+        "${env:JAVA_HOME}/include/linux"
+    ]
+}
