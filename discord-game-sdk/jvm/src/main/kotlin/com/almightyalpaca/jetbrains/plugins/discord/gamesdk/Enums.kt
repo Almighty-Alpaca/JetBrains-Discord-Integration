@@ -73,6 +73,9 @@ enum class DiscordResult {
 }
 
 enum class DiscordCreateFlags {
+    /**
+     * Default is dangerous as the Game SDK will kill the application when Discord isn't running
+     */
     Default,
     NoRequireDiscord,
     ;

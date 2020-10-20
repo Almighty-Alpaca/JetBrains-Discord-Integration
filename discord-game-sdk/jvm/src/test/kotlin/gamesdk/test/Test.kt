@@ -30,29 +30,29 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class)
     fun testActivity() {
-        val core = Core(310270644849737729, DiscordCreateFlags.Default)
+        Core(310270644849737729, DiscordCreateFlags.NoRequireDiscord).use { core ->
+            val activity = Activity().apply {
+                // TODO: fill once fields are implemented
+            }
 
-        val activity = Activity().apply {
-            // TODO: fill once fields are implemented
-        }
+            runBlocking {
+                val updateResult = core.activityManager.updateActivity(activity)
+                println(updateResult)
 
-        runBlocking {
-            val updateResult = core.activityManager.updateActivity(activity)
-            println(updateResult)
+                delay(5.seconds)
 
-            delay(30.seconds)
+                val clearResult = core.activityManager.clearActivity()
+                println(clearResult)
 
-            val clearResult = core.activityManager.clearActivity()
-            println(clearResult)
-
-            delay(30.seconds)
+                delay(5.seconds)
+            }
         }
     }
 
     @Test
     @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
     fun testActivity2() {
-        val core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.Default)
+        val core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)
 
         val activityManager = core.getActivityManager()
 
@@ -70,7 +70,7 @@ class Test {
                 println(result)
             }
 
-            delay(30.seconds)
+            delay(10.seconds)
         }
     }
 }

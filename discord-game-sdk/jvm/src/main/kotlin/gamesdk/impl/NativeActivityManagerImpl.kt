@@ -24,19 +24,31 @@ import gamesdk.impl.utils.DelegateNativeObject
 import gamesdk.impl.utils.Native
 
 internal class NativeActivityManagerImpl(val core: NativeCoreImpl) : DelegateNativeObject(core), ActivityManager {
-    override fun registerCommand(command: String): DiscordResult = native { DiscordResult.fromInt(registerCommand(core.pointer, command)) }
-    override fun registerSteam(steamId: SteamId): DiscordResult = native { DiscordResult.fromInt(registerSteam(core.pointer, steamId)) }
+    override fun registerCommand(command: String): DiscordResult = native { corePointer -> registerCommand(corePointer, command).toDiscordResult() }
+    override fun registerSteam(steamId: SteamId): DiscordResult = native { corePointer -> registerSteam(corePointer, steamId).toDiscordResult() }
 
     override suspend fun updateActivity(activity: Activity): DiscordResult =
-        suspendCallback { callback -> native { activity.toNative().use { activity -> updateActivity(core.pointer, activity.pointer, callback) } } }
+        suspendCallback { callback ->
+            activity.toNative().use { activity ->
+                activity.native { activityPointer ->
+                    native { corePointer ->
+                        updateActivity(corePointer, activityPointer, callback.toNative())
+                    }
+                }
+            }
+        }
 
-    override suspend fun clearActivity(): DiscordResult = suspendCallback { callback -> native { clearActivity(core.pointer, callback) } }
+    override suspend fun clearActivity(): DiscordResult = suspendCallback { callback ->
+        native { corePointer ->
+            clearActivity(corePointer, callback.toNative())
+        }
+    }
 }
 
 private external fun Native.registerCommand(core: Pointer, command: String): Int
 
 private external fun Native.registerSteam(core: Pointer, steamId: SteamId): Int
 
-private external fun Native.updateActivity(core: Pointer, activity: Pointer, callback: DiscordResultCallback)
+private external fun Native.updateActivity(core: Pointer, activity: Pointer, callback: NativeDiscordResultCallback)
 
-private external fun Native.clearActivity(core: Pointer, callback: DiscordResultCallback)
+private external fun Native.clearActivity(core: Pointer, callback: NativeDiscordResultCallback)

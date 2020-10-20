@@ -18,7 +18,12 @@
 
 #include <iostream>
 
-std::function<void(discord::Result)> createResultCallback(JNIEnv *env, jobject jCallback)
+/*
+* TODO: Maybe the can be simplified when I understand the threading model better
+* If truly all callbacks are run on the thread that calls discord::Core::RunCallbacks(),
+* we could save a great deal of complexity by running it in a permanently attached thread.
+*/
+std::function<void(discord::Result)> createResultCallback(JNIEnv *env, jobject const jCallback)
 {
     jobject jCallbackGlobal = env->NewGlobalRef(jCallback);
 
@@ -28,38 +33,50 @@ std::function<void(discord::Result)> createResultCallback(JNIEnv *env, jobject j
     return [jCallbackGlobal, jvm](discord::Result result) -> void {
         JNIEnv *env{};
 
-        jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
-        if (jAttachResult == JNI_OK)
+        jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
+
+        if (getEnvResult == JNI_EVERSION)
         {
-            jclass jCallbackClass = env->GetObjectClass(jCallbackGlobal);
-            jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)Ljava.lang.Object");
+            // TODO: handle wrong version
+        }
+        else if (getEnvResult == JNI_EDETACHED)
+        {
+            jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
 
-            if (jCallbackMethodInvoke != nullptr)
+            if (jAttachResult != JNI_OK)
             {
-                env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, (jint)result);
+                // TODO: Check and handle error code (jni.h:160). What about the global reference?
+
+                std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
             }
-            else
-            {
-                // TODO: Handle method not found
+        }
 
-                std::cout << "Could not find callback method" << std::endl;
-            }
+        jclass jCallbackClass = env->GetObjectClass(jCallbackGlobal);
+        jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
 
-            env->DeleteGlobalRef(jCallbackGlobal);
+        if (jCallbackMethodInvoke != nullptr)
+        {
+            env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, (jint)result);
+        }
+        else
+        {
+            // TODO: Handle method not found
 
+            std::cout << "Could not find callback method" << std::endl;
+        }
+
+        env->DeleteGlobalRef(jCallbackGlobal);
+
+        // Only detach if thread wasn't previously attached
+        if (getEnvResult == JNI_EDETACHED)
+        {
             jint jDetachResult = jvm->DetachCurrentThread();
             if (jDetachResult != JNI_OK)
             {
                 // TODO: Check and handle error code (jni.h:160)
 
-                std::cout << "Could not detach from VM! Code: " << jAttachResult << std::endl;
+                std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
             }
-        }
-        else
-        {
-                // TODO: Check and handle error code (jni.h:160). What about the global reference?
-
-            std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
         }
     };
 }

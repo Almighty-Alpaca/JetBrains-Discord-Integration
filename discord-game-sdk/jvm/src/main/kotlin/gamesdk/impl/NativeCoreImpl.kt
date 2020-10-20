@@ -17,14 +17,43 @@
 package gamesdk.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
 import gamesdk.impl.utils.CloseableNativeObject
+import gamesdk.impl.utils.Native
 import gamesdk.impl.utils.NativeLoader
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
-internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlags) : CloseableNativeObject(nativeCreate(clientId, createFlags.toInt())), Core {
+internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlags) : CloseableNativeObject(nativeCreate(clientId, createFlags.toNative())), Core {
     override val activityManager: ActivityManager by nativeLazy { NativeActivityManagerImpl(this) }
+
+    private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+
+    init {
+        runner.scheduleAtFixedRate({
+            val result = runCallbacks()
+            if (result != DiscordResult.Ok) {
+                println("Error running callbacks: $result")
+            }
+        }, 0L, 1L, TimeUnit.SECONDS)
+    }
+
+    private fun runCallbacks(): DiscordResult = native { corePointer -> runCallbacks(corePointer).toDiscordResult() }
+
+    override val destructor: Native.(Pointer) -> Unit = Native::destroy
+
+    @Synchronized
+    override fun close() {
+        runner.shutdown()
+        runner.awaitTermination(10, TimeUnit.SECONDS)
+        runner.shutdownNow()
+
+        super.close()
+    }
 
     companion object {
         init {
@@ -35,3 +64,7 @@ internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlag
 
 // This one can't have Native as receiver because it's creating the object
 private external fun nativeCreate(clientId: ClientId, createFlags: Int): Pointer
+
+private external fun Native.destroy(core: Pointer)
+
+private external fun Native.runCallbacks(core: Pointer): Int

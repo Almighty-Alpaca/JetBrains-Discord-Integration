@@ -16,6 +16,7 @@
 
 package gamesdk.impl
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -25,8 +26,28 @@ internal typealias Pointer = Long
 internal typealias Callback<T> = (T) -> Unit
 internal typealias DiscordResultCallback = Callback<DiscordResult>
 
+internal typealias NativeDiscordResultCallback = Callback<Int>
+
+fun DiscordResultCallback.toNative(): NativeDiscordResultCallback = { invoke(it.toDiscordResult()) }
+
+fun NativeDiscordResultCallback.fromNative(): DiscordResultCallback = { invoke(it.toNative()) }
+
 internal suspend inline fun <T> suspendCallback(crossinline callback: (Callback<T>) -> Unit): T = suspendCoroutine { continuation ->
     callback { result ->
         continuation.resume(result)
     }
+}
+
+internal fun DiscordResult.toNative() = this.ordinal
+
+internal fun Int.toDiscordResult() = when (this) {
+    in DiscordResult.values().indices -> DiscordResult.values()[this]
+    else -> throw IllegalArgumentException()
+}
+
+internal fun DiscordCreateFlags.toNative() = this.ordinal
+
+internal fun Int.toDiscordCreateFlags() = when (this) {
+    in DiscordCreateFlags.values().indices -> DiscordCreateFlags.values()[this]
+    else -> throw IllegalArgumentException()
 }

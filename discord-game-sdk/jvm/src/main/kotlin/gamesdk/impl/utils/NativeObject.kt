@@ -25,20 +25,31 @@ internal sealed class Native
 
 private object NativeInstance : Native()
 
-internal sealed class NativeObject {
-    abstract val alive: Boolean
+internal sealed class NativeObject(private val pointer: () -> Pointer) {
+    constructor(delegate: NativeObject) : this(delegate.pointer)
 
-    internal abstract fun <T> native(block: Native.() -> T): T
+    val alive: Boolean
+        get() = pointer() != 0L
+
+    internal abstract fun <T> native(block: Native.(Pointer) -> T): T
+
+    protected fun <T> native(lock: NativeObject, block: Native.(Pointer) -> T) = synchronized(lock) {
+        if (alive) {
+            NativeInstance.block(pointer())
+        } else {
+            throw IllegalStateException("Object was already closed")
+        }
+    }
 
     protected fun <T> nativeProperty(setter: Native.(Pointer, T) -> Unit, getter: Native.(Pointer) -> T): ReadWriteProperty<CloseableNativeObject, T> = Property(setter, getter)
 
     private class Property<T>(private val setter: Native.(Pointer, T) -> Unit, private val getter: Native.(Pointer) -> T) : ReadWriteProperty<CloseableNativeObject, T> {
         override fun setValue(thisRef: CloseableNativeObject, property: KProperty<*>, value: T) {
-            thisRef.native { setter(thisRef.pointer, value) }
+            thisRef.native { pointer -> setter(pointer, value) }
         }
 
         override fun getValue(thisRef: CloseableNativeObject, property: KProperty<*>): T {
-            return thisRef.native { getter(thisRef.pointer) }
+            return thisRef.native { pointer -> getter(pointer) }
         }
     }
 
@@ -53,36 +64,22 @@ internal sealed class NativeObject {
     }
 }
 
-internal abstract class DelegateNativeObject internal constructor(private val delegate: NativeObject) : NativeObject() {
-    final override val alive
-        get() = delegate.alive
-
-    final override fun <T> native(block: Native.() -> T) = synchronized(delegate) {
-        if (alive) {
-            NativeInstance.block()
-        } else {
-            throw IllegalStateException()
-        }
+internal abstract class DelegateNativeObject internal constructor(private val delegate: NativeObject) : NativeObject(delegate) {
+    final override fun <T> native(block: Native.(Pointer) -> T) = synchronized(delegate) {
+        super.native(delegate, block)
     }
 }
 
-internal abstract class CloseableNativeObject internal constructor(internal val pointer: Pointer) : NativeObject(), AutoCloseable {
-    final override var alive = true
-        private set
+internal abstract class CloseableNativeObject internal constructor(private var pointer: Pointer) : NativeObject({ pointer }), AutoCloseable {
+    @Synchronized
+    final override fun <T> native(block: Native.(Pointer) -> T): T = native(this, block)
 
-    final override fun <T> native(block: Native.() -> T) = synchronized(this) {
-        if (alive) {
-            NativeInstance.block()
-        } else {
-            throw IllegalStateException()
-        }
-    }
+    protected abstract val destructor: Native.(Pointer) -> Unit
 
+    @Synchronized
     override fun close() = native {
-        alive = false
+        destructor(pointer)
 
-        nativeDestroy(pointer)
+        pointer = 0
     }
 }
-
-private external fun Native.nativeDestroy(core: Pointer)

@@ -26,10 +26,12 @@ internal class NativeActivityImpl : CloseableNativeObject(nativeCreate()) {
     var applicationId: ApplicationId by nativeProperty(Native::setApplicationId, Native::getApplicationId)
     var name: String by nativeProperty(Native::setName, Native::getName)
     var state: String by nativeProperty(Native::setState, Native::getState)
+
+    override val destructor: Native.(Pointer) -> Unit = Native::destroy
 }
 
 internal fun Activity.toNative(): NativeActivityImpl = NativeActivityImpl().apply native@{
-    this@native.type = this@toNative.type.toInt()
+    this@native.type = this@toNative.type.toNative()
     this@native.applicationId = applicationId
     this@native.name = name
     this@native.state=state
@@ -37,6 +39,8 @@ internal fun Activity.toNative(): NativeActivityImpl = NativeActivityImpl().appl
 
 // This one can't have Native as receiver because it's creating the object
 private external fun nativeCreate(): Pointer
+
+private external fun Native.destroy(nativeActivity: Pointer)
 
 private external fun Native.nativeSetType(nativeActivity: Pointer, type: Int)
 

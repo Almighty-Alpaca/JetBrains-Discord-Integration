@@ -39,13 +39,11 @@ interface Activity {
         Listening,
         Watching;
 
-        internal fun toInt() = this.ordinal
-
-        companion object {
-            internal fun fromInt(native: Int) = when (native) {
-                in values().indices -> values()[native]
-                else -> throw IllegalArgumentException()
-            }
-        }
+        internal fun toNative() = this.ordinal
     }
+}
+
+internal fun Int.toActivityType() = when (this) {
+    in Activity.Type.values().indices -> Activity.Type.values()[this]
+    else -> throw IllegalArgumentException()
 }

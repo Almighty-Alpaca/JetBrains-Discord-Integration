@@ -21,7 +21,21 @@ JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *
 {
     discord::Core *core{};
 
-    discord::Core::Create(clientId, (std::uint64_t)createFlags, &core);
+    discord::Result result = discord::Core::Create(clientId, (std::uint64_t)createFlags, &core);
+
+    // TODO: Check result
 
     return (jlong)core;
+}
+
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *, jclass, jobject, jlong jCore)
+{
+    delete (discord::Core *)jCore;
+}
+
+JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *, jclass, jobject, jlong jCore)
+{
+    discord::Core *core = (discord::Core *)jCore;
+
+    return (jint)core->RunCallbacks();
 }

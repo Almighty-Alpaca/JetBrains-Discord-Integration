@@ -22,6 +22,10 @@ JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeActivityImplKt_nativeCreate(JNIE
 {
     return (jlong) new discord::Activity{};
 }
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityImplKt_destroy(JNIEnv *, jclass, jobject, jlong jActivity)
+{
+    delete (discord::Activity *)jActivity;
+}
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityImplKt_nativeSetType(JNIEnv *, jclass, jobject, jlong jActivity, jint jType)
 {
