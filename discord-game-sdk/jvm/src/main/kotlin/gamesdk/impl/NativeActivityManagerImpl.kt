@@ -23,7 +23,7 @@ import gamesdk.api.SteamId
 import gamesdk.impl.utils.DelegateNativeObject
 import gamesdk.impl.utils.Native
 
-internal class NativeActivityManagerImpl(val core: NativeCoreImpl) : DelegateNativeObject(core), ActivityManager {
+internal class NativeActivityManagerImpl(core: NativeCoreImpl) : DelegateNativeObject(core), ActivityManager {
     override fun registerCommand(command: String): DiscordResult = native { corePointer -> registerCommand(corePointer, command).toDiscordResult() }
     override fun registerSteam(steamId: SteamId): DiscordResult = native { corePointer -> registerSteam(corePointer, steamId).toDiscordResult() }
 

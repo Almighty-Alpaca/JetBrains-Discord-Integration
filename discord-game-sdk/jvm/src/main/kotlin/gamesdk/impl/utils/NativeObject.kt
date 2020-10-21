@@ -28,13 +28,10 @@ private object NativeInstance : Native()
 internal sealed class NativeObject(private val pointer: () -> Pointer) {
     constructor(delegate: NativeObject) : this(delegate.pointer)
 
-    val alive: Boolean
-        get() = pointer() != 0L
-
     internal abstract fun <T> native(block: Native.(Pointer) -> T): T
 
-    protected fun <T> native(lock: NativeObject, block: Native.(Pointer) -> T) = synchronized(lock) {
-        if (alive) {
+    protected fun <T> native(lock: CloseableNativeObject, block: Native.(Pointer) -> T) = synchronized(lock) {
+        if (pointer() != 0L) {
             NativeInstance.block(pointer())
         } else {
             throw IllegalStateException("Object was already closed")
@@ -64,9 +61,14 @@ internal sealed class NativeObject(private val pointer: () -> Pointer) {
     }
 }
 
-internal abstract class DelegateNativeObject internal constructor(private val delegate: NativeObject) : NativeObject(delegate) {
-    final override fun <T> native(block: Native.(Pointer) -> T) = synchronized(delegate) {
-        super.native(delegate, block)
+internal abstract class DelegateNativeObject internal constructor(delegate: NativeObject) : NativeObject(delegate) {
+    private val closable: CloseableNativeObject = when (delegate) {
+        is CloseableNativeObject -> delegate
+        is DelegateNativeObject -> delegate.closable
+    }
+
+    final override fun <T> native(block: Native.(Pointer) -> T) = synchronized(closable) {
+        super.native(closable, block)
     }
 }
 
