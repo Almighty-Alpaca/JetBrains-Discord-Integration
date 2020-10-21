@@ -51,10 +51,12 @@ object Utils {
     private fun sizeAsString(size: Int?): String? {
         if (size == null) return null
         if (size < 2 shl 10) return "$size bytes" // 0 .. 2 KiB
-        if (size < 2 shl 20) return "${size.toFloat() / (1 shl 10)} KiB" // 2 KiB .. 2 MiB
-        if (size < 1 shl 30) return "${size.toFloat() / (1 shl 20)} MiB" // 2 MiB .. 1 GiB
-        return "${size.toFloat() / (1 shl 30)} GiB" // 1 GiB ..
+        if (size < 2 shl 20) return "${twoDecimals(size.toDouble() / (1 shl 10))} KiB" // 2 KiB .. 2 MiB
+        if (size < 1 shl 30) return "${twoDecimals(size.toDouble() / (1 shl 20))} MiB" // 2 MiB .. 1 GiB
+        return "${twoDecimals(size.toDouble() / (1 shl 30))} GiB" // 1 GiB ..
     }
+
+    private fun twoDecimals(num: Double) = (Math.floor(num * 100.0) / 100.0)
 
     private fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
 
