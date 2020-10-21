@@ -82,7 +82,6 @@ class PngOptimizingTransformer(
 
             val writer = ImageIO.getImageWritersByFormatName("png").next()
             val param = writer.defaultWriteParam
-            param.compressionMode = ImageWriteParam.MODE_DISABLED
 
             writer.output = imageOutputStream
             writer.write(null, IIOImage(scaledImage, null, null), param)
