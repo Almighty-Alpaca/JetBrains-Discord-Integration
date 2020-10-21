@@ -17,15 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import java.awt.Color
 import java.awt.GridBagConstraints
 import javax.swing.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 inline fun gbc(block: (GridBagConstraints.() -> Unit)): GridBagConstraints = GridBagConstraints().apply(block)
 
@@ -47,16 +43,3 @@ fun label(text: String): JComponent = JBLabel(text).apply {
 }
 
 operator fun <T> DefaultComboBoxModel<T>.contains(o: Any?) = getIndexOf(o) != -1
-
-suspend fun <T> invokeSuspend(runnable: () -> T): T = when {
-    ApplicationManager.getApplication()?.isDispatchThread != false && SwingUtilities.isEventDispatchThread() -> runnable()
-    else -> suspendCoroutine { continuation ->
-        SwingUtilities.invokeLater {
-            try {
-                continuation.resume(runnable())
-            } catch (e: Exception) {
-                continuation.resumeWithException(e)
-            }
-        }
-    }
-}

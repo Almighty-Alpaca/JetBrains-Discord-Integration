@@ -16,9 +16,38 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import javax.swing.SwingUtilities
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, command: () -> Unit): ScheduledFuture<*> =
     scheduleWithFixedDelay(Runnable(command), initialDelay, delay, unit)
+
+suspend fun <T> invokeOnEventThread(runnable: () -> T): T = when {
+    ApplicationManager.getApplication()?.isDispatchThread != false && SwingUtilities.isEventDispatchThread() -> runnable()
+    else -> suspendCoroutine { continuation ->
+        SwingUtilities.invokeLater {
+            try {
+                continuation.resume(runnable())
+            } catch (e: Exception) {
+                continuation.resumeWithException(e)
+            }
+        }
+    }
+}
+
+suspend fun <T> invokeReadAction(runnable: () -> T): T = suspendCoroutine { continuation ->
+    runReadAction {
+        try {
+            continuation.resume(runnable())
+        } catch (e: Exception) {
+            continuation.resumeWithException(e)
+        }
+    }
+}
