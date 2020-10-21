@@ -36,24 +36,24 @@ internal fun DiscordImageHandle.deconstruct() = DeconstructedDiscordImageHandle(
  * @see DiscordActivity
  */
 internal class DeconstructedDiscordActivity internal constructor(
-    val type: Int,
-    val applicationId: int64_t,
-    val name: @StringLength(max = 128) String,
-    val state: @StringLength(max = 128) String,
-    val details: @StringLength(max = 128) String,
-    val timestampStart: DiscordTimestamp,
-    val timestampEnd: DiscordTimestamp,
-    val assetsLargeImage: @StringLength(max = 128) String,
-    val assetsLargeText: @StringLength(max = 128) String,
-    val assetsSmallImage: @StringLength(max = 128) String,
-    val assetsSmallText: @StringLength(max = 128) String,
-    val partyId: @StringLength(max = 128) String,
-    val partyCurrentSize: int32_t,
-    val partyMaxSize: int32_t,
-    val secretsMatch: @StringLength(max = 128) String,
-    val secretsJoin: @StringLength(max = 128) String,
-    val secretsSpectate: @StringLength(max = 128) String,
-    val instance: Boolean
+    public val type: Int,
+    public val applicationId: int64_t,
+    public val name: @StringLength(max = 128) String,
+    public val state: @StringLength(max = 128) String,
+    public val details: @StringLength(max = 128) String,
+    public val timestampStart: DiscordTimestamp,
+    public val timestampEnd: DiscordTimestamp,
+    public val assetsLargeImage: @StringLength(max = 128) String,
+    public val assetsLargeText: @StringLength(max = 128) String,
+    public val assetsSmallImage: @StringLength(max = 128) String,
+    public val assetsSmallText: @StringLength(max = 128) String,
+    public val partyId: @StringLength(max = 128) String,
+    public val partyCurrentSize: int32_t,
+    public val partyMaxSize: int32_t,
+    public val secretsMatch: @StringLength(max = 128) String,
+    public val secretsJoin: @StringLength(max = 128) String,
+    public val secretsSpectate: @StringLength(max = 128) String,
+    public val instance: Boolean
 ) {
     internal fun construct() = DiscordActivity(
         type = DiscordActivityType.fromInt(this.type),

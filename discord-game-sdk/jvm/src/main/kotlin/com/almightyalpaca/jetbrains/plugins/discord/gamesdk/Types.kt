@@ -68,44 +68,44 @@ class DiscordImageDimensions(
 )
 
 class DiscordActivityTimestamps(
-    val start: DiscordTimestamp,
-    val end: DiscordTimestamp
+    val start: DiscordTimestamp = 0,
+    val end: DiscordTimestamp = 0
 )
 
 class DiscordActivityAssets(
-    val large_image: @StringLength(max = 128) String,
-    val large_text: @StringLength(max = 128) String,
-    val small_image: @StringLength(max = 128) String,
-    val small_text: @StringLength(max = 128) String
+    val large_image: @StringLength(max = 128) String = "",
+    val large_text: @StringLength(max = 128) String = "",
+    val small_image: @StringLength(max = 128) String = "",
+    val small_text: @StringLength(max = 128) String = ""
 )
 
 class DiscordPartySize(
-    val currentSize: int32_t,
-    val maxSize: int32_t
+    val currentSize: int32_t = 0,
+    val maxSize: int32_t = 0
 )
 
 class DiscordActivityParty(
-    val id: @StringLength(max = 128) String,
-    val size: DiscordPartySize
+    val id: @StringLength(max = 128) String = "",
+    val size: DiscordPartySize = DiscordPartySize()
 )
 
 class DiscordActivitySecrets(
-    val match: @StringLength(max = 128) String,
-    val join: @StringLength(max = 128) String,
-    val spectate: @StringLength(max = 128) String
+    val match: @StringLength(max = 128) String = "",
+    val join: @StringLength(max = 128) String = "",
+    val spectate: @StringLength(max = 128) String = ""
 )
 
 class DiscordActivity(
-    val type: DiscordActivityType,
     val applicationId: int64_t,
-    val name: @StringLength(max = 128) String,
-    val state: @StringLength(max = 128) String,
-    val details: @StringLength(max = 128) String,
-    val timestamps: DiscordActivityTimestamps,
-    val assets: DiscordActivityAssets,
-    val party: DiscordActivityParty,
-    val secrets: DiscordActivitySecrets,
-    val instance: Boolean
+    val type: DiscordActivityType = DiscordActivityType.Playing,
+    val name: @StringLength(max = 128) String = "",
+    val state: @StringLength(max = 128) String = "",
+    val details: @StringLength(max = 128) String = "",
+    val timestamps: DiscordActivityTimestamps = DiscordActivityTimestamps(),
+    val assets: DiscordActivityAssets = DiscordActivityAssets(),
+    val party: DiscordActivityParty = DiscordActivityParty(),
+    val secrets: DiscordActivitySecrets = DiscordActivitySecrets(),
+    val instance: Boolean = false
 )
 
 class DiscordPresence(

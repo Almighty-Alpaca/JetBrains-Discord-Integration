@@ -76,7 +76,7 @@ object NativeLoader {
 
         when {
             os.contains("windows") -> "windows"
-            os.contains("mac") -> "macos" // TODO: check if pat his correct
+            os.contains("mac") -> "macos" // TODO: check if path is correct
             os.contains("linux") -> "linux"
             else -> throw IllegalStateException("unknown operating system: $os")
         }

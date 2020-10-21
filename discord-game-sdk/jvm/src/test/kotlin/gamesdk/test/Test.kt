@@ -16,6 +16,7 @@
 
 package gamesdk.test
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCoreImpl
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
 import gamesdk.api.Activity
@@ -57,20 +58,24 @@ class Test {
         val activityManager = core.getActivityManager()
 
         runBlocking {
-            // TODO: Current implementation requires all fields
-            // val activity = DiscordActivity()
-            //
-            // activityManager.updateActivity(activity, null) { _, result ->
-            //     println(result)
-            // }
-            //
-            // delay(30.seconds)
+            for (i in 1..100) {
+                println("Running")
+                // TODO: Current implementation requires all fields
+                if (i % 15 == 0) {
+                    val activity = DiscordActivity(310270644849737729, state = "Waiting", details = "...")
 
+                    activityManager.updateActivity(activity) { result ->
+                        println(result)
+                    }
+                }
+
+                core.runCallbacks()
+
+                delay(1.seconds)
+            }
             activityManager.clearActivity { result ->
                 println(result)
             }
-
-            delay(10.seconds)
         }
     }
 }

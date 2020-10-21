@@ -4,7 +4,7 @@
 #define INTERNAL_THIS_POINTER_NAME "internalThisPointer"
 #define CLASSNAME(name) ("Lcom/almightyalpaca/jetbrains/plugins/discord/gamesdk/" name ";")
 
-#define GET_INTERFACE_PTR(jni, this_, classname, type, var) {                                                       \
+#define GET_INTERFACE_PTR(jni, this_, type, var) {                                                                  \
     jclass clazz;                                                                                                   \
     jfieldID ptr_field_id;                                                                                          \
                                                                                                                     \
