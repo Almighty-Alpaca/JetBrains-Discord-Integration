@@ -7,7 +7,7 @@ IDiscordActivityEvents       activity_manager_events;
 /**
   Activity is an jobject of type DeconstructedDiscordActivity
  */
-DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
+static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
     jclass      discord_activity_class      = env->GetObjectClass(p_activity);
 
     /// type signatures: https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures
@@ -114,7 +114,8 @@ DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
 JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1registerCommand
   (JNIEnv * env, jobject this_ptr, jstring name)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
     const char* nameNative = env->GetStringUTFChars(name, 0);
 
     int return_code = manager->register_command(manager, nameNative);
@@ -132,14 +133,14 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1registerSteam_0002dWZ4Q5Ns
   (JNIEnv * env, jobject this_ptr, jint steam_id)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
     return manager->register_steam(manager, steam_id);
 }
 
 struct native_callback_data {
     JNIEnv* env;
-    jobject java_callback_data;
     jobject callback;
 };
 
@@ -147,8 +148,8 @@ static void callback_activity_manager(void* vp_cb_data, EDiscordResult result){
     native_callback_data* cb_data = (native_callback_data*) vp_cb_data;
     jclass callback_class;
     callback_class = cb_data->env->GetObjectClass(cb_data->callback);
-    jmethodID invoke_method_id = cb_data->env->GetMethodID(callback_class, "invoke", "(Ljava.lang.Object;I)V");
-    cb_data->env->CallObjectMethod(cb_data->callback, invoke_method_id, cb_data->java_callback_data, result);
+    jmethodID invoke_method_id = cb_data->env->GetMethodID(callback_class, "invoke", "(I)V");
+    cb_data->env->CallObjectMethod(cb_data->callback, invoke_method_id, result);
 }
 
 /*
@@ -157,13 +158,14 @@ static void callback_activity_manager(void* vp_cb_data, EDiscordResult result){
  * Signature:  (Lcom/almightyalpaca/jetbrains/plugins/discord/gamesdk/DeconstructedDiscordActivity;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1updateActivity
-  (JNIEnv *env, jobject this_ptr, jobject p_activity, jobject callback_data, jobject p_callback)
+  (JNIEnv *env, jobject this_ptr, jobject p_activity, jobject p_callback)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
     DiscordActivity activity = construct_activity(env, p_activity);
 
-    native_callback_data ncb_data = {.env = env, .java_callback_data = callback_data, .callback = p_callback};
+    native_callback_data ncb_data = {.env = env, .callback = p_callback};
 
     manager->update_activity(manager, &activity, &ncb_data, callback_activity_manager);
 }
@@ -174,11 +176,12 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1clearActivity
-  (JNIEnv *env, jobject this_ptr, jobject callback_data, jobject p_callback)
+  (JNIEnv *env, jobject this_ptr, jobject p_callback)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
-    native_callback_data ncb_data = {.env = env, .java_callback_data = callback_data, .callback = p_callback};
+    native_callback_data ncb_data = {.env = env, .callback = p_callback};
 
     manager->clear_activity(manager, &ncb_data, callback_activity_manager);
 }
@@ -189,11 +192,12 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  (JILjava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1sendRequestReply
-  (JNIEnv *env, jobject this_ptr, jlong user_id, jint reply, jobject callback_data, jobject p_callback)
+  (JNIEnv *env, jobject this_ptr, jlong user_id, jint reply, jobject p_callback)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
-    native_callback_data ncb_data = {.env = env, .java_callback_data = callback_data, .callback = p_callback};
+    native_callback_data ncb_data = {.env = env, .callback = p_callback};
 
     manager->send_request_reply(manager, user_id, (EDiscordActivityJoinRequestReply) reply, &ncb_data, callback_activity_manager);
 }
@@ -204,11 +208,12 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  (JILjava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1sendInvite
-  (JNIEnv *env, jobject this_ptr, jlong user_id, jint type, jstring content, jobject callback_data, jobject p_callback)
+  (JNIEnv *env, jobject this_ptr, jlong user_id, jint type, jstring content, jobject p_callback)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
-    native_callback_data ncb_data = {.env = env, .java_callback_data = callback_data, .callback = p_callback};
+    native_callback_data ncb_data = {.env = env, .callback = p_callback};
 
     const char* content_native = env->GetStringUTFChars(content, NULL);
 
@@ -223,11 +228,12 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  (JLjava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1acceptInvite
-  (JNIEnv *env, jobject this_ptr, jlong user_id, jobject callback_data, jobject p_callback)
+  (JNIEnv *env, jobject this_ptr, jlong user_id, jobject p_callback)
 {
-    IDiscordActivityManager* manager = GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager);
+    IDiscordActivityManager* manager;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordActivityManagerImpl", IDiscordActivityManager, manager);
 
-    native_callback_data ncb_data = {.env = env, .java_callback_data = callback_data, .callback = p_callback};
+    native_callback_data ncb_data = {.env = env, .callback = p_callback};
 
     manager->accept_invite(manager, user_id, &ncb_data, callback_activity_manager);
 }

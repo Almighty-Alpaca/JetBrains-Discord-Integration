@@ -64,10 +64,7 @@ interface DiscordLobbySearchQuery {
 // TODO: try to replace pointers with object refs
 
 interface DiscordApplicationManager {
-    fun <T> validateOrExit(
-        callbackData: T,
-        callback: (callbackData: T, result: DiscordResult) -> Unit
-    )
+    fun validateOrExit(callback: (result: DiscordResult) -> Unit)
 
     fun getCurrentLocale(): DiscordLocale
 
@@ -75,10 +72,8 @@ interface DiscordApplicationManager {
 
     fun getOAuth2Token(): DiscordOAuth2Token
 
-    fun <T> getTicket(
-        callbackData: T,
+    fun getTicket(
         callback: (
-            callbackData: T,
             result: DiscordResult,
             ticket: String
         ) -> Unit
@@ -92,11 +87,9 @@ interface DiscordUserEvents {
 interface DiscordUserManager {
     fun getCurrentUser(): Pair<DiscordResult, DiscordUser?>
 
-    fun <T> getUser(
+    fun getUser(
         userId: DiscordUserId,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult,
             user: DiscordUser?
         ) -> Unit
@@ -108,12 +101,10 @@ interface DiscordUserManager {
 }
 
 interface DiscordImageManager {
-    fun <T> fetch(
+    fun fetch(
         handle: DiscordImageHandle,
         refresh: Boolean,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult,
             result_handle: DiscordImageHandle
         ) -> Unit
@@ -156,49 +147,39 @@ interface DiscordActivityManager {
 
     fun registerSteam(steamId: uint32_t): DiscordResult
 
-    fun <T> updateActivity(
+    fun updateActivity(
         activity: DiscordActivity,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
-    fun <T> clearActivity(
-        callbackData: T,
+    fun clearActivity(
         callback: (
-            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
-    fun <T> sendRequestReply(
+    fun sendRequestReply(
         userId: DiscordUserId,
         reply: DiscordActivityJoinRequestReply,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
-    fun <T> sendInvite(
+    fun sendInvite(
         userId: DiscordUserId,
         type: DiscordActivityActionType,
         content: String,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
 
-    fun <T> acceptInvite(
+    fun acceptInvite(
         userId: DiscordUserId,
-        callbackData: T,
         callback: (
-            callbackData: T,
             result: DiscordResult
         ) -> Unit
     )
@@ -214,10 +195,8 @@ interface DiscordRelationshipEvents {
 }
 
 interface DiscordRelationshipManager {
-    fun <T> filter(
-        filterData: T,
+    fun filter(
         filter: (
-            filterData: T,
             relationship: DiscordRelationship
         ) -> Boolean
     )
@@ -840,7 +819,7 @@ interface DiscordAchievementManager {
 interface DiscordCore {
     fun destroy()
     fun runCallbacks(): DiscordResult
-    fun <T> setLogHook(minLevel: DiscordLogLevel, hookData: T, hook: (hookData: T, level: DiscordLogLevel, message: String) -> Unit)
+    fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit)
     fun getApplicationManager(): DiscordApplicationManager
     fun getUserManager(): DiscordUserManager
     fun getImageManager(): DiscordImageManager

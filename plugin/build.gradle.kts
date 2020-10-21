@@ -51,7 +51,10 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
 
-    implementation(project(":discord-game-sdk:jvm"))
+    implementation(project(":discord-game-sdk:jvm")) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+    }
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 

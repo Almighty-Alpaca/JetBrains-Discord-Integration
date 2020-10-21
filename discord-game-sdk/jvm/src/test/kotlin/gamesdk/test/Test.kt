@@ -66,7 +66,7 @@ class Test {
             //
             // delay(30.seconds)
 
-            activityManager.clearActivity(null) { _, result ->
+            activityManager.clearActivity { result ->
                 println(result)
             }
 

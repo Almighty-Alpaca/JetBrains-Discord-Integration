@@ -10,7 +10,8 @@
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1destroy
   (JNIEnv *env, jobject this_ptr)
 {
-    IDiscordCore* core = GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore);
+    IDiscordCore* core;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore, core);
     core->destroy(core);
 }
 
@@ -22,7 +23,8 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1runCallbacks
   (JNIEnv *env, jobject this_ptr)
 {
-    IDiscordCore* core = GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore);
+    IDiscordCore* core;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore, core);
     return (jint) core->run_callbacks(core);
 }
 
@@ -34,12 +36,14 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1setLogHook
   (JNIEnv * env, jobject this_ptr, jint min_level, jobject hook_data, jobject hook)
 {
-    IDiscordCore* core = GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore);
+    IDiscordCore* core;
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore, core);
     /// TODO: Make global refs here to the hook_data and hook (https://stackoverflow.com/a/35950745/12576629) then make a native callback that calls the hook.
 }
 
 #define GetMgr(MANAGER_NAME) {                                                                      \
-    IDiscordCore* core = GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore);         \
+    IDiscordCore* core;                                                                             \
+    GET_INTERFACE_PTR(env, this_ptr, "DiscordCoreImpl", IDiscordCore, core);                        \
     return (jlong) core->get_ ## MANAGER_NAME ## _manager(core);                                    \
 }
 
