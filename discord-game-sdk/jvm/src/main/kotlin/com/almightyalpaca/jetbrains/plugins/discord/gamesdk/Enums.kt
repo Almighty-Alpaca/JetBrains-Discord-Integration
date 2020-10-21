@@ -61,6 +61,7 @@ enum class DiscordResult {
     InvalidGiftCode,
     PurchaseError,
     TransactionAborted,
+    DrawingInitFailed,
     ;
 
     fun toInt(): Int {
@@ -126,6 +127,18 @@ enum class DiscordPremiumType {
 
 enum class DiscordImageType {
     User,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
+}
+
+enum class DiscordActivityPartyPrivacy {
+    Private,
+    Public,
     ;
 
     fun toInt() = this.ordinal
@@ -251,6 +264,32 @@ enum class DiscordLobbySearchDistance {
     Global,
     ;
 
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
+}
+
+enum class DiscordKeyVariant {
+    Normal,
+    Right,
+    Left,
+    ;
+
+    fun toInt() = this.ordinal
+
+    companion object {
+        fun fromInt(i: Int) = values()[i]
+    }
+}
+
+enum class DiscordMouseButton {
+    Left,
+    Middle,
+    Right,
+    ;
+    
     fun toInt() = this.ordinal
 
     companion object {

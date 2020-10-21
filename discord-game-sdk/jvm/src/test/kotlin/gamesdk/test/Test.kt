@@ -76,6 +76,8 @@ class Test {
             activityManager.clearActivity { result ->
                 println(result)
             }
+
+            core.destroy()
         }
     }
 }

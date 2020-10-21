@@ -28,6 +28,7 @@ static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
                 party_id_field_id           = env->GetFieldID(discord_activity_class, "partyId", "Ljava/lang/String;"),
                 party_current_size_field_id = env->GetFieldID(discord_activity_class, "partyCurrentSize", "I"),
                 party_max_size_field_id     = env->GetFieldID(discord_activity_class, "partyMaxSize", "I"),
+                party_privacy_field_id      = env->GetFieldID(discord_activity_class, "partyPrivacy", "I"),
                 secrets_match_field_id      = env->GetFieldID(discord_activity_class, "secretsMatch", "Ljava/lang/String;"),
                 secrets_join_field_id       = env->GetFieldID(discord_activity_class, "secretsJoin", "Ljava/lang/String;"),
                 secrets_spectate_field_id   = env->GetFieldID(discord_activity_class, "secretsSpectate", "Ljava/lang/String;"),
@@ -47,6 +48,7 @@ static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
     jstring     party_id                    = (jstring) env->GetObjectField(p_activity, party_id_field_id);
     jint        party_current_size          = env->GetIntField(p_activity, party_current_size_field_id);
     jint        party_max_size              = env->GetIntField(p_activity, party_max_size_field_id);
+    jint        party_privacy               = env->GetIntField(p_activity, party_privacy_field_id);
     jstring     secrets_match               = (jstring) env->GetObjectField(p_activity, secrets_match_field_id);
     jstring     secrets_join                = (jstring) env->GetObjectField(p_activity, secrets_join_field_id);
     jstring     secrets_spectate            = (jstring) env->GetObjectField(p_activity, secrets_spectate_field_id);
@@ -84,6 +86,7 @@ static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
     strncpy(activity.party.id, party_id_native, sizeof(activity.party.id));
     activity.party.size.current_size = party_current_size;
     activity.party.size.max_size     = party_max_size;
+    activity.party.privacy           = (EDiscordActivityPartyPrivacy) party_privacy;
 
     strncpy(activity.secrets.match,     secrets_match_native,    sizeof(activity.secrets.match));
     strncpy(activity.secrets.join,      secrets_join_native,     sizeof(activity.secrets.join));

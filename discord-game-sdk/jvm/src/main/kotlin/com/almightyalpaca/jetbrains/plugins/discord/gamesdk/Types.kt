@@ -86,7 +86,8 @@ class DiscordPartySize(
 
 class DiscordActivityParty(
     val id: @StringLength(max = 128) String = "",
-    val size: DiscordPartySize = DiscordPartySize()
+    val size: DiscordPartySize = DiscordPartySize(),
+    val privacy: DiscordActivityPartyPrivacy = DiscordActivityPartyPrivacy.Private
 )
 
 class DiscordActivitySecrets(
@@ -126,6 +127,21 @@ class DiscordLobby(
     val secret: DiscordLobbySecret,
     val capacity: uint32_t,
     val locked: Boolean
+)
+
+class DiscordImeUnderline(
+    val from: int32_t,
+    val to: int32_t,
+    val color: uint32_t,
+    val backgroundColor: uint32_t,
+    val thick: Boolean
+)
+
+class DiscordRect (
+    val left: int32_t,
+    val top: int32_t,
+    val right: int32_t,
+    val bottom: int32_t
 )
 
 class DiscordFileStat(

@@ -599,6 +599,8 @@ interface DiscordOverlayManager {
             result: DiscordResult
         ) -> Unit
     )
+
+    // TODO: Add definitions for https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration/commit/aebc8b9e1bcbd8bd92bf51c4dc84a758b7e08ebe#diff-55032fa98b9ee622a6971564672dc88c9f52d3b09234dea74da2b17879d909fdR553-R565
 }
 
 interface DiscordStorageManager {

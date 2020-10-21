@@ -36,24 +36,25 @@ internal fun DiscordImageHandle.deconstruct() = DeconstructedDiscordImageHandle(
  * @see DiscordActivity
  */
 internal class DeconstructedDiscordActivity internal constructor(
-    public val type: Int,
-    public val applicationId: int64_t,
-    public val name: @StringLength(max = 128) String,
-    public val state: @StringLength(max = 128) String,
-    public val details: @StringLength(max = 128) String,
-    public val timestampStart: DiscordTimestamp,
-    public val timestampEnd: DiscordTimestamp,
-    public val assetsLargeImage: @StringLength(max = 128) String,
-    public val assetsLargeText: @StringLength(max = 128) String,
-    public val assetsSmallImage: @StringLength(max = 128) String,
-    public val assetsSmallText: @StringLength(max = 128) String,
-    public val partyId: @StringLength(max = 128) String,
-    public val partyCurrentSize: int32_t,
-    public val partyMaxSize: int32_t,
-    public val secretsMatch: @StringLength(max = 128) String,
-    public val secretsJoin: @StringLength(max = 128) String,
-    public val secretsSpectate: @StringLength(max = 128) String,
-    public val instance: Boolean
+    val type: Int,
+    val applicationId: int64_t,
+    val name: @StringLength(max = 128) String,
+    val state: @StringLength(max = 128) String,
+    val details: @StringLength(max = 128) String,
+    val timestampStart: DiscordTimestamp,
+    val timestampEnd: DiscordTimestamp,
+    val assetsLargeImage: @StringLength(max = 128) String,
+    val assetsLargeText: @StringLength(max = 128) String,
+    val assetsSmallImage: @StringLength(max = 128) String,
+    val assetsSmallText: @StringLength(max = 128) String,
+    val partyId: @StringLength(max = 128) String,
+    val partyCurrentSize: int32_t,
+    val partyMaxSize: int32_t,
+    val partyPrivacy: Int,
+    val secretsMatch: @StringLength(max = 128) String,
+    val secretsJoin: @StringLength(max = 128) String,
+    val secretsSpectate: @StringLength(max = 128) String,
+    val instance: Boolean
 ) {
     internal fun construct() = DiscordActivity(
         type = DiscordActivityType.fromInt(this.type),
@@ -63,7 +64,9 @@ internal class DeconstructedDiscordActivity internal constructor(
         details = this.details,
         timestamps = DiscordActivityTimestamps(start = timestampStart, end = timestampEnd),
         assets = DiscordActivityAssets(large_image = this.assetsLargeImage, large_text = this.assetsLargeText, small_image = this.assetsSmallImage, small_text = this.assetsSmallText),
-        party = DiscordActivityParty(id = this.partyId, size = DiscordPartySize(currentSize = this.partyCurrentSize, maxSize = this.partyMaxSize)),
+        party = DiscordActivityParty(
+            id = this.partyId, size = DiscordPartySize(currentSize = this.partyCurrentSize, maxSize = this.partyMaxSize), privacy = DiscordActivityPartyPrivacy.fromInt(this.partyPrivacy)
+        ),
         secrets = DiscordActivitySecrets(match = this.secretsMatch, join = this.secretsJoin, spectate = this.secretsSpectate),
         instance = this.instance
     )
@@ -84,6 +87,7 @@ internal fun DiscordActivity.deconstruct() = DeconstructedDiscordActivity(
     partyId = this.party.id,
     partyCurrentSize = this.party.size.currentSize,
     partyMaxSize = this.party.size.maxSize,
+    partyPrivacy = this.party.privacy.toInt(),
     secretsMatch = this.secrets.match,
     secretsJoin = this.secrets.join,
     secretsSpectate = this.secrets.spectate,
