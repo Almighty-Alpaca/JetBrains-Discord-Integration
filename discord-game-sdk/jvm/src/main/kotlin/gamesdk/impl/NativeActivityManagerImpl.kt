@@ -16,8 +16,10 @@
 
 package gamesdk.impl
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DeconstructedDiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
-import gamesdk.api.Activity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.deconstruct
 import gamesdk.api.ActivityManager
 import gamesdk.api.SteamId
 import gamesdk.impl.utils.DelegateNativeObject
@@ -27,14 +29,10 @@ internal class NativeActivityManagerImpl(core: NativeCoreImpl) : DelegateNativeO
     override fun registerCommand(command: String): DiscordResult = native { corePointer -> registerCommand(corePointer, command).toDiscordResult() }
     override fun registerSteam(steamId: SteamId): DiscordResult = native { corePointer -> registerSteam(corePointer, steamId).toDiscordResult() }
 
-    override suspend fun updateActivity(activity: Activity): DiscordResult =
+    override suspend fun updateActivity(activity: DiscordActivity): DiscordResult =
         suspendCallback { callback ->
-            activity.toNative().use { activity ->
-                activity.native { activityPointer ->
-                    native { corePointer ->
-                        updateActivity(corePointer, activityPointer, callback.toNative())
-                    }
-                }
+            native { corePointer ->
+                updateActivity(corePointer, activity.deconstruct(), callback.toNative())
             }
         }
 
@@ -49,6 +47,6 @@ private external fun Native.registerCommand(core: Pointer, command: String): Int
 
 private external fun Native.registerSteam(core: Pointer, steamId: SteamId): Int
 
-private external fun Native.updateActivity(core: Pointer, activity: Pointer, callback: NativeDiscordResultCallback)
+private external fun Native.updateActivity(core: Pointer, activity: DeconstructedDiscordActivity, callback: NativeDiscordResultCallback)
 
 private external fun Native.clearActivity(core: Pointer, callback: NativeDiscordResultCallback)

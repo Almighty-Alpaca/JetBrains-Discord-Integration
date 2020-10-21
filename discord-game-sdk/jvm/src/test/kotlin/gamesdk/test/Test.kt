@@ -19,7 +19,6 @@ package gamesdk.test
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCoreImpl
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
-import gamesdk.api.Activity
 import gamesdk.api.Core
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -31,16 +30,14 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class)
     fun testActivity() {
-        Core(310270644849737729, DiscordCreateFlags.NoRequireDiscord).use { core ->
-            val activity = Activity().apply {
-                // TODO: fill once fields are implemented
-            }
+        Core(768507783167344680, DiscordCreateFlags.NoRequireDiscord).use { core ->
+            val activity = DiscordActivity(768507783167344680, state = "Testing...")
 
             runBlocking {
                 val updateResult = core.activityManager.updateActivity(activity)
                 println(updateResult)
 
-                delay(5.seconds)
+                delay(10.seconds)
 
                 val clearResult = core.activityManager.clearActivity()
                 println(clearResult)

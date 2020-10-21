@@ -16,6 +16,8 @@
 
 package gamesdk.impl
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityType
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
 import kotlin.coroutines.resume
@@ -36,6 +38,13 @@ internal suspend inline fun <T> suspendCallback(crossinline callback: (Callback<
     callback { result ->
         continuation.resume(result)
     }
+}
+
+internal fun DiscordActivityType.toNative() = this.ordinal
+
+internal fun Int.toDiscordActivityType() = when (this) {
+    in DiscordActivityType.values().indices -> DiscordActivityType.values()[this]
+    else -> throw IllegalArgumentException()
 }
 
 internal fun DiscordResult.toNative() = this.ordinal

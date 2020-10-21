@@ -16,6 +16,7 @@
 
 package gamesdk.api
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
 
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -25,6 +26,6 @@ interface ActivityManager {
     fun registerCommand(command: String): DiscordResult
     fun registerSteam(steamId: SteamId): DiscordResult
 
-    suspend fun updateActivity(activity: Activity): DiscordResult
+    suspend fun updateActivity(activity: DiscordActivity): DiscordResult
     suspend fun clearActivity(): DiscordResult
 }

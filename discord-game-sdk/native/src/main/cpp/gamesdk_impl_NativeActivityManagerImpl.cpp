@@ -40,14 +40,116 @@ JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_registerSte
     return (jint)result;
 }
 
-JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_updateActivity(JNIEnv *env, jclass, jobject, jlong jCore, jlong jActivity, jobject jCallback)
+discord::Activity construct_activity(JNIEnv *env, jobject jDestructuredActivity)
+{
+    jclass jDestructuredActivityClass = env->GetObjectClass(jDestructuredActivity);
+
+    /// type signatures: https://docs.oracle.com/en/java/javase/15/docs/specs/jni/types.html#type-signatures
+    jfieldID type_field_id = env->GetFieldID(jDestructuredActivityClass, "type", "I"),
+             application_id_field_id = env->GetFieldID(jDestructuredActivityClass, "applicationId", "J"),
+             name_field_id = env->GetFieldID(jDestructuredActivityClass, "name", "Ljava/lang/String;"),
+             state_field_id = env->GetFieldID(jDestructuredActivityClass, "state", "Ljava/lang/String;"),
+             details_field_id = env->GetFieldID(jDestructuredActivityClass, "details", "Ljava/lang/String;"),
+             timestamp_start_field_id = env->GetFieldID(jDestructuredActivityClass, "timestampStart", "J"),
+             timestamp_end_field_id = env->GetFieldID(jDestructuredActivityClass, "timestampEnd", "J"),
+             assets_large_image_field_id = env->GetFieldID(jDestructuredActivityClass, "assetsLargeImage", "Ljava/lang/String;"),
+             assets_large_text_field_id = env->GetFieldID(jDestructuredActivityClass, "assetsLargeText", "Ljava/lang/String;"),
+             assets_small_image_field_id = env->GetFieldID(jDestructuredActivityClass, "assetsSmallImage", "Ljava/lang/String;"),
+             assets_small_text_field_id = env->GetFieldID(jDestructuredActivityClass, "assetsSmallText", "Ljava/lang/String;"),
+             party_id_field_id = env->GetFieldID(jDestructuredActivityClass, "partyId", "Ljava/lang/String;"),
+             party_current_size_field_id = env->GetFieldID(jDestructuredActivityClass, "partyCurrentSize", "I"),
+             party_max_size_field_id = env->GetFieldID(jDestructuredActivityClass, "partyMaxSize", "I"),
+             party_privacy_field_id = env->GetFieldID(jDestructuredActivityClass, "partyPrivacy", "I"),
+             secrets_match_field_id = env->GetFieldID(jDestructuredActivityClass, "secretsMatch", "Ljava/lang/String;"),
+             secrets_join_field_id = env->GetFieldID(jDestructuredActivityClass, "secretsJoin", "Ljava/lang/String;"),
+             secrets_spectate_field_id = env->GetFieldID(jDestructuredActivityClass, "secretsSpectate", "Ljava/lang/String;"),
+             instance_field_id = env->GetFieldID(jDestructuredActivityClass, "instance", "Z");
+
+    jint type = env->GetIntField(jDestructuredActivity, type_field_id);
+    jlong application_id = env->GetLongField(jDestructuredActivity, application_id_field_id);
+    jstring name = (jstring)env->GetObjectField(jDestructuredActivity, name_field_id);
+    jstring state = (jstring)env->GetObjectField(jDestructuredActivity, state_field_id);
+    jstring details = (jstring)env->GetObjectField(jDestructuredActivity, details_field_id);
+    jlong timestamp_start = env->GetLongField(jDestructuredActivity, timestamp_start_field_id);
+    jlong timestamp_end = env->GetLongField(jDestructuredActivity, timestamp_end_field_id);
+    jstring assets_large_image = (jstring)env->GetObjectField(jDestructuredActivity, assets_large_image_field_id);
+    jstring assets_large_text = (jstring)env->GetObjectField(jDestructuredActivity, assets_large_text_field_id);
+    jstring assets_small_image = (jstring)env->GetObjectField(jDestructuredActivity, assets_small_image_field_id);
+    jstring assets_small_text = (jstring)env->GetObjectField(jDestructuredActivity, assets_small_text_field_id);
+    jstring party_id = (jstring)env->GetObjectField(jDestructuredActivity, party_id_field_id);
+    jint party_current_size = env->GetIntField(jDestructuredActivity, party_current_size_field_id);
+    jint party_max_size = env->GetIntField(jDestructuredActivity, party_max_size_field_id);
+    jint party_privacy = env->GetIntField(jDestructuredActivity, party_privacy_field_id);
+    jstring secrets_match = (jstring)env->GetObjectField(jDestructuredActivity, secrets_match_field_id);
+    jstring secrets_join = (jstring)env->GetObjectField(jDestructuredActivity, secrets_join_field_id);
+    jstring secrets_spectate = (jstring)env->GetObjectField(jDestructuredActivity, secrets_spectate_field_id);
+    bool instance = env->GetBooleanField(jDestructuredActivity, instance_field_id);
+
+    const char *name_native = env->GetStringUTFChars(name, nullptr);
+    const char *state_native = env->GetStringUTFChars(state, nullptr);
+    const char *details_native = env->GetStringUTFChars(details, nullptr);
+    const char *assets_large_image_native = env->GetStringUTFChars(assets_large_image, nullptr);
+    const char *assets_large_text_native = env->GetStringUTFChars(assets_large_text, nullptr);
+    const char *assets_small_image_native = env->GetStringUTFChars(assets_small_image, nullptr);
+    const char *assets_small_text_native = env->GetStringUTFChars(assets_small_text, nullptr);
+    const char *party_id_native = env->GetStringUTFChars(party_id, nullptr);
+    const char *secrets_match_native = env->GetStringUTFChars(secrets_match, nullptr);
+    const char *secrets_join_native = env->GetStringUTFChars(secrets_match, nullptr);
+    const char *secrets_spectate_native = env->GetStringUTFChars(secrets_match, nullptr);
+
+    discord::Activity activity;
+    activity.SetType((discord::ActivityType)type);
+    activity.SetApplicationId(application_id);
+
+    activity.SetName(name_native);
+    activity.SetState(state_native);
+    activity.SetDetails(details_native);
+
+    activity.GetTimestamps().SetStart(timestamp_start);
+    activity.GetTimestamps().SetEnd(timestamp_end);
+
+    activity.GetAssets().SetLargeImage(assets_large_image_native);
+    activity.GetAssets().SetLargeText(assets_large_text_native);
+    activity.GetAssets().SetSmallImage(assets_small_image_native);
+    activity.GetAssets().SetSmallText(assets_small_text_native);
+
+    activity.GetParty().SetId(party_id_native);
+    activity.GetParty().GetSize().SetCurrentSize(party_current_size);
+    activity.GetParty().GetSize().SetMaxSize(party_max_size);
+    activity.GetParty().SetPrivacy((discord::ActivityPartyPrivacy)party_privacy);
+
+    activity.GetSecrets().SetMatch(secrets_match_native);
+    activity.GetSecrets().SetJoin(secrets_join_native);
+    activity.GetSecrets().SetSpectate(secrets_spectate_native);
+
+    activity.SetInstance(instance);
+
+    env->ReleaseStringUTFChars(name, name_native);
+    env->ReleaseStringUTFChars(state, state_native);
+    env->ReleaseStringUTFChars(details, details_native);
+
+    env->ReleaseStringUTFChars(assets_large_image, assets_large_image_native);
+    env->ReleaseStringUTFChars(assets_large_text, assets_large_text_native);
+    env->ReleaseStringUTFChars(assets_small_image, assets_small_image_native);
+    env->ReleaseStringUTFChars(assets_small_text, assets_small_text_native);
+
+    env->ReleaseStringUTFChars(party_id, party_id_native);
+
+    env->ReleaseStringUTFChars(secrets_match, secrets_match_native);
+    env->ReleaseStringUTFChars(secrets_join, secrets_join_native);
+    env->ReleaseStringUTFChars(secrets_spectate, secrets_spectate_native);
+
+    return activity;
+}
+
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_updateActivity(JNIEnv *env, jclass, jobject, jlong jCore, jobject jDestructuredActivity, jobject jCallback)
 {
     discord::Core *core = (discord::Core *)jCore;
-    discord::Activity *activity = (discord::Activity *)jActivity;
+    discord::Activity activity = construct_activity(env, jDestructuredActivity);
 
     std::function<void(discord::Result)> callback = createResultCallback(env, jCallback);
 
-    core->ActivityManager().UpdateActivity(*activity, callback);
+    core->ActivityManager().UpdateActivity(activity, callback);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_clearActivity(JNIEnv *env, jclass, jobject, jlong jCore, jobject jCallback)
