@@ -16,31 +16,49 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DeconstructedDiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.deconstruct
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordUserId
 import gamesdk.api.ActivityManager
 import gamesdk.api.SteamId
 import gamesdk.impl.utils.DelegateNativeObject
 import gamesdk.impl.utils.Native
 
 internal class NativeActivityManagerImpl(core: NativeCoreImpl) : DelegateNativeObject(core), ActivityManager {
-    override fun registerCommand(command: String): DiscordResult = native { corePointer -> registerCommand(corePointer, command).toDiscordResult() }
-    override fun registerSteam(steamId: SteamId): DiscordResult = native { corePointer -> registerSteam(corePointer, steamId).toDiscordResult() }
+    override fun registerCommand(command: String): DiscordResult =
+        native { corePointer -> registerCommand(corePointer, command).toDiscordResult() }
+
+    override fun registerSteam(steamId: SteamId): DiscordResult =
+        native { corePointer -> registerSteam(corePointer, steamId).toDiscordResult() }
 
     override suspend fun updateActivity(activity: DiscordActivity): DiscordResult =
-        suspendCallback { callback ->
-            native { corePointer ->
-                updateActivity(corePointer, activity.deconstruct(), callback.toNative())
-            }
-        }
+        suspendCallback { callback -> updateActivity(activity, callback) }
 
-    override suspend fun clearActivity(): DiscordResult = suspendCallback { callback ->
-        native { corePointer ->
-            clearActivity(corePointer, callback.toNative())
-        }
-    }
+    override fun updateActivity(activity: DiscordActivity, callback: DiscordResultCallback) =
+        native { corePointer -> updateActivity(corePointer, activity.deconstruct(), callback.toNative()) }
+
+    override suspend fun clearActivity(): DiscordResult =
+        suspendCallback { callback -> clearActivity(callback) }
+
+    override fun clearActivity(callback: DiscordResultCallback) =
+        native { corePointer -> clearActivity(corePointer, callback.toNative()) }
+
+    override suspend fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply): DiscordResult =
+        suspendCallback { callback -> sendRequestReply(userId, reply, callback) }
+
+    override fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback): Unit =
+        TODO("Not yet implemented")
+
+    override suspend fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String): DiscordResult =
+        suspendCallback { callback -> sendInvite(userId, type, content, callback) }
+
+    override fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callback: DiscordResultCallback): Unit =
+        TODO("Not yet implemented")
+
+    override suspend fun acceptInvite(userId: DiscordUserId): DiscordResult =
+        suspendCallback { callback -> acceptInvite(userId, callback) }
+
+    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback): Unit = TODO("Not yet implemented")
 }
 
 private external fun Native.registerCommand(core: Pointer, command: String): Int

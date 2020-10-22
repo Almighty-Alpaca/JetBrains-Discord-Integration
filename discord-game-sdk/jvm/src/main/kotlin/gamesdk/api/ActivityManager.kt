@@ -16,16 +16,33 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityActionType
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityJoinRequestReply
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityManager
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordUserId
+import gamesdk.impl.DiscordResultCallback
 
 @OptIn(ExperimentalUnsignedTypes::class)
 typealias SteamId = UInt
 
-interface ActivityManager {
-    fun registerCommand(command: String): DiscordResult
-    fun registerSteam(steamId: SteamId): DiscordResult
+interface ActivityManager : DiscordActivityManager {
+    override fun registerCommand(command: String): DiscordResult
+    override fun registerSteam(steamId: SteamId): DiscordResult
 
     suspend fun updateActivity(activity: DiscordActivity): DiscordResult
+    override fun updateActivity(activity: DiscordActivity, callback: DiscordResultCallback)
+
     suspend fun clearActivity(): DiscordResult
+    override fun clearActivity(callback: DiscordResultCallback)
+
+    suspend fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply): DiscordResult
+    override fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback)
+
+    suspend fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String): DiscordResult
+    override fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callback: DiscordResultCallback)
+
+    suspend fun acceptInvite(userId: DiscordUserId): DiscordResult
+    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback)
 }
