@@ -16,25 +16,33 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityType
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordRelationship
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 internal typealias Pointer = Long
 
-internal typealias Callback<T> = (T) -> Unit
-internal typealias DiscordResultCallback = Callback<DiscordResult>
+internal typealias DiscordResultCallback = (result:DiscordResult) -> Unit
+internal typealias NativeDiscordResultCallback = (result:Int) -> Unit
 
-internal typealias NativeDiscordResultCallback = Callback<Int>
+internal fun DiscordResultCallback.toNative(): NativeDiscordResultCallback = { invoke(it.toDiscordResult()) }
 
-fun DiscordResultCallback.toNative(): NativeDiscordResultCallback = { invoke(it.toDiscordResult()) }
+internal fun NativeDiscordResultCallback.fromNative(): DiscordResultCallback = { invoke(it.toNative()) }
 
-fun NativeDiscordResultCallback.fromNative(): DiscordResultCallback = { invoke(it.toNative()) }
+internal typealias DiscordResultObjectCallback<T> = (result:DiscordResult, other:T) -> Unit
+internal typealias NativeDiscordResultObjectCallback<T> = (result:Int, other:T) -> Unit
 
-internal suspend inline fun <T> suspendCallback(crossinline callback: (Callback<T>) -> Unit): T = suspendCoroutine { continuation ->
+internal fun <T> DiscordResultObjectCallback<T>.toNative(): NativeDiscordResultObjectCallback<T> = { result, other -> invoke(result.toDiscordResult(), other) }
+
+internal fun <T>NativeDiscordResultObjectCallback<T>.fromNative(): DiscordResultObjectCallback<T> = { result, other -> invoke(result.toNative(),other) }
+
+
+typealias DiscordRelationshipCallback = (relationship: DiscordRelationship) -> Boolean
+
+internal suspend inline fun <T> suspendCallback(crossinline callback: ((T) -> Unit) -> Unit): T = suspendCoroutine { continuation ->
     callback { result ->
         continuation.resume(result)
     }

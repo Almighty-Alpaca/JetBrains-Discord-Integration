@@ -62,12 +62,29 @@ internal class DeconstructedDiscordActivity internal constructor(
         name = this.name,
         state = this.state,
         details = this.details,
-        timestamps = DiscordActivityTimestamps(start = timestampStart, end = timestampEnd),
-        assets = DiscordActivityAssets(large_image = this.assetsLargeImage, large_text = this.assetsLargeText, small_image = this.assetsSmallImage, small_text = this.assetsSmallText),
-        party = DiscordActivityParty(
-            id = this.partyId, size = DiscordPartySize(currentSize = this.partyCurrentSize, maxSize = this.partyMaxSize), privacy = DiscordActivityPartyPrivacy.fromInt(this.partyPrivacy)
+        timestamps = DiscordActivityTimestamps(
+            start = timestampStart,
+            end = timestampEnd
         ),
-        secrets = DiscordActivitySecrets(match = this.secretsMatch, join = this.secretsJoin, spectate = this.secretsSpectate),
+        assets = DiscordActivityAssets(
+            large_image = this.assetsLargeImage,
+            large_text = this.assetsLargeText,
+            small_image = this.assetsSmallImage,
+            small_text = this.assetsSmallText
+        ),
+        party = DiscordActivityParty(
+            id = this.partyId,
+            size = DiscordPartySize(
+                currentSize = this.partyCurrentSize,
+                maxSize = this.partyMaxSize
+            ),
+            privacy = DiscordActivityPartyPrivacy.fromInt(this.partyPrivacy)
+        ),
+        secrets = DiscordActivitySecrets(
+            match = this.secretsMatch,
+            join = this.secretsJoin,
+            spectate = this.secretsSpectate
+        ),
         instance = this.instance
     )
 }
