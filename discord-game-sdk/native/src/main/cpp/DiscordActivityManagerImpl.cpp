@@ -64,8 +64,8 @@ static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
     const char* assets_small_text_native    = env->GetStringUTFChars(assets_small_text, NULL);
     const char* party_id_native             = env->GetStringUTFChars(party_id, NULL);
     const char* secrets_match_native        = env->GetStringUTFChars(secrets_match, NULL);
-    const char* secrets_join_native         = env->GetStringUTFChars(secrets_match, NULL);
-    const char* secrets_spectate_native     = env->GetStringUTFChars(secrets_match, NULL);
+    const char* secrets_join_native         = env->GetStringUTFChars(secrets_join, NULL);
+    const char* secrets_spectate_native     = env->GetStringUTFChars(secrets_spectate, NULL);
 
     DiscordActivity activity;
     activity.type = (EDiscordActivityType)type;
