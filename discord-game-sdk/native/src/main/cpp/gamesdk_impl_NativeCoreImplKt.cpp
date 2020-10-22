@@ -17,15 +17,44 @@
 #include "gamesdk_impl_NativeCoreImplKt.h"
 #include "core.h"
 
-JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *, jclass, jlong clientId, jint createFlags)
+JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *env, jclass, jlong clientId, jint createFlags)
 {
     discord::Core *core{};
 
     discord::Result result = discord::Core::Create(clientId, (std::uint64_t)createFlags, &core);
 
-    // TODO: Check result
+    if (core == nullptr)
+    {
+        jclass jIntegerClass = env->FindClass("java/lang/Integer");
 
-    return (jlong)core;
+        if (jIntegerClass != nullptr)
+        {
+            jmethodID jIntegerValueOf = env->GetStaticMethodID(jIntegerClass, "valueOf", "(I)Ljava/lang/Integer;");
+
+            if (jIntegerValueOf != nullptr)
+            {
+                return env->CallStaticObjectMethod(jIntegerClass, jIntegerValueOf, (jint)result);
+            }
+        }
+    }
+    else
+    {
+        jclass jLongClass = env->FindClass("java/lang/Long");
+
+        if (jLongClass != nullptr)
+        {
+            jmethodID jLongValueOf = env->GetStaticMethodID(jLongClass, "valueOf", "(J)Ljava/lang/Long;");
+
+            if (jLongValueOf != nullptr)
+            {
+                return env->CallStaticObjectMethod(jLongClass, jLongValueOf, (jlong)core);
+            }
+        }
+    }
+
+    // TODO: something is seriously wrong, throw an exception
+
+    return nullptr;
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *, jclass, jobject, jlong jCore)

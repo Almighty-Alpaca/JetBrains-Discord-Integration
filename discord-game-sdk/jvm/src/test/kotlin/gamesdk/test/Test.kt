@@ -17,13 +17,13 @@
 package gamesdk.test
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.orInvalidDiscord
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.unwrap
 import gamesdk.api.Core
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import java.lang.RuntimeException
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -31,19 +31,22 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class)
     fun testActivity() {
-        Core(768507783167344680, DiscordCreateFlags.NoRequireDiscord).use { core ->
-            val activity = DiscordActivity(768507783167344680, state = "Testing...")
+        when (val result = Core.create(768507783167344680, DiscordCreateFlags.NoRequireDiscord)) {
+            is Failure -> println(result.reason)
+            is Success -> result.value.use { core ->
+                val activity = DiscordActivity(768507783167344680, state = "Testing...")
 
-            runBlocking {
-                val updateResult = core.activityManager.updateActivity(activity)
-                println(updateResult)
+                runBlocking {
+                    val updateResult = core.activityManager.updateActivity(activity)
+                    println(updateResult)
 
-                delay(10.seconds)
+                    delay(10.seconds)
 
-                val clearResult = core.activityManager.clearActivity()
-                println(clearResult)
+                    val clearResult = core.activityManager.clearActivity()
+                    println(clearResult)
 
-                delay(5.seconds)
+                    delay(5.seconds)
+                }
             }
         }
     }

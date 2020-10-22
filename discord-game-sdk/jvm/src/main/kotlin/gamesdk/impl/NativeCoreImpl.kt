@@ -18,6 +18,9 @@ package gamesdk.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Result
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
@@ -28,7 +31,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlags) : CloseableNativeObject(nativeCreate(clientId, createFlags.toNative())), Core {
+internal class NativeCoreImpl private constructor(pointer: Pointer) : CloseableNativeObject(pointer), Core {
     override val activityManager: ActivityManager by nativeLazy { NativeActivityManagerImpl(this) }
 
     private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
@@ -59,11 +62,23 @@ internal class NativeCoreImpl(clientId: ClientId, createFlags: DiscordCreateFlag
         init {
             NativeLoader.loadLibraries(NativeCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
         }
+
+        fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {
+            return when (val result = nativeCreate(clientId, createFlags.toNative())) {
+                is Long -> Success(NativeCoreImpl(result))
+                is Int -> Failure(result.toDiscordResult())
+                else -> throw IllegalStateException() // This should never happen unless the native method returns garbage
+            }
+        }
     }
 }
 
-// This one can't have Native as receiver because it's creating the object
-private external fun nativeCreate(clientId: ClientId, createFlags: Int): Pointer
+/**
+ * This one can't have Native as receiver because it's creating the object
+ *
+ * @return Either an Int or a Long
+ */
+private external fun nativeCreate(clientId: ClientId, createFlags: Int): Any
 
 private external fun Native.destroy(core: Pointer)
 
