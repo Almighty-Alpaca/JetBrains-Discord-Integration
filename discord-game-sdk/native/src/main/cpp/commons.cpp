@@ -24,4 +24,6 @@ jobject createPair(JNIEnv* env, jobject first, jobject second)
     jclass pair_class = env->FindClass("kotlin/Pair");
     jmethodID constructor = env->GetMethodID(pair_class, "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
     jobject pair = env->NewObject(pair_class, constructor, first, second);
+
+    return pair;
 }
