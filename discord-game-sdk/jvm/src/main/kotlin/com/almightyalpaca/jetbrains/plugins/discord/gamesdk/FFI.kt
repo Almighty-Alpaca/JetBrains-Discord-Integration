@@ -18,6 +18,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Result
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.mapFirst
 import gamesdk.impl.DiscordRelationshipCallback
 import gamesdk.impl.DiscordResultCallback
@@ -147,6 +150,7 @@ class DiscordRelationshipManagerImpl internal constructor(private val internalTh
 }
 
 class DiscordCoreImpl internal constructor(private val internalThisPointer: Long) : DiscordCore {
+    override fun isValid() = internalThisPointer != 0L
     override fun destroy() = native_destroy()
     override fun runCallbacks() = DiscordResult.fromInt(native_runCallbacks())
     override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit) =
@@ -187,9 +191,12 @@ class DiscordCoreImpl internal constructor(private val internalThisPointer: Long
             NativeLoader.loadLibraries(DiscordCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
         }
 
-        fun create(clientId: DiscordClientId, flags: DiscordCreateFlags) = DiscordCoreImpl(native_create(clientId, flags.toInt()))
+        fun create(clientId: DiscordClientId, flags: DiscordCreateFlags): Result<DiscordCoreImpl, DiscordResult> = with(native_create(clientId, flags.toInt())) {
+            return if (second == DiscordResult.Ok.toInt()) Success(DiscordCoreImpl(first))
+            else Failure(DiscordResult.fromInt(second))
+        }
 
         @JvmStatic
-        private external fun native_create(clientId: DiscordClientId, flags: Int): Long
+        private external fun native_create(clientId: DiscordClientId, flags: Int): Pair<Long, Int>
     }
 }

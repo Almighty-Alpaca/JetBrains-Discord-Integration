@@ -249,6 +249,7 @@ interface DiscordAchievementManager {
 }
 
 interface DiscordCore {
+    fun isValid(): Boolean
     fun destroy()
     fun runCallbacks(): DiscordResult
     fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit)

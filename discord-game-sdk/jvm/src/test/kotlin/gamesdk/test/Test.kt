@@ -16,13 +16,14 @@
 
 package gamesdk.test
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCoreImpl
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.orInvalidDiscord
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.unwrap
 import gamesdk.api.Core
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import java.lang.RuntimeException
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -50,24 +51,48 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
     fun testActivity2() {
-        val core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)
+        var core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord).orInvalidDiscord()
 
-        val activityManager = core.getActivityManager()
+//        core.setLogHook(DiscordLogLevel.Debug) {
+//            level, message ->
+//            println("Discord($level): $message")
+//        }
+
+        lateinit var activityManager: DiscordActivityManager
+
+        var discordRunning = core.isValid()
+        if (discordRunning) {
+            activityManager = core.getActivityManager()
+        }
 
         runBlocking {
-            for (i in 1..100) {
-                println("Running")
-                // TODO: Current implementation requires all fields
-                if (i % 15 == 0) {
-                    val activity = DiscordActivity(310270644849737729, state = "Waiting", details = "...")
+            for (i in 0..180) {
+                if (discordRunning) {
+                    println("Running")
+                    if (i % 15 == 0) {
+                        val activity = DiscordActivity(310270644849737729, state = "Waiting", details = "...")
 
-                    activityManager.updateActivity(activity) { result ->
-                        println(result)
+                        activityManager.updateActivity(activity) { result ->
+                            println(result)
+                        }
+                    }
+
+                    val result = core.runCallbacks()
+                    println("Callback result: $result")
+
+                    if (result == DiscordResult.NotRunning) {
+                        discordRunning = false
+                        println("Discord is not running anymore")
+                        core.destroy()
+                    }
+                } else {
+                    println("Trying to reconnect")
+                    core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord).orInvalidDiscord()
+                    discordRunning = core.isValid()
+                    if (discordRunning) {
+                        activityManager = core.getActivityManager()
                     }
                 }
-
-                core.runCallbacks()
-
                 delay(1.seconds)
             }
             activityManager.clearActivity { result ->

@@ -145,77 +145,79 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     return manager->register_steam(manager, steam_id);
 }
 
-struct native_callback_data {
-    JavaVM* jvm;
-    jobject callback;
-};
+namespace discord_activity {
+    struct native_callback_data {
+        JavaVM* jvm;
+        jobject callback;
+    };
 
-static void callback_activity_manager(void* vp_cb_data, EDiscordResult result){
-    native_callback_data* cb_data = (native_callback_data*) vp_cb_data;
-    jobject j_callback_global = cb_data->callback;
-    JavaVM *jvm = cb_data->jvm;
-    JNIEnv *env{};
+    static void callback_activity_manager(void* vp_cb_data, EDiscordResult result){
+        native_callback_data* cb_data = (native_callback_data*) vp_cb_data;
+        jobject j_callback_global = cb_data->callback;
+        JavaVM *jvm = cb_data->jvm;
+        JNIEnv *env{};
 
-    jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
+        jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
 
-    if (getEnvResult == JNI_EVERSION)
-    {
-        // TODO: handle wrong version
-    }
-    else if (getEnvResult == JNI_EDETACHED)
-    {
-        jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
-
-        if (jAttachResult != JNI_OK)
+        if (getEnvResult == JNI_EVERSION)
         {
-            // TODO: Check and handle error code (jni.h:160). What about the global reference?
-
-            std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+            // TODO: handle wrong version
         }
-    }
-
-    jclass jCallbackClass = env->GetObjectClass(j_callback_global);
-    jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
-
-    if (jCallbackMethodInvoke != nullptr)
-    {
-        env->CallObjectMethod(j_callback_global, jCallbackMethodInvoke, (jint)result);
-    }
-    else
-    {
-        // TODO: Handle method not found
-
-        std::cout << "Could not find callback method" << std::endl;
-    }
-
-    env->DeleteGlobalRef(j_callback_global);
-
-    // Only detach if thread wasn't previously attached
-    if (getEnvResult == JNI_EDETACHED)
-    {
-        jint jDetachResult = jvm->DetachCurrentThread();
-        if (jDetachResult != JNI_OK)
+        else if (getEnvResult == JNI_EDETACHED)
         {
-            // TODO: Check and handle error code (jni.h:160)
+            jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
 
-            std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
+            if (jAttachResult != JNI_OK)
+            {
+                // TODO: Check and handle error code (jni.h:160). What about the global reference?
+
+                std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+            }
         }
+
+        jclass jCallbackClass = env->GetObjectClass(j_callback_global);
+        jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
+
+        if (jCallbackMethodInvoke != nullptr)
+        {
+            env->CallObjectMethod(j_callback_global, jCallbackMethodInvoke, (jint)result);
+        }
+        else
+        {
+            // TODO: Handle method not found
+
+            std::cout << "Could not find callback method" << std::endl;
+        }
+
+        env->DeleteGlobalRef(j_callback_global);
+
+        // Only detach if thread wasn't previously attached
+        if (getEnvResult == JNI_EDETACHED)
+        {
+            jint jDetachResult = jvm->DetachCurrentThread();
+            if (jDetachResult != JNI_OK)
+            {
+                // TODO: Check and handle error code (jni.h:160)
+
+                std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
+            }
+        }
+
+        delete cb_data;
     }
 
-    delete cb_data;
-}
+    static native_callback_data* setup_native_callback_data(JNIEnv* env, jobject j_callback) {
+        jobject jCallbackGlobal = env->NewGlobalRef(j_callback);
 
-static native_callback_data* setup_native_callback_data(JNIEnv* env, jobject j_callback) {
-    jobject jCallbackGlobal = env->NewGlobalRef(j_callback);
+        JavaVM *jvm{};
+        env->GetJavaVM(&jvm);
 
-    JavaVM *jvm{};
-    env->GetJavaVM(&jvm);
+        auto cb_data = new native_callback_data();
+        cb_data->jvm = jvm;
+        cb_data->callback = jCallbackGlobal;
 
-    auto cb_data = new native_callback_data();
-    cb_data->jvm = jvm;
-    cb_data->callback = jCallbackGlobal;
-
-    return cb_data;
+        return cb_data;
+    }
 }
 
 /*
@@ -231,9 +233,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 
     DiscordActivity activity = construct_activity(env, p_activity);
 
-    auto ncb_data = setup_native_callback_data(env, p_callback);
+    auto ncb_data = discord_activity::setup_native_callback_data(env, p_callback);
 
-    manager->update_activity(manager, &activity, ncb_data, callback_activity_manager);
+    manager->update_activity(manager, &activity, ncb_data, discord_activity::callback_activity_manager);
 }
 
 /*
@@ -247,9 +249,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = setup_native_callback_data(env, p_callback);
+    auto ncb_data = discord_activity::setup_native_callback_data(env, p_callback);
 
-    manager->clear_activity(manager, ncb_data, callback_activity_manager);
+    manager->clear_activity(manager, ncb_data, discord_activity::callback_activity_manager);
 }
 
 /*
@@ -263,9 +265,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = setup_native_callback_data(env, p_callback);
+    auto ncb_data = discord_activity::setup_native_callback_data(env, p_callback);
 
-    manager->send_request_reply(manager, user_id, (EDiscordActivityJoinRequestReply) reply, ncb_data, callback_activity_manager);
+    manager->send_request_reply(manager, user_id, (EDiscordActivityJoinRequestReply) reply, ncb_data, discord_activity::callback_activity_manager);
 }
 
 /*
@@ -279,11 +281,11 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = setup_native_callback_data(env, p_callback);
+    auto ncb_data = discord_activity::setup_native_callback_data(env, p_callback);
 
     const char* content_native = env->GetStringUTFChars(content, NULL);
 
-    manager->send_invite(manager, user_id, (EDiscordActivityActionType) type, content_native, ncb_data, callback_activity_manager);
+    manager->send_invite(manager, user_id, (EDiscordActivityActionType) type, content_native, ncb_data, discord_activity::callback_activity_manager);
 
     env->ReleaseStringUTFChars(content, content_native);
 }
@@ -299,7 +301,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = setup_native_callback_data(env, p_callback);
+    auto ncb_data = discord_activity::setup_native_callback_data(env, p_callback);
 
-    manager->accept_invite(manager, user_id, ncb_data, callback_activity_manager);
+    manager->accept_invite(manager, user_id, ncb_data, discord_activity::callback_activity_manager);
 }

@@ -1,6 +1,7 @@
 #include "commons.h"
 #include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl.h"
 #include "discord_game_sdk.h"
+#include <iostream>
 
 /*
  * Class:      com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl
@@ -28,17 +29,93 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     return (jint) core->run_callbacks(core);
 }
 
+namespace discordcore {
+    struct native_callback_data {
+        JavaVM* jvm;
+        jobject callback;
+    };
+
+    static void log_hook_callback(void* vp_cb_data, enum EDiscordLogLevel level, const char* message){
+        native_callback_data* cb_data = (native_callback_data*) vp_cb_data;
+        jobject j_callback_global = cb_data->callback;
+        JavaVM *jvm = cb_data->jvm;
+        JNIEnv *env{};
+
+        jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
+
+        if (getEnvResult == JNI_EVERSION)
+        {
+            // TODO: handle wrong version
+        }
+        else if (getEnvResult == JNI_EDETACHED)
+        {
+            jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
+
+            if (jAttachResult != JNI_OK)
+            {
+                // TODO: Check and handle error code (jni.h:160). What about the global reference?
+
+                std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+            }
+        }
+
+        jclass jCallbackClass = env->GetObjectClass(j_callback_global);
+        jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(ILjava/lang/String;)V");
+
+        if (jCallbackMethodInvoke != nullptr)
+        {
+            jstring j_message = env->NewStringUTF(message);
+            env->CallObjectMethod(j_callback_global, jCallbackMethodInvoke, (jint)level, j_message);
+        }
+        else
+        {
+            // TODO: Handle method not found
+
+            std::cout << "Could not find callback method" << std::endl;
+        }
+
+        env->DeleteGlobalRef(j_callback_global);
+
+        // Only detach if thread wasn't previously attached
+        if (getEnvResult == JNI_EDETACHED)
+        {
+            jint jDetachResult = jvm->DetachCurrentThread();
+            if (jDetachResult != JNI_OK)
+            {
+                // TODO: Check and handle error code (jni.h:160)
+
+                std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
+            }
+        }
+    }
+
+    static native_callback_data* setup_native_callback_data(JNIEnv* env, jobject j_callback) {
+        jobject jCallbackGlobal = env->NewGlobalRef(j_callback);
+
+        JavaVM *jvm{};
+        env->GetJavaVM(&jvm);
+
+        auto cb_data = new native_callback_data(); // TODO: Clean up this allocation on `Core.destroy()`
+        cb_data->jvm = jvm;
+        cb_data->callback = jCallbackGlobal;
+
+        return cb_data;
+    }
+}
+
 /*
  * Class:      com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl
  * Method:     native_1setLogHook
- * Signature:  (ILjava/lang/Object;Lkotlin/jvm/functions/Function3;)V
+ * Signature:  (ILkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1setLogHook
-  (JNIEnv * env, jobject this_ptr, jint min_level, jobject hook_data, jobject hook)
+  (JNIEnv *env, jobject this_ptr, jint min_level, jobject p_callback)
 {
     IDiscordCore* core;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordCore, core);
-    /// TODO: Make global refs here to the hook_data and hook (https://stackoverflow.com/a/35950745/12576629) then make a native callback that calls the hook.
+    auto ncb_data = discordcore::setup_native_callback_data(env, p_callback);
+
+    core->set_log_hook(core, (EDiscordLogLevel) min_level, ncb_data, discordcore::log_hook_callback);
 }
 
 #define GetMgr(MANAGER_NAME) {                                                                      \
@@ -194,10 +271,10 @@ extern IDiscordActivityEvents       activity_manager_events;
  * Method:     native_1create_0002dJSWoG40
  * Signature:  (JI)J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1create_0002dJSWoG40
+JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1create_0002dJSWoG40
   (JNIEnv *env, jclass __class, jlong client_id, jint flags)
 {
-    IDiscordCore* core;
+    IDiscordCore* core = nullptr;
     DiscordCreateParams params;
     DiscordCreateParamsSetDefault(&params);
     params.client_id = client_id;
@@ -214,7 +291,9 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
     params.voice_events = &voice_manager_events;
     params.achievement_events = &achievement_manager_events;
 
-    DiscordCreate(DISCORD_VERSION, &params, &core);
+    auto result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    return (jlong) core;
+    jobject pair = createPair(env, asJobjectFromLong(env, (jlong) core), asJobjectFromInt(env, (jint) result));
+
+    return pair;
 }
