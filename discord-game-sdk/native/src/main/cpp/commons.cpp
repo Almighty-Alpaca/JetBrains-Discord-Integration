@@ -3,8 +3,8 @@
 jobject asJobjectFromInt(JNIEnv* env, jint int_)
 {
     jclass int_class = env->FindClass("java/lang/Integer");
-    jmethodID constructor = env->GetMethodID(int_class, "<init>", "(I)V");
-    jobject jobj = env->NewObject(int_class, constructor, int_);
+    jmethodID j_value_of = env->GetStaticMethodID(int_class, "valueOf", "(I)Ljava/lang/Integer;");
+    jobject jobj = env->CallStaticObjectMethod(int_class, j_value_of, int_);
 
     return jobj;
 }
@@ -12,8 +12,8 @@ jobject asJobjectFromInt(JNIEnv* env, jint int_)
 jobject asJobjectFromLong(JNIEnv* env, jlong long_)
 {
     jclass long_class = env->FindClass("java/lang/Long");
-    jmethodID constructor = env->GetMethodID(long_class, "<init>", "(J)V");
-    jobject jobj = env->NewObject(long_class, constructor, long_);
+    jmethodID j_value_of = env->GetStaticMethodID(long_class, "valueOf", "(J)Ljava/lang/Long;");
+    jobject jobj = env->CallStaticObjectMethod(long_class, j_value_of, long_);
 
     return jobj;
 }
