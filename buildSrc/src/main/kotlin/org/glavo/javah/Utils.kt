@@ -1,37 +1,20 @@
 package org.glavo.javah
 
-import org.jetbrains.kotlin.konan.file.use
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
-import java.io.PrintWriter
-import java.io.Writer
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
-import java.util.regex.Pattern
 
 object Utils {
     const val MAX_SUPPORTED_VERSION = 13
 
     val MULTI_RELEASE_VERSIONS = (9..MAX_SUPPORTED_VERSION).asSequence().map(Int::toString).toList()
 
-    val SIMPLE_NAME_PATTERN: Pattern = Pattern.compile("[^.;\\[/]+")
-    val FULL_NAME_PATTERN: Pattern = Pattern.compile("[^.;\\[/]+(\\.[^.;\\[/]+)*")
-    val METHOD_NAME_PATTERN: Pattern = Pattern.compile("(<init>)|(<cinit>)|([^.;\\[/<>]+)")
-    val METHOD_TYPE_PATTERN: Pattern = Pattern.compile("\\((?<args>(\\[*([BCDFIJSZ]|L[^.;\\[/]+(/[^.;\\\\\\[/]+)*;))*)\\)(?<ret>\\[*([BCDFIJSZV]|L[^.;\\[/]+(/[^.;\\[/]+)*;))")
-
-    val NOOP_WRITER = PrintWriter(object : Writer() {
-        override fun write(cbuf: CharArray, off: Int, len: Int) {
-        }
-
-        override fun flush() {
-        }
-
-        override fun close() {
-        }
-    })
+    val FULL_NAME_PATTERN = Regex("""[^.;\[/]+(\.[^.;\[/]+)*""")
+    val METHOD_TYPE_PATTERN = Regex("""\((?<args>(\[*([BCDFIJSZ]|L[^.;\[/]+(/[^.;\\\[/]+)*;))*)\)(?<ret>\[*([BCDFIJSZV]|L[^.;\[/]+(/[^.;\[/]+)*;))""")
 
     fun mangleName(name: String): String {
         val builder = StringBuilder(name.length * 2)

@@ -15,7 +15,9 @@
  */
 
 import org.apache.commons.io.FilenameUtils
-import org.glavo.javah.JavahTask
+import org.glavo.javah.ClassName
+import org.glavo.javah.ClassPath
+import org.glavo.javah.JniHeaderGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -96,7 +98,7 @@ open class GenerateJniHeadersTask : DefaultTask() {
 
         Files.createDirectories(classesPath)
 
-        val kotlinClassesNames = Files.walk(classesPath)
+        val kotlinClassNames = Files.walk(classesPath)
             .filter { Files.isRegularFile(it) }
             .map(classesPath::relativize)
             .map(Path::toString)
@@ -106,10 +108,14 @@ open class GenerateJniHeadersTask : DefaultTask() {
             .map { it.removeSuffix(".class") }
             .toList()
 
-        val task = JavahTask()
-        task.outputDir = destinationPath
-        task.addClassPath(classesPath)
-        task.addClasses(kotlinClassesNames)
-        task.run()
+        val searchPaths = setOf(
+            ClassPath(classesPath)
+        )
+
+        val generator = JniHeaderGenerator(destinationPath, searchPaths)
+
+        for (className in kotlinClassNames) {
+            generator.generate(ClassName.of(className))
+        }
     }
 }

@@ -23,8 +23,8 @@ class ClassName private constructor(private val moduleName: String?, val classNa
 
     companion object {
         fun of(moduleName: String?, className: String): ClassName {
-            require(moduleName == null || FULL_NAME_PATTERN.matcher(moduleName).matches()) { "Illegal module name: $moduleName" }
-            require(FULL_NAME_PATTERN.matcher(className).matches()) { "Illegal class name: $moduleName" }
+            require(moduleName == null || FULL_NAME_PATTERN.matches(moduleName)) { "Illegal module name: $moduleName" }
+            require(FULL_NAME_PATTERN.matches(className)) { "Illegal class name: $moduleName" }
 
             return ClassName(moduleName, className)
         }

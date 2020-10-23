@@ -10,10 +10,6 @@ import java.util.stream.Collectors
 
 interface SearchPath {
     fun search(name: ClassName): Path?
-    fun search(fullName: String): Path? {
-        Objects.requireNonNull(fullName)
-        return search(ClassName.of(fullName))
-    }
 
     companion object {
         fun searchFrom(searchPaths: Iterable<SearchPath>, name: ClassName): Path? {

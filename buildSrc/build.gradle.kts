@@ -53,6 +53,9 @@ dependencies {
     implementation(group = "com.google.guava", name = "guava", version = versionGuava)
 
     implementation(group = "org.ow2.asm", name = "asm", version = versionAsm)
+    implementation(group = "org.ow2.asm", name = "asm-tree", version = versionAsm)
+
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version = "0.2.0")
 
     implementation(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = versionKotlin)
 }
