@@ -31,7 +31,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-internal class NativeCoreImpl private constructor(pointer: Pointer) : CloseableNativeObject(pointer), Core {
+internal class NativeCoreImpl private constructor(pointer: NativePointer) : CloseableNativeObject(pointer), Core {
     override val activityManager: ActivityManager by nativeLazy { NativeActivityManagerImpl(this) }
 
     private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
@@ -47,7 +47,7 @@ internal class NativeCoreImpl private constructor(pointer: Pointer) : CloseableN
 
     private fun runCallbacks(): DiscordResult = native { corePointer -> runCallbacks(corePointer).toDiscordResult() }
 
-    override val destructor: Native.(Pointer) -> Unit = Native::destroy
+    override val destructor: Native.(NativePointer) -> Unit = Native::destroy
 
     @Synchronized
     override fun close() {
@@ -64,7 +64,7 @@ internal class NativeCoreImpl private constructor(pointer: Pointer) : CloseableN
         }
 
         fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {
-            return when (val result = nativeCreate(clientId, createFlags.toNative())) {
+            return when (val result = nativeCreate(clientId, createFlags.toNativeDiscordCreateFlags())) {
                 is Long -> Success(NativeCoreImpl(result))
                 is Int -> Failure(result.toDiscordResult())
                 else -> throw IllegalStateException() // This should never happen unless the native method returns garbage
@@ -78,8 +78,8 @@ internal class NativeCoreImpl private constructor(pointer: Pointer) : CloseableN
  *
  * @return Either an Int or a Long
  */
-private external fun nativeCreate(clientId: ClientId, createFlags: Int): Any
+private external fun nativeCreate(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
 
-private external fun Native.destroy(core: Pointer)
+private external fun Native.destroy(core: NativePointer)
 
-private external fun Native.runCallbacks(core: Pointer): Int
+private external fun Native.runCallbacks(core: NativePointer): Int

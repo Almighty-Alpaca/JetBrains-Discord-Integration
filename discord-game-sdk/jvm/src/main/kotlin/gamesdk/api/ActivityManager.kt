@@ -22,7 +22,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityManag
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordUserId
-import gamesdk.impl.DiscordResultCallback
 
 @OptIn(ExperimentalUnsignedTypes::class)
 typealias SteamId = UInt

@@ -16,7 +16,7 @@
 
 package gamesdk.impl.utils
 
-import gamesdk.impl.Pointer
+import gamesdk.impl.NativePointer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -25,12 +25,12 @@ internal sealed class Native
 
 private object NativeInstance : Native()
 
-internal sealed class NativeObject(private val pointer: () -> Pointer) {
+internal sealed class NativeObject(private val pointer: () -> NativePointer) {
     constructor(delegate: NativeObject) : this(delegate.pointer)
 
-    internal abstract fun <T> native(block: Native.(Pointer) -> T): T
+    internal abstract fun <T> native(block: Native.(NativePointer) -> T): T
 
-    protected fun <T> native(lock: CloseableNativeObject, block: Native.(Pointer) -> T) = synchronized(lock) {
+    protected fun <T> native(lock: CloseableNativeObject, block: Native.(NativePointer) -> T) = synchronized(lock) {
         if (pointer() != 0L) {
             NativeInstance.block(pointer())
         } else {
@@ -38,9 +38,9 @@ internal sealed class NativeObject(private val pointer: () -> Pointer) {
         }
     }
 
-    protected fun <T> nativeProperty(setter: Native.(Pointer, T) -> Unit, getter: Native.(Pointer) -> T): ReadWriteProperty<CloseableNativeObject, T> = Property(setter, getter)
+    protected fun <T> nativeProperty(setter: Native.(NativePointer, T) -> Unit, getter: Native.(NativePointer) -> T): ReadWriteProperty<CloseableNativeObject, T> = Property(setter, getter)
 
-    private class Property<T>(private val setter: Native.(Pointer, T) -> Unit, private val getter: Native.(Pointer) -> T) : ReadWriteProperty<CloseableNativeObject, T> {
+    private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: Native.(NativePointer) -> T) : ReadWriteProperty<CloseableNativeObject, T> {
         override fun setValue(thisRef: CloseableNativeObject, property: KProperty<*>, value: T) {
             thisRef.native { pointer -> setter(pointer, value) }
         }
@@ -67,16 +67,16 @@ internal abstract class DelegateNativeObject internal constructor(delegate: Nati
         is DelegateNativeObject -> delegate.closable
     }
 
-    final override fun <T> native(block: Native.(Pointer) -> T) = synchronized(closable) {
+    final override fun <T> native(block: Native.(NativePointer) -> T) = synchronized(closable) {
         super.native(closable, block)
     }
 }
 
-internal abstract class CloseableNativeObject internal constructor(private var pointer: Pointer) : NativeObject({ pointer }), AutoCloseable {
+internal abstract class CloseableNativeObject internal constructor(private var pointer: NativePointer) : NativeObject({ pointer }), AutoCloseable {
     @Synchronized
-    final override fun <T> native(block: Native.(Pointer) -> T): T = native(this, block)
+    final override fun <T> native(block: Native.(NativePointer) -> T): T = native(this, block)
 
-    protected abstract val destructor: Native.(Pointer) -> Unit
+    protected abstract val destructor: Native.(NativePointer) -> Unit
 
     @Synchronized
     override fun close() = native {

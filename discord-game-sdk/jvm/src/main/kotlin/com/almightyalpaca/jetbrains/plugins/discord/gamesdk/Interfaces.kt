@@ -18,7 +18,8 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
 
-import gamesdk.impl.DiscordResultCallback
+import gamesdk.api.DiscordRelationshipFilter
+import gamesdk.api.DiscordResultCallback
 
 interface DiscordLobbyTransaction {
     fun setType(type: DiscordLobbyType): DiscordResult
@@ -89,7 +90,7 @@ interface DiscordRelationshipEvents {
 }
 
 interface DiscordRelationshipManager {
-    fun filter(filter: (relationship: DiscordRelationship) -> Boolean)
+    fun filter(filter: DiscordRelationshipFilter)
     fun count(): Pair<DiscordResult, int32_t>
     fun get(userId: DiscordUserId): Pair<DiscordResult, DiscordRelationship?>
     fun getAt(index: uint32_t): Pair<DiscordResult, DiscordRelationship?>

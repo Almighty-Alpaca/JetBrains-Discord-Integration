@@ -22,10 +22,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Result
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.mapFirst
-import gamesdk.impl.DiscordRelationshipCallback
-import gamesdk.impl.DiscordResultCallback
+import gamesdk.api.DiscordRelationshipFilter
+import gamesdk.api.DiscordResultCallback
 import gamesdk.impl.NativeDiscordResultCallback
-import gamesdk.impl.toNative
+import gamesdk.impl.toNativeDiscordResultCallback
 import gamesdk.impl.utils.NativeLoader
 
 class DiscordLobbyTransactionImpl internal constructor(private val internalThisPointer: Long) : DiscordLobbyTransaction {
@@ -67,7 +67,7 @@ class DiscordLobbySearchQueryImpl internal constructor(private val internalThisP
 }
 
 class DiscordApplicationManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordApplicationManager {
-    override fun validateOrExit(callback: DiscordResultCallback) = native_validateOrExit(callback.toNative())
+    override fun validateOrExit(callback: DiscordResultCallback) = native_validateOrExit(callback.toNativeDiscordResultCallback())
 
     override fun getCurrentLocale() = native_getCurrentLocale()
     override fun getCurrentBranch() = native_getDiscordBranch()
@@ -117,16 +117,16 @@ class DiscordActivityManagerImpl internal constructor(private val internalThisPo
 
     override fun registerSteam(steamId: uint32_t) = DiscordResult.fromInt(native_registerSteam(steamId))
 
-    override fun updateActivity(activity: DiscordActivity, callback: DiscordResultCallback) = native_updateActivity(activity.deconstruct(), callback.toNative())
+    override fun updateActivity(activity: DiscordActivity, callback: DiscordResultCallback) = native_updateActivity(activity.deconstruct(), callback.toNativeDiscordResultCallback())
 
-    override fun clearActivity(callback: DiscordResultCallback) = native_clearActivity(callback.toNative())
+    override fun clearActivity(callback: DiscordResultCallback) = native_clearActivity(callback.toNativeDiscordResultCallback())
 
-    override fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback) = native_sendRequestReply(userId, reply.toInt(), callback.toNative())
+    override fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback) = native_sendRequestReply(userId, reply.toInt(), callback.toNativeDiscordResultCallback())
 
     override fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callback: DiscordResultCallback) =
-        native_sendInvite(userId, type.toInt(), content, callback.toNative())
+        native_sendInvite(userId, type.toInt(), content, callback.toNativeDiscordResultCallback())
 
-    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback) = native_acceptInvite(userId, callback.toNative())
+    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback) = native_acceptInvite(userId, callback.toNativeDiscordResultCallback())
 
     private external fun native_registerCommand(command: String): Int
     private external fun native_registerSteam(steamId: uint32_t): Int
@@ -138,12 +138,12 @@ class DiscordActivityManagerImpl internal constructor(private val internalThisPo
 }
 
 class DiscordRelationshipManagerImpl internal constructor(private val internalThisPointer: Long) : DiscordRelationshipManager {
-    override fun filter(filter: (relationship: DiscordRelationship) -> Boolean) = native_filter(filter)
+    override fun filter(filter: DiscordRelationshipFilter) = native_filter(filter)
     override fun count() = native_count()
     override fun get(userId: DiscordUserId): Pair<DiscordResult, DiscordRelationship?> = native_get(userId).mapFirst(DiscordResult.Companion::fromInt)
     override fun getAt(index: uint32_t): Pair<DiscordResult, DiscordRelationship?> = native_getAt(index).mapFirst(DiscordResult.Companion::fromInt)
 
-    private external fun native_filter(filter: DiscordRelationshipCallback)
+    private external fun native_filter(filter: DiscordRelationshipFilter)
     private external fun native_count(): Pair<DiscordResult, int32_t>
     private external fun native_get(userId: DiscordUserId): Pair<Int, DiscordRelationship?>
     private external fun native_getAt(index: uint32_t): Pair<Int, DiscordRelationship?>

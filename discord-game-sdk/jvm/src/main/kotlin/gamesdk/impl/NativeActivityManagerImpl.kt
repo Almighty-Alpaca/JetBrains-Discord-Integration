@@ -17,9 +17,8 @@
 package gamesdk.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordUserId
 import gamesdk.api.ActivityManager
+import gamesdk.api.DiscordResultCallback
 import gamesdk.api.SteamId
 import gamesdk.impl.utils.DelegateNativeObject
 import gamesdk.impl.utils.Native
@@ -35,36 +34,43 @@ internal class NativeActivityManagerImpl(core: NativeCoreImpl) : DelegateNativeO
         suspendCallback { callback -> updateActivity(activity, callback) }
 
     override fun updateActivity(activity: DiscordActivity, callback: DiscordResultCallback) =
-        native { corePointer -> updateActivity(corePointer, activity.deconstruct(), callback.toNative()) }
+        native { corePointer -> updateActivity(corePointer, activity.deconstruct(), callback.toNativeDiscordResultCallback()) }
 
     override suspend fun clearActivity(): DiscordResult =
         suspendCallback { callback -> clearActivity(callback) }
 
     override fun clearActivity(callback: DiscordResultCallback) =
-        native { corePointer -> clearActivity(corePointer, callback.toNative()) }
+        native { corePointer -> clearActivity(corePointer, callback.toNativeDiscordResultCallback()) }
 
     override suspend fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply): DiscordResult =
         suspendCallback { callback -> sendRequestReply(userId, reply, callback) }
 
     override fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback): Unit =
-        TODO("Not yet implemented")
+        native { corePointer -> sendRequestReply(corePointer, userId, reply.toNativeDiscordActivityJoinRequestReply(), callback.toNativeDiscordResultCallback()) }
 
     override suspend fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String): DiscordResult =
         suspendCallback { callback -> sendInvite(userId, type, content, callback) }
 
     override fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callback: DiscordResultCallback): Unit =
-        TODO("Not yet implemented")
+        native { corePointer -> sendInvite(corePointer, userId, type.toNativeDiscordActivityActionType(), content, callback.toNativeDiscordResultCallback()) }
 
     override suspend fun acceptInvite(userId: DiscordUserId): DiscordResult =
         suspendCallback { callback -> acceptInvite(userId, callback) }
 
-    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback): Unit = TODO("Not yet implemented")
+    override fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback) =
+        native { corePointer -> acceptInvite(corePointer, userId, callback.toNativeDiscordResultCallback()) }
 }
 
-private external fun Native.registerCommand(core: Pointer, command: String): Int
+private external fun Native.registerCommand(core: NativePointer, command: String): Int
 
-private external fun Native.registerSteam(core: Pointer, steamId: SteamId): Int
+private external fun Native.registerSteam(core: NativePointer, steamId: SteamId): Int
 
-private external fun Native.updateActivity(core: Pointer, activity: DeconstructedDiscordActivity, callback: NativeDiscordResultCallback)
+private external fun Native.updateActivity(core: NativePointer, activity: DeconstructedDiscordActivity, callback: NativeDiscordResultCallback)
 
-private external fun Native.clearActivity(core: Pointer, callback: NativeDiscordResultCallback)
+private external fun Native.clearActivity(core: NativePointer, callback: NativeDiscordResultCallback)
+
+private external fun Native.sendRequestReply(core: NativePointer, userId: DiscordUserId, reply: NativeDiscordActivityJoinRequestReply, callback: NativeDiscordResultCallback)
+
+private external fun Native.sendInvite(core: NativePointer, userId: DiscordUserId, type: NativeDiscordActivityActionType, content: String, callback: NativeDiscordResultCallback)
+
+private external fun Native.acceptInvite(core: NativePointer, userId: DiscordUserId, callback: NativeDiscordResultCallback)

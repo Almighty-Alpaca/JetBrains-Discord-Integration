@@ -160,3 +160,34 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_clearActivi
 
     core->ActivityManager().ClearActivity(callback);
 }
+
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_sendRequestReply(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore, jlong jUserId, jint jReply, jobject jCallback)
+{
+    discord::Core *core = (discord::Core *)jCore;
+
+    std::function<void(discord::Result)> callback = createResultCallback(env, jCallback);
+
+    core->ActivityManager().SendRequestReply((discord::UserId)jUserId, (discord::ActivityJoinRequestReply)jReply, callback);
+}
+
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_sendInvite(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore, jlong jUserId, jint jType, jstring jContent, jobject jCallback)
+{
+    discord::Core *core = (discord::Core *)jCore;
+
+    std::function<void(discord::Result)> callback = createResultCallback(env, jCallback);
+
+    const char *content = env->GetStringUTFChars(jContent, nullptr);
+
+    core->ActivityManager().SendInvite((discord::UserId)jUserId, (discord::ActivityActionType)jType, content, callback);
+
+    env->ReleaseStringUTFChars(jContent, content);
+}
+
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_acceptInvite(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore, jlong jUserId, jobject jCallback)
+{
+    discord::Core *core = (discord::Core *)jCore;
+
+    std::function<void(discord::Result)> callback = createResultCallback(env, jCallback);
+
+    core->ActivityManager().AcceptInvite((discord::UserId)jUserId, callback);
+}
