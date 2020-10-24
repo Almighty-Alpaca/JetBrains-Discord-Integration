@@ -1,4 +1,4 @@
-#include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl.h"
+#include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl.h"
 #include "discord_game_sdk.h"
 #include "commons.h"
 
@@ -117,7 +117,7 @@ static DiscordActivity construct_activity(JNIEnv* env, jobject p_activity) {
  * Method:     native_1registerCommand
  * Signature:  (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1registerCommand
+JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1registerCommand
   (JNIEnv * env, jobject this_ptr, jstring name)
 {
     IDiscordActivityManager* manager;
@@ -136,7 +136,7 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1registerSteam_0002dWZ4Q5Ns
  * Signature:  (I)I
  */
-JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1registerSteam_0002dWZ4Q5Ns
+JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1registerSteam_0002dWZ4Q5Ns
   (JNIEnv * env, jobject this_ptr, jint steam_id)
 {
     IDiscordActivityManager* manager;
@@ -225,7 +225,7 @@ namespace discord_activity {
  * Method:     native_1updateActivity
  * Signature:  (Lcom/almightyalpaca/jetbrains/plugins/discord/gamesdk/DeconstructedDiscordActivity;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1updateActivity
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1updateActivity
   (JNIEnv *env, jobject this_ptr, jobject p_activity, jobject p_callback)
 {
     IDiscordActivityManager* manager;
@@ -243,7 +243,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1clearActivity
  * Signature:  (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1clearActivity
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1clearActivity
   (JNIEnv *env, jobject this_ptr, jobject p_callback)
 {
     IDiscordActivityManager* manager;
@@ -259,7 +259,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1sendRequestReply
  * Signature:  (JILjava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1sendRequestReply
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1sendRequestReply
   (JNIEnv *env, jobject this_ptr, jlong user_id, jint reply, jobject p_callback)
 {
     IDiscordActivityManager* manager;
@@ -275,7 +275,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1sendInvite
  * Signature:  (JILjava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1sendInvite
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1sendInvite
   (JNIEnv *env, jobject this_ptr, jlong user_id, jint type, jstring content, jobject p_callback)
 {
     IDiscordActivityManager* manager;
@@ -295,7 +295,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1acceptInvite
  * Signature:  (JLjava/lang/Object;Lkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordActivityManagerImpl_native_1acceptInvite
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl_native_1acceptInvite
   (JNIEnv *env, jobject this_ptr, jlong user_id, jobject p_callback)
 {
     IDiscordActivityManager* manager;

@@ -16,8 +16,8 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordRelationship
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordRelationship
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordResult
 
 typealias DiscordResultCallback = (result: DiscordResult) -> Unit
 

@@ -16,7 +16,7 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.DiscordResultCallback
 import gamesdk.api.DiscordResultObjectCallback
 import kotlin.coroutines.resume

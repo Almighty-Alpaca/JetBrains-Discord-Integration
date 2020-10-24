@@ -1,5 +1,5 @@
 #include "commons.h"
-#include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl.h"
+#include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl.h"
 #include "discord_game_sdk.h"
 #include <iostream>
 
@@ -8,7 +8,7 @@
  * Method:     native_1destroy
  * Signature:  ()V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1destroy
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1destroy
   (JNIEnv *env, jobject this_ptr)
 {
     IDiscordCore* core;
@@ -21,7 +21,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1runCallbacks
  * Signature:  ()I
  */
-JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1runCallbacks
+JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1runCallbacks
   (JNIEnv *env, jobject this_ptr)
 {
     IDiscordCore* core;
@@ -108,7 +108,7 @@ namespace discordcore {
  * Method:     native_1setLogHook
  * Signature:  (ILkotlin/jvm/functions/Function2;)V
  */
-JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1setLogHook
+JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1setLogHook
   (JNIEnv *env, jobject this_ptr, jint min_level, jobject p_callback)
 {
     IDiscordCore* core;
@@ -129,7 +129,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Method:     native_1getApplicationManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getApplicationManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getApplicationManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(application)
@@ -140,7 +140,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getUserManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getUserManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getUserManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(user)
@@ -151,7 +151,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getImageManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getImageManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getImageManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(image)
@@ -162,7 +162,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getActivityManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getActivityManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getActivityManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(activity)
@@ -173,7 +173,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getRelationshipManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getRelationshipManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getRelationshipManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(relationship)
@@ -184,7 +184,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getLobbyManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getLobbyManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getLobbyManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(lobby)
@@ -194,7 +194,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getNetworkManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getNetworkManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getNetworkManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(network)
@@ -205,7 +205,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getOverlayManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getOverlayManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getOverlayManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(overlay)
@@ -216,7 +216,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getStorageManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getStorageManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getStorageManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(storage)
@@ -227,7 +227,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getStoreManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getStoreManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getStoreManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(store)
@@ -238,7 +238,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getVoiceManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getVoiceManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getVoiceManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(voice)
@@ -249,7 +249,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Method:     native_1getAchievementManager
  * Signature:  ()J
  */
-JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1getAchievementManager
+JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getAchievementManager
   (JNIEnv *env, jobject this_ptr)
 {
     GetMgr(achievement)
@@ -271,7 +271,7 @@ extern IDiscordActivityEvents       activity_manager_events;
  * Method:     native_1create_0002dJSWoG40
  * Signature:  (JI)J
  */
-JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl_native_1create_0002dJSWoG40
+JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1create_0002dJSWoG40
   (JNIEnv *env, jclass __class, jlong client_id, jint flags)
 {
     IDiscordCore* core = nullptr;

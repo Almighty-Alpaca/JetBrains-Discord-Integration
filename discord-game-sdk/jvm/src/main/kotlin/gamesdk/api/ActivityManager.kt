@@ -16,12 +16,7 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityActionType
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityJoinRequestReply
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivityManager
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordActivity
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordUserId
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 
 @OptIn(ExperimentalUnsignedTypes::class)
 typealias SteamId = UInt

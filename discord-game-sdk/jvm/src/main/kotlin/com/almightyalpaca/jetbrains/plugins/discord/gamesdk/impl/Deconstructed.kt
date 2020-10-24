@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl
+
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 
 /*
-    To simplify the native interface, this file contains "deconstructed" classes,
-    which are made out only of primitives and Strings
+ * To simplify the native interface, this file contains "deconstructed" classes,
+ * which are made out only of primitives and Strings
  */
 
 internal class DeconstructedDiscordImageHandle internal constructor(

@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
+
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.VoidPointer
+
+sealed class Result<out T, out E>
+
+data class Success<out T>(val value: T) : Result<T, Nothing>()
+data class Failure<out E>(val reason: E) : Result<Nothing, E>()
 
 typealias int8_t = Byte
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -137,7 +144,7 @@ class DiscordImeUnderline(
     val thick: Boolean
 )
 
-class DiscordRect (
+class DiscordRect(
     val left: int32_t,
     val top: int32_t,
     val right: int32_t,

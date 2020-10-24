@@ -16,9 +16,9 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Result
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCreateFlags
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Result
 import gamesdk.impl.NativeCoreImpl
 
 typealias ClientId = Long

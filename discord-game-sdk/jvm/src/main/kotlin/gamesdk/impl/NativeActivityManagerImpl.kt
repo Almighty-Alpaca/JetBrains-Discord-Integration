@@ -16,7 +16,9 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DeconstructedDiscordActivity
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.deconstruct
 import gamesdk.api.ActivityManager
 import gamesdk.api.DiscordResultCallback
 import gamesdk.api.SteamId

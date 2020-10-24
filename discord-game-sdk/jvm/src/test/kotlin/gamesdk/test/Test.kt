@@ -16,10 +16,8 @@
 
 package gamesdk.test
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.*
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.orInvalidDiscord
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
 import gamesdk.api.Core
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -54,28 +52,26 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
     fun testActivity2() {
-        var core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord).orInvalidDiscord()
-
-//        core.setLogHook(DiscordLogLevel.Debug) {
-//            level, message ->
-//            println("Discord($level): $message")
-//        }
-
-        lateinit var activityManager: DiscordActivityManager
-
-        var discordRunning = core.isValid()
-        if (discordRunning) {
-            activityManager = core.getActivityManager()
-        }
-
         runBlocking {
+            var core: DiscordCore? = when (val result = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)) {
+                is Success -> result.value
+                is Failure -> {
+                    println("Error " + result.reason)
+                    null
+                }
+            }
+
+            // core.setLogHook(DiscordLogLevel.Debug) { level, message ->
+            //     println("Discord($level): $message")
+            // }
+
             for (i in 0..180) {
-                if (discordRunning) {
+                if (core != null) {
                     println("Running")
                     if (i % 15 == 0) {
                         val activity = DiscordActivity(310270644849737729, state = "Waiting", details = "...")
 
-                        activityManager.updateActivity(activity) { result ->
+                        core.getActivityManager().updateActivity(activity) { result ->
                             println(result)
                         }
                     }
@@ -84,25 +80,29 @@ class Test {
                     println("Callback result: $result")
 
                     if (result == DiscordResult.NotRunning) {
-                        discordRunning = false
                         println("Discord is not running anymore")
                         core.destroy()
+                        core = null
                     }
                 } else {
                     println("Trying to reconnect")
-                    core = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord).orInvalidDiscord()
-                    discordRunning = core.isValid()
-                    if (discordRunning) {
-                        activityManager = core.getActivityManager()
+
+                    core = when (val result = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)) {
+                        is Success -> result.value
+                        is Failure -> {
+                            println("Error " + result.reason)
+                            null
+                        }
                     }
                 }
                 delay(1.seconds)
             }
-            activityManager.clearActivity { result ->
+
+            core?.getActivityManager()?.clearActivity { result ->
                 println(result)
             }
 
-            core.destroy()
+            core?.destroy()
         }
     }
 }

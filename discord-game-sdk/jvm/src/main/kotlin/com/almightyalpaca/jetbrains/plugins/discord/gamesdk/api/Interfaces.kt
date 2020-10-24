@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
-
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DoublePointer
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.Pointer
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.VoidPointer
 import gamesdk.api.DiscordRelationshipFilter
 import gamesdk.api.DiscordResultCallback
 

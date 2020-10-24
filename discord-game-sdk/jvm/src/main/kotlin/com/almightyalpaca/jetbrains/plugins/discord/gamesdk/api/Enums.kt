@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
+
+import java.util.*
 
 enum class DiscordResult {
     Ok,
@@ -64,27 +66,28 @@ enum class DiscordResult {
     DrawingInitFailed,
     ;
 
-    fun toInt(): Int {
+    internal fun toInt(): Int {
         return this.ordinal
     }
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
 enum class DiscordCreateFlags {
     /**
-     * Default is dangerous as the Game SDK will kill the application when Discord isn't running
+     * **WARNING:** Default is potentially dangerous as the Game SDK will kill the
+     * whole application when Discord isn't running or is closed
      */
     Default,
     NoRequireDiscord,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -95,22 +98,33 @@ enum class DiscordLogLevel {
     Debug,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
+typealias DiscordUserFlags = EnumSet<DiscordUserFlag>
 
-// well this is just masks so we need ints.
-typealias DiscordUserFlag = Int
+enum class DiscordUserFlag(private val bit: Int) {
+    Partner(1),
+    HypeSquadEvents(2),
+    HypeSquadHouse1(6),
+    HypeSquadHouse2(7),
+    HypeSquadHouse3(8),
+    ;
 
-const val DiscordUserFlag_Partner = 2
-const val DiscordUserFlag_HypeSquadEvents = 4
-const val DiscordUserFlag_HypeSquadHouse1 = 64
-const val DiscordUserFlag_HypeSquadHouse2 = 128
-const val DiscordUserFlag_HypeSquadHouse3 = 256
+    companion object {
+        internal fun DiscordUserFlags.toInt(): Int = fold(0, { acc, flag -> acc or (1 shr flag.bit) })
+
+        internal fun fromInt(i: Int): EnumSet<DiscordUserFlag> = values()
+            .filterTo(
+                EnumSet.noneOf<DiscordUserFlag>(DiscordUserFlag::class.java),
+                { flag -> i and (1 shr flag.bit) != 0 }
+            )
+    }
+}
 
 enum class DiscordPremiumType {
     None,
@@ -118,10 +132,10 @@ enum class DiscordPremiumType {
     Tier2,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -129,10 +143,10 @@ enum class DiscordImageType {
     User,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -141,10 +155,10 @@ enum class DiscordActivityPartyPrivacy {
     Public,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -155,10 +169,10 @@ enum class DiscordActivityType {
     Watching,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -167,10 +181,10 @@ enum class DiscordActivityActionType {
     Spectate,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
@@ -180,10 +194,10 @@ enum class DiscordActivityJoinRequestReply {
     Ignore,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -194,10 +208,10 @@ enum class DiscordStatus {
     DoNotDisturb,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -210,10 +224,10 @@ enum class DiscordRelationshipType {
     Implicit,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -222,10 +236,10 @@ enum class DiscordLobbyType {
     Public,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
@@ -238,10 +252,10 @@ enum class DiscordLobbySearchComparison {
     NotEqual,
     ;
 
-    fun toInt() = this.ordinal - 2
+    internal fun toInt() = this.ordinal - 2
 
     companion object {
-        fun fromInt(i: Int) = values()[i + 2]
+        internal fun fromInt(i: Int) = values()[i + 2]
     }
 }
 
@@ -250,10 +264,10 @@ enum class DiscordLobbySearchCast {
     Number,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
@@ -264,10 +278,10 @@ enum class DiscordLobbySearchDistance {
     Global,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -277,10 +291,10 @@ enum class DiscordKeyVariant {
     Left,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -289,11 +303,11 @@ enum class DiscordMouseButton {
     Middle,
     Right,
     ;
-    
-    fun toInt() = this.ordinal
+
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }
 
@@ -307,10 +321,10 @@ enum class DiscordEntitlementType {
     PremiumPurchase,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
@@ -321,10 +335,10 @@ enum class DiscordSkuType {
     Bundle,
     ;
 
-    fun toInt() = this.ordinal + 1
+    internal fun toInt() = this.ordinal + 1
 
     companion object {
-        fun fromInt(i: Int) = values()[i - 1]
+        internal fun fromInt(i: Int) = values()[i - 1]
     }
 }
 
@@ -333,9 +347,9 @@ enum class DiscordInputModeType {
     PushToTalk,
     ;
 
-    fun toInt() = this.ordinal
+    internal fun toInt() = this.ordinal
 
     companion object {
-        fun fromInt(i: Int) = values()[i]
+        internal fun fromInt(i: Int) = values()[i]
     }
 }

@@ -16,11 +16,7 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordCreateFlags
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.DiscordResult
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Failure
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Result
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils.Success
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
@@ -65,8 +61,8 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Clos
 
         fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {
             return when (val result = nativeCreate(clientId, createFlags.toNativeDiscordCreateFlags())) {
-                is Long -> Success(NativeCoreImpl(result))
-                is Int -> Failure(result.toDiscordResult())
+                is NativePointer -> Success(NativeCoreImpl(result))
+                is NativeDiscordResult -> Failure(result.toDiscordResult())
                 else -> throw IllegalStateException() // This should never happen unless the native method returns garbage
             }
         }
@@ -76,7 +72,7 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Clos
 /**
  * This one can't have Native as receiver because it's creating the object
  *
- * @return Either an Int or a Long
+ * @return Either a [NativeDiscordResult] or a [NativePointer]
  */
 private external fun nativeCreate(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
 

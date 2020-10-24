@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
 
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator
@@ -45,24 +45,3 @@ class StringLengthValidator : ConstraintValidator<StringLength, String> {
         return (value.length >= min) && (value.length + (if (includingNullTerminator) 1 else 0) <= max)
     }
 }
-
-/**
- * Just a visible hint that this is a pointer T* to help readability
- * It is only used to annotate longs.
- */
-@Target(AnnotationTarget.TYPE)
-annotation class Pointer<T>
-
-/**
- * Just a visible hint that this is a pointer T** to help readability
- * It is only used to annotate longs.
- */
-@Target(AnnotationTarget.TYPE)
-annotation class DoublePointer<T>
-
-/**
- * Just a visible hint that this is a void* pointer to help readability
- * It is only used to annotate longs.
- */
-@Target(AnnotationTarget.TYPE)
-annotation class VoidPointer

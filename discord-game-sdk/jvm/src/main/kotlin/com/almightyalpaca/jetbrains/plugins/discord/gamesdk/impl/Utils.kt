@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.utils
+package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl
 
-inline fun <A, B, C> Pair<A, B>.mapFirst(f: (A) -> C): Pair<C, B> = f(this.first) to this.second
-inline fun <A, B, C> Pair<A, B>.mapSecond(f: (B) -> C): Pair<A, C> = this.first to f(this.second)
+internal inline fun <A, B, C> Pair<A, B>.mapFirst(f: (A) -> C): Pair<C, B> = f(this.first) to this.second
+internal inline fun <A, B, C> Pair<A, B>.mapSecond(f: (B) -> C): Pair<A, C> = this.first to f(this.second)
 
