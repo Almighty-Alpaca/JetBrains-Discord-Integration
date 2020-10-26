@@ -18,7 +18,6 @@ rootProject.name = "JetBrains-Discord-Integration"
 
 include("icons")
 include("plugin")
-include("plugin:gamesdk")
 include("uploader")
 include("bot")
 include("discord-game-sdk:jvm")
