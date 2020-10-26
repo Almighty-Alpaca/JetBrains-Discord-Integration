@@ -20,15 +20,16 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
-import gamesdk.impl.utils.CloseableNativeObject
 import gamesdk.impl.utils.Native
 import gamesdk.impl.utils.NativeLoader
+import gamesdk.impl.utils.NativeMethod
+import gamesdk.impl.utils.NativeObject
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-internal class NativeCoreImpl private constructor(pointer: NativePointer) : CloseableNativeObject(pointer), Core {
-    override val activityManager: ActivityManager by nativeLazy { NativeActivityManagerImpl(this) }
+internal class NativeCoreImpl private constructor(pointer: NativePointer) : NativeObject.Closeable(pointer), Core {
+    override val activityManager: ActivityManager by nativeLazy { pointer -> NativeActivityManagerImpl(getActivityManager(pointer), this@NativeCoreImpl) }
 
     private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
@@ -43,7 +44,7 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Clos
 
     private fun runCallbacks(): DiscordResult = native { corePointer -> runCallbacks(corePointer).toDiscordResult() }
 
-    override val destructor: Native.(NativePointer) -> Unit = Native::destroy
+    override val destructor: NativeMethod<Unit> = Native::destroy
 
     @Synchronized
     override fun close() {
@@ -79,3 +80,5 @@ private external fun nativeCreate(clientId: ClientId, createFlags: NativeDiscord
 private external fun Native.destroy(core: NativePointer)
 
 private external fun Native.runCallbacks(core: NativePointer): Int
+
+private external fun Native.getActivityManager(core: NativePointer): NativePointer

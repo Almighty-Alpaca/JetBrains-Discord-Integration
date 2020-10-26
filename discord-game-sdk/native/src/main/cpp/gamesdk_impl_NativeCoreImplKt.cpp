@@ -17,11 +17,11 @@
 #include "gamesdk_impl_NativeCoreImplKt.h"
 #include "core.h"
 
-JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *env, jclass, jlong clientId, jint createFlags)
+JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *env, jclass jClass, jlong jClientId, jint jCreateFlags)
 {
     discord::Core *core{};
 
-    discord::Result result = discord::Core::Create(clientId, (std::uint64_t)createFlags, &core);
+    discord::Result result = discord::Core::Create((discord::ClientId)jClientId, (std::uint64_t)jCreateFlags, &core);
 
     if (core == nullptr)
     {
@@ -57,14 +57,21 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv
     return nullptr;
 }
 
-JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *, jclass, jobject, jlong jCore)
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
 {
     delete (discord::Core *)jCore;
 }
 
-JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *, jclass, jobject, jlong jCore)
+JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
 {
     discord::Core *core = (discord::Core *)jCore;
 
     return (jint)core->RunCallbacks();
+}
+
+JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getActivityManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
+{
+    discord::Core *core = (discord::Core *)jCore;
+
+    return (jlong)&core->ActivityManager();
 }

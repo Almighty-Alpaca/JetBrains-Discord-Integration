@@ -31,20 +31,23 @@ class Test {
     fun testActivity() {
         when (val result = Core.create(768507783167344680, DiscordCreateFlags.NoRequireDiscord)) {
             is Failure -> println(result.reason)
-            is Success -> result.value.use { core ->
-                val activity = DiscordActivity(768507783167344680, state = "Testing...")
+            is Success -> {
+                result.value.use { core ->
+                    val activity = DiscordActivity(768507783167344680, state = "Testing...")
 
-                runBlocking {
-                    val updateResult = core.activityManager.updateActivity(activity)
-                    println(updateResult)
+                    runBlocking {
+                        val updateResult = core.activityManager.updateActivity(activity)
+                        println(updateResult)
 
-                    delay(10.seconds)
+                        delay(5.seconds)
 
-                    val clearResult = core.activityManager.clearActivity()
-                    println(clearResult)
+                        val clearResult = core.activityManager.clearActivity()
+                        println(clearResult)
 
-                    delay(5.seconds)
+                        delay(5.seconds)
+                    }
                 }
+                println("Done")
             }
         }
     }

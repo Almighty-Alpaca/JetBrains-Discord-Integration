@@ -25,63 +25,88 @@ internal sealed class Native
 
 private object NativeInstance : Native()
 
-internal sealed class NativeObject(private val pointer: () -> NativePointer) {
-    constructor(delegate: NativeObject) : this(delegate.pointer)
+internal typealias NativeMethod<T> = Native.(pointer: NativePointer) -> T
 
-    internal abstract fun <T> native(block: Native.(NativePointer) -> T): T
+internal sealed class NativeObject(@Volatile private var pointer: NativePointer) {
+    private val children = mutableSetOf<NativeObject>()
+    private fun register(child: NativeObject): Unit = native { children.add(child) }
+    private fun unregister(child: NativeObject): Unit = synchronized { children.remove(child) }
 
-    protected fun <T> native(lock: CloseableNativeObject, block: Native.(NativePointer) -> T) = synchronized(lock) {
-        if (pointer() != 0L) {
-            NativeInstance.block(pointer())
+    private val alive
+        get() = synchronized { pointer != 0L }
+
+    protected open fun close(): Unit = native {
+        pointer = 0L
+
+        // To prevent ConcurrentModificationException
+        children.toSet().forEach(NativeObject::close)
+    }
+
+    private val lock: Closeable
+        get() = when (this) {
+            is Delegate -> this.parent.lock
+            is Closeable -> this
+        }
+
+    private fun <T> synchronized(block: () -> T) = synchronized(lock, block)
+
+    protected fun <T> native(block: NativeMethod<T>) = synchronized {
+        if (pointer != 0L) {
+            NativeInstance.block(pointer)
         } else {
             throw IllegalStateException("Object was already closed")
         }
     }
 
-    protected fun <T> nativeProperty(setter: Native.(NativePointer, T) -> Unit, getter: Native.(NativePointer) -> T): ReadWriteProperty<CloseableNativeObject, T> = Property(setter, getter)
+    protected fun <T> nativeProperty(setter: Native.(NativePointer, T) -> Unit, getter: NativeMethod<T>): ReadWriteProperty<Closeable, T> = Property(setter, getter)
 
-    private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: Native.(NativePointer) -> T) : ReadWriteProperty<CloseableNativeObject, T> {
-        override fun setValue(thisRef: CloseableNativeObject, property: KProperty<*>, value: T) {
+    private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: NativeMethod<T>) : ReadWriteProperty<Closeable, T> {
+        override fun setValue(thisRef: Closeable, property: KProperty<*>, value: T) {
             thisRef.native { pointer -> setter(pointer, value) }
         }
 
-        override fun getValue(thisRef: CloseableNativeObject, property: KProperty<*>): T {
+        override fun getValue(thisRef: Closeable, property: KProperty<*>): T {
             return thisRef.native { pointer -> getter(pointer) }
         }
     }
 
-    protected fun <T> nativeLazy(tCreator: () -> T): ReadOnlyProperty<NativeObject, T> = Lazy(tCreator)
+    protected fun <T : Any> nativeLazy(tCreator: NativeMethod<T>): ReadOnlyProperty<NativeObject, T> = Lazy(tCreator)
 
-    private class Lazy<T>(tCreator: () -> T) : ReadOnlyProperty<NativeObject, T> {
-        private val t by lazy(tCreator)
+    private class Lazy<T : Any>(private val tCreator: NativeMethod<T>) : ReadOnlyProperty<NativeObject, T> {
+        @Volatile
+        private var value: T? = null
 
-        override fun getValue(thisRef: NativeObject, property: KProperty<*>): T {
-            return thisRef.native { t }
+        override fun getValue(thisRef: NativeObject, property: KProperty<*>): T = thisRef.native { pointer ->
+            var value = value
+
+            if (value == null) {
+                value = tCreator(pointer)
+                this@Lazy.value = value
+            }
+
+            value
         }
     }
-}
 
-internal abstract class DelegateNativeObject internal constructor(delegate: NativeObject) : NativeObject(delegate) {
-    private val closable: CloseableNativeObject = when (delegate) {
-        is CloseableNativeObject -> delegate
-        is DelegateNativeObject -> delegate.closable
+    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObject) : NativeObject(pointer) {
+        init {
+            parent.register(this)
+        }
+
+        override fun close() {
+            parent.unregister(this)
+
+            super.close()
+        }
     }
 
-    final override fun <T> native(block: Native.(NativePointer) -> T) = synchronized(closable) {
-        super.native(closable, block)
-    }
-}
+    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObject(pointer), AutoCloseable {
+        protected abstract val destructor: NativeMethod<Unit>
 
-internal abstract class CloseableNativeObject internal constructor(private var pointer: NativePointer) : NativeObject({ pointer }), AutoCloseable {
-    @Synchronized
-    final override fun <T> native(block: Native.(NativePointer) -> T): T = native(this, block)
+        override fun close() = native { pointer ->
+            destructor(pointer)
 
-    protected abstract val destructor: Native.(NativePointer) -> Unit
-
-    @Synchronized
-    override fun close() = native {
-        destructor(pointer)
-
-        pointer = 0
+            super.close()
+        }
     }
 }
