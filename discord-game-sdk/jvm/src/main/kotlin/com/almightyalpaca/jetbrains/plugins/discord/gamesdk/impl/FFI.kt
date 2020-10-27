@@ -148,8 +148,10 @@ internal class DiscordRelationshipManagerImpl(private val internalThisPointer: L
 }
 
 internal class DiscordCoreImpl(private val internalThisPointer: Long) : DiscordCore {
-    override fun isValid() = internalThisPointer != 0L
-    override fun destroy() = native_destroy()
+    override val alive: Boolean
+        get() = internalThisPointer != 0L
+
+    override fun close() = native_destroy()
     override fun runCallbacks() = DiscordResult.fromInt(native_runCallbacks())
     override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit) =
         native_setLogHook(minLevel.toInt()) { level, message -> hook(DiscordLogLevel.fromInt(level), message) }

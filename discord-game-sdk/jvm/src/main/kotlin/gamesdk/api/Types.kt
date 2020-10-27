@@ -16,11 +16,22 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordRelationship
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordResult
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 
 typealias DiscordResultCallback = (result: DiscordResult) -> Unit
 
 typealias DiscordResultObjectCallback<T> = (result: DiscordResult, other: T) -> Unit
 
 typealias DiscordRelationshipFilter = (relationship: DiscordRelationship) -> Boolean
+
+interface ApplicationManager : DiscordApplicationManager
+interface UserManager : DiscordUserManager
+interface ImageManager : DiscordImageManager
+interface RelationshipManager : DiscordRelationshipManager
+interface LobbyManager : DiscordLobbyManager
+interface NetworkManager : DiscordNetworkManager
+interface OverlayManager : DiscordOverlayManager
+interface StorageManager : DiscordStorageManager
+interface StoreManager : DiscordStoreManager
+interface VoiceManager : DiscordVoiceManager
+interface AchievementManager : DiscordAchievementManager

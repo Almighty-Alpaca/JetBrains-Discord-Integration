@@ -17,39 +17,39 @@
 package gamesdk.impl
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
-import gamesdk.api.ActivityManager
-import gamesdk.api.ClientId
-import gamesdk.api.Core
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
+import gamesdk.api.*
 
 internal class NativeCoreImpl private constructor(pointer: NativePointer) : NativeObjectImpl.Closeable(pointer), Core {
+    override val applicationManager: ApplicationManager
+        get() = TODO("Not yet implemented")
+    override val userManager: UserManager
+        get() = TODO("Not yet implemented")
+    override val imageManager: ImageManager
+        get() = TODO("Not yet implemented")
+
     override val activityManager: ActivityManager by nativeLazy { pointer -> NativeActivityManagerImpl(getActivityManager(pointer), this@NativeCoreImpl) }
 
-    private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+    override val relationshipManager: RelationshipManager
+        get() = TODO("Not yet implemented")
+    override val lobbyManager: LobbyManager
+        get() = TODO("Not yet implemented")
+    override val networkManager: NetworkManager
+        get() = TODO("Not yet implemented")
+    override val overlayManager: OverlayManager
+        get() = TODO("Not yet implemented")
+    override val storageManager: StorageManager
+        get() = TODO("Not yet implemented")
+    override val storeManager: StoreManager
+        get() = TODO("Not yet implemented")
+    override val voiceManager: VoiceManager
+        get() = TODO("Not yet implemented")
+    override val achievementManager: AchievementManager
+        get() = TODO("Not yet implemented")
 
-    init {
-        runner.scheduleAtFixedRate({
-            val result = runCallbacks()
-            if (result != DiscordResult.Ok) {
-                println("Error running callbacks: $result")
-            }
-        }, 0L, 1L, TimeUnit.SECONDS)
-    }
-
-    private fun runCallbacks(): DiscordResult = native { corePointer -> runCallbacks(corePointer).toDiscordResult() }
+    override fun runCallbacks(): DiscordResult = native { pointer -> runCallbacks(pointer).toDiscordResult() }
+    override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit): Unit = TODO("Not yet implemented")
 
     override val destructor: NativeMethod<Unit> = Native::destroy
-
-    @Synchronized
-    override fun close() {
-        runner.shutdown()
-        runner.awaitTermination(10, TimeUnit.SECONDS)
-        runner.shutdownNow()
-
-        super.close()
-    }
 
     companion object : NativeObjectCreator() {
         fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {

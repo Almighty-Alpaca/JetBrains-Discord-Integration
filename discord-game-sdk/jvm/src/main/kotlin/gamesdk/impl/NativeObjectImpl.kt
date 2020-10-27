@@ -69,6 +69,28 @@ internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePoin
         }
     }
 
+    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
+        init {
+            parent.register(this)
+        }
+
+        override fun close() {
+            parent.unregister(this)
+
+            super.close()
+        }
+    }
+
+    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
+        protected abstract val destructor: NativeMethod<Unit>
+
+        override fun close() = native { pointer ->
+            destructor(pointer)
+
+            super.close()
+        }
+    }
+
     protected fun <T> nativeProperty(setter: Native.(NativePointer, T) -> Unit, getter: NativeMethod<T>): ReadWriteProperty<Closeable, T> = Property(setter, getter)
 
     private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: NativeMethod<T>) : ReadWriteProperty<Closeable, T> {
@@ -96,28 +118,6 @@ internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePoin
             }
 
             value
-        }
-    }
-
-    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
-        init {
-            parent.register(this)
-        }
-
-        override fun close() {
-            parent.unregister(this)
-
-            super.close()
-        }
-    }
-
-    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
-        protected abstract val destructor: NativeMethod<Unit>
-
-        override fun close() = native { pointer ->
-            destructor(pointer)
-
-            super.close()
         }
     }
 }

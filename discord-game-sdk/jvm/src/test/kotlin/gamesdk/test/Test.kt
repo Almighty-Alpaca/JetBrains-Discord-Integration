@@ -19,6 +19,7 @@ package gamesdk.test
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
 import gamesdk.api.Core
+import gamesdk.api.ThreadedCore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -32,7 +33,7 @@ class Test {
         when (val result = Core.create(768507783167344680, DiscordCreateFlags.NoRequireDiscord)) {
             is Failure -> println(result.reason)
             is Success -> {
-                result.value.use { core ->
+                result.value.let(ThreadedCore.Companion::create). use { core ->
                     val activity = DiscordActivity(768507783167344680, state = "Testing...")
 
                     runBlocking {
@@ -84,7 +85,7 @@ class Test {
 
                     if (result == DiscordResult.NotRunning) {
                         println("Discord is not running anymore")
-                        core.destroy()
+                        core.close()
                         core = null
                     }
                 } else {
@@ -105,7 +106,7 @@ class Test {
                 println(result)
             }
 
-            core?.destroy()
+            core?.close()
         }
     }
 }

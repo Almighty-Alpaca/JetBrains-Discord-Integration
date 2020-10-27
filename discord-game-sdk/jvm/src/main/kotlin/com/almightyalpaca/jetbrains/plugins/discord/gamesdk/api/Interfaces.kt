@@ -251,8 +251,8 @@ interface DiscordAchievementManager {
 }
 
 interface DiscordCore {
-    fun isValid(): Boolean
-    fun destroy()
+    val alive: Boolean
+    fun close()
     fun runCallbacks(): DiscordResult
     fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit)
     fun getApplicationManager(): DiscordApplicationManager
