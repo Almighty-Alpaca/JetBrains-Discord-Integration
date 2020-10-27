@@ -20,7 +20,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
-import gamesdk.impl.utils.NativeLoader
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -52,13 +51,9 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Nati
         super.close()
     }
 
-    companion object {
-        init {
-            NativeLoader.loadLibraries(NativeCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
-        }
-
+    companion object : NativeObjectCreator() {
         fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {
-            return when (val result = nativeCreate(clientId, createFlags.toNativeDiscordCreateFlags())) {
+            return when (val result = native { create(clientId, createFlags.toNativeDiscordCreateFlags()) }) {
                 is NativePointer -> Success(NativeCoreImpl(result))
                 is NativeDiscordResult -> Failure(result.toDiscordResult())
                 else -> throw IllegalStateException() // This should never happen unless the native method returns garbage
@@ -72,7 +67,7 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Nati
  *
  * @return Either a [NativeDiscordResult] or a [NativePointer]
  */
-private external fun nativeCreate(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
+private external fun Native.create(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
 
 private external fun Native.destroy(core: NativePointer)
 

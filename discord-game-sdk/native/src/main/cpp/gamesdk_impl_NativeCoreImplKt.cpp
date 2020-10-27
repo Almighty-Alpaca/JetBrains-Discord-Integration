@@ -17,7 +17,7 @@
 #include "gamesdk_impl_NativeCoreImplKt.h"
 #include "core.h"
 
-JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_nativeCreate(JNIEnv *env, jclass jClass, jlong jClientId, jint jCreateFlags)
+JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags)
 {
     discord::Core *core{};
 

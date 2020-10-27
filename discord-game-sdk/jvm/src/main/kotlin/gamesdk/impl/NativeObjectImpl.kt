@@ -17,13 +17,24 @@
 package gamesdk.impl
 
 import gamesdk.api.NativeObject
+import gamesdk.impl.utils.NativeLoader
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal sealed class Native
+internal sealed class Native(library: String, vararg libraries: String) {
+    init {
+        NativeLoader.loadLibraries(NativeCoreImpl::class.java.classLoader, library, *libraries)
+    }
+}
 
-private object NativeInstance : Native()
+private object NativeInstance : Native("discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+
+internal typealias NativeCreator<T> = Native.() -> T
+
+internal abstract class NativeObjectCreator {
+    protected fun <T> native(creator: NativeCreator<T>): T = NativeInstance.creator()
+}
 
 internal typealias NativeMethod<T> = Native.(pointer: NativePointer) -> T
 
