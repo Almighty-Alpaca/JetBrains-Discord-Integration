@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package gamesdk.impl.utils
+package gamesdk.impl
 
-import gamesdk.impl.NativePointer
+import gamesdk.api.NativeObject
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -27,19 +27,19 @@ private object NativeInstance : Native()
 
 internal typealias NativeMethod<T> = Native.(pointer: NativePointer) -> T
 
-internal sealed class NativeObject(@Volatile private var pointer: NativePointer) {
-    private val children = mutableSetOf<NativeObject>()
-    private fun register(child: NativeObject): Unit = native { children.add(child) }
-    private fun unregister(child: NativeObject): Unit = synchronized { children.remove(child) }
+internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePointer) : NativeObject {
+    private val children = mutableSetOf<NativeObjectImpl>()
+    private fun register(child: NativeObjectImpl): Unit = native { children.add(child) }
+    private fun unregister(child: NativeObjectImpl): Unit = synchronized { children.remove(child) }
 
-    private val alive
+    final override val alive
         get() = synchronized { pointer != 0L }
 
     protected open fun close(): Unit = native {
         pointer = 0L
 
         // To prevent ConcurrentModificationException
-        children.toSet().forEach(NativeObject::close)
+        children.toSet().forEach(NativeObjectImpl::close)
     }
 
     private val lock: Closeable
@@ -70,13 +70,13 @@ internal sealed class NativeObject(@Volatile private var pointer: NativePointer)
         }
     }
 
-    protected fun <T : Any> nativeLazy(tCreator: NativeMethod<T>): ReadOnlyProperty<NativeObject, T> = Lazy(tCreator)
+    protected fun <T : Any> nativeLazy(tCreator: NativeMethod<T>): ReadOnlyProperty<NativeObjectImpl, T> = Lazy(tCreator)
 
-    private class Lazy<T : Any>(private val tCreator: NativeMethod<T>) : ReadOnlyProperty<NativeObject, T> {
+    private class Lazy<T : Any>(private val tCreator: NativeMethod<T>) : ReadOnlyProperty<NativeObjectImpl, T> {
         @Volatile
         private var value: T? = null
 
-        override fun getValue(thisRef: NativeObject, property: KProperty<*>): T = thisRef.native { pointer ->
+        override fun getValue(thisRef: NativeObjectImpl, property: KProperty<*>): T = thisRef.native { pointer ->
             var value = value
 
             if (value == null) {
@@ -88,7 +88,7 @@ internal sealed class NativeObject(@Volatile private var pointer: NativePointer)
         }
     }
 
-    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObject) : NativeObject(pointer) {
+    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
         init {
             parent.register(this)
         }
@@ -100,7 +100,7 @@ internal sealed class NativeObject(@Volatile private var pointer: NativePointer)
         }
     }
 
-    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObject(pointer), AutoCloseable {
+    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
         protected abstract val destructor: NativeMethod<Unit>
 
         override fun close() = native { pointer ->

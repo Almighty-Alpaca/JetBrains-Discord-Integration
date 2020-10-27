@@ -16,18 +16,8 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCreateFlags
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordResult
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Result
-import gamesdk.impl.NativeCoreImpl
+interface NativeObject {
+    val alive: Boolean
 
-typealias ClientId = Long
-
-interface Core : NativeObject.Closable {
-    val activityManager: ActivityManager
-
-    companion object {
-        fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> =
-            NativeCoreImpl.create(clientId, createFlags)
-    }
+    interface Closable : NativeObject, AutoCloseable
 }

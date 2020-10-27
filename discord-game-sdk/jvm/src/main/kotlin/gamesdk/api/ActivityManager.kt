@@ -21,7 +21,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 @OptIn(ExperimentalUnsignedTypes::class)
 typealias SteamId = UInt
 
-interface ActivityManager : DiscordActivityManager {
+interface ActivityManager : DiscordActivityManager, NativeObject {
     override fun registerCommand(command: String): DiscordResult
     override fun registerSteam(steamId: SteamId): DiscordResult
 

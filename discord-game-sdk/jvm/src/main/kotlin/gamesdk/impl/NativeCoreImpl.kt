@@ -20,15 +20,12 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.ActivityManager
 import gamesdk.api.ClientId
 import gamesdk.api.Core
-import gamesdk.impl.utils.Native
 import gamesdk.impl.utils.NativeLoader
-import gamesdk.impl.utils.NativeMethod
-import gamesdk.impl.utils.NativeObject
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-internal class NativeCoreImpl private constructor(pointer: NativePointer) : NativeObject.Closeable(pointer), Core {
+internal class NativeCoreImpl private constructor(pointer: NativePointer) : NativeObjectImpl.Closeable(pointer), Core {
     override val activityManager: ActivityManager by nativeLazy { pointer -> NativeActivityManagerImpl(getActivityManager(pointer), this@NativeCoreImpl) }
 
     private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()

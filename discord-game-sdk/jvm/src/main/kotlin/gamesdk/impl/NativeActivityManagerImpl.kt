@@ -22,10 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.deconstruct
 import gamesdk.api.ActivityManager
 import gamesdk.api.DiscordResultCallback
 import gamesdk.api.SteamId
-import gamesdk.impl.utils.Native
-import gamesdk.impl.utils.NativeObject
 
-internal class NativeActivityManagerImpl(pointer: NativePointer, core: NativeCoreImpl) : NativeObject.Delegate(pointer, core), ActivityManager {
+internal class NativeActivityManagerImpl(pointer: NativePointer, core: NativeCoreImpl) : NativeObjectImpl.Delegate(pointer, core), ActivityManager {
     override fun registerCommand(command: String): DiscordResult =
         native { pointer -> registerCommand(pointer, command).toDiscordResult() }
 
