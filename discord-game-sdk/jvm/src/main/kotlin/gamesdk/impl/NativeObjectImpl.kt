@@ -17,7 +17,6 @@
 package gamesdk.impl
 
 import gamesdk.api.NativeObject
-import gamesdk.impl.utils.NativeLoader
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -69,7 +68,7 @@ internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePoin
         }
     }
 
-    internal abstract class Delegate internal constructor(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
+    internal abstract class Delegate(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
         init {
             parent.register(this)
         }
@@ -81,7 +80,7 @@ internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePoin
         }
     }
 
-    internal abstract class Closeable internal constructor(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
+    internal abstract class Closeable(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
         protected abstract val destructor: NativeMethod<Unit>
 
         override fun close() = native { pointer ->

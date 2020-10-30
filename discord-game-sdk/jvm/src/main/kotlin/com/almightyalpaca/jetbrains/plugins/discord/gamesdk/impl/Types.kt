@@ -22,7 +22,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl
  */
 @Deprecated("Remove all pointers from public api, use typealias in implementation")
 @Target(AnnotationTarget.TYPE)
-annotation class Pointer<T>
+internal annotation class Pointer<T>
 
 /**
  * Just a visible hint that this is a pointer T** to help readability
@@ -30,7 +30,7 @@ annotation class Pointer<T>
  */
 @Deprecated("Remove all pointers from public api, use typealias in implementation")
 @Target(AnnotationTarget.TYPE)
-annotation class DoublePointer<T>
+internal annotation class DoublePointer<T>
 
 /**
  * Just a visible hint that this is a void* pointer to help readability
@@ -38,4 +38,4 @@ annotation class DoublePointer<T>
  */
 @Deprecated("Remove all pointers from public api, use typealias in implementation")
 @Target(AnnotationTarget.TYPE)
-annotation class VoidPointer
+internal annotation class VoidPointer

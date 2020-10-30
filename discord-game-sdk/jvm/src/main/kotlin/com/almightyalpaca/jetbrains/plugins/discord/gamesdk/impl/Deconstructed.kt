@@ -23,12 +23,12 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
  * which are made out only of primitives and Strings
  */
 
-internal class DeconstructedDiscordImageHandle internal constructor(
+internal class DeconstructedDiscordImageHandle(
     val type: Int,
     val id: int64_t,
     val size: uint32_t
 ) {
-    internal fun construct() = DiscordImageHandle(type = DiscordImageType.fromInt(this.type), id = this.id, size = this.size)
+    fun construct() = DiscordImageHandle(type = DiscordImageType.fromInt(this.type), id = this.id, size = this.size)
 }
 
 internal fun DiscordImageHandle.deconstruct() = DeconstructedDiscordImageHandle(type = this.type.toInt(), id = this.id, size = this.size)
@@ -37,7 +37,7 @@ internal fun DiscordImageHandle.deconstruct() = DeconstructedDiscordImageHandle(
  * "Deconstructed" DiscordActivity
  * @see DiscordActivity
  */
-internal class DeconstructedDiscordActivity internal constructor(
+internal class DeconstructedDiscordActivity(
     val type: Int,
     val applicationId: int64_t,
     val name: @StringLength(max = 128) String,
@@ -58,7 +58,7 @@ internal class DeconstructedDiscordActivity internal constructor(
     val secretsSpectate: @StringLength(max = 128) String,
     val instance: Boolean
 ) {
-    internal fun construct() = DiscordActivity(
+    fun construct() = DiscordActivity(
         type = DiscordActivityType.fromInt(this.type),
         applicationId = this.applicationId,
         name = this.name,

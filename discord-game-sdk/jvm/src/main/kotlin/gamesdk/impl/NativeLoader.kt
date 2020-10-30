@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package gamesdk.impl.utils
+package gamesdk.impl
 
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-object NativeLoader {
+internal object NativeLoader {
     fun loadLibraries(classLoader: ClassLoader, vararg libraryNames: String) {
         try {
             val tempDir = Files.createTempDirectory("jni")
@@ -47,6 +47,7 @@ object NativeLoader {
     }
 
     private fun constructPath(libraryName: String) = "$os/$architecture/${constructName(libraryName)}"
+
     private fun constructName(libraryName: String) = "$filePrefix$libraryName$fileSuffix"
 
     private val filePrefix: String by lazy {

@@ -63,8 +63,6 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Nati
 }
 
 /**
- * This one can't have Native as receiver because it's creating the object
- *
  * @return Either a [NativeDiscordResult] or a [NativePointer]
  */
 private external fun Native.create(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
