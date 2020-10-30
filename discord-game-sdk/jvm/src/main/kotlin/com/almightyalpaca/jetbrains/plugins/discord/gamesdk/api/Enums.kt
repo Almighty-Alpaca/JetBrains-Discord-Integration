@@ -19,50 +19,95 @@ package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
 import java.util.*
 
 enum class DiscordResult {
+    /** Everything is good */
     Ok,
+    /** Discord isn't working */
     ServiceUnavailable,
+    /** The SDK version may be outdated */
     InvalidVersion,
+    /** An internal error on transactional operations */
     LockFailed,
+    /** Something on our side went wrong */
     InternalError,
+    /** The data you sent didn't match what we expect */
     InvalidPayload,
+    /** That's not a thing you can do */
     InvalidCommand,
+    /** You aren't authorized to do that */
     InvalidPermissions,
+    /** Couldn't fetch what you wanted */
     NotFetched,
+    /** What you're looking for doesn't exist */
     NotFound,
+    /** User already has a network connection open on that channel */
     Conflict,
+    /** Activity secrets must be unique and not match party id */
     InvalidSecret,
+    /** Join request for that user does not exist */
     InvalidJoinSecret,
+    /** You accidentally set an `ApplicationId` in your `UpdateActivity()` payload */
     NoEligibleActivity,
+    /** Your game invite is no longer valid */
     InvalidInvite,
+    /** The internal auth call failed for the user, and you can't do this */
     NotAuthenticated,
+    /** The user's bearer token is invalid */
     InvalidAccessToken,
+    /** Access token belongs to another application */
     ApplicationMismatch,
+    /** Something internally went wrong fetching image data */
     InvalidDataUrl,
+    /** Not valid Base64 data */
     InvalidBase64,
+    /** You're trying to access the list before creating a stable list with Filter() */
     NotFiltered,
+    /** The lobby is full */
     LobbyFull,
+    /** The secret you're using to connect is wrong */
     InvalidLobbySecret,
+    /** File name is too long */
     InvalidFilename,
+    /** File is too large */
     InvalidFileSize,
+    /** The user does not have the right entitlement for this game */
     InvalidEntitlement,
+    /** Discord is not installed */
     NotInstalled,
+    /** Discord is not running */
     NotRunning,
+    /** Insufficient buffer space when trying to write */
     InsufficientBuffer,
+    /** User cancelled the purchase flow */
     PurchaseCanceled,
+    /** Discord guild does not exist */
     InvalidGuild,
+    /** The event you're trying to subscribe to does not exist */
     InvalidEvent,
+    /** Discord channel does not exist */
     InvalidChannel,
+    /** The origin header on the socket does not match what you've registered (you should not see this) */
     InvalidOrigin,
+    /** You are calling that method too quickly */
     RateLimited,
+    /** The OAuth2 process failed at some point */
     OAuth2Error,
+    /** The user took too long selecting a channel for an invite */
     SelectChannelTimeout,
+    /** Took too long trying to fetch the guild */
     GetGuildTimeout,
+    /** Push to talk is required for this channel */
     SelectVoiceForceRequired,
+    /** That push to talk shortcut is already registered */
     CaptureShortcutAlreadyListening,
+    /** Your application cannot update this achievement */
     UnauthorizedForAchievement,
+    /** The gift code is not valid */
     InvalidGiftCode,
+    /** Something went wrong during the purchase flow */
     PurchaseError,
+    /** Purchase flow aborted because the SDK is being torn down */
     TransactionAborted,
+    /**  */
     DrawingInitFailed,
     ;
 
