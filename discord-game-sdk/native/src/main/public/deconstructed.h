@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-#include "types.h"
+#ifndef _Included_deconstructed
+#define _Included_deconstructed
+
+#include "discord_game_sdk.h"
 
 #include <jni.h>
-#include <functional>
 
-std::function<void(discord::Result)> createResultCallback(JNIEnv *env, jobject jCallback);
+namespace deconstructed
+{
+    /**
+     * Activity is an jobject of type DeconstructedDiscordActivity
+     */
+    struct DiscordActivity constructActivity(JNIEnv *env, jobject jActivity);
+} // namespace deconstructed
+
+#endif

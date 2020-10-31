@@ -33,7 +33,7 @@ class Test {
         when (val result = Core.create(768507783167344680, DiscordCreateFlags.NoRequireDiscord)) {
             is Failure -> println(result.reason)
             is Success -> {
-                result.value.let(ThreadedCore.Companion::create). use { core ->
+                result.value.let(ThreadedCore.Companion::create).use { core ->
                     val activity = DiscordActivity(768507783167344680, state = "Testing...")
 
                     runBlocking {

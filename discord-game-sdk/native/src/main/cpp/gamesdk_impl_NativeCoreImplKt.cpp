@@ -15,15 +15,23 @@
  */
 
 #include "gamesdk_impl_NativeCoreImplKt.h"
-#include "core.h"
+
+#include "discord_game_sdk.h"
+
+#include <iostream>
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags)
 {
-    discord::Core *core{};
+    struct DiscordCreateParams params;
+    DiscordCreateParamsSetDefault(&params);
+    
+    params.client_id = (DiscordClientId)jClientId;
+    params.flags = jCreateFlags;
 
-    discord::Result result = discord::Core::Create((discord::ClientId)jClientId, (std::uint64_t)jCreateFlags, &core);
+    struct IDiscordCore *core = nullptr;
+    EDiscordResult result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    if (core == nullptr)
+    if (result != DiscordResult_Ok)
     {
         jclass jIntegerClass = env->FindClass("java/lang/Integer");
 
@@ -59,19 +67,21 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
 {
-    delete (discord::Core *)jCore;
+    struct IDiscordCore *core = (IDiscordCore *)jCore;
+
+    core->destroy(core);
 }
 
 JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
 {
-    discord::Core *core = (discord::Core *)jCore;
+    struct IDiscordCore *core = (IDiscordCore *)jCore;
 
-    return (jint)core->RunCallbacks();
+    return (jint)core->run_callbacks(core);
 }
 
 JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getActivityManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
 {
-    discord::Core *core = (discord::Core *)jCore;
+    struct IDiscordCore *core = (IDiscordCore *)jCore;
 
-    return (jlong)&core->ActivityManager();
+    return (jlong)core->get_activity_manager(core);
 }

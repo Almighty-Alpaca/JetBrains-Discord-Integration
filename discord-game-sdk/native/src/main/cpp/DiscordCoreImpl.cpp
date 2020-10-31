@@ -1,6 +1,8 @@
-#include "commons.h"
 #include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl.h"
+
+#include "commons.h"
 #include "discord_game_sdk.h"
+
 #include <iostream>
 
 /*
