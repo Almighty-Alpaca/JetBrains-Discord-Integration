@@ -188,7 +188,7 @@ internal class DiscordCoreImpl(private val internalThisPointer: Long) : DiscordC
 
     companion object {
         init {
-            NativeLoader.loadLibraries(DiscordCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+            NativeLoader.loadLibraries(DiscordCoreImpl::class.java.classLoader, "discord_game_sdk", "discord_game_sdk_kotlin")
         }
 
         fun create(clientId: DiscordClientId, flags: DiscordCreateFlags): Result<DiscordCoreImpl, DiscordResult> = with(native_create(clientId, flags.toInt())) {

@@ -22,7 +22,6 @@ include("uploader")
 include("bot")
 include("discord-game-sdk:jvm")
 include("discord-game-sdk:native")
-include("discord-game-sdk:discord-game-sdk-cpp")
 
 pluginManagement {
     repositories {

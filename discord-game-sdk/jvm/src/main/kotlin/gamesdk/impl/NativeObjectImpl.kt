@@ -27,7 +27,7 @@ internal sealed class Native(library: String, vararg libraries: String) {
     }
 }
 
-private object NativeInstance : Native("discord_game_sdk", "discord_game_sdk_cpp", "discord_game_sdk_kotlin")
+private object NativeInstance : Native("discord_game_sdk", "discord_game_sdk_kotlin")
 
 internal typealias NativeCreator<T> = Native.() -> T
 

@@ -54,11 +54,8 @@ library {
         )
     )
 
-    dependencies {
-        implementation(project(":discord-game-sdk:discord-game-sdk-cpp"))
-    }
-
     privateHeaders {
+        from(project.layout.projectDirectory.dir("src/main/headers"))
         from(project(":discord-game-sdk:jvm").layout.buildDirectory.dir("generated/headers"))
         builtBy(":discord-game-sdk:jvm:generateJniHeaders")
 
@@ -72,8 +69,30 @@ library {
             else -> throw GradleException("Unknown operating system family '${os}'.")
         }
     }
+
+    @Suppress("UnstableApiUsage")
+    binaries.whenElementFinalized binary@{
+        dependencies.apply {
+            implementation(files(getSharedLibrary(targetMachine)))
+        }
+    }
 }
 
 unitTest {
     targetMachines.set(library.targetMachines)
+}
+
+fun getSharedLibrary(targetMachine: TargetMachine): String {
+    return when (val os = targetMachine.operatingSystemFamily.name) {
+        "windows" -> {
+            when (val architecture = targetMachine.architecture.name) {
+                MachineArchitecture.X86 -> "lib/discord_game_sdk/windows/x86/discord_game_sdk.dll"
+                MachineArchitecture.X86_64 -> "lib/discord_game_sdk/windows/x86-64/discord_game_sdk.dll"
+                else -> throw GradleException("Unknown architecture'${architecture}'.")
+            }
+        }
+        "linux" -> "lib/discord_game_sdk/linux/x86-64/libdiscord_game_sdk.so"
+        "os x" -> "lib/discord_game_sdk/macos/x86-64/libdiscord_game_sdk.dylib"
+        else -> throw GradleException("Unknown operating system family '${os}'.")
+    }
 }

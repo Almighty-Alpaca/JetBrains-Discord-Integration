@@ -53,8 +53,7 @@ sourceSets {
         resources {
             // TODO: use release binaries
             srcDir(project(":discord-game-sdk:native").layout.buildDirectory.dir("lib/main/debug"))
-            srcDir(project(":discord-game-sdk:discord-game-sdk-cpp").layout.buildDirectory.dir("lib/main/debug"))
-            srcDir(project(":discord-game-sdk:discord-game-sdk-cpp").layout.projectDirectory.dir("lib/discord_game_sdk"))
+            srcDir(project(":discord-game-sdk:native").layout.projectDirectory.dir("lib/discord_game_sdk"))
         }
     }
 }
@@ -73,7 +72,6 @@ tasks {
 
     processResources {
         dependsOn(":discord-game-sdk:native:assemble")
-        dependsOn(":discord-game-sdk:discord-game-sdk-cpp:assemble")
 
         filesMatching("shared/**/*.*") {
             path = path.substringAfter('/')
