@@ -66,7 +66,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun connect() {
-        DiscordPlugin.LOG.info("Starting new rpc connection")
+        DiscordPlugin.LOG.debug("Starting new rpc connection")
 
         if (DiscordRPC.INSTANCE == null) {
             DiscordPlugin.LOG.error("DiscordRPC library isn't loaded")
@@ -92,7 +92,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun send(presence: RichPresence?) {
-        DiscordPlugin.LOG.info("Sending new presence")
+        DiscordPlugin.LOG.debug("Sending new presence")
 
         if (CONNECTED.get() != this) {
             DiscordPlugin.LOG.error("Can't send presence to inactive connection")
@@ -114,7 +114,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
 
     @Synchronized
     override fun disconnect() {
-        DiscordPlugin.LOG.info("Stopping rpc connection")
+        DiscordPlugin.LOG.debug("Stopping rpc connection")
 
         if (CONNECTED.get() != this) {
             return
