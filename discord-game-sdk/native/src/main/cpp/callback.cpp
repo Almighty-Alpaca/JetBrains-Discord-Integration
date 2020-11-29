@@ -91,7 +91,7 @@ namespace callback
 
             jobject jCallbackGlobal = env->NewGlobalRef(jCallback);
 
-            return new CallbackData{.jvm = jvm, .jCallback = jCallbackGlobal};
+            return new CallbackData{jvm, jCallbackGlobal};
         }
     } // namespace result
 } // namespace callback
