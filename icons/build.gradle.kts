@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
     fileIndices
@@ -37,7 +39,36 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml")
 }
 
+val minimizedJar: Configuration by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    // If you want this configuration to share the same dependencies, otherwise omit this line
+    extendsFrom(configurations["implementation"], configurations["runtimeOnly"])
+}
+
 tasks {
+    val minimizedJar by registering(ShadowJar::class) {
+        group = "build"
+
+        archiveClassifier.set("minimized")
+
+        from(sourceSets.main.map(SourceSet::getOutput))
+
+        val iconPaths = arrayOf(
+            Regex("""/?discord/applications/.*\.png"""),
+            Regex("""/?discord/themes/.*\.png""")
+        )
+
+        transform(PngOptimizingTransformer(128, *iconPaths))
+    }
+
+    artifacts {
+        @Suppress("UnstableApiUsage")
+        add("minimizedJar", minimizedJar.flatMap { it.archiveFile }) {
+            builtBy(minimizedJar)
+        }
+    }
+
     generateFileIndices {
         paths += "discord/applications"
         paths += "discord/languages"

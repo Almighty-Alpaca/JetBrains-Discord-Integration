@@ -109,7 +109,7 @@ tasks {
     create<Delete>("clean") {
         group = "build"
 
-        val regex = Regex("""JetBrains-Discord-Integration-Plugin-\d+.\d+.\d+(?:\+\d+)?.zip""")
+        val regex = Regex("""JetBrains-Discord-Integration-\d+.\d+.\d+(?:\+\d+)?.zip""")
 
         Files.newDirectoryStream(project.projectDir.toPath())
             .filter { p -> regex.matches(p.fileName.toString()) }

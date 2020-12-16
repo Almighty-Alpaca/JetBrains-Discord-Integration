@@ -62,7 +62,7 @@ secrets.gradle.kts
 .sandbox/
 
 ## Plugin .zip
-JetBrains-Discord-Integration-Plugin-*.zip
+JetBrains-Discord-Integration-*.zip
 
 ## Bot config
 bot/config.yaml

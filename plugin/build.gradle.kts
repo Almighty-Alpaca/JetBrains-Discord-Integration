@@ -16,14 +16,13 @@
 
 @file:Suppress("SuspiciousCollectionReassignment")
 
-import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
 
 plugins {
     kotlin("jvm")
     id("org.jetbrains.intellij")
-    id("com.github.johnrengelman.shadow")
     antlr
 }
 
@@ -37,7 +36,7 @@ dependencies {
     val versionJUnit: String by project
     val versionAntlr: String by project
 
-    implementation(project(":icons")) {
+    implementation(project(path = ":icons", configuration = "minimizedJar")) {
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
@@ -102,6 +101,20 @@ intellij {
 }
 
 tasks {
+    val minimizedJar by registering(ShadowJar::class) {
+        group = "build"
+
+        archiveClassifier.set("minimized")
+
+        from(sourceSets.main.map(org.gradle.api.tasks.SourceSet::getOutput))
+
+        val iconPaths = arrayOf(
+            Regex("""/?discord/images/.*\.png""")
+        )
+
+        transform(PngOptimizingTransformer(128, *iconPaths))
+    }
+
     checkUnusedDependencies {
         ignore("com.jetbrains", "ideaIU")
     }
@@ -140,12 +153,19 @@ tasks {
         }
     }
 
+    buildPlugin {
+        archiveBaseName.set(rootProject.name)
+    }
+
+    jarSearchableOptions {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("options")
+    }
+
     prepareSandbox task@{
-        setLibrariesToIgnore(*configurations.filter { it.isCanBeResolved }.toTypedArray())
+        dependsOn(minimizedJar)
 
-        dependsOn(shadowJar)
-
-        pluginJar(shadowJar.get().archiveFile)
+        pluginJar(minimizedJar.map { it.archiveFile }.get())
     }
 
     build {
@@ -156,40 +176,10 @@ tasks {
         dependsOn(verifyPlugin)
     }
 
-    shadowJar task@{
-        fun prefix(pkg: String, configure: Action<SimpleRelocator>? = null) =
-            relocate(pkg, "${rootProject.group}.dependencies.$pkg", configure)
-
-        mergeServiceFiles()
-
-        prefix("club.minnced.discord.rpc")
-        prefix("com.fasterxml.jackson.annotation")
-        prefix("com.fasterxml.jackson.core")
-        prefix("com.fasterxml.jackson.databind")
-        prefix("com.fasterxml.jackson.dataformat.yaml")
-        prefix("com.jagrosh.discordipc")
-        prefix("javassist")
-        prefix("okhttp3")
-        prefix("okio")
-        prefix("org.apache.commons.io")
-        prefix("org.yaml.snakeyaml")
-
-        val iconPaths = arrayOf(
-            Regex("""/?discord/applications/.*\.png"""),
-            Regex("""/?discord/themes/.*\.png""")
-        )
-
-        transform(PngOptimizingTransformer(128, *iconPaths))
-    }
-
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
         }
-    }
-
-    withType<AbstractArchiveTask> {
-        archiveBaseName.set("${rootProject.name}-${project.name.capitalize()}")
     }
 
     generateGrammarSource {
