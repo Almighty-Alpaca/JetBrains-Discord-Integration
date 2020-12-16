@@ -1,3 +1,6 @@
+## v1.6.1
+- Fix unneeded dependencies inflating plugin size 
+
 ## v1.6.0
 - Implement custom templates
 - Add support for .cjs and .mjs files
