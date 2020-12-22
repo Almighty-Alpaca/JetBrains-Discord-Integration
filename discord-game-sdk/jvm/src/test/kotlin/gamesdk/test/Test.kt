@@ -42,7 +42,7 @@ class Test {
     fun testActivity() {
         @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
         when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
-            is DiscordObjectResult.Failure -> println(result.reason)
+            is DiscordObjectResult.Failure -> println(result.code)
             is DiscordObjectResult.Success -> result.value.use { core ->
                 val activity = DiscordActivity(applicationId = 768507783167344680, state = "Testing...")
 
@@ -69,7 +69,7 @@ class Test {
 
         @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
         when (val result = ThreadedCore.create(768507783167344680U, DiscordCreateFlags.NoRequireDiscord)) {
-            is DiscordObjectResult.Failure -> println(result.reason)
+            is DiscordObjectResult.Failure -> println(result.code)
             is DiscordObjectResult.Success -> result.value.use { core ->
                 runBlocking {
                     core.userManager.currentUserUpdates.subscribe {

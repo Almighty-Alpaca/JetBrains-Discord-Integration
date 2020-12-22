@@ -16,19 +16,29 @@
 
 package gamesdk.api
 
-import gamesdk.api.types.DiscordRelationship
-import gamesdk.api.types.DiscordUser
 import gamesdk.api.types.DiscordCode
 import gamesdk.api.types.DiscordPremiumType
+import gamesdk.api.types.DiscordRelationship
+import gamesdk.api.types.DiscordUser
 
-public sealed class DiscordResult(public val code: DiscordCode) {
-    public object Success : DiscordResult(DiscordCode.Ok)
-    public data class Failure(val reason: DiscordCode.Failure) : DiscordResult(reason)
+public sealed class DiscordResult {
+    public abstract val code: DiscordCode
+
+    public object Success : DiscordResult() {
+        override val code: DiscordCode = DiscordCode.Ok
+    }
+
+    public data class Failure(override val code: DiscordCode.Failure) : DiscordResult()
 }
 
-public sealed class DiscordObjectResult<out T>(public val code: DiscordCode) {
-    public data class Success<out T>(val value: T) : DiscordObjectResult<T>(DiscordCode.Ok)
-    public data class Failure(val reason: DiscordCode.Failure) : DiscordObjectResult<Nothing>(reason)
+public sealed class DiscordObjectResult<out T> {
+    public abstract val code: DiscordCode
+
+    public data class Success<out T>(val value: T) : DiscordObjectResult<T>() {
+        override val code: DiscordCode = DiscordCode.Ok
+    }
+
+    public data class Failure(override val code: DiscordCode.Failure) : DiscordObjectResult<Nothing>()
 }
 
 public inline fun <T, R> DiscordObjectResult<T>.map(block: (T) -> R): DiscordObjectResult<R> =

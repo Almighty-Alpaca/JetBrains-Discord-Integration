@@ -32,7 +32,7 @@ public class ThreadedCore private constructor(private val core: Core) : Core by 
         runner.scheduleAtFixedRate({
             val result = core.runCallbacks()
             if (result is DiscordResult.Failure) {
-                println("Error running callbacks: ${result.reason}")
+                println("Error running callbacks: ${result.code}")
             }
         }, 0L, 100L, TimeUnit.MILLISECONDS)
     }

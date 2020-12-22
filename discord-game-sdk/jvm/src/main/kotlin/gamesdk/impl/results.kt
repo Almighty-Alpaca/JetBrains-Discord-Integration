@@ -37,7 +37,7 @@ internal typealias NativeDiscordBooleanResult = NativeDiscordObjectResult<Boolea
 internal fun DiscordResult.toNativeDiscordResult(): NativeDiscordResult {
     return when (this) {
         is DiscordResult.Success -> DiscordCode.Ok.toNativeDiscordCode()
-        is DiscordResult.Failure -> reason.toNativeDiscordCode()
+        is DiscordResult.Failure -> code.toNativeDiscordCode()
     }
 }
 
@@ -54,7 +54,7 @@ internal fun NativeDiscordResult.toDiscordResult(): DiscordResult {
 internal inline fun <TN, T> DiscordObjectResult<T>.toNativeDiscordObjectResult(converter: (T) -> TN): NativeDiscordObjectResult<TN> {
     return when (this) {
         is DiscordObjectResult.Success<T> -> NativeDiscordObjectResult.Success(converter(value))
-        is DiscordObjectResult.Failure -> NativeDiscordObjectResult.Failure(reason.toNativeDiscordCode())
+        is DiscordObjectResult.Failure -> NativeDiscordObjectResult.Failure(code.toNativeDiscordCode())
     }
 }
 
