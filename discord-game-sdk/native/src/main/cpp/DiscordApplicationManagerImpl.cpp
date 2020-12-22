@@ -52,11 +52,14 @@ static jobject create_oauth2_token(JNIEnv *env, jstring access_token, jstring sc
 
 static void run_callback_with_discord_oauth2_token(void* data, EDiscordResult result, DiscordOAuth2Token *token) {
     callback::typed::run(data, result, [token](JNIEnv* env) -> jobject {
-        jstring j_access_token = env->NewStringUTF(token->access_token);
-        jstring j_scopes = env->NewStringUTF(token->scopes);
-        jlong j_expires = token->expires;
+        jobject j_token = nullptr;
+        if (token != nullptr) {
+            jstring j_access_token = env->NewStringUTF(token->access_token);
+            jstring j_scopes = env->NewStringUTF(token->scopes);
+            jlong j_expires = token->expires;
 
-        jobject j_token = create_oauth2_token(env, j_access_token, j_scopes, j_expires);
+            j_token = create_oauth2_token(env, j_access_token, j_scopes, j_expires);
+        }
 
         return j_token;
     });
@@ -67,13 +70,25 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordApplicationManager *manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordApplicationManager, manager);
 
-    DiscordOAuth2Token token{};
-
     auto *cb_data = callback::getData(env, j_callback);
 
     manager->get_oauth2_token(manager, cb_data, run_callback_with_discord_oauth2_token);
 }
 
+static void run_callback_with_ticket(void* data, EDiscordResult result, const char* ticket) {
+    callback::typed::run(data, result, [ticket](JNIEnv* env) -> jstring {
+        jstring j_ticket = ticket != nullptr ? env->NewStringUTF(ticket) : nullptr;
+
+        return j_ticket;
+    });
+}
+
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordApplicationManagerImpl_native_1getTicked
-        (JNIEnv *env, jobject this_ptr, jobject callback) {
+        (JNIEnv *env, jobject this_ptr, jobject j_callback) {
+    IDiscordApplicationManager *manager;
+    GET_INTERFACE_PTR(env, this_ptr, IDiscordApplicationManager, manager);
+
+    auto *cb_data = callback::getData(env, j_callback);
+
+    manager->get_ticket(manager, cb_data, run_callback_with_ticket);
 }
