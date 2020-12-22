@@ -28,8 +28,9 @@ namespace callback {
 
     void run(void *data, EDiscordResult result);
 
-    void run(void *data, EDiscordResult result, DiscordUser *user);
+    void run(void *data, EDiscordResult result, const std::function<jobject(JNIEnv &)> &t);
 
+    void run(void *data, EDiscordResult result, DiscordUser *user);
 } // namespace callback
 
 #endif // CALLBACK_H

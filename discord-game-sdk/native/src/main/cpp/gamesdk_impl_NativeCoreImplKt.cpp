@@ -19,6 +19,7 @@
 #include "commons.h"
 #include "discord_game_sdk.h"
 #include "events.h"
+#include "types.h"
 
 #include <iostream>
 
@@ -54,7 +55,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM
     IDiscordCore *core = nullptr;
     EDiscordResult result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    return createNativeDiscordObjectResult(env, result, createLongObject(env, (jlong) core));
+    return types::createNativeDiscordObjectResult(env, result, types::createLongObject(env, (jlong) core));
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {

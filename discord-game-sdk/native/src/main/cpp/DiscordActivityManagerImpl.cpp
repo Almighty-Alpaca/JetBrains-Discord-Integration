@@ -20,7 +20,7 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 {
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
-    const char* nameNative = env->GetStringUTFChars(name, 0);
+    const char* nameNative = env->GetStringUTFChars(name, nullptr);
 
     int return_code = manager->register_command(manager, nameNative);
 
@@ -106,7 +106,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 
     auto ncb_data = callback::create(env, p_callback);
 
-    const char *content_native = env->GetStringUTFChars(content, NULL);
+    const char* content_native = env->GetStringUTFChars(content, nullptr);
 
     manager->send_invite(manager, user_id, (EDiscordActivityActionType) type, content_native, ncb_data, callback::run);
 

@@ -68,13 +68,16 @@ internal class DiscordApplicationManagerImpl(private val internalThisPointer: Lo
 
     override fun getCurrentLocale() = native_getCurrentLocale()
     override fun getCurrentBranch() = native_getDiscordBranch()
-    override fun getOAuth2Token() = native_getOAuth2Token()
+    override fun getOAuth2Token(callback: (result: DiscordCode, token: DiscordOAuth2Token?) -> Unit) = native_getOAuth2Token { result, token ->
+        callback((result).toDiscordCode(), token)
+    }
+
     override fun getTicket(callback: (result: DiscordCode, ticket: String) -> Unit) = native_getTicked { result, ticket -> callback((result).toDiscordCode(), ticket) }
 
     private external fun native_validateOrExit(callback: (result: NativeDiscordCode) -> Unit)
     private external fun native_getCurrentLocale(): DiscordLocale
     private external fun native_getDiscordBranch(): DiscordBranch
-    private external fun native_getOAuth2Token(): DiscordOAuth2Token
+    private external fun native_getOAuth2Token(callback: (result: Int, token: DiscordOAuth2Token?) -> Unit)
     private external fun native_getTicked(callback: (result: Int, ticket: String) -> Unit)
 }
 

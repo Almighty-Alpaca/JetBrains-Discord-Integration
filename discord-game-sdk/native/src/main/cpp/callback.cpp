@@ -16,6 +16,8 @@
 
 #include "callback.h"
 #include "commons.h"
+#include "types.h"
+#include "jnihelpers.h"
 
 #include <iostream>
 
@@ -58,7 +60,7 @@ namespace callback {
         jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
 
         if (jCallbackMethodInvoke != nullptr) {
-            env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, createIntegerObject(env, (jint) result));
+            env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, types::createIntegerObject(env, (jint) result));
         } else {
             // TODO: Handle method not found
 
@@ -80,61 +82,37 @@ namespace callback {
         delete callbackData;
     }
 
-    template<class T>
-    void run(void *data, EDiscordResult result, T &t, std::function<jobject(JNIEnv *, T &)> converter) {
+    void run(void *data, EDiscordResult result, const std::function<jobject(JNIEnv &)> &t) {
         auto *callbackData = (CallbackData *) data;
 
         jobject jCallbackGlobal = callbackData->jCallback;
         JavaVM *jvm = callbackData->jvm;
 
-        JNIEnv *env{};
-        jint getEnvResult = jvm->GetEnv((void **) &env, JNI_VERSION_1_8);
+        jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & t](JNIEnv &env) {
+            jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);
+            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(I)V");
 
-        if (getEnvResult == JNI_EVERSION) {
-            // TODO: handle wrong version
-        } else if (getEnvResult == JNI_EDETACHED) {
-            jint jAttachResult = jvm->AttachCurrentThread((void **) &env, nullptr);
+            if (jCallbackMethodInvoke != nullptr) {
+                jobject jResult = types::createNativeDiscordObjectResult(&env, result, t(env));
 
-            if (jAttachResult != JNI_OK) {
-                // TODO: Check and handle error code (jni.h:160). What about the global reference?
+                env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
+            } else {
+                // TODO: Handle method not found
 
-                std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+                std::cout << "Could not find callback method" << std::endl;
             }
-        }
 
-        jclass jCallbackClass = env->GetObjectClass(jCallbackGlobal);
-        jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
-
-        if (jCallbackMethodInvoke != nullptr) {
-            jobject jResult = createNativeDiscordObjectResult(env, result, converter(env, t));
-
-            env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
-        } else {
-            // TODO: Handle method not found
-
-            std::cout << "Could not find callback method" << std::endl;
-        }
-
-        env->DeleteGlobalRef(jCallbackGlobal);
-
-        // Only detach if thread wasn't previously attached
-        if (getEnvResult == JNI_EDETACHED) {
-            jint jDetachResult = jvm->DetachCurrentThread();
-            if (jDetachResult != JNI_OK) {
-                // TODO: Check and handle error code (jni.h:160)
-
-                std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
-            }
-        }
+            env.DeleteGlobalRef(jCallbackGlobal);
+        });
 
         delete callbackData;
     }
 
     void run(void *data, EDiscordResult result, DiscordUser *user) {
-        static std::function<jobject(JNIEnv *, DiscordUser *&)> converter = [](JNIEnv *env, DiscordUser *user) -> jobject {
-            return createJavaDiscordUser(env, user);
+        std::function<jobject(JNIEnv &)> converter = [&user](JNIEnv &env) -> jobject {
+            return types::createJavaUser(env, *user);
         };
 
-        run<DiscordUser *>(data, result, user, converter);
+        run(data, result, converter);
     }
 } // namespace callback

@@ -20,6 +20,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DoublePointer
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.Pointer
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.VoidPointer
 import gamesdk.api.DiscordRelationshipFilter
+import gamesdk.api.DiscordResultCallback
 import gamesdk.api.types.*
 
 public interface DiscordLobbyTransaction {
@@ -47,7 +48,7 @@ public interface DiscordApplicationManager {
     public fun validateOrExit(callback: (result: DiscordCode) -> Unit)
     public fun getCurrentLocale(): DiscordLocale
     public fun getCurrentBranch(): DiscordBranch
-    public fun getOAuth2Token(): DiscordOAuth2Token
+    public fun getOAuth2Token(callback: (result: DiscordCode, token: DiscordOAuth2Token?) -> Unit)
     public fun getTicket(callback: (result: DiscordCode, ticket: String) -> Unit)
 }
 
