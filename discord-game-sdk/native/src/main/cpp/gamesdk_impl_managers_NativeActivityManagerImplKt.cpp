@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_up
     auto *activityManager = (IDiscordActivityManager *) jActivityManager;
     DiscordActivity activity = types::createDiscordActivity(*env, jDeconstructedActivity);
 
-    activityManager->update_activity(activityManager, &activity, callback::result::create(env, jCallback), callback::result::run);
+    activityManager->update_activity(activityManager, &activity, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_clearActivity(
@@ -58,7 +58,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_cl
 ) {
     auto *activityManager = (IDiscordActivityManager *) jActivityManager;
 
-    activityManager->clear_activity(activityManager, callback::result::create(env, jCallback), callback::result::run);
+    activityManager->clear_activity(activityManager, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_sendRequestReply(
@@ -66,7 +66,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_se
 ) {
     auto *activityManager = (IDiscordActivityManager *) jActivityManager;
 
-    activityManager->send_request_reply(activityManager, (DiscordUserId) jUserId, (EDiscordActivityJoinRequestReply) jReply, callback::result::create(env, jCallback), callback::result::run);
+    activityManager->send_request_reply(activityManager, (DiscordUserId) jUserId, (EDiscordActivityJoinRequestReply) jReply, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_sendInvite(
@@ -76,7 +76,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_se
 
     const char *content = env->GetStringUTFChars(jContent, nullptr);
 
-    activityManager->send_invite(activityManager, (DiscordUserId) jUserId, (EDiscordActivityActionType) jType, content, callback::result::create(env, jCallback), callback::result::run);
+    activityManager->send_invite(activityManager, (DiscordUserId) jUserId, (EDiscordActivityActionType) jType, content, callback::create(env, jCallback), callback::run);
 
     env->ReleaseStringUTFChars(jContent, content);
 }
@@ -86,5 +86,5 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_ac
 ) {
     auto *activityManager = (IDiscordActivityManager *) jActivityManager;
 
-    activityManager->accept_invite(activityManager, (DiscordUserId) jUserId, callback::result::create(env, jCallback), callback::result::run);
+    activityManager->accept_invite(activityManager, (DiscordUserId) jUserId, callback::create(env, jCallback), callback::run);
 }

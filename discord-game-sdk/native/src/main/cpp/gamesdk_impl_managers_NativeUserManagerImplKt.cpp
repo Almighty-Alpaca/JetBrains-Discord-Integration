@@ -23,7 +23,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getCur
 ) {
     auto *userManager = (IDiscordUserManager *) jUserManager;
 
-    userManager->get_user(userManager, (DiscordUserId) jUserId, callback::result::object::createUser(env, jCallback), callback::result::object::run);
+    userManager->get_user(userManager, (DiscordUserId) jUserId, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getCurrentUser_getCurrentUserPremiumType(

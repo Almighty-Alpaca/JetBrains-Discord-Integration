@@ -92,8 +92,7 @@ namespace events {
 //            };
 //            jobject jEvent = std::apply(f, eventClassConstructorArgs(env));
 
-            auto t = std::tuple_cat(std::forward_as_tuple(env, jEventClass, jEventConstructor), eventClassConstructorArgs(env));
-            jobject jEvent = std::apply(&JNIEnv::NewObject, t);
+            jobject jEvent = std::apply(&JNIEnv::NewObject, std::tuple_cat(std::forward_as_tuple(env, jEventClass, jEventConstructor), eventClassConstructorArgs(env)));
 
             std::cout << __LINE__ << ": " << (jEvent == nullptr ? "null" : "not null") << std::endl;
 

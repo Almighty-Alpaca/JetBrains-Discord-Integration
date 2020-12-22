@@ -56,9 +56,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
 
     DiscordActivity activity = types::createDiscordActivity(*env, p_activity);
 
-    auto ncb_data = callback::result::create(env, p_callback);
+    auto ncb_data = callback::create(env, p_callback);
 
-    manager->update_activity(manager, &activity, ncb_data, callback::result::run);
+    manager->update_activity(manager, &activity, ncb_data, callback::run);
 }
 
 /*
@@ -72,9 +72,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = callback::result::create(env, p_callback);
+    auto ncb_data = callback::create(env, p_callback);
 
-    manager->clear_activity(manager, ncb_data, callback::result::run);
+    manager->clear_activity(manager, ncb_data, callback::run);
 }
 
 /*
@@ -88,9 +88,9 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = callback::result::create(env, p_callback);
+    auto ncb_data = callback::create(env, p_callback);
 
-    manager->send_request_reply(manager, user_id, (EDiscordActivityJoinRequestReply) reply, ncb_data, callback::result::run);
+    manager->send_request_reply(manager, user_id, (EDiscordActivityJoinRequestReply) reply, ncb_data, callback::run);
 }
 
 /*
@@ -104,11 +104,11 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = callback::result::create(env, p_callback);
+    auto ncb_data = callback::create(env, p_callback);
 
     const char *content_native = env->GetStringUTFChars(content, NULL);
 
-    manager->send_invite(manager, user_id, (EDiscordActivityActionType) type, content_native, ncb_data, callback::result::run);
+    manager->send_invite(manager, user_id, (EDiscordActivityActionType) type, content_native, ncb_data, callback::run);
 
     env->ReleaseStringUTFChars(content, content_native);
 }
@@ -124,7 +124,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    auto ncb_data = callback::result::create(env, p_callback);
+    auto ncb_data = callback::create(env, p_callback);
 
-    manager->accept_invite(manager, user_id, ncb_data, callback::result::run);
+    manager->accept_invite(manager, user_id, ncb_data, callback::run);
 }

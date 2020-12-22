@@ -23,22 +23,12 @@
 #include <jni.h>
 #include <functional>
 
-namespace callback::result {
+namespace callback {
     void *create(JNIEnv *env, jobject jCallback);
 
     void run(void *data, EDiscordResult result);
 
-    namespace object {
-        void *createUser(JNIEnv *env, jobject jCallback);
-
-        template<class T>
-        void *create(JNIEnv *env, jobject jCallback, std::function<jobject(JNIEnv *, T &)> converter);
-
-        template<class T>
-        void run(void *data, EDiscordResult result, T &t);
-
-        void run(void *data, EDiscordResult result, DiscordUser *user);
-    } // namespace object
+    void run(void *data, EDiscordResult result, DiscordUser *user);
 
 } // namespace callback
 
