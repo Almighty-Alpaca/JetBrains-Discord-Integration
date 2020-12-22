@@ -63,10 +63,6 @@ namespace callback {
         void run(void *data, EDiscordResult result);
     } // namespace result
 
-    namespace typed {
-        void run(void *data, EDiscordResult result, jobject obj);
-    }
-
     void *getData(JNIEnv *env, jobject jCallback);
 } // namespace callback
 
