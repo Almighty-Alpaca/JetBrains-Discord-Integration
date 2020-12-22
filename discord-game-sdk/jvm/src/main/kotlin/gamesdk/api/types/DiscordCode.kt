@@ -20,11 +20,6 @@ public sealed class DiscordCode(public val ordinal: Int) {
     /** Everything is good */
     public object Ok : DiscordCode(0)
 
-    init {
-        @Suppress("LeakingThis")
-        VALUES_INTERNAL[ordinal] = this
-    }
-
     public sealed class Failure(native: Int) : DiscordCode(native) {
         /** Discord isn't working */
         public object ServiceUnavailable : Failure(1)
@@ -159,64 +154,59 @@ public sealed class DiscordCode(public val ordinal: Int) {
         public object DrawingInitFailed : Failure(44)
 
         public companion object {
-            public val VALUES: List<Failure> = listOf(
-                ServiceUnavailable,
-                InvalidVersion,
-                LockFailed,
-                InternalError,
-                InvalidPayload,
-                InvalidCommand,
-                InvalidPermissions,
-                NotFetched,
-                NotFound,
-                Conflict,
-                InvalidSecret,
-                InvalidJoinSecret,
-                NoEligibleActivity,
-                InvalidInvite,
-                NotAuthenticated,
-                InvalidAccessToken,
-                ApplicationMismatch,
-                InvalidDataUrl,
-                InvalidBase64,
-                NotFiltered,
-                LobbyFull,
-                InvalidLobbySecret,
-                InvalidFilename,
-                InvalidFileSize,
-                InvalidEntitlement,
-                NotInstalled,
-                NotRunning,
-                InsufficientBuffer,
-                PurchaseCanceled,
-                InvalidGuild,
-                InvalidEvent,
-                InvalidChannel,
-                InvalidOrigin,
-                RateLimited,
-                OAuth2Error,
-                SelectChannelTimeout,
-                GetGuildTimeout,
-                SelectVoiceForceRequired,
-                CaptureShortcutAlreadyListening,
-                UnauthorizedForAchievement,
-                InvalidGiftCode,
-                PurchaseError,
-                TransactionAborted,
-                DrawingInitFailed
-            )
+            public val VALUES: List<Failure> by lazy {
+                listOf(
+                    ServiceUnavailable,
+                    InvalidVersion,
+                    LockFailed,
+                    InternalError,
+                    InvalidPayload,
+                    InvalidCommand,
+                    InvalidPermissions,
+                    NotFetched,
+                    NotFound,
+                    Conflict,
+                    InvalidSecret,
+                    InvalidJoinSecret,
+                    NoEligibleActivity,
+                    InvalidInvite,
+                    NotAuthenticated,
+                    InvalidAccessToken,
+                    ApplicationMismatch,
+                    InvalidDataUrl,
+                    InvalidBase64,
+                    NotFiltered,
+                    LobbyFull,
+                    InvalidLobbySecret,
+                    InvalidFilename,
+                    InvalidFileSize,
+                    InvalidEntitlement,
+                    NotInstalled,
+                    NotRunning,
+                    InsufficientBuffer,
+                    PurchaseCanceled,
+                    InvalidGuild,
+                    InvalidEvent,
+                    InvalidChannel,
+                    InvalidOrigin,
+                    RateLimited,
+                    OAuth2Error,
+                    SelectChannelTimeout,
+                    GetGuildTimeout,
+                    SelectVoiceForceRequired,
+                    CaptureShortcutAlreadyListening,
+                    UnauthorizedForAchievement,
+                    InvalidGiftCode,
+                    PurchaseError,
+                    TransactionAborted,
+                    DrawingInitFailed
+                )
+            }
         }
     }
 
     public companion object {
-        public val VALUES_INTERNAL: MutableMap<Int, DiscordCode> = mutableMapOf()
-        public val VALUES: Map<Int, DiscordCode> = VALUES_INTERNAL
-        // TODO: for some reason the first entity is replaced by `null` when using this
-//        @OptIn(ExperimentalStdlibApi::class)
-//        public val VALUES: List<DiscordCode> = buildList {
-//            add(Ok)
-//            addAll(Failure.VALUES)
-//        }
+        public val VALUES: List<DiscordCode> by lazy { listOf(Ok) + Failure.VALUES }
     }
 
     override fun toString(): String = "$ordinal"

@@ -24,7 +24,7 @@ internal fun DiscordCode.toNativeDiscordCode(): NativeDiscordCode = this.ordinal
 
 internal fun NativeDiscordCode.toDiscordCode(): DiscordCode =
     when (this) {
-        in DiscordCode.VALUES.keys -> DiscordCode.VALUES.getValue(this)
+        in DiscordCode.VALUES.indices -> DiscordCode.VALUES[this]
         else -> throw IllegalArgumentException()
     }
 
