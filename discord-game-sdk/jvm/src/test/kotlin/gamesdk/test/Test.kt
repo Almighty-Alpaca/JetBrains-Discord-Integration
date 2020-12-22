@@ -16,10 +16,20 @@
 
 package gamesdk.test
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
-import gamesdk.api.Core
-import gamesdk.api.ThreadedCore
+import gamesdk.api.*
+import gamesdk.api.events.Subscription
+import gamesdk.api.events.subscribe
+import gamesdk.api.events.subscribeOnce
+import gamesdk.api.types.DiscordActivity
+import gamesdk.api.types.DiscordCode
+import gamesdk.api.types.DiscordCreateFlags
+import gamesdk.impl.events.NativeCurrentUserUpdateEvent
+import gamesdk.impl.events.NativeNotifiableEventBus
+import gamesdk.impl.events.toCurrentUserUpdateEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -30,27 +40,94 @@ class Test {
     @Test
     @OptIn(ExperimentalTime::class)
     fun testActivity() {
-        when (val result = Core.create(768507783167344680, DiscordCreateFlags.NoRequireDiscord)) {
-            is Failure -> println(result.reason)
-            is Success -> {
-                result.value.let(ThreadedCore.Companion::create).use { core ->
-                    val activity = DiscordActivity(768507783167344680, state = "Testing...")
+        @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
+        when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
+            is DiscordObjectResult.Failure -> println(result.reason)
+            is DiscordObjectResult.Success -> result.value.use { core ->
+                val activity = DiscordActivity(applicationId = 768507783167344680, state = "Testing...")
 
-                    runBlocking {
-                        val updateResult = core.activityManager.updateActivity(activity)
-                        println(updateResult)
+                runBlocking {
+                    val updateResult = core.activityManager.updateActivity(activity)
+                    println(updateResult.code)
 
-                        delay(5.seconds)
+                    delay(10.seconds)
 
-                        val clearResult = core.activityManager.clearActivity()
-                        println(clearResult)
+                    val clearResult = core.activityManager.clearActivity()
+                    println(clearResult.code)
 
-                        delay(5.seconds)
-                    }
+                    delay(5.seconds)
                 }
-                println("Done")
             }
         }
+        println("Done")
+    }
+
+    @Test
+    @OptIn(ExperimentalTime::class)
+    fun testEvents() {
+        println("Start")
+
+        @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
+        when (val result = ThreadedCore.create(768507783167344680U, DiscordCreateFlags.NoRequireDiscord)) {
+            is DiscordObjectResult.Failure -> println(result.reason)
+            is DiscordObjectResult.Success -> result.value.use { core ->
+                runBlocking {
+                    core.userManager.currentUserUpdates.subscribe {
+                        println("User Update!")
+                    }
+
+                    core.relationshipManager.refreshes.subscribe {
+                        println("Relationship Refresh!")
+                    }
+
+                    core.relationshipManager.relationshipUpdates.subscribe {
+                        println("Relationship Update!")
+                    }
+
+                    delay(30.seconds)
+                }
+            }
+        }
+
+        println("Done")
+    }
+
+    @Test
+    @OptIn(ExperimentalTime::class)
+    fun testEventBus() {
+        val eventBus = NativeNotifiableEventBus.create(NativeCurrentUserUpdateEvent::toCurrentUserUpdateEvent)
+
+        val result1 = withCallbackContext {
+            eventBus.subscribeOnce { registerInvocation() }
+        }
+
+        val result2 = withCallbackContext {
+            var i = 2
+            eventBus.subscribeUntil {
+                registerInvocation()
+                return@subscribeUntil --i == 0
+            }
+        }
+
+        val subscription3: Subscription
+        val result3 = withCallbackContext {
+            subscription3 = eventBus.subscribe { registerInvocation() }
+        }
+
+        val result4 = withCallbackContext {
+            eventBus.subscribe { registerInvocation() }
+        }
+
+        eventBus.notify(NativeCurrentUserUpdateEvent())
+        eventBus.notify(NativeCurrentUserUpdateEvent())
+        eventBus.notify(NativeCurrentUserUpdateEvent())
+        eventBus.unsubscribe(subscription3)
+        eventBus.notify(NativeCurrentUserUpdateEvent())
+
+        result1.assertInvocations(1)
+        result2.assertInvocations(2)
+        result3.assertInvocations(3)
+        result4.assertInvocations(4)
     }
 
     @Test
@@ -83,7 +160,7 @@ class Test {
                     val result = core.runCallbacks()
                     println("Callback result: $result")
 
-                    if (result == DiscordResult.NotRunning) {
+                    if (result == DiscordCode.Failure.NotRunning) {
                         println("Discord is not running anymore")
                         core.close()
                         core = null

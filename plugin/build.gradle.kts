@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment")
-
 import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
@@ -181,6 +179,7 @@ tasks {
 
     withType<KotlinCompile> {
         kotlinOptions {
+            @Suppress("SuspiciousCollectionReassignment")
             freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
         }
     }

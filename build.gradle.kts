@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("SuspiciousCollectionReassignment")
-
 import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
 import com.palantir.gradle.gitversion.VersionDetails
 import groovy.lang.Closure
@@ -70,18 +68,17 @@ subprojects {
     tasks {
         withType<KotlinCompile> {
             kotlinOptions {
-                jvmTarget = "1.8"
+                apiVersion = "1.4"
+                languageVersion = "1.4"
+                jvmTarget = "11"
+                @Suppress("SuspiciousCollectionReassignment")
                 freeCompilerArgs += "-Xjvm-default=enable"
             }
         }
 
         withType<JavaCompile> {
-            targetCompatibility = "1.8"
-            sourceCompatibility = "1.8"
-
-            if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
-                options.compilerArgs as MutableList<String> += listOf("--release", "8")
-            }
+            @Suppress("UnstableApiUsage")
+            options.release.set(11)
         }
     }
 }

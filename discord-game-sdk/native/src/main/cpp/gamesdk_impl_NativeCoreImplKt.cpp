@@ -16,72 +16,73 @@
 
 #include "gamesdk_impl_NativeCoreImplKt.h"
 
+#include "commons.h"
 #include "discord_game_sdk.h"
+#include "events.h"
 
 #include <iostream>
 
-JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags)
-{
-    struct DiscordCreateParams params;
+JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM(
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags, jobject jEvents
+) {
+    DiscordCreateParams params{};
     DiscordCreateParamsSetDefault(&params);
-    
-    params.client_id = (DiscordClientId)jClientId;
-    params.flags = jCreateFlags;
 
-    struct IDiscordCore *core = nullptr;
+    params.client_id = (DiscordClientId) jClientId;
+    params.flags = (uint64_t) jCreateFlags;
+
+    params.event_data = events::createData(env, jEvents);
+
+    params.events = nullptr;
+
+    // params.application_events = nullptr;
+    params.user_events = events::getUserEvents();
+
+    params.image_events = nullptr;
+    // params.activity_events = new IDiscordActivityEvents{};
+
+    params.relationship_events = events::getRelationshipEvents();
+
+    // params.lobby_events = new IDiscordLobbyEvents{};
+    // params.network_events = new IDiscordNetworkEvents{};
+    // params.overlay_events = new IDiscordOverlayEvents{};
+    params.storage_events = nullptr;
+    // params.store_events = new IDiscordStoreEvents{};
+    // params.voice_events = new IDiscordVoiceEvents{};
+    // params.achievement_events = new IDiscordAchievementEvents{};
+
+    IDiscordCore *core = nullptr;
     EDiscordResult result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    if (result != DiscordResult_Ok)
-    {
-        jclass jIntegerClass = env->FindClass("java/lang/Integer");
-
-        if (jIntegerClass != nullptr)
-        {
-            jmethodID jIntegerValueOf = env->GetStaticMethodID(jIntegerClass, "valueOf", "(I)Ljava/lang/Integer;");
-
-            if (jIntegerValueOf != nullptr)
-            {
-                return env->CallStaticObjectMethod(jIntegerClass, jIntegerValueOf, (jint)result);
-            }
-        }
-    }
-    else
-    {
-        jclass jLongClass = env->FindClass("java/lang/Long");
-
-        if (jLongClass != nullptr)
-        {
-            jmethodID jLongValueOf = env->GetStaticMethodID(jLongClass, "valueOf", "(J)Ljava/lang/Long;");
-
-            if (jLongValueOf != nullptr)
-            {
-                return env->CallStaticObjectMethod(jLongClass, jLongValueOf, (jlong)core);
-            }
-        }
-    }
-
-    // TODO: something is seriously wrong, throw an exception
-
-    return nullptr;
+    return createNativeDiscordObjectResult(env, result, createLongObject(env, (jlong) core));
 }
 
-JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
-{
-    struct IDiscordCore *core = (IDiscordCore *)jCore;
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
+    auto *core = (IDiscordCore *) jCore;
 
     core->destroy(core);
 }
 
-JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
-{
-    struct IDiscordCore *core = (IDiscordCore *)jCore;
+JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
+    auto *core = (IDiscordCore *) jCore;
 
-    return (jint)core->run_callbacks(core);
+    return (jint) core->run_callbacks(core);
 }
 
-JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getActivityManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore)
-{
-    struct IDiscordCore *core = (IDiscordCore *)jCore;
+JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getActivityManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
+    auto *core = (IDiscordCore *) jCore;
 
-    return (jlong)core->get_activity_manager(core);
+    return (jlong) core->get_activity_manager(core);
+}
+
+JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getRelationshipManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
+    auto *core = (IDiscordCore *) jCore;
+
+    return (jlong) core->get_relationship_manager(core);
+}
+
+JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getUserManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
+    auto *core = (IDiscordCore *) jCore;
+
+    return (jlong) core->get_user_manager(core);
 }

@@ -16,21 +16,47 @@
 
 package gamesdk.impl
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.*
+import gamesdk.api.events.CurrentUserUpdateEvent
+import gamesdk.api.events.RelationshipRefreshEvent
+import gamesdk.api.events.RelationshipUpdateEvent
+import gamesdk.api.managers.*
+import gamesdk.api.types.*
+import gamesdk.impl.events.*
+import gamesdk.impl.managers.NativeActivityManagerImpl
+import gamesdk.impl.managers.NativeRelationshipManagerImpl
+import gamesdk.impl.managers.NativeUserManagerImpl
+import gamesdk.impl.types.NativeDiscordCreateFlags
+import gamesdk.impl.types.toNativeDiscordCreateFlags
 
-internal class NativeCoreImpl private constructor(pointer: NativePointer) : NativeObjectImpl.Closeable(pointer), Core {
+/**
+ * **WARNING**: Do not make the properties in this class internal!
+ * The name mangling done by the Kotlin compiler will break the native code.
+ */
+internal class Events {
+    val currentUserUpdates: NativeNotifiableEventBus<CurrentUserUpdateEvent, NativeCurrentUserUpdateEvent> =
+        NativeNotifiableEventBus.create(NativeCurrentUserUpdateEvent::toCurrentUserUpdateEvent)
+
+    val relationshipRefreshes: NativeNotifiableEventBus<RelationshipRefreshEvent, NativeRelationshipRefreshEvent> =
+        NativeNotifiableEventBus.create(NativeRelationshipRefreshEvent::toRelationshipRefreshEvent)
+    val relationshipUpdates: NativeNotifiableEventBus<RelationshipUpdateEvent, NativeRelationshipUpdateEvent> =
+        NativeNotifiableEventBus.create(NativeRelationshipUpdateEvent::toRelationshipUpdateEvent)
+}
+
+internal class NativeCoreImpl private constructor(pointer: NativePointer, internal val events: Events) : NativeObjectImpl.Closeable(pointer), Core {
     override val applicationManager: ApplicationManager
         get() = TODO("Not yet implemented")
-    override val userManager: UserManager
-        get() = TODO("Not yet implemented")
+
+    override val userManager: UserManager by nativeLazy { pointer -> NativeUserManagerImpl(getUserManager(pointer), this@NativeCoreImpl) }
+
     override val imageManager: ImageManager
         get() = TODO("Not yet implemented")
 
     override val activityManager: ActivityManager by nativeLazy { pointer -> NativeActivityManagerImpl(getActivityManager(pointer), this@NativeCoreImpl) }
 
     override val relationshipManager: RelationshipManager
-        get() = TODO("Not yet implemented")
+            by nativeLazy { pointer -> NativeRelationshipManagerImpl(getRelationshipManager(pointer), this@NativeCoreImpl) }
+
     override val lobbyManager: LobbyManager
         get() = TODO("Not yet implemented")
     override val networkManager: NetworkManager
@@ -47,28 +73,32 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer) : Nati
         get() = TODO("Not yet implemented")
 
     override fun runCallbacks(): DiscordResult = native { pointer -> runCallbacks(pointer).toDiscordResult() }
-    override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit): Unit = TODO("Not yet implemented")
+
+//    override val logMessages
+//        get() = events.logMessages
+
+    override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit): Unit =
+        TODO("Not yet implemented")
 
     override val destructor: NativeMethod<Unit> = Native::destroy
 
     companion object : NativeObjectCreator() {
-        fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> {
-            return when (val result = native { create(clientId, createFlags.toNativeDiscordCreateFlags()) }) {
-                is NativePointer -> Success(NativeCoreImpl(result))
-                is NativeDiscordResult -> Failure(result.toDiscordResult())
-                else -> throw IllegalStateException() // This should never happen unless the native method returns garbage
-            }
+        internal fun create(clientId: DiscordClientId, createFlags: DiscordCreateFlags): DiscordObjectResult<Core> {
+            val events = Events()
+            return native { create(clientId, createFlags.toNativeDiscordCreateFlags(), events) }
+                .toDiscordObjectResult { NativeCoreImpl(it, events) }
         }
     }
 }
 
-/**
- * @return Either a [NativeDiscordResult] or a [NativePointer]
- */
-private external fun Native.create(clientId: ClientId, createFlags: NativeDiscordCreateFlags): Any
+private external fun Native.create(clientId: DiscordClientId, createFlags: NativeDiscordCreateFlags, events: Events): NativeDiscordObjectResult<NativePointer>
 
 private external fun Native.destroy(core: NativePointer)
 
 private external fun Native.runCallbacks(core: NativePointer): Int
 
 private external fun Native.getActivityManager(core: NativePointer): NativePointer
+
+private external fun Native.getRelationshipManager(core: NativePointer): NativePointer
+
+private external fun Native.getUserManager(core: NativePointer): NativePointer

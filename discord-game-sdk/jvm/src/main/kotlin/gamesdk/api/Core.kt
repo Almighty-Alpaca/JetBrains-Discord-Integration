@@ -16,43 +16,31 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
+import gamesdk.api.managers.*
+import gamesdk.api.types.DiscordClientId
+import gamesdk.api.types.DiscordCreateFlags
+import gamesdk.api.types.DiscordLogLevel
 import gamesdk.impl.NativeCoreImpl
 
-typealias ClientId = Long
+public interface Core : NativeObject.Closable {
+    public val applicationManager: ApplicationManager
+    public val userManager: UserManager
+    public val imageManager: ImageManager
+    public val activityManager: ActivityManager
+    public val relationshipManager: RelationshipManager
+    public val lobbyManager: LobbyManager
+    public val networkManager: NetworkManager
+    public val overlayManager: OverlayManager
+    public val storageManager: StorageManager
+    public val storeManager: StoreManager
+    public val voiceManager: VoiceManager
+    public val achievementManager: AchievementManager
 
-interface Core : NativeObject.Closable, DiscordCore {
-    val applicationManager: ApplicationManager
-    val userManager: UserManager
-    val imageManager: ImageManager
-    val activityManager: ActivityManager
-    val relationshipManager: RelationshipManager
-    val lobbyManager: LobbyManager
-    val networkManager: NetworkManager
-    val overlayManager: OverlayManager
-    val storageManager: StorageManager
-    val storeManager: StoreManager
-    val voiceManager: VoiceManager
-    val achievementManager: AchievementManager
+    public fun runCallbacks(): DiscordResult
+    public fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit)
 
-    override fun runCallbacks(): DiscordResult
-    override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit)
-
-    override fun getApplicationManager(): DiscordApplicationManager = applicationManager
-    override fun getUserManager(): DiscordUserManager = userManager
-    override fun getImageManager(): DiscordImageManager = imageManager
-    override fun getActivityManager(): DiscordActivityManager = activityManager
-    override fun getRelationshipManager(): DiscordRelationshipManager = relationshipManager
-    override fun getLobbyManager(): DiscordLobbyManager = lobbyManager
-    override fun getNetworkManager(): DiscordNetworkManager = networkManager
-    override fun getOverlayManager(): DiscordOverlayManager = overlayManager
-    override fun getStorageManager(): DiscordStorageManager = storageManager
-    override fun getStoreManager(): DiscordStoreManager = storeManager
-    override fun getVoiceManager(): DiscordVoiceManager = voiceManager
-    override fun getAchievementManager(): DiscordAchievementManager = achievementManager
-
-    companion object {
-        fun create(clientId: ClientId, createFlags: DiscordCreateFlags): Result<Core, DiscordResult> =
+    public companion object {
+        public fun create(clientId: DiscordClientId, createFlags: DiscordCreateFlags): DiscordCoreResult =
             NativeCoreImpl.create(clientId, createFlags)
     }
 }

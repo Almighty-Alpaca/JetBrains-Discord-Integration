@@ -16,7 +16,8 @@
 
 package gamesdk.api
 
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordResult
+import gamesdk.api.types.DiscordClientId
+import gamesdk.api.types.DiscordCreateFlags
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -24,16 +25,16 @@ import java.util.concurrent.TimeUnit
 /**
  * Core implementation that automatically runs callbacks
  */
-class ThreadedCore private constructor(private val core: Core) : Core by core {
+public class ThreadedCore private constructor(private val core: Core) : Core by core {
     private var runner: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
     init {
         runner.scheduleAtFixedRate({
             val result = core.runCallbacks()
-            if (result != DiscordResult.Ok) {
-                println("Error running callbacks: $result")
+            if (result is DiscordResult.Failure) {
+                println("Error running callbacks: ${result.reason}")
             }
-        }, 0L, 1L, TimeUnit.SECONDS)
+        }, 0L, 100L, TimeUnit.MILLISECONDS)
     }
 
     // TODO: Find out how to synchronize this
@@ -45,12 +46,8 @@ class ThreadedCore private constructor(private val core: Core) : Core by core {
         core.close()
     }
 
-    companion object {
-        fun create(core: Core): ThreadedCore {
-            return when (core) {
-                is ThreadedCore -> core
-                else -> ThreadedCore(core)
-            }
-        }
+    public companion object {
+        public fun create(clientId: DiscordClientId, createFlags: DiscordCreateFlags): DiscordCoreResult =
+            Core.create(clientId, createFlags).map(::ThreadedCore)
     }
 }

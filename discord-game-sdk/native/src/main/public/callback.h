@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-#ifndef _Included_callback
-#define _Included_callback
+#ifndef CALLBACK_H
+#define CALLBACK_H
 
+#include "commons.h"
 #include "discord_game_sdk.h"
 
 #include <jni.h>
+#include <functional>
 
-namespace callback
-{
-    namespace result
-    {
-        void run(void *data, EDiscordResult result);
+namespace callback::result {
+    void *create(JNIEnv *env, jobject jCallback);
 
-        void *getData(JNIEnv *env, jobject jCallback);
-    } // namespace result
+    void run(void *data, EDiscordResult result);
+
+    namespace object {
+        void *createUser(JNIEnv *env, jobject jCallback);
+
+        template<class T>
+        void *create(JNIEnv *env, jobject jCallback, std::function<jobject(JNIEnv *, T &)> converter);
+
+        template<class T>
+        void run(void *data, EDiscordResult result, T &t);
+
+        void run(void *data, EDiscordResult result, DiscordUser *user);
+    } // namespace object
+
 } // namespace callback
 
-#endif
+#endif // CALLBACK_H

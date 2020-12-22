@@ -16,8 +16,8 @@
 
 package gamesdk.api
 
-interface NativeObject {
-    val alive: Boolean
+public interface NativeObject {
+    public val alive: Boolean
 
-    interface Closable : NativeObject, AutoCloseable
+    public interface Closable : NativeObject, AutoCloseable
 }

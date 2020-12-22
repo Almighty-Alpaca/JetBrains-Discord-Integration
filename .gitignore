@@ -53,6 +53,11 @@ hs_err_pid*
 ## Gradle build output
 **/build/
 
+### CMake ###
+
+## Build Files
+**/cmake-build-debug
+
 ### Project Files ###
 
 ## Tokens

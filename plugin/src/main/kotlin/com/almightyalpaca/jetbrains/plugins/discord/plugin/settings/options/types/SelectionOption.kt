@@ -176,7 +176,7 @@ class SelectionOption<T>(
     }
 
     override val isModified
-        get() = currentValue != componentImpl.selectedItem
+        get() = currentValue as Any != componentImpl.selectedItem // because Kotlin is being weird
 
     @Suppress("UNCHECKED_CAST")
     override fun apply() {

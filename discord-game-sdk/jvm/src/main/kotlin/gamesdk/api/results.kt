@@ -1,0 +1,57 @@
+/*
+ * Copyright 2017-2020 Aljoscha Grebe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package gamesdk.api
+
+import gamesdk.api.types.DiscordRelationship
+import gamesdk.api.types.DiscordUser
+import gamesdk.api.types.DiscordCode
+import gamesdk.api.types.DiscordPremiumType
+
+public sealed class DiscordResult(public val code: DiscordCode) {
+    public object Success : DiscordResult(DiscordCode.Ok)
+    public data class Failure(val reason: DiscordCode.Failure) : DiscordResult(reason)
+}
+
+public sealed class DiscordObjectResult<out T>(public val code: DiscordCode) {
+    public data class Success<out T>(val value: T) : DiscordObjectResult<T>(DiscordCode.Ok)
+    public data class Failure(val reason: DiscordCode.Failure) : DiscordObjectResult<Nothing>(reason)
+}
+
+public inline fun <T, R> DiscordObjectResult<T>.map(block: (T) -> R): DiscordObjectResult<R> =
+    flatMap { DiscordObjectResult.Success(block(it)) }
+
+public inline fun <T, R> DiscordObjectResult<T>.flatMap(block: (T) -> DiscordObjectResult<R>): DiscordObjectResult<R> = when (this) {
+    is DiscordObjectResult.Success -> block(value)
+    is DiscordObjectResult.Failure -> this
+}
+
+//sealed class DiscordObjectObjectResult<out T1, out T2>(val code: DiscordCode) {
+//    data class Success<out T1, out T2>(val first: T1, val second: T2) : DiscordObjectObjectResult<T1, T2>(DiscordCode.Ok)
+//    data class Failure(val reason: DiscordCode.Failure) : DiscordObjectObjectResult<Nothing, Nothing>(reason)
+//}
+
+public typealias DiscordCoreResult = DiscordObjectResult<Core>
+
+public typealias DiscordUserResult = DiscordObjectResult<DiscordUser>
+
+public typealias DiscordPremiumTypeResult = DiscordObjectResult<DiscordPremiumType>
+
+public typealias DiscordRelationshipResult = DiscordObjectResult<DiscordRelationship>
+
+public typealias DiscordBooleanResult = DiscordObjectResult<Boolean>
+
+public typealias DiscordIntResult = DiscordObjectResult<Int>

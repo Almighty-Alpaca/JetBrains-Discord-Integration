@@ -46,6 +46,8 @@ dependencies {
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
+
+    testImplementation(group = "com.willowtreeapps.assertk", name = "assertk-jvm", version = "0.23")
 }
 
 sourceSets {
@@ -59,13 +61,21 @@ sourceSets {
 }
 
 tasks {
-    @Suppress("SuspiciousCollectionReassignment")
     withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            @Suppress("SuspiciousCollectionReassignment")
             freeCompilerArgs += listOf(
                 "-Xjvm-default=enable",
                 "-Xopt-in=kotlin.RequiresOptIn"
+            )
+        }
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            @Suppress("SuspiciousCollectionReassignment")
+            freeCompilerArgs += listOf(
+                "-Xexplicit-api=strict"
             )
         }
     }

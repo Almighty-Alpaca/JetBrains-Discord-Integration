@@ -24,13 +24,14 @@ import kotlin.properties.Delegates
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 @Constraint(validatedBy = [StringLengthValidator::class])
-annotation class StringLength(val min: Int = 0, val max: Int = 1 shl 20, val includingNullTerminator: Boolean = true, val allowNull: Boolean = false)
 
-class StringLengthValidator : ConstraintValidator<StringLength, String> {
-    var min by Delegates.notNull<Int>()
-    var max by Delegates.notNull<Int>()
-    var includingNullTerminator by Delegates.notNull<Boolean>()
-    var allowNull by Delegates.notNull<Boolean>()
+public annotation class StringLength(val min: Int = 0, val max: Int = 1 shl 20, val includingNullTerminator: Boolean = true, val allowNull: Boolean = false)
+
+public class StringLengthValidator : ConstraintValidator<StringLength, String> {
+    public var min: Int by Delegates.notNull()
+    public var max: Int by Delegates.notNull()
+    public var includingNullTerminator: Boolean by Delegates.notNull()
+    public var allowNull: Boolean by Delegates.notNull()
 
     override fun initialize(constraintAnnotation: StringLength) {
         super.initialize(constraintAnnotation)
