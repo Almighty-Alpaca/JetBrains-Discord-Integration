@@ -22,13 +22,13 @@
 #include <jni.h>
 
 namespace types {
-    jobject createIntegerObject(JNIEnv *env, jint value);
+    jobject createIntegerObject(JNIEnv &env, jint value);
 
-    jobject createLongObject(JNIEnv *env, jlong value);
+    jobject createLongObject(JNIEnv &env, jlong value);
 
-    jobject createBooleanObject(JNIEnv *env, jboolean value);
+    jobject createBooleanObject(JNIEnv &env, jboolean value);
 
-    jobject createPair(JNIEnv *env, jobject first, jobject second);
+    jobject createPair(JNIEnv &env, jobject first, jobject second);
 
     /**
      * Activity is an jobject of type NativeDiscordActivity
@@ -43,7 +43,7 @@ namespace types {
 
     jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship);
 
-    jobject createNativeDiscordObjectResult(JNIEnv *env, enum EDiscordResult result, jobject object);
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject object);
 } // namespace types
 
 #endif // TYPES_H

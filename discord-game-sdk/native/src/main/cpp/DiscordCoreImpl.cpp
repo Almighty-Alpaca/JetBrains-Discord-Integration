@@ -297,7 +297,7 @@ JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_game
 
     auto result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    jobject pair = types::createPair(env, types::createLongObject(env, (jlong) core), types::createIntegerObject(env, (jint) result));
+    jobject pair = types::createPair(*env, types::createLongObject(*env, (jlong) core), types::createIntegerObject(*env, (jint) result));
 
     return pair;
 }
