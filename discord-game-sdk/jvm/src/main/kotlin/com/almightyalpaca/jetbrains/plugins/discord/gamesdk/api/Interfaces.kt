@@ -47,7 +47,7 @@ interface DiscordApplicationManager {
     fun validateOrExit(callback: DiscordResultCallback)
     fun getCurrentLocale(): DiscordLocale
     fun getCurrentBranch(): DiscordBranch
-    fun getOAuth2Token(): DiscordOAuth2Token
+    fun getOAuth2Token(callback: (result: DiscordResult, token: DiscordOAuth2Token?) -> Unit)
     fun getTicket(callback: (result: DiscordResult, ticket: String) -> Unit)
 }
 

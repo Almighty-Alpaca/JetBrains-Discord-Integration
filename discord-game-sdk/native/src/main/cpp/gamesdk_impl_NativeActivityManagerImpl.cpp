@@ -47,21 +47,21 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_updateActiv
     struct IDiscordActivityManager *activityManager = (IDiscordActivityManager *)jActivityManagerPointer;
     struct DiscordActivity activity = deconstructed::constructActivity(env, jDeconstructedActivity);
 
-    activityManager->update_activity(activityManager, &activity, callback::result::getData(env, jCallback), callback::result::run);
+    activityManager->update_activity(activityManager, &activity, callback::getData(env, jCallback), callback::result::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_clearActivity(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManagerPointer, jobject jCallback)
 {
     struct IDiscordActivityManager *activityManager = (IDiscordActivityManager *)jActivityManagerPointer;
 
-    activityManager->clear_activity(activityManager, callback::result::getData(env, jCallback), callback::result::run);
+    activityManager->clear_activity(activityManager, callback::getData(env, jCallback), callback::result::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_sendRequestReply(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManagerPointer, jlong jUserId, jint jReply, jobject jCallback)
 {
     struct IDiscordActivityManager *activityManager = (IDiscordActivityManager *)jActivityManagerPointer;
 
-    activityManager->send_request_reply(activityManager, (DiscordUserId)jUserId, (EDiscordActivityJoinRequestReply)jReply, callback::result::getData(env, jCallback), callback::result::run);
+    activityManager->send_request_reply(activityManager, (DiscordUserId)jUserId, (EDiscordActivityJoinRequestReply)jReply, callback::getData(env, jCallback), callback::result::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_sendInvite(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManagerPointer, jlong jUserId, jint jType, jstring jContent, jobject jCallback)
@@ -70,7 +70,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_sendInvite(
 
     const char *content = env->GetStringUTFChars(jContent, nullptr);
 
-    activityManager->send_invite(activityManager, (DiscordUserId)jUserId, (EDiscordActivityActionType)jType, content, callback::result::getData(env, jCallback), callback::result::run);
+    activityManager->send_invite(activityManager, (DiscordUserId)jUserId, (EDiscordActivityActionType)jType, content, callback::getData(env, jCallback), callback::result::run);
 
     env->ReleaseStringUTFChars(jContent, content);
 }
@@ -79,5 +79,5 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_NativeActivityManagerImplKt_acceptInvit
 {
     struct IDiscordActivityManager *activityManager = (IDiscordActivityManager *)jActivityManagerPointer;
 
-    activityManager->accept_invite(activityManager, (DiscordUserId)jUserId, callback::result::getData(env, jCallback), callback::result::run);
+    activityManager->accept_invite(activityManager, (DiscordUserId)jUserId, callback::getData(env, jCallback), callback::result::run);
 }

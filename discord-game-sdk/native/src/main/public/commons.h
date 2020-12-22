@@ -1,10 +1,9 @@
-#ifndef _INCLUDED_COMMONS
-#define _INCLUDED_COMMONS
+#ifndef INCLUDED_COMMONS
+#define INCLUDED_COMMONS
 
 #include <jni.h>
 
 #define INTERNAL_THIS_POINTER_NAME "internalThisPointer"
-#define CLASSNAME(name) ("Lcom/almightyalpaca/jetbrains/plugins/discord/gamesdk/" name ";")
 
 #define GET_INTERFACE_PTR(jni, this_, type, var) {                                                                  \
     jclass clazz;                                                                                                   \
@@ -16,8 +15,8 @@
     var = (type*) ptr;                                                                                              \
 }
 
-jobject asJobjectFromInt(JNIEnv* env, jint int_);
-jobject asJobjectFromLong(JNIEnv* env, jlong long_);
-jobject createPair(JNIEnv* env, jobject first, jobject second);
+jobject as_jobject_from_int(JNIEnv* env, jint int_);
+jobject as_jobject_from_long(JNIEnv* env, jlong long_);
+jobject create_pair(JNIEnv* env, jobject first, jobject second);
 
 #endif

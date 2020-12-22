@@ -14,21 +14,60 @@
  * limitations under the License.
  */
 
-#ifndef _Included_callback
-#define _Included_callback
+#ifndef Included_callback
+#define Included_callback
 
 #include "discord_game_sdk.h"
 
 #include <jni.h>
+#include <iostream>
 
-namespace callback
-{
-    namespace result
-    {
+namespace callback {
+    struct CallbackData {
+        JavaVM *jvm;
+        jobject jCallback;
+    };
+
+    template<typename T>
+    void do_with_jnienv(JavaVM *jvm, T &&call) {
+        JNIEnv *env{};
+
+        jint getEnvResult = jvm->GetEnv((void **) &env, JNI_VERSION_1_8);
+
+        if (getEnvResult == JNI_EVERSION) {
+            // TODO: handle wrong version
+        } else if (getEnvResult == JNI_EDETACHED) {
+            jint jAttachResult = jvm->AttachCurrentThread((void **) &env, nullptr);
+
+            if (jAttachResult != JNI_OK) {
+                // TODO: Check and handle error code (jni.h:160). What about the global reference?
+
+                std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+            }
+        }
+
+        call(env);
+
+        // Only detach if thread wasn't previously attached
+        if (getEnvResult == JNI_EDETACHED) {
+            jint jDetachResult = jvm->DetachCurrentThread();
+            if (jDetachResult != JNI_OK) {
+                // TODO: Check and handle error code (jni.h:160)
+
+                std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
+            }
+        }
+    }
+
+    namespace result {
         void run(void *data, EDiscordResult result);
-
-        void *getData(JNIEnv *env, jobject jCallback);
     } // namespace result
+
+    namespace typed {
+        void run(void *data, EDiscordResult result, jobject obj);
+    }
+
+    void *getData(JNIEnv *env, jobject jCallback);
 } // namespace callback
 
 #endif

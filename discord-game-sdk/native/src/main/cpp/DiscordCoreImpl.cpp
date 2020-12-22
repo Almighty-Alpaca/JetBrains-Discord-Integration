@@ -38,7 +38,7 @@ namespace discordcore {
     };
 
     static void log_hook_callback(void* vp_cb_data, enum EDiscordLogLevel level, const char* message){
-        native_callback_data* cb_data = (native_callback_data*) vp_cb_data;
+        auto* cb_data = (native_callback_data*) vp_cb_data;
         jobject j_callback_global = cb_data->callback;
         JavaVM *jvm = cb_data->jvm;
         JNIEnv *env{};
@@ -274,10 +274,10 @@ extern IDiscordActivityEvents       activity_manager_events;
  * Signature:  (JI)J
  */
 JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1create_0002dJSWoG40
-  (JNIEnv *env, jclass __class, jlong client_id, jint flags)
+  (JNIEnv *env, jclass class_, jlong client_id, jint flags)
 {
     IDiscordCore* core = nullptr;
-    DiscordCreateParams params;
+    DiscordCreateParams params{};
     DiscordCreateParamsSetDefault(&params);
     params.client_id = client_id;
     params.flags = flags;
@@ -295,7 +295,7 @@ JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_game
 
     auto result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    jobject pair = createPair(env, asJobjectFromLong(env, (jlong) core), asJobjectFromInt(env, (jint) result));
+    jobject pair = create_pair(env, as_jobject_from_long(env, (jlong) core), as_jobject_from_int(env, (jint) result));
 
     return pair;
 }

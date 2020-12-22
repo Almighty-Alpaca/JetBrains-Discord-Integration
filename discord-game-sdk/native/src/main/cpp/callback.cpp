@@ -22,76 +22,37 @@ namespace callback
 {
     namespace result
     {
-        struct CallbackData
-        {
-            JavaVM *jvm;
-            jobject jCallback;
-        };
-
         void run(void *data, EDiscordResult result)
         {
-            struct CallbackData *callbackData = (CallbackData *)data;
+            auto *callbackData = (CallbackData *)data;
             jobject jCallbackGlobal = callbackData->jCallback;
             JavaVM *jvm = callbackData->jvm;
-            JNIEnv *env{};
 
-            jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
+            do_with_jnienv(jvm, [callbackData, jCallbackGlobal, result](JNIEnv* env) {
+                jclass jCallbackClass = env->GetObjectClass(jCallbackGlobal);
+                jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
 
-            if (getEnvResult == JNI_EVERSION)
-            {
-                // TODO: handle wrong version
-            }
-            else if (getEnvResult == JNI_EDETACHED)
-            {
-                jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
+                if (jCallbackMethodInvoke != nullptr) {
+                    env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, (jint) result);
+                } else {
+                    // TODO: Handle method not found
 
-                if (jAttachResult != JNI_OK)
-                {
-                    // TODO: Check and handle error code (jni.h:160). What about the global reference?
-
-                    std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
+                    std::cout << "Could not find callback method" << std::endl;
                 }
-            }
 
-            jclass jCallbackClass = env->GetObjectClass(jCallbackGlobal);
-            jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(I)V");
+                env->DeleteGlobalRef(jCallbackGlobal);
 
-            if (jCallbackMethodInvoke != nullptr)
-            {
-                env->CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, (jint)result);
-            }
-            else
-            {
-                // TODO: Handle method not found
-
-                std::cout << "Could not find callback method" << std::endl;
-            }
-
-            env->DeleteGlobalRef(jCallbackGlobal);
-
-            // Only detach if thread wasn't previously attached
-            if (getEnvResult == JNI_EDETACHED)
-            {
-                jint jDetachResult = jvm->DetachCurrentThread();
-                if (jDetachResult != JNI_OK)
-                {
-                    // TODO: Check and handle error code (jni.h:160)
-
-                    std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
-                }
-            }
-
-            delete callbackData;
-        }
-
-        void *getData(JNIEnv *env, jobject jCallback)
-        {
-            JavaVM *jvm{};
-            env->GetJavaVM(&jvm);
-
-            jobject jCallbackGlobal = env->NewGlobalRef(jCallback);
-
-            return new CallbackData{.jvm = jvm, .jCallback = jCallbackGlobal};
+                delete callbackData;
+            });
         }
     } // namespace result
+    void *getData(JNIEnv *env, jobject jCallback)
+    {
+        JavaVM *jvm{};
+        env->GetJavaVM(&jvm);
+
+        jobject jCallbackGlobal = env->NewGlobalRef(jCallback);
+
+        return new CallbackData{.jvm = jvm, .jCallback = jCallbackGlobal};
+    }
 } // namespace callback

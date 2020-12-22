@@ -22,8 +22,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.*
 import gamesdk.api.DiscordRelationshipFilter
 import gamesdk.api.DiscordResultCallback
 import gamesdk.impl.NativeDiscordResultCallback
-import gamesdk.impl.toNativeDiscordResultCallback
 import gamesdk.impl.NativeLoader
+import gamesdk.impl.toNativeDiscordResultCallback
 
 internal class DiscordLobbyTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyTransaction {
     override fun setType(type: DiscordLobbyType) = DiscordResult.fromInt(native_setType(type.toInt()))
@@ -68,13 +68,16 @@ internal class DiscordApplicationManagerImpl(private val internalThisPointer: Lo
 
     override fun getCurrentLocale() = native_getCurrentLocale()
     override fun getCurrentBranch() = native_getDiscordBranch()
-    override fun getOAuth2Token() = native_getOAuth2Token()
+    override fun getOAuth2Token(callback: (result: DiscordResult, token: DiscordOAuth2Token?) -> Unit) = native_getOAuth2Token { result, token ->
+        callback(DiscordResult.fromInt(result), token)
+    }
+
     override fun getTicket(callback: (result: DiscordResult, ticket: String) -> Unit) = native_getTicked { result, ticket -> callback(DiscordResult.fromInt(result), ticket) }
 
     private external fun native_validateOrExit(callback: NativeDiscordResultCallback)
     private external fun native_getCurrentLocale(): DiscordLocale
     private external fun native_getDiscordBranch(): DiscordBranch
-    private external fun native_getOAuth2Token(): DiscordOAuth2Token
+    private external fun native_getOAuth2Token(callback: (result: Int, token: DiscordOAuth2Token?) -> Unit)
     private external fun native_getTicked(callback: (result: Int, ticket: String) -> Unit)
 }
 

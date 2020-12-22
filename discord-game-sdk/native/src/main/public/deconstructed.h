@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _Included_deconstructed
-#define _Included_deconstructed
+#ifndef Included_deconstructed
+#define Included_deconstructed
 
 #include "discord_game_sdk.h"
 
