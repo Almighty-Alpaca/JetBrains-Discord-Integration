@@ -16,12 +16,12 @@
 
 #include "gamesdk_impl_NativeCoreImplKt.h"
 
+#include <iostream>
+
 #include "commons.h"
 #include "discord_game_sdk.h"
 #include "events.h"
 #include "types.h"
-
-#include <iostream>
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM(
         JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags, jobject jEvents
@@ -32,7 +32,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM
     params.client_id = (DiscordClientId) jClientId;
     params.flags = (uint64_t) jCreateFlags;
 
-    params.event_data = events::createData(env, jEvents);
+    params.event_data = events::create(*env, jEvents);
 
     params.events = nullptr;
 

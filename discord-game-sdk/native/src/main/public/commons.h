@@ -1,9 +1,9 @@
 #ifndef COMMONS_H
 #define COMMONS_H
 
-#include "discord_game_sdk.h"
-
 #include <jni.h>
+
+#include "discord_game_sdk.h"
 
 #define INTERNAL_THIS_POINTER_NAME "internalThisPointer"
 

@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-#include <iostream>
 #include "types.h"
+
+#include <iostream>
 
 namespace types {
 
     jobject createIntegerObject(JNIEnv &env, jint value) {
         jclass int_class = env.FindClass("java/lang/Integer");
         jmethodID j_value_of = env.GetStaticMethodID(int_class, "valueOf", "(I)Ljava/lang/Integer;");
+
         return env.CallStaticObjectMethod(int_class, j_value_of, value);
     }
 
     jobject createLongObject(JNIEnv &env, jlong value) {
         jclass long_class = env.FindClass("java/lang/Long");
         jmethodID j_value_of = env.GetStaticMethodID(long_class, "valueOf", "(J)Ljava/lang/Long;");
+
         return env.CallStaticObjectMethod(long_class, j_value_of, value);
     }
 
     jobject createBooleanObject(JNIEnv &env, jboolean value) {
         jclass jBooleanClass = env.FindClass("java/lang/Boolean");
         jmethodID jBooleanValueOfMethod = env.GetStaticMethodID(jBooleanClass, "valueOf", "(B)Ljava/lang/Boolean;");
+
         return env.CallStaticObjectMethod(jBooleanClass, jBooleanValueOfMethod, value);
     }
 
@@ -210,21 +214,17 @@ namespace types {
     }
 
     jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship) {
-        std::cout << "0" << std::endl;
-
+        jint jType = (jint) relationship.type;
         jobject jUser = createJavaUser(env, relationship.user);
-        std::cout << "1" << std::endl;
-
         jobject jPresence = createJavaPresence(env, relationship.presence);
-        std::cout << "2" << std::endl;
 
         jclass jRelationshipClass = env.FindClass("gamesdk/impl/types/NativeDiscordRelationship");
-        std::cout << "3" << std::endl;
 
         jmethodID jRelationshipConstructor = env.GetMethodID(jRelationshipClass, "<init>", "(ILgamesdk/api/types/DiscordUser;Lgamesdk/impl/types/NativeDiscordPresence;)V");
-        std::cout << "4" << std::endl;
 
-        return env.NewObject(jRelationshipClass, jRelationshipConstructor, jUser, jPresence);
+        jobject jRelationship = env.NewObject(jRelationshipClass, jRelationshipConstructor, jType, jUser, jPresence);
+
+        return jRelationship;
     }
 
     jobject createNativeDiscordObjectResult(JNIEnv &env, EDiscordResult result, jobject object) {

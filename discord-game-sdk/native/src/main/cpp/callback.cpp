@@ -15,31 +15,33 @@
  */
 
 #include "callback.h"
-#include "commons.h"
-#include "types.h"
-#include "jnihelpers.h"
 
 #include <iostream>
 
+#include "commons.h"
+#include "jnihelpers.h"
+#include "types.h"
+
 namespace callback {
     struct CallbackData {
-        JavaVM *jvm;
+        JavaVM &jvm;
         jobject jCallback;
     };
 
     void *create(JNIEnv *env, jobject jCallback) {
-        JavaVM *jvm{};
-        env->GetJavaVM(&jvm);
+        JavaVM *jvm;
+        jint result = env->GetJavaVM(&jvm);
+        // TODO: handle result
 
         jobject jCallbackGlobal = env->NewGlobalRef(jCallback);
 
-        return new CallbackData{jvm, jCallbackGlobal};
+        return new CallbackData{*jvm, jCallbackGlobal};
     }
 
     void run(void *data, EDiscordResult result) {
         auto *callbackData = (CallbackData *) data;
         jobject jCallbackGlobal = callbackData->jCallback;
-        JavaVM *jvm = callbackData->jvm;
+        JavaVM &jvm = callbackData->jvm;
 
         jnihelpers::withEnv(jvm, [&jCallbackGlobal, &result](JNIEnv &env) {
 
@@ -64,7 +66,7 @@ namespace callback {
         auto *callbackData = (CallbackData *) data;
 
         jobject jCallbackGlobal = callbackData->jCallback;
-        JavaVM *jvm = callbackData->jvm;
+        JavaVM &jvm = callbackData->jvm;
 
         jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & t](JNIEnv &env) {
             jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);

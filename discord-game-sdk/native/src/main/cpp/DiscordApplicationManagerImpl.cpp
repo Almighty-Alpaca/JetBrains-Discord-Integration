@@ -1,8 +1,8 @@
 #include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordApplicationManagerImpl.h"
 
-#include "discord_game_sdk.h"
-#include "commons.h"
 #include "callback.h"
+#include "commons.h"
+#include "discord_game_sdk.h"
 
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordApplicationManagerImpl_native_1validateOrExit
         (JNIEnv *env, jobject this_ptr, jobject callback) {

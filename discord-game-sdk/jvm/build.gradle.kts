@@ -80,6 +80,12 @@ tasks {
         }
     }
 
+    test {
+        jvmArgs = listOf(
+            // "-Xcheck:jni" // For JNI debugging
+        )
+    }
+
     processResources {
         dependsOn(":discord-game-sdk:native:assemble")
 

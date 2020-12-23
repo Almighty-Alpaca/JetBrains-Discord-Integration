@@ -16,9 +16,9 @@
 
 #include "gamesdk_impl_managers_NativeActivityManagerImplKt.h"
 
+#include "callback.h"
 #include "discord_game_sdk.h"
 #include "types.h"
-#include "callback.h"
 
 JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_registerCommand(
         JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jstring jCommand

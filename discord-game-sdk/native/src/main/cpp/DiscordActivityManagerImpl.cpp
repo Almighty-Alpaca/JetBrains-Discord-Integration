@@ -1,12 +1,12 @@
 #include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordActivityManagerImpl.h"
 
-#include "discord_game_sdk.h"
-#include "commons.h"
-#include "callback.h"
-#include "types.h"
-
 #include <cassert>
 #include <iostream>
+
+#include "callback.h"
+#include "commons.h"
+#include "discord_game_sdk.h"
+#include "types.h"
 
 IDiscordActivityEvents       activity_manager_events;
 

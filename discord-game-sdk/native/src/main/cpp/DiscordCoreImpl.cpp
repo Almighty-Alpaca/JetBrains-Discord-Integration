@@ -1,11 +1,10 @@
 #include "com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl.h"
 
-#include "commons.h"
-#include "types.h"
-
-#include "discord_game_sdk.h"
-
 #include <iostream>
+
+#include "commons.h"
+#include "discord_game_sdk.h"
+#include "types.h"
 
 /*
  * Class:      com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl

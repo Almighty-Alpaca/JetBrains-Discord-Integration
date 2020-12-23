@@ -17,11 +17,11 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
 
+#include <functional>
+#include <jni.h>
+
 #include "commons.h"
 #include "discord_game_sdk.h"
-
-#include <jni.h>
-#include <functional>
 
 namespace callback {
     void *create(JNIEnv *env, jobject jCallback);

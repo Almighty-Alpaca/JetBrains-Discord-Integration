@@ -56,7 +56,5 @@ internal interface NativeNotifiableEventBus<T : Event, TN : NativeEvent> : Event
 }
 
 private class NativeNotifiableEventBusImpl<T : Event, TN : NativeEvent>(val converter: (TN) -> T) : NotifiableEventBusImpl<T>(), NativeNotifiableEventBus<T, TN> {
-    override fun notify(nativeEvent: TN) {
-        println("EVENT")
-    }
+    override fun notify(nativeEvent: TN) = notify(converter(nativeEvent))
 }
