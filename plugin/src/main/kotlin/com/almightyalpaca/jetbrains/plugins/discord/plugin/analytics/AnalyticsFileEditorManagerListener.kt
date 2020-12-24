@@ -37,7 +37,7 @@ class AnalyticsFileEditorManagerListener : FileEditorManagerListener, Disposable
         val project = source.project
 
         launch {
-            val data = dataService.getData(Renderer.Mode.NORMAL, project, editor) ?: return@launch
+            val data = dataService.getData(Renderer.Mode.NORMAL, project, editor)
             val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)
 
             with(context) {

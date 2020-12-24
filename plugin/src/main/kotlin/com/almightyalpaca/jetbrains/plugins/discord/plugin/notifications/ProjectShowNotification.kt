@@ -19,10 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ProjectShow
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationGroup
-import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
+import com.intellij.notification.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import kotlin.coroutines.resume
@@ -42,6 +39,7 @@ object ProjectShowNotification {
     suspend fun show(project: Project) = suspendCoroutine<ProjectShow> { continuation ->
         group.createNotification(title, null, content, NotificationType.INFORMATION)
             .apply {
+                collapseActionsDirection = Notification.CollapseActionsDirection.KEEP_LEFTMOST
                 for (value in project.settings.show.selectableValues) {
                     addAction(DumbAwareAction.create(value.text) {
                         expire()

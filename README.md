@@ -41,7 +41,7 @@ cd JetBrains-Discord-Integration
 chmod +x gradlew
 ./gradlew
 ```
-This will generate the file `JetBrains-Discord-Integration-Plugin-X.X.X.zip`.
+This will generate the file `JetBrains-Discord-Integration-X.X.X.zip`.
 
 To install the zip file follow the steps from the [previous install method](#from-the-github-release-page).
 

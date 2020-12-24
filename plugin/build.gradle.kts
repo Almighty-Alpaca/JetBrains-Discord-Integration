@@ -18,8 +18,9 @@
 
 import com.almightyalpaca.jetbrains.plugins.discord.gradle.PngOptimizingTransformer
 import com.almightyalpaca.jetbrains.plugins.discord.gradle.isCi
+import com.almightyalpaca.jetbrains.plugins.discord.gradle.kotlinx
 import com.almightyalpaca.jetbrains.plugins.discord.gradle.ktor
-import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
 
@@ -35,16 +36,20 @@ plugins {
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 
 dependencies {
+    val versionAntlr: String by project
+    val versionAtomicfu: String by project
     val versionCommonsIo: String by project
     val versionJackson: String by project
+    val versionJunit: String by project
+    val versionKtor: String by project
     val versionOkHttp: String by project
     val versionRpc: String by project
-    val versionJunit: String by project
-    val versionAntlr: String by project
 
     implementation(project(":icons"))
 
     implementation(project(":analytics:interface"))
+
+    implementation(group = "org.jetbrains.kotlinx", name = "atomicfu", version = versionAtomicfu)
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
@@ -54,8 +59,7 @@ dependencies {
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 
-    val versionKtor: String by project
-    implementation(platform(ktor("bom", versionKtor)))
+    implementation(platform(ktor(module = "bom", version = versionKtor)))
     implementation(ktor("client-core-jvm"))
     implementation(ktor("http-jvm"))
     implementation(ktor("client-okhttp"))
@@ -63,6 +67,7 @@ dependencies {
     implementation(ktor("client-serialization-jvm"))
 
     antlr("org.antlr", name = "antlr4", version = versionAntlr)
+    implementation("org.antlr", name = "antlr4-runtime", version = versionAntlr)
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJunit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJunit)
@@ -79,6 +84,15 @@ sourceSets {
     }
 }
 
+// https://github.com/gradle/gradle/issues/820
+configurations {
+    compile {
+        setExtendsFrom(extendsFrom.filter { it != antlr.get() })
+    }
+}
+
+val isCI by lazy { System.getenv("CI") != null }
+
 intellij {
     // https://www.jetbrains.com/intellij-repository/releases
     // https://www.jetbrains.com/intellij-repository/snapshots
@@ -94,36 +108,34 @@ intellij {
     setPlugins("git4idea")
 }
 
-afterEvaluate {
-    configurations {
-        all {
-            if (name.contains("kotlin", ignoreCase = true)) {
-                return@all
-            }
+configurations {
+    all {
+        if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
+            return@all
+        }
 
-            resolutionStrategy.dependencySubstitution {
-                val ideaDependency = "com.jetbrains:${intellij.ideaDependency.name}:${intellij.ideaDependency.version}"
+        resolutionStrategy.dependencySubstitution {
+            val ideaDependency = "com.jetbrains:${intellij.ideaDependency.name}:${intellij.ideaDependency.version}"
 
-                val ideaModules = listOf(
-                    "org.jetbrains.kotlin:kotlin-reflect",
-                    "org.jetbrains.kotlin:kotlin-stdlib",
-                    "org.jetbrains.kotlin:kotlin-stdlib-common",
-                    "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
-                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-                    "org.jetbrains.kotlin:kotlin-test",
-                    "org.jetbrains.kotlin:kotlin-test-common",
-                    "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
-                    "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
-                    "org.slf4j:slf4j-api"
-                )
+            val ideaModules = listOf(
+                "org.jetbrains.kotlin:kotlin-reflect",
+                "org.jetbrains.kotlin:kotlin-stdlib",
+                "org.jetbrains.kotlin:kotlin-stdlib-common",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+                "org.jetbrains.kotlin:kotlin-test",
+                "org.jetbrains.kotlin:kotlin-test-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
+                "org.slf4j:slf4j-api"
+            )
 
-                all action@{
-                    val requested = requested as? ModuleComponentSelector ?: return@action
+            all action@{
+                val requested = requested as? ModuleComponentSelector ?: return@action
 
-                    if ("${requested.group}:${requested.module}" in ideaModules) {
-                        useTarget(ideaDependency)
-                    }
+                if ("${requested.group}:${requested.module}" in ideaModules) {
+                    useTarget(ideaDependency)
                 }
             }
         }
@@ -131,6 +143,20 @@ afterEvaluate {
 }
 
 tasks {
+    val minimizedJar by registering(ShadowJar::class) {
+        group = "build"
+
+        archiveClassifier.set("minimized")
+
+        from(sourceSets.main.map(org.gradle.api.tasks.SourceSet::getOutput))
+
+        val iconPaths = arrayOf(
+            Regex("""/?discord/images/.*\.png""")
+        )
+
+        transform(PngOptimizingTransformer(128, *iconPaths))
+    }
+
     checkUnusedDependencies {
         ignore("com.jetbrains", "ideaIU")
     }
@@ -172,12 +198,19 @@ tasks {
         }
     }
 
+    buildPlugin {
+        archiveBaseName.set(rootProject.name)
+    }
+
+    jarSearchableOptions {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("options")
+    }
+
     prepareSandbox task@{
-        setLibrariesToIgnore(*configurations.filter { it.isCanBeResolved }.toTypedArray())
+        dependsOn(minimizedJar)
 
-        dependsOn(shadowJar)
-
-        pluginJar(shadowJar.get().archiveFile)
+        pluginJar(minimizedJar.map { it.archiveFile }.get())
     }
 
     build {
@@ -188,44 +221,10 @@ tasks {
         dependsOn(verifyPlugin)
     }
 
-    shadowJar task@{
-        fun prefix(pkg: String, configure: Action<SimpleRelocator>? = null) =
-            relocate(pkg, "${rootProject.group}.dependencies.$pkg", configure)
-
-        mergeServiceFiles()
-
-        prefix("club.minnced.discord.rpc")
-        prefix("com.fasterxml.jackson.annotation")
-        prefix("com.fasterxml.jackson.core")
-        prefix("com.fasterxml.jackson.databind")
-        prefix("com.fasterxml.jackson.dataformat.yaml")
-        prefix("com.jagrosh.discordipc")
-        prefix("io.ktor")
-        prefix("javassist")
-        prefix("kotlinx.atomicfu")
-        prefix("kotlinx.io")
-        prefix("kotlinx.serialization")
-        prefix("okhttp3")
-        prefix("okio")
-        prefix("org.apache.commons.io")
-        prefix("org.yaml.snakeyaml")
-
-        val iconPaths = arrayOf(
-            Regex("""/?discord/applications/.*\.png"""),
-            Regex("""/?discord/themes/.*\.png""")
-        )
-
-        transform(PngOptimizingTransformer(128, *iconPaths))
-    }
-
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
         }
-    }
-
-    withType<AbstractArchiveTask> {
-        archiveBaseName.set("${rootProject.name}-${project.name.capitalize()}")
     }
 
     generateGrammarSource {

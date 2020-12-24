@@ -60,6 +60,7 @@ buildscript {
 
     val versionPngtastic: String by properties
     val versionZeroAllocationHashing: String by properties
+    // val versionAtomicfu: String by properties
 
     repositories {
         jcenter()
@@ -69,5 +70,6 @@ buildscript {
     dependencies {
         classpath(group = "com.github.depsypher", name = "pngtastic", version = versionPngtastic)
         classpath(group = "net.openhft", name = "zero-allocation-hashing", version = versionZeroAllocationHashing)
+        // classpath(group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plugin", version = versionAtomicfu)
     }
 }

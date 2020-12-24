@@ -1,3 +1,17 @@
+## v1.6.1
+- Fix unneeded dependencies inflating plugin size 
+
+## v1.6.0
+- Implement custom templates
+- Add support for .cjs and .mjs files
+- Add option to hide  presence while a specific project is open
+- Fix log spam by moving all repetitive logging to debug level
+- Fix extensions conflicts
+- Fix AlreadyDisposedExceptions
+- Fix compilation on Java 8
+- Fix ClassCastException when rendering preview with disabled presence
+- Fix preview for default avatars
+
 ## v1.5.0
 - Icon text is now more customizable
 - Fix sporadic ProcessCanceledException when updating presence
