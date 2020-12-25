@@ -89,6 +89,10 @@ tasks {
     processResources {
         dependsOn(":discord-game-sdk:native:assemble")
 
+        filesNotMatching(listOf("**/*.dll", "**/*.dylib", "**/*.so")) {
+            exclude()
+        }
+
         filesMatching("shared/**/*.*") {
             path = path.substringAfter('/')
         }
