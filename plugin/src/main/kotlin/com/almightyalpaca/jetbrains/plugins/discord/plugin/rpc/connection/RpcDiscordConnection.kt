@@ -36,10 +36,16 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-private var CONNECTED: AtomicReference<NativeRpcConnection?> = AtomicReference(null)
+class RpcDiscordConnection(
+    override val appId: Long,
+    private val userCallback: (User?) -> Unit
+) : DiscordEventHandlers(), DiscordConnection, DisposableCoroutineScope {
 
-class NativeRpcConnection(override val appId: Long, private val userCallback: (User?) -> Unit) : DiscordEventHandlers(),
-    RpcConnection, DisposableCoroutineScope {
+    companion object {
+        private var CONNECTED: AtomicReference<RpcDiscordConnection?> = AtomicReference(null)
+
+    }
+
     override val parentJob: Job = SupervisorJob()
 
     private var updateJob: Job? = null
@@ -51,7 +57,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
             DiscordPlugin.LOG.info("Rpc connected, user: ${user.username}#${user.discriminator}")
 
             running = true
-            userCallback(user.toGeneric())
+            userCallback(user.toApplicationUser())
         }
         disconnected = OnStatus { _, _ ->
             DiscordPlugin.LOG.info("Rpc disconnected")
@@ -133,7 +139,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
     }
 }
 
-private fun DiscordUser.toGeneric(): User = User.Normal(username, discriminator, userId.toLong(), avatar)
+private fun DiscordUser.toApplicationUser(): User = User.Normal(username, discriminator, userId.toLong(), avatar)
 
 private fun RichPresence.toNative() = DiscordRichPresence().apply {
     this@toNative.state?.let { state = it }

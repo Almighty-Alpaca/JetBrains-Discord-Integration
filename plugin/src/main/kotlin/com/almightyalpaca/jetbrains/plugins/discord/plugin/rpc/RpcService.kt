@@ -17,8 +17,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.NativeRpcConnection
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RpcConnection
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.DiscordConnection
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.GameSdkDiscordConnection
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RpcDiscordConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
 import com.intellij.openapi.components.Service
@@ -41,7 +42,7 @@ class RpcService : DisposableCoroutineScope {
     val user: User
         get() = _user ?: User.CLYDE
 
-    private var connection: RpcConnection? = null
+    private var connection: DiscordConnection? = null
 
     private var lastPresence: RichPresence? = null
 
@@ -118,10 +119,7 @@ class RpcService : DisposableCoroutineScope {
                         connection = null
                     }
 
-                    connection = NativeRpcConnection(presence.appId, ::updateUser).apply {
-                        Disposer.register(this@RpcService, this@apply)
-                        connect()
-                    }
+                    connection = createConnection(presence.appId)
                     connectionChecker = checkConnected()
 
                 }
@@ -140,4 +138,16 @@ class RpcService : DisposableCoroutineScope {
 
         super.dispose()
     }
+
+    fun createConnection(applicationId: Long): DiscordConnection =
+        when (System.getenv("com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection").toLowerCase()) {
+            "gamesdk" -> GameSdkDiscordConnection(applicationId, ::updateUser).apply {
+                Disposer.register(this@RpcService, this@apply)
+                connect()
+            }
+            else -> RpcDiscordConnection(applicationId, ::updateUser).apply {
+                Disposer.register(this@RpcService, this@apply)
+                connect()
+            }
+        }
 }

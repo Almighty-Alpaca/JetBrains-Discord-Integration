@@ -21,7 +21,7 @@ import com.intellij.openapi.Disposable
 
 const val UPDATE_DELAY = 2000L
 
-interface RpcConnection : Disposable {
+interface DiscordConnection : Disposable {
     val appId: Long
 
     val running: Boolean

@@ -16,8 +16,6 @@
 
 package gamesdk.api.events
 
-import kotlinx.coroutines.Job
-
 public interface Subscription {
     public suspend fun join()
 }

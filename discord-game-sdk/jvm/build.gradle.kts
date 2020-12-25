@@ -50,6 +50,10 @@ dependencies {
     testImplementation(group = "com.willowtreeapps.assertk", name = "assertk-jvm", version = "0.23")
 }
 
+kotlin {
+    explicitApi()
+}
+
 sourceSets {
     main {
         resources {
@@ -71,21 +75,6 @@ tasks {
         }
     }
 
-    compileKotlin {
-        kotlinOptions {
-            @Suppress("SuspiciousCollectionReassignment")
-            freeCompilerArgs += listOf(
-                "-Xexplicit-api=strict"
-            )
-        }
-    }
-
-    test {
-        jvmArgs = listOf(
-            // "-Xcheck:jni" // For JNI debugging
-        )
-    }
-
     processResources {
         dependsOn(":discord-game-sdk:native:assemble")
 
@@ -100,5 +89,9 @@ tasks {
 
     test {
         useJUnitPlatform()
+
+        jvmArgs = listOf(
+            // "-Xcheck:jni" // For JNI debugging
+        )
     }
 }
