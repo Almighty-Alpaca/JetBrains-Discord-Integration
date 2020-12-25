@@ -44,7 +44,6 @@ namespace callback {
         JavaVM &jvm = callbackData->jvm;
 
         jnihelpers::withEnv(jvm, [&jCallbackGlobal, &result](JNIEnv &env) {
-
             jclass jCallbackClass = env.FindClass("kotlin/jvm/functions/Function1");
             jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
 
