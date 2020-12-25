@@ -19,10 +19,17 @@ package gamesdk.impl.events
 import gamesdk.api.events.Event
 import gamesdk.api.events.EventBus
 import gamesdk.api.events.Subscription
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.CopyOnWriteArrayList
 
-internal data class SubscriptionImpl<T>(val listener: suspend (T) -> Boolean) : Subscription
+internal data class SubscriptionImpl<T>(
+    val listener: suspend (event: T) -> Boolean
+) : Subscription {
+    val job = Job()
+
+    override suspend fun join() = job.join()
+}
 
 internal interface NotifiableEventBus<T : Event> : EventBus<T> {
     fun notify(event: T)
@@ -31,17 +38,24 @@ internal interface NotifiableEventBus<T : Event> : EventBus<T> {
 private abstract class NotifiableEventBusImpl<T : Event> : NotifiableEventBus<T> {
     private val listeners = CopyOnWriteArrayList<SubscriptionImpl<T>>()
 
-    final override fun subscribeUntil(listener: suspend (T) -> Boolean): Subscription =
+    final override fun subscribeUntil(listener: suspend (event: T) -> Boolean): Subscription =
         SubscriptionImpl(listener).also(listeners::add)
 
     final override fun unsubscribe(subscription: Subscription) {
-        listeners.remove(subscription)
+        if (listeners.remove(subscription) && subscription is SubscriptionImpl<*>) {
+            subscription.job.complete()
+        }
     }
 
     final override fun notify(event: T) = runBlocking {
-        listeners.forEach { subscription ->
-            if (subscription.listener(event)) {
+        for (subscription in listeners) {
+            try {
+                if (subscription.listener(event) && listeners.remove(subscription)) {
+                    subscription.job.complete()
+                }
+            } catch (e: Exception) {
                 listeners.remove(subscription)
+                subscription.job.completeExceptionally(e)
             }
         }
     }

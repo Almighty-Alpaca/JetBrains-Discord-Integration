@@ -16,21 +16,25 @@
 
 package gamesdk.api.events
 
-public interface Subscription
+import kotlinx.coroutines.Job
+
+public interface Subscription {
+    public suspend fun join()
+}
 
 public interface EventBus<T : Event> {
-    public fun subscribeUntil(listener: suspend (T) -> Boolean): Subscription
+    public fun subscribeUntil(listener: suspend (event: T) -> Boolean): Subscription
 
     public fun unsubscribe(subscription: Subscription)
 }
 
-public inline fun <T : Event> EventBus<T>.subscribeOnce(crossinline listener: suspend (T) -> Unit): Subscription =
+public inline fun <T : Event> EventBus<T>.subscribeOnce(crossinline listener: suspend (event: T) -> Unit): Subscription =
     subscribeUntil remove@{
         listener(it)
         return@remove true
     }
 
-public inline fun <T : Event> EventBus<T>.subscribe(crossinline listener: suspend (T) -> Unit): Subscription =
+public inline fun <T : Event> EventBus<T>.subscribe(crossinline listener: suspend (event: T) -> Unit): Subscription =
     subscribeUntil remove@{
         listener(it)
         return@remove false
