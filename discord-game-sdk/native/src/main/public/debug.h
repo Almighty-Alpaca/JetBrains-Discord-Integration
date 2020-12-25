@@ -21,7 +21,7 @@
 
 #define REACHED std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
-#define REACHED_STRING(ARG) std::cout << __FILE__ << ":" << __LINE__ << " - " << #ARG << "=" << ARG << std::endl;
+#define REACHED_PRINT(ARG) std::cout << __FILE__ << ":" << __LINE__ << " - " << #ARG << "=" << ARG << std::endl;
 
 #define REACHED_NOT_NULL(ARG) std::cout << __FILE__ << ":" << __LINE__ << " - " << #ARG << ((ARG) == nullptr ? "=null" : "!=null") << std::endl;
 

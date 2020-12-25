@@ -194,7 +194,7 @@ namespace types {
         jclass jUserClass = env.FindClass("gamesdk/api/types/DiscordUser");
         jmethodID jUserConstructor = env.GetMethodID(jUserClass, "<init>", "(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 
-        auto jId = (jint) user.id;
+        auto jId = (jlong) user.id;
         auto jUsername = env.NewStringUTF(user.username);
         auto jDiscriminator = env.NewStringUTF(user.discriminator);
         auto jAvatar = env.NewStringUTF(user.avatar);
