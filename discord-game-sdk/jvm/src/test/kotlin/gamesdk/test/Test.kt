@@ -16,6 +16,8 @@
 
 package gamesdk.test
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
@@ -33,6 +35,8 @@ import gamesdk.impl.events.toCurrentUserUpdateEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
+import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -60,6 +64,35 @@ class Test {
             }
         }
         println("Done")
+    }
+
+    @Test
+    @OptIn(ExperimentalTime::class)
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
+    fun testGetCurrentUser() {
+        @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
+        when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
+            is DiscordObjectResult.Failure -> println(result.code)
+            is DiscordObjectResult.Success -> result.value.use { core ->
+                runBlocking {
+                    val userManager = core.userManager
+
+                    withSuspendAssertionContext {
+                        userManager.currentUserUpdates.subscribeOnce {
+                            try {
+                                val result = userManager.getCurrentUser()
+
+                                assertThat(result.code, "result").isEqualTo(DiscordCode.Ok)
+
+                                registerInvocation()
+                            } catch (e: Throwable) {
+                                e.printStackTrace()
+                            }
+                        }.join()
+                    }.result { assertThat(::invocations).isEqualTo(1) }
+                }
+            }
+        }
     }
 
     @Test
@@ -97,11 +130,11 @@ class Test {
     fun testEventBus() {
         val eventBus = NativeNotifiableEventBus.create(NativeCurrentUserUpdateEvent::toCurrentUserUpdateEvent)
 
-        val result1 = withCallbackContext {
+        val assertion1 = withAssertionContext {
             eventBus.subscribeOnce { registerInvocation() }
         }
 
-        val result2 = withCallbackContext {
+        val assertion2 = withAssertionContext {
             var i = 2
             eventBus.subscribeUntil {
                 registerInvocation()
@@ -110,11 +143,11 @@ class Test {
         }
 
         val subscription3: Subscription
-        val result3 = withCallbackContext {
+        val assertion3 = withAssertionContext {
             subscription3 = eventBus.subscribe { registerInvocation() }
         }
 
-        val result4 = withCallbackContext {
+        val assertion4 = withAssertionContext {
             eventBus.subscribe { registerInvocation() }
         }
 
@@ -124,10 +157,10 @@ class Test {
         eventBus.unsubscribe(subscription3)
         eventBus.notify(NativeCurrentUserUpdateEvent())
 
-        result1.assertInvocations(1)
-        result2.assertInvocations(2)
-        result3.assertInvocations(3)
-        result4.assertInvocations(4)
+        assertion1.result { assertThat(::invocations).isEqualTo(1) }
+        assertion2.result { assertThat(::invocations).isEqualTo(2) }
+        assertion3.result { assertThat(::invocations).isEqualTo(3) }
+        assertion4.result { assertThat(::invocations).isEqualTo(4) }
     }
 
     @Test

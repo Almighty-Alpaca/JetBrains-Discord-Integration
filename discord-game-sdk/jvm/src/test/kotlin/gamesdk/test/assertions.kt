@@ -16,44 +16,66 @@
 
 package gamesdk.test
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isGreaterThanOrEqualTo
-import assertk.assertions.isLessThanOrEqualTo
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@Suppress("NOTHING_TO_INLINE") // To support coroutines
 @OptIn(ExperimentalContracts::class)
-fun withCallbackContext(block: CallbackAssertionContext.() -> Unit): CallbackAssertionResult {
+fun withAssertionContext(block: Assertion.Context.() -> Unit): Assertion {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return CallbackAssertionContext().apply(block).getResult()
+
+    val assertion = Assertion()
+    assertion.execute(block)
+
+    return assertion
 }
 
-class CallbackAssertionContext {
-    var invocations = 0
-        private set
-
-    fun registerInvocation() {
-        invocations++
+@OptIn(ExperimentalContracts::class)
+suspend fun withSuspendAssertionContext(block: suspend Assertion.Context.() -> Unit): Assertion {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    fun getResult(): CallbackAssertionResult = CallbackAssertionResult(this)
+    val assertion = Assertion()
+    assertion.execute(block)
 
+    return assertion
 }
 
-class CallbackAssertionResult(private val context: CallbackAssertionContext) {
-    fun assertMaxInvocations(maxInvocations: Int) {
-        assertThat(context::invocations).isLessThanOrEqualTo(maxInvocations)
+class Assertion {
+    private val context = Context()
+
+    fun result(block: Result.() -> Unit = {}) = Result(context.invocations).apply(block)
+
+    @OptIn(ExperimentalContracts::class)
+    fun <T> execute(block: Context.() -> T): T {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+
+        return with(context) { block() }
     }
 
-    fun assertInvocations(exactInvocations: Int) {
-        assertThat(context::invocations).isEqualTo(exactInvocations)
+    @OptIn(ExperimentalContracts::class)
+    suspend fun <T> execute(block: suspend Context.() -> T): T {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+
+        return with(context) { block() }
     }
 
-    fun assertMinInvocations(minInvocations: Int) {
-        assertThat(context::invocations).isGreaterThanOrEqualTo(minInvocations)
+    class Context {
+        var invocations = 0
+            private set
+
+        fun registerInvocation() {
+            invocations++
+        }
     }
+
+    class Result(val invocations: Int)
 }
