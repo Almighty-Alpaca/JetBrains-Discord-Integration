@@ -34,31 +34,21 @@ dependencies {
     val versionJUnit: String by project
     val versionAntlr: String by project
 
-    implementation(project(path = ":icons", configuration = "minimizedJar")) {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    }
+    implementation(project(path = ":icons", configuration = "minimizedJar"))
+
+    // Not sure why selecting the default configuration explicitly is required here but whatever
+    implementation(project(path = ":discord-game-sdk:jvm", configuration = "default"))
 
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    }
-
-    implementation(project(":discord-game-sdk:jvm")) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    }
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 
-    antlr("org.antlr", name = "antlr4", version = versionAntlr)
-    implementation("org.antlr", name = "antlr4-runtime", version = versionAntlr)
+    antlr(group = "org.antlr", name = "antlr4", version = versionAntlr)
+    implementation(group = "org.antlr", name = "antlr4-runtime", version = versionAntlr)
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
@@ -75,10 +65,42 @@ sourceSets {
     }
 }
 
-// https://github.com/gradle/gradle/issues/820
 configurations {
+    // https://github.com/gradle/gradle/issues/820
     compile {
         setExtendsFrom(extendsFrom.filter { it != antlr.get() })
+    }
+
+    all {
+        if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
+            return@all
+        }
+
+        resolutionStrategy.dependencySubstitution {
+            val ideaDependency = "com.jetbrains:${intellij.ideaDependency.name}:${intellij.ideaDependency.version}"
+
+            val ideaModules = listOf(
+                "org.jetbrains.kotlin:kotlin-reflect",
+                "org.jetbrains.kotlin:kotlin-stdlib",
+                "org.jetbrains.kotlin:kotlin-stdlib-common",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+                "org.jetbrains.kotlin:kotlin-test",
+                "org.jetbrains.kotlin:kotlin-test-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
+                "org.slf4j:slf4j-api"
+            )
+
+            all action@{
+                val requested = requested as? ModuleComponentSelector ?: return@action
+
+                if ("${requested.group}:${requested.module}" in ideaModules) {
+                    useTarget(ideaDependency)
+                }
+            }
+        }
     }
 }
 
@@ -109,7 +131,7 @@ tasks {
 
         archiveClassifier.set("minimized")
 
-        from(sourceSets.main.map(org.gradle.api.tasks.SourceSet::getOutput))
+        from(sourceSets.main.map(SourceSet::getOutput))
 
         val iconPaths = arrayOf(
             Regex("""/?discord/images/.*\.png""")
