@@ -26,8 +26,8 @@ interface DiscordConnection : Disposable {
 
     val running: Boolean
 
-    fun connect()
-    fun disconnect()
+    suspend fun connect()
+    suspend fun disconnect()
 
-    fun send(presence: RichPresence?)
+    suspend fun send(presence: RichPresence?)
 }

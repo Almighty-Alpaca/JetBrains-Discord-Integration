@@ -27,10 +27,9 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.scheduleWithFixedDelay
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -43,7 +42,7 @@ class RpcDiscordConnection(
 
     companion object {
         private var CONNECTED: AtomicReference<RpcDiscordConnection?> = AtomicReference(null)
-
+        private val mutex = Mutex()
     }
 
     override val parentJob: Job = SupervisorJob()
@@ -70,8 +69,7 @@ class RpcDiscordConnection(
     override var running: Boolean = false
         get() = field && CONNECTED.get() == this
 
-    @Synchronized
-    override fun connect() {
+    override suspend fun connect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Starting new rpc connection")
 
         if (DiscordRPC.INSTANCE == null) {
@@ -96,8 +94,7 @@ class RpcDiscordConnection(
         DiscordRPC.INSTANCE.Discord_RunCallbacks()
     }
 
-    @Synchronized
-    override fun send(presence: RichPresence?) {
+    override suspend fun send(presence: RichPresence?): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Sending new presence")
 
         if (CONNECTED.get() != this) {
@@ -118,8 +115,7 @@ class RpcDiscordConnection(
         }
     }
 
-    @Synchronized
-    override fun disconnect() {
+    override suspend fun disconnect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Stopping rpc connection")
 
         if (CONNECTED.get() != this) {
@@ -133,7 +129,7 @@ class RpcDiscordConnection(
     }
 
     override fun dispose() {
-        disconnect()
+        runBlocking { disconnect() }
 
         super.dispose()
     }

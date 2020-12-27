@@ -25,10 +25,9 @@ import gamesdk.api.DiscordObjectResult
 import gamesdk.api.ThreadedCore
 import gamesdk.api.events.subscribe
 import gamesdk.api.types.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class GameSdkDiscordConnection(
     override val appId: Long,
@@ -43,8 +42,9 @@ class GameSdkDiscordConnection(
     override val running: Boolean
         get() = core != null
 
-    @Synchronized
-    override fun connect() {
+    private val mutex = Mutex()
+
+    override suspend fun connect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Starting new rpc connection")
 
         if (core != null) {
@@ -56,9 +56,10 @@ class GameSdkDiscordConnection(
             is DiscordObjectResult.Failure -> throw RuntimeException("Error creating connection: " + result.code)
             is DiscordObjectResult.Success -> result.value.let { core ->
                 this.core = core
+                val userManager = core.userManager
 
-                core.userManager.currentUserUpdates.subscribe {
-                    when (val user = core.userManager.getCurrentUser()) {
+                userManager.currentUserUpdates.subscribe {
+                    when (val user = userManager.getCurrentUser()) {
                         is DiscordObjectResult.Success -> userCallback(user.value.toApplicationUser())
                         is DiscordObjectResult.Failure -> println("Error getting user: " + user.code)
                     }
@@ -67,8 +68,7 @@ class GameSdkDiscordConnection(
         }
     }
 
-    @Synchronized
-    override fun send(presence: RichPresence?) {
+    override suspend fun send(presence: RichPresence?): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Sending new presence")
 
         updateJob?.cancel()
@@ -83,8 +83,7 @@ class GameSdkDiscordConnection(
         }
     }
 
-    @Synchronized
-    override fun disconnect() {
+    override suspend fun disconnect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Stopping rpc connection")
 
         core?.use {
@@ -93,9 +92,10 @@ class GameSdkDiscordConnection(
     }
 
     override fun dispose() {
-        disconnect()
+        runBlocking { disconnect() }
 
         super.dispose()
+
     }
 }
 
