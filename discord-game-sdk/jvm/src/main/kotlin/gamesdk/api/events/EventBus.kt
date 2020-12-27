@@ -20,6 +20,10 @@ public interface Subscription {
     public suspend fun join()
 }
 
+public object CompletedSubscription : Subscription {
+    override suspend fun join(): Unit = Unit
+}
+
 public interface EventBus<T : Event> {
     public fun subscribeUntil(listener: suspend (event: T) -> Boolean): Subscription
 
@@ -30,6 +34,17 @@ public inline fun <T : Event> EventBus<T>.subscribeOnce(crossinline listener: su
     subscribeUntil remove@{
         listener(it)
         return@remove true
+    }
+
+public inline fun <T : Event> EventBus<T>.subscribe(times: Int, crossinline listener: suspend (event: T) -> Unit): Subscription =
+    if (times <= 0)
+        CompletedSubscription
+    else {
+        var i = times
+        subscribeUntil remove@{
+            listener(it)
+            return@remove --i == 0
+        }
     }
 
 public inline fun <T : Event> EventBus<T>.subscribe(crossinline listener: suspend (event: T) -> Unit): Subscription =
