@@ -44,6 +44,10 @@ namespace types {
     jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship);
 
     jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject object);
+
+    jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object);
+
+    jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);
 } // namespace types
 
 #endif // TYPES_H

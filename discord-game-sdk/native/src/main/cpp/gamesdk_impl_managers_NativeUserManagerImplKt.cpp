@@ -16,17 +16,19 @@
 
 #include "gamesdk_impl_managers_NativeUserManagerImplKt.h"
 
-#include <functional>
-
 #include "callback.h"
-#include "commons.h"
 #include "discord_game_sdk.h"
+#include "instance.h"
 #include "types.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getCurrentUser(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jUserManager
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer
 ) {
-    auto *userManager = (IDiscordUserManager *) jUserManager;
+    IDiscordUserManager *userManager = instance::getUserManager((Instance *) jPointer);
 
     DiscordUser user{};
     EDiscordResult result = userManager->get_current_user(userManager, &user);
@@ -35,17 +37,17 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_get
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getUser(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jUserManager, jlong jUserId, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jobject jCallback
 ) {
-    auto *userManager = (IDiscordUserManager *) jUserManager;
+    IDiscordUserManager *userManager = instance::getUserManager((Instance *) jPointer);
 
     userManager->get_user(userManager, (DiscordUserId) jUserId, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getCurrentUserPremiumType(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jUserManager
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer
 ) {
-    auto *userManager = (IDiscordUserManager *) jUserManager;
+    IDiscordUserManager *userManager = instance::getUserManager((Instance *) jPointer);
 
     EDiscordPremiumType type;
     EDiscordResult result = userManager->get_current_user_premium_type(userManager, &type);
@@ -54,12 +56,14 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_get
 }
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_currentUserHasFlag(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jUserManager, jint jFlag
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jint jFlag
 ) {
-    auto *userManager = (IDiscordUserManager *) jUserManager;
+    IDiscordUserManager *userManager = instance::getUserManager((Instance *) jPointer);
 
     bool value;
     EDiscordResult result = userManager->current_user_has_flag(userManager, (EDiscordUserFlag) jFlag, &value);
 
     return types::createNativeDiscordObjectResult(*env, result, types::createBooleanObject(*env, value));
 }
+
+#pragma clang diagnostic pop

@@ -77,6 +77,9 @@ namespace types {
                 secrets_spectate_field_id = env.GetFieldID(discord_activity_class, "secretsSpectate", "Ljava/lang/String;"),
                 instance_field_id = env.GetFieldID(discord_activity_class, "instance", "Z");
 
+        #pragma clang diagnostic push
+        #pragma ide diagnostic ignored "modernize-use-auto"
+
         jint type = env.GetIntField(jActivity, type_field_id);
         jlong application_id = env.GetLongField(jActivity, application_id_field_id);
         jstring name = (jstring) env.GetObjectField(jActivity, name_field_id);
@@ -95,7 +98,9 @@ namespace types {
         jstring secrets_match = (jstring) env.GetObjectField(jActivity, secrets_match_field_id);
         jstring secrets_join = (jstring) env.GetObjectField(jActivity, secrets_join_field_id);
         jstring secrets_spectate = (jstring) env.GetObjectField(jActivity, secrets_spectate_field_id);
-        bool instance = env.GetBooleanField(jActivity, instance_field_id);
+        jboolean instance = env.GetBooleanField(jActivity, instance_field_id);
+
+        #pragma clang diagnostic pop
 
         const char *name_native = env.GetStringUTFChars(name, nullptr);
         const char *state_native = env.GetStringUTFChars(state, nullptr);
@@ -229,13 +234,21 @@ namespace types {
 
     jobject createNativeDiscordObjectResult(JNIEnv &env, EDiscordResult result, jobject object) {
         if (result == DiscordResult_Ok) {
-            jclass jSuccessClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Success");
-            jmethodID jSuccessConstructor = env.GetMethodID(jSuccessClass, "<init>", "(Ljava/lang/Object;)V");
-            return env.NewObject(jSuccessClass, jSuccessConstructor, object);
+            return createNativeDiscordObjectResultSuccess(env, object);
         } else {
-            jclass jFailureClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Failure");
-            jmethodID jFailureConstructor = env.GetMethodID(jFailureClass, "<init>", "(I)V");
-            return env.NewObject(jFailureClass, jFailureConstructor, (jint) result);
+            return createNativeDiscordObjectResultFailure(env, result);
         }
+    }
+
+    jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object) {
+        jclass jSuccessClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Success");
+        jmethodID jSuccessConstructor = env.GetMethodID(jSuccessClass, "<init>", "(Ljava/lang/Object;)V");
+        return env.NewObject(jSuccessClass, jSuccessConstructor, object);
+    }
+
+    jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result) {
+        jclass jFailureClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Failure");
+        jmethodID jFailureConstructor = env.GetMethodID(jFailureClass, "<init>", "(I)V");
+        return env.NewObject(jFailureClass, jFailureConstructor, (jint) result);
     }
 } // namespace types

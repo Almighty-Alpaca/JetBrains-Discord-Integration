@@ -18,6 +18,7 @@ package gamesdk.test
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
@@ -72,23 +73,28 @@ class Test {
     fun testGetCurrentUser() {
         @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
         when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
-            is DiscordObjectResult.Failure -> println(result.code)
+            is DiscordObjectResult.Failure ->
+                println("ERROR: ${result.code}")
             is DiscordObjectResult.Success -> result.value.use { core ->
-                runBlocking {
-                    val userManager = core.userManager
+                val userManager = core.userManager
 
+                runBlocking {
                     withSuspendAssertionContext {
-                        userManager.currentUserUpdates.subscribeOnce {
+                        val subscription = userManager.currentUserUpdates.subscribeOnce {
                             try {
                                 val result = userManager.getCurrentUser()
 
-                                assertThat(result.code, "result").isEqualTo(DiscordCode.Ok)
+                                assertThat(result).isInstanceOf(DiscordObjectResult.Success::class)
 
                                 registerInvocation()
                             } catch (e: Throwable) {
                                 e.printStackTrace()
                             }
-                        }.join()
+                        }
+
+                        userManager.getCurrentUser()
+
+                        subscription.join()
                     }.result { assertThat(::invocations).isEqualTo(1) }
                 }
             }

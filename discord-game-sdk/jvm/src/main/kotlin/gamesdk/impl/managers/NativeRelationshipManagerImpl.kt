@@ -27,9 +27,8 @@ import gamesdk.api.types.DiscordUserId
 import gamesdk.api.types.uint32_t
 import gamesdk.impl.NativeCoreImpl
 import gamesdk.impl.NativeObjectImpl
-import gamesdk.impl.NativePointer
 
-internal class NativeRelationshipManagerImpl(pointer: NativePointer, private val core: NativeCoreImpl) : NativeObjectImpl.Delegate(pointer, core), RelationshipManager {
+internal class NativeRelationshipManagerImpl(private val core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), RelationshipManager {
     override val refreshes: EventBus<RelationshipRefreshEvent>
         get() = core.events.relationshipRefreshes
 

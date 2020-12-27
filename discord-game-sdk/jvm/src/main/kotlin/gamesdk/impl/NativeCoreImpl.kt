@@ -47,15 +47,17 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer, intern
     override val applicationManager: ApplicationManager
         get() = TODO("Not yet implemented")
 
-    override val userManager: UserManager by nativeLazy { pointer -> NativeUserManagerImpl(getUserManager(pointer), this@NativeCoreImpl) }
+    override val userManager: UserManager
+            by lazy { NativeUserManagerImpl(this@NativeCoreImpl) }
 
     override val imageManager: ImageManager
         get() = TODO("Not yet implemented")
 
-    override val activityManager: ActivityManager by nativeLazy { pointer -> NativeActivityManagerImpl(getActivityManager(pointer), this@NativeCoreImpl) }
+    override val activityManager: ActivityManager
+            by lazy { NativeActivityManagerImpl(this@NativeCoreImpl) }
 
     override val relationshipManager: RelationshipManager
-            by nativeLazy { pointer -> NativeRelationshipManagerImpl(getRelationshipManager(pointer), this@NativeCoreImpl) }
+            by lazy { NativeRelationshipManagerImpl(this@NativeCoreImpl) }
 
     override val lobbyManager: LobbyManager
         get() = TODO("Not yet implemented")
@@ -93,12 +95,6 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer, intern
 
 private external fun Native.create(clientId: DiscordClientId, createFlags: NativeDiscordCreateFlags, events: Events): NativeDiscordObjectResult<NativePointer>
 
-private external fun Native.destroy(core: NativePointer)
+private external fun Native.destroy(pointer: NativePointer)
 
-private external fun Native.runCallbacks(core: NativePointer): Int
-
-private external fun Native.getActivityManager(core: NativePointer): NativePointer
-
-private external fun Native.getRelationshipManager(core: NativePointer): NativePointer
-
-private external fun Native.getUserManager(core: NativePointer): NativePointer
+private external fun Native.runCallbacks(pointer: NativePointer): Int

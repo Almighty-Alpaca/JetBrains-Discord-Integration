@@ -20,7 +20,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@Suppress("NOTHING_TO_INLINE") // To support coroutines
 @OptIn(ExperimentalContracts::class)
 fun withAssertionContext(block: Assertion.Context.() -> Unit): Assertion {
     contract {

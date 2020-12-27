@@ -26,9 +26,8 @@ import gamesdk.api.types.DiscordUserId
 import gamesdk.impl.*
 import gamesdk.impl.types.*
 import gamesdk.impl.types.toDiscordPremiumType
-import gamesdk.impl.types.toNativeDiscordUserFlag
 
-internal class NativeUserManagerImpl(pointer: NativePointer, private val core: NativeCoreImpl) : NativeObjectImpl.Delegate(pointer, core), UserManager {
+internal class NativeUserManagerImpl(private val core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), UserManager {
     override val currentUserUpdates
         get() = core.events.currentUserUpdates
 
@@ -48,10 +47,10 @@ internal class NativeUserManagerImpl(pointer: NativePointer, private val core: N
         native { pointer -> currentUserHasFlag(pointer, flag.toNativeDiscordUserFlag()).toDiscordObjectResult() }
 }
 
-private external fun Native.getCurrentUser(userManager: NativePointer): NativeDiscordUserResult
+private external fun Native.getCurrentUser(pointer: NativePointer): NativeDiscordUserResult
 
-private external fun Native.getUser(userManager: NativePointer, userId: DiscordUserId, callback: NativeDiscordUserResultCallback)
+private external fun Native.getUser(pointer: NativePointer, userId: DiscordUserId, callback: NativeDiscordUserResultCallback)
 
-private external fun Native.getCurrentUserPremiumType(userManager: NativePointer): NativeDiscordPremiumTypeResult
+private external fun Native.getCurrentUserPremiumType(pointer: NativePointer): NativeDiscordPremiumTypeResult
 
-private external fun Native.currentUserHasFlag(userManager: NativePointer, flag: NativeDiscordUserFlag): NativeDiscordBooleanResult
+private external fun Native.currentUserHasFlag(pointer: NativePointer, flag: NativeDiscordUserFlag): NativeDiscordBooleanResult

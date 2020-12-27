@@ -18,12 +18,17 @@
 
 #include "callback.h"
 #include "discord_game_sdk.h"
+#include "instance.h"
 #include "types.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_registerCommand(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jstring jCommand
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jstring jCommand
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     const char *command = env->GetStringUTFChars(jCommand, nullptr);
 
@@ -35,9 +40,9 @@ JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_re
 }
 
 JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_registerSteam_0002d99SHSdE(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jint jSteamId
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jint jSteamId
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     EDiscordResult result = activityManager->register_steam(activityManager, (uint32_t) jSteamId);
 
@@ -45,34 +50,35 @@ JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_re
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_updateActivity(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jobject jDeconstructedActivity, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jobject jDeconstructedActivity, jobject jCallback
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
+
     DiscordActivity activity = types::createDiscordActivity(*env, jDeconstructedActivity);
 
     activityManager->update_activity(activityManager, &activity, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_clearActivity(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jobject jCallback
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     activityManager->clear_activity(activityManager, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_sendRequestReply(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jlong jUserId, jint jReply, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jint jReply, jobject jCallback
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     activityManager->send_request_reply(activityManager, (DiscordUserId) jUserId, (EDiscordActivityJoinRequestReply) jReply, callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_sendInvite(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jlong jUserId, jint jType, jstring jContent, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jint jType, jstring jContent, jobject jCallback
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     const char *content = env->GetStringUTFChars(jContent, nullptr);
 
@@ -82,9 +88,11 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_se
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_acceptInvite(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jActivityManager, jlong jUserId, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jobject jCallback
 ) {
-    auto *activityManager = (IDiscordActivityManager *) jActivityManager;
+    IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
     activityManager->accept_invite(activityManager, (DiscordUserId) jUserId, callback::create(env, jCallback), callback::run);
 }
+
+#pragma clang diagnostic pop

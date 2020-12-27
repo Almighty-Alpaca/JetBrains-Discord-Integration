@@ -23,6 +23,8 @@
 namespace events {
     void *create(JNIEnv &env, jobject jEvents);
 
+    void remove(void *data);
+
     IDiscordUserEvents *getUserEvents();
 
     IDiscordRelationshipEvents *getRelationshipEvents();

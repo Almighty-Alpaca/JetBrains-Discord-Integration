@@ -90,8 +90,10 @@ tasks {
     test {
         useJUnitPlatform()
 
+        // For JNI debugging
         jvmArgs = listOf(
-            // "-Xcheck:jni" // For JNI debugging
+            // "-Xcheck:jni",
+            // "-verbose:jni"
         )
     }
 }

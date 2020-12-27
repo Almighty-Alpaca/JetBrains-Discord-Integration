@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("CanSealedSubClassBeObject")
+
 package gamesdk.impl.events
 
 import gamesdk.api.events.CurrentUserUpdateEvent

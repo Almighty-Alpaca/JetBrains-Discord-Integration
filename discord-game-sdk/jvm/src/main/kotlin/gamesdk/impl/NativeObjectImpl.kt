@@ -20,7 +20,6 @@ import gamesdk.api.NativeObject
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -125,87 +124,51 @@ internal abstract class NativeObjectCreator {
 
 internal typealias NativeMethod<T> = Native.(pointer: NativePointer) -> T
 
-internal sealed class NativeObjectImpl(@Volatile private var pointer: NativePointer) : NativeObject {
-    private val children = mutableSetOf<NativeObjectImpl>()
-    private fun register(child: NativeObjectImpl): Unit = native { children.add(child) }
-    private fun unregister(child: NativeObjectImpl): Unit = synchronized { children.remove(child) }
+internal sealed class NativeObjectImpl : NativeObject {
+    protected abstract fun <T> native(block: NativeMethod<T>): T
 
-    final override val alive
-        get() = synchronized { pointer != 0L }
+    internal abstract class Delegate(private val parent: NativeObjectImpl) : NativeObjectImpl() {
+        final override fun <T> native(block: NativeMethod<T>): T = parent.native(block)
 
-    protected open fun close(): Unit = native {
-        pointer = 0L
-
-        // To prevent ConcurrentModificationException
-        children.toSet().forEach(NativeObjectImpl::close)
+        final override val alive
+            get() = parent.alive
     }
 
-    private val lock: Closeable
-        get() = when (this) {
-            is Delegate -> this.parent.lock
-            is Closeable -> this
-        }
-
-    private fun <T> synchronized(block: () -> T) = synchronized(lock, block)
-
-    protected fun <T> native(block: NativeMethod<T>) = synchronized {
-        if (pointer != 0L) {
-            NativeInstance.block(pointer)
-        } else {
-            throw IllegalStateException("Object was already closed")
-        }
-    }
-
-    internal abstract class Delegate(pointer: NativePointer, internal val parent: NativeObjectImpl) : NativeObjectImpl(pointer) {
-        init {
-            @Suppress("LeakingThis")
-            parent.register(this)
-        }
-
-        override fun close() {
-            parent.unregister(this)
-
-            super.close()
-        }
-    }
-
-    internal abstract class Closeable(pointer: NativePointer) : NativeObjectImpl(pointer), AutoCloseable {
+    internal abstract class Closeable(@Volatile private var pointer: NativePointer) : NativeObjectImpl(), AutoCloseable {
         protected abstract val destructor: NativeMethod<Unit>
 
-        override fun close() = native { pointer ->
+        private inline fun <T> synchronized(block: () -> T) = synchronized(this, block)
+
+        final override fun <T> native(block: NativeMethod<T>) = synchronized {
+            if (pointer != 0L) {
+                NativeInstance.block(pointer)
+            } else {
+                throw IllegalStateException("Object was already closed")
+            }
+        }
+
+        final override val alive
+            get() = synchronized { pointer != 0L }
+
+        // native() instead of synchronized() because native() also checks if the object is still alive
+        final override fun close() = native { pointer ->
             destructor(pointer)
 
-            super.close()
+            this@Closeable.pointer = 0L
         }
     }
 
     protected fun <T> nativeProperty(setter: Native.(NativePointer, T) -> Unit, getter: NativeMethod<T>): ReadWriteProperty<Closeable, T> = Property(setter, getter)
 
-    private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: NativeMethod<T>) : ReadWriteProperty<Closeable, T> {
-        override fun setValue(thisRef: Closeable, property: KProperty<*>, value: T) {
+    private class Property<T>(private val setter: Native.(NativePointer, T) -> Unit, private val getter: NativeMethod<T>) : ReadWriteProperty<NativeObjectImpl, T> {
+        override fun setValue(thisRef: NativeObjectImpl, property: KProperty<*>, value: T) {
             thisRef.native { pointer -> setter(pointer, value) }
         }
 
-        override fun getValue(thisRef: Closeable, property: KProperty<*>): T {
+        override fun getValue(thisRef: NativeObjectImpl, property: KProperty<*>): T {
             return thisRef.native { pointer -> getter(pointer) }
         }
     }
 
-    protected fun <T : Any> nativeLazy(tCreator: NativeMethod<T>): ReadOnlyProperty<NativeObjectImpl, T> = Lazy(tCreator)
-
-    private class Lazy<T : Any>(private val tCreator: NativeMethod<T>) : ReadOnlyProperty<NativeObjectImpl, T> {
-        @Volatile
-        private var value: T? = null
-
-        override fun getValue(thisRef: NativeObjectImpl, property: KProperty<*>): T = thisRef.native { pointer ->
-            var value = value
-
-            if (value == null) {
-                value = tCreator(pointer)
-                this@Lazy.value = value
-            }
-
-            value
-        }
-    }
+    protected fun <T : Any> nativeLazy(initializer: NativeMethod<T>) = lazy { native(initializer) }
 }

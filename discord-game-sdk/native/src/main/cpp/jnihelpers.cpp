@@ -19,7 +19,7 @@
 #include <iostream>
 
 namespace jnihelpers {
-    void withEnv(JavaVM &jvm, const std::function<void(JNIEnv &)>& call) {
+    void withEnv(JavaVM &jvm, const std::function<void(JNIEnv &)> &call) {
         JNIEnv *env{};
         jint getEnvResult = jvm.GetEnv((void **) &env, JNI_VERSION_1_8);
 

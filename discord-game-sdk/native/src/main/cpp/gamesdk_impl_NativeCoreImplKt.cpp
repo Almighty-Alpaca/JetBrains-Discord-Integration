@@ -21,7 +21,12 @@
 #include "commons.h"
 #include "discord_game_sdk.h"
 #include "events.h"
+#include "instance.h"
 #include "types.h"
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM(
         JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags, jobject jEvents
@@ -55,35 +60,29 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM
     IDiscordCore *core = nullptr;
     EDiscordResult result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    return types::createNativeDiscordObjectResult(*env, result, types::createLongObject(*env, (jlong) core));
+    if (result != DiscordResult_Ok) {
+        events::remove(params.event_data);
+        return types::createNativeDiscordObjectResultFailure(*env, result);
+    }
+
+    auto *instance = new Instance{core, params.event_data};
+
+    return types::createNativeDiscordObjectResultSuccess(*env, types::createLongObject(*env, (jlong) instance));
 }
 
-JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
-    auto *core = (IDiscordCore *) jCore;
+JNIEXPORT void JNICALL Java_gamesdk_impl_NativeCoreImplKt_destroy(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer) {
+    auto instance = (Instance *) jPointer;
 
-    core->destroy(core);
+    instance->core->destroy(instance->core);
+    events::remove(instance->eventData);
+
+    delete instance;
 }
 
-JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
-    auto *core = (IDiscordCore *) jCore;
+JNIEXPORT jint JNICALL Java_gamesdk_impl_NativeCoreImplKt_runCallbacks(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer) {
+    IDiscordCore *core = instance::getCore((Instance *) jPointer);
 
     return (jint) core->run_callbacks(core);
 }
 
-JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getActivityManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
-    auto *core = (IDiscordCore *) jCore;
-
-    return (jlong) core->get_activity_manager(core);
-}
-
-JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getRelationshipManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
-    auto *core = (IDiscordCore *) jCore;
-
-    return (jlong) core->get_relationship_manager(core);
-}
-
-JNIEXPORT jlong JNICALL Java_gamesdk_impl_NativeCoreImplKt_getUserManager(JNIEnv *env, jclass jClass, jobject jReceiver, jlong jCore) {
-    auto *core = (IDiscordCore *) jCore;
-
-    return (jlong) core->get_user_manager(core);
-}
+#pragma clang diagnostic pop

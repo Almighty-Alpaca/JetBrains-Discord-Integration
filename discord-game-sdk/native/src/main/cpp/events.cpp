@@ -40,6 +40,19 @@ namespace events {
         return new EventData{*jvm, jEventsGlobal};
     }
 
+    void remove(void *data) {
+        auto *eventData = (EventData *) data;
+
+        JavaVM &jvm = eventData->jvm;
+        jobject jEventsGlobal = eventData->jEventsGlobal;
+
+        jnihelpers::withEnv(jvm, [& jEventsGlobal](JNIEnv &env) {
+            env.DeleteGlobalRef(jEventsGlobal);
+        });
+
+        delete eventData;
+    }
+
     template<class... Args>
     void onEvent(
             void *data,
@@ -50,8 +63,8 @@ namespace events {
     ) {
         auto *eventData = (EventData *) data;
 
-        jobject jEventsGlobal = eventData->jEventsGlobal;
         JavaVM &jvm = eventData->jvm;
+        jobject jEventsGlobal = eventData->jEventsGlobal;
 
         jnihelpers::withEnv(jvm, [& jEventsGlobal, & eventBusName, & eventClassName, &eventClassConstructorSignature, &eventClassConstructorArgSupplier](JNIEnv &env) {
             jclass jEventsClass = env.GetObjectClass(jEventsGlobal);
