@@ -17,6 +17,7 @@
 package gamesdk.impl.types
 
 import gamesdk.api.types.DiscordPremiumType
+
 internal typealias  NativeDiscordPremiumType = Int
 
 internal fun DiscordPremiumType.toNativeDiscordPremiumType(): NativeDiscordPremiumType = this.ordinal

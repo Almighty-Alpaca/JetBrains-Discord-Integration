@@ -16,7 +16,9 @@
 
 package gamesdk.api.types
 
-public enum class DiscordLobbySearchCast {
-    String,
-    Number,
-}
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
+
+public class DiscordInputMode(
+    public val type: DiscordInputModeType,
+    public val shortcut: @StringLength(max = 256) String
+)

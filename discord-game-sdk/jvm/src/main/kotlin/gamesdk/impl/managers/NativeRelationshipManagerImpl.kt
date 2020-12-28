@@ -16,15 +16,15 @@
 
 package gamesdk.impl.managers
 
-import gamesdk.api.DiscordIntResult
 import gamesdk.api.DiscordRelationshipFilter
+import gamesdk.api.DiscordRelationshipListSizeResult
 import gamesdk.api.DiscordRelationshipResult
 import gamesdk.api.events.EventBus
 import gamesdk.api.events.RelationshipRefreshEvent
 import gamesdk.api.events.RelationshipUpdateEvent
+import gamesdk.api.managers.DiscordRelationshipListSize
 import gamesdk.api.managers.RelationshipManager
 import gamesdk.api.types.DiscordUserId
-import gamesdk.api.types.uint32_t
 import gamesdk.impl.NativeCoreImpl
 import gamesdk.impl.NativeObjectImpl
 
@@ -35,7 +35,7 @@ internal class NativeRelationshipManagerImpl(private val core: NativeCoreImpl) :
     override val relationshipUpdates: EventBus<RelationshipUpdateEvent>
         get() = core.events.relationshipUpdates
 
-    override fun count(): DiscordIntResult =
+    override fun count(): DiscordRelationshipListSizeResult =
         TODO("Not yet implemented")
 
     override fun filter(filter: DiscordRelationshipFilter): Unit =
@@ -44,6 +44,6 @@ internal class NativeRelationshipManagerImpl(private val core: NativeCoreImpl) :
     override fun get(userId: DiscordUserId): DiscordRelationshipResult =
         TODO("Not yet implemented")
 
-    override fun getAt(index: uint32_t): DiscordRelationshipResult =
+    override fun getAt(index: DiscordRelationshipListSize): DiscordRelationshipResult =
         TODO("Not yet implemented")
 }

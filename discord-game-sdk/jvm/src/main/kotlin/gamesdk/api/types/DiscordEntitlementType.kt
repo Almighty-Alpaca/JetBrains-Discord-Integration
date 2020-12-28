@@ -15,13 +15,3 @@
  */
 
 package gamesdk.api.types
-
-public enum class DiscordEntitlementType {
-    Purchase,
-    PremiumSubscription,
-    DeveloperGift,
-    TestModePurchase,
-    FreePurchase,
-    UserGift,
-    PremiumPurchase,
-}

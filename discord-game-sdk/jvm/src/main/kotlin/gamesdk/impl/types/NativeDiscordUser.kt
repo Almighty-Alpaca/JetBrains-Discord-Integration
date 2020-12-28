@@ -17,9 +17,33 @@
 package gamesdk.impl.types
 
 import gamesdk.api.types.DiscordUser
+import gamesdk.api.types.DiscordUserFlag
+import gamesdk.api.types.DiscordUserFlags
+import java.util.*
 
 internal typealias NativeDiscordUser = DiscordUser
 
 internal fun DiscordUser.toNativeDiscordUser(): NativeDiscordUser = this
 
 internal fun NativeDiscordUser.toDiscordUser(): DiscordUser = this
+
+internal typealias  NativeDiscordUserFlag = Int
+
+internal fun DiscordUserFlag.toNativeDiscordUserFlag(): NativeDiscordUserFlag = this.ordinal
+
+internal fun NativeDiscordUserFlag.toDiscordUserFlag(): DiscordUserFlag =
+    when (this) {
+        in DiscordUserFlag.values().indices -> DiscordUserFlag.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+internal typealias  NativeDiscordUserFlags = Int
+
+internal fun DiscordUserFlags.toNativeDiscordUserFlags(): NativeDiscordUserFlags =
+    this.fold(0) { acc, i -> acc + (1 shl i.offset) }
+
+internal fun NativeDiscordUserFlags.toDiscordUserFlags(): DiscordUserFlags =
+    DiscordUserFlag
+        .values()
+        .filterTo(EnumSet.noneOf(DiscordUserFlag::class.java)) {
+            (this shr it.offset) and 1 == 1
+        }

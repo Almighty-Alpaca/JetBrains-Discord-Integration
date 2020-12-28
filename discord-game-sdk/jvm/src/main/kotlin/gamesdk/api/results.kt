@@ -16,6 +16,7 @@
 
 package gamesdk.api
 
+import gamesdk.api.managers.DiscordRelationshipListSize
 import gamesdk.api.types.DiscordCode
 import gamesdk.api.types.DiscordPremiumType
 import gamesdk.api.types.DiscordRelationship
@@ -64,4 +65,4 @@ public typealias DiscordRelationshipResult = DiscordObjectResult<DiscordRelation
 
 public typealias DiscordBooleanResult = DiscordObjectResult<Boolean>
 
-public typealias DiscordIntResult = DiscordObjectResult<Int>
+public typealias DiscordRelationshipListSizeResult = DiscordObjectResult<DiscordRelationshipListSize>

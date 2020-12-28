@@ -16,6 +16,16 @@
 
 package gamesdk.api.types
 
-public enum class DiscordImageType {
-    User,
-}
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordFileStatsSize = ULong
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordFileStatsLastModified = ULong
+
+public class DiscordFileStat(
+    public val filename: @StringLength(max = 260) String,
+    public val size: DiscordFileStatsSize,
+    public val lastModified: DiscordFileStatsLastModified
+)

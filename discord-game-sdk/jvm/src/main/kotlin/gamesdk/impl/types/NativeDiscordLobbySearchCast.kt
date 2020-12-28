@@ -17,6 +17,9 @@
 package gamesdk.impl.types
 
 import gamesdk.api.types.DiscordLobbySearchCast
+import gamesdk.api.types.DiscordLobbySearchComparison
+import gamesdk.api.types.DiscordLobbySearchDistance
+import gamesdk.api.types.DiscordLobbyType
 
 internal typealias NativeDiscordLobbySearchCast = Int
 
@@ -25,5 +28,35 @@ internal fun DiscordLobbySearchCast.toNativeDiscordLobbySearchCast(): NativeDisc
 internal fun NativeDiscordLobbySearchCast.toDiscordLobbySearchCast(): DiscordLobbySearchCast =
     when (this) {
         in DiscordLobbySearchCast.values().indices -> DiscordLobbySearchCast.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordLobbySearchComparison = Int
+
+internal fun DiscordLobbySearchComparison.toNativeDiscordLobbySearchComparison(): NativeDiscordLobbySearchComparison = this.ordinal
+
+internal fun NativeDiscordLobbySearchComparison.toDiscordLobbySearchComparison(): DiscordLobbySearchComparison =
+    when (this) {
+        in DiscordLobbySearchComparison.values().indices -> DiscordLobbySearchComparison.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordLobbySearchDistance = Int
+
+internal fun DiscordLobbySearchDistance.toNativeDiscordLobbySearchDistance(): NativeDiscordLobbySearchDistance = this.ordinal
+
+internal fun NativeDiscordLobbySearchDistance.toDiscordLobbySearchDistance(): DiscordLobbySearchDistance =
+    when (this) {
+        in DiscordLobbySearchDistance.values().indices -> DiscordLobbySearchDistance.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordLobbyType = Int
+
+internal fun DiscordLobbyType.toNativeDiscordLobbyType(): NativeDiscordLobbyType = this.ordinal
+
+internal fun NativeDiscordLobbyType.toDiscordLobbyType(): DiscordLobbyType =
+    when (this) {
+        in DiscordLobbyType.values().indices -> DiscordLobbyType.values()[this]
         else -> throw IllegalArgumentException()
     }

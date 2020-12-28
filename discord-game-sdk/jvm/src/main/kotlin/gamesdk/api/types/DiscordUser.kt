@@ -16,7 +16,26 @@
 
 package gamesdk.api.types
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
 import java.util.*
+
+public class DiscordUser(
+    public val id: DiscordUserId,
+    public val username: @StringLength(max = 256) String,
+    public val discriminator: @StringLength(max = 8) String,
+    public val avatar: @StringLength(max = 128) String,
+    public val bot: Boolean
+)
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordUserAchievementPercentage = UByte
+
+public class DiscordUserAchievement(
+    public val userId: DiscordUserId,
+    public val achievementId: DiscordSnowflake,
+    public val percentComplete: DiscordUserAchievementPercentage,
+    public val unlockedAt: DiscordDateTime
+)
 
 public enum class DiscordUserFlag(public val offset: Int) {
     Partner(1),

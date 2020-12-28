@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package gamesdk.impl.types
+package gamesdk.api.types
 
-import gamesdk.api.types.DiscordActivityActionType
+public class DiscordEntitlement(
+    public val id: DiscordSnowflake,
+    public val type: DiscordEntitlementType,
+    public val skuId: DiscordSnowflake
+)
 
-internal typealias  NativeDiscordActivityActionType = Int
-
-internal fun DiscordActivityActionType.toNativeDiscordActivityActionType(): NativeDiscordActivityActionType = this.ordinal
-
-internal fun NativeDiscordActivityActionType.toDiscordActivityActionType(): DiscordActivityActionType =
-    when (this) {
-        in DiscordActivityActionType.values().indices -> DiscordActivityActionType.values()[this]
-        else -> throw IllegalArgumentException()
-    }
+public enum class DiscordEntitlementType {
+    Purchase,
+    PremiumSubscription,
+    DeveloperGift,
+    TestModePurchase,
+    FreePurchase,
+    UserGift,
+    PremiumPurchase,
+}

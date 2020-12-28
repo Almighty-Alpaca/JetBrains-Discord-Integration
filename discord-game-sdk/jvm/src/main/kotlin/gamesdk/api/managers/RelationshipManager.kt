@@ -16,21 +16,23 @@
 
 package gamesdk.api.managers
 
-import gamesdk.api.DiscordIntResult
 import gamesdk.api.DiscordRelationshipFilter
+import gamesdk.api.DiscordRelationshipListSizeResult
 import gamesdk.api.DiscordRelationshipResult
 import gamesdk.api.events.EventBus
 import gamesdk.api.events.RelationshipRefreshEvent
 import gamesdk.api.events.RelationshipUpdateEvent
 import gamesdk.api.types.DiscordUserId
-import gamesdk.api.types.uint32_t
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordRelationshipListSize = UInt
 
 public interface RelationshipManager {
     public val refreshes: EventBus<RelationshipRefreshEvent>
     public val relationshipUpdates: EventBus<RelationshipUpdateEvent>
 
     public fun filter(filter: DiscordRelationshipFilter)
-    public fun count(): DiscordIntResult
+    public fun count(): DiscordRelationshipListSizeResult
     public fun get(userId: DiscordUserId): DiscordRelationshipResult
-    public fun getAt(index: uint32_t): DiscordRelationshipResult
+    public fun getAt(index: DiscordRelationshipListSize): DiscordRelationshipResult
 }

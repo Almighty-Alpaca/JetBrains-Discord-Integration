@@ -17,6 +17,7 @@
 package gamesdk.impl.types
 
 import gamesdk.api.types.DiscordRelationship
+import gamesdk.api.types.DiscordRelationshipType
 
 internal class NativeDiscordRelationship(
     internal val type: NativeDiscordRelationshipType,
@@ -35,3 +36,13 @@ internal fun NativeDiscordRelationship.toDiscordRelationship(): DiscordRelations
     user = user.toDiscordUser(),
     presence = presence.toDiscordPresence()
 )
+
+internal typealias NativeDiscordRelationshipType = Int
+
+internal fun DiscordRelationshipType.toNativeDiscordRelationshipType(): NativeDiscordRelationshipType = this.ordinal
+
+internal fun NativeDiscordRelationshipType.toDiscordRelationshipType(): DiscordRelationshipType =
+    when (this) {
+        in DiscordRelationshipType.values().indices -> DiscordRelationshipType.values()[this]
+        else -> throw IllegalArgumentException()
+    }

@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package gamesdk.impl.types
+package gamesdk.api.types
 
-import gamesdk.api.types.DiscordLobbyType
-
-internal typealias NativeDiscordLobbyType = Int
-
-internal fun DiscordLobbyType.toNativeDiscordLobbyType(): NativeDiscordLobbyType = this.ordinal
-
-internal fun NativeDiscordLobbyType.toDiscordLobbyType(): DiscordLobbyType =
-    when (this) {
-        in DiscordLobbyType.values().indices -> DiscordLobbyType.values()[this]
-        else -> throw IllegalArgumentException()
-    }
+public class DiscordPresence(
+    public val status: DiscordStatus,
+    public val activity: DiscordActivity
+)

@@ -23,7 +23,6 @@ import gamesdk.api.DiscordRelationshipFilter
 import gamesdk.api.types.*
 import gamesdk.impl.Native
 import gamesdk.impl.types.*
-import gamesdk.impl.types.toDiscordCode
 
 internal class DiscordLobbyTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyTransaction {
     override fun setType(type: DiscordLobbyType) = native_setType(type.toNativeDiscordLobbyType()).toDiscordCode()

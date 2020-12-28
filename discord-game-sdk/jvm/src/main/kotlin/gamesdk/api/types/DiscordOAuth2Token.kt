@@ -16,7 +16,10 @@
 
 package gamesdk.api.types
 
-public enum class DiscordActivityActionType {
-    Join,
-    Spectate,
-}
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
+
+public class DiscordOAuth2Token(
+    public val accessToken: @StringLength(max = 128) String,
+    public val scopes: @StringLength(max = 1024) String,
+    public val expires: DiscordTimestamp
+)

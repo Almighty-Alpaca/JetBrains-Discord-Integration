@@ -16,9 +16,12 @@
 
 package gamesdk.api.types
 
-public enum class DiscordSkuType {
-    Application,
-    DLC,
-    Consumable,
-    Bundle,
-}
+// Undocumented overlay stuff
+
+//public class DiscordImeUnderline(
+//    public val from: Int,
+//    public val to: Int,
+//    public val color: UInt,
+//    public val backgroundColor: UInt,
+//    public val thick: Boolean
+//)

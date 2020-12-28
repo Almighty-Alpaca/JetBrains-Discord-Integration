@@ -16,7 +16,20 @@
 
 package gamesdk.api.types
 
-public enum class DiscordLobbyType {
-    Private,
-    Public,
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordImageSize = UInt
+
+public class DiscordImageHandle(
+    public val type: DiscordImageType,
+    public val id: DiscordUserId,
+    public val size: DiscordImageSize
+)
+
+public class DiscordImageDimensions(
+    public val width: DiscordImageDimension,
+    public val height: DiscordImageDimension
+)
+
+public enum class DiscordImageType {
+    User,
 }

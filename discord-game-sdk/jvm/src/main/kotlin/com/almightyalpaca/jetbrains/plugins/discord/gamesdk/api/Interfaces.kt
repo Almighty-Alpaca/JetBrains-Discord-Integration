@@ -20,8 +20,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DoublePointer
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.Pointer
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.VoidPointer
 import gamesdk.api.DiscordRelationshipFilter
-import gamesdk.api.DiscordResultCallback
 import gamesdk.api.types.*
+import gamesdk.impl.types.*
 
 public interface DiscordLobbyTransaction {
     public fun setType(type: DiscordLobbyType): DiscordCode

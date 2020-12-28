@@ -16,7 +16,9 @@
 
 package gamesdk.api.types
 
-public enum class DiscordActivityPartyPrivacy {
-    Private,
-    Public,
-}
+public typealias DiscordPartySizeValue = Int
+
+public class DiscordPartySize(
+    public val currentSize: DiscordPartySizeValue = 0,
+    public val maxSize: DiscordPartySizeValue = 0
+)

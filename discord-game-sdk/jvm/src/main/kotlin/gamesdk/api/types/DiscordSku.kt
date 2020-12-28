@@ -16,8 +16,26 @@
 
 package gamesdk.api.types
 
-public enum class DiscordActivityJoinRequestReply {
-    No,
-    Yes,
-    Ignore,
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
+
+public class DiscordSku(
+    public val id: DiscordSnowflake,
+    public val type: DiscordSkuType,
+    public val name: @StringLength(max = 256) String,
+    public val price: DiscordSkuPrice
+)
+
+public enum class DiscordSkuType {
+    Application,
+    DLC,
+    Consumable,
+    Bundle,
 }
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordSkuPriceValue = UInt
+
+public class DiscordSkuPrice(
+    public val amount: DiscordSkuPriceValue,
+    public val currency: @StringLength(max = 16) String
+)

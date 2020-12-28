@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package gamesdk.impl.types
+package gamesdk.api.types
 
-import gamesdk.api.types.DiscordActivityPartyPrivacy
+public class DiscordRelationship(
+    public val type: DiscordRelationshipType,
+    public val user: DiscordUser,
+    public val presence: DiscordPresence
+)
 
-internal typealias NativeDiscordActivityPartyPrivacy = Int
-
-internal fun DiscordActivityPartyPrivacy.toNativeDiscordActivityPartyPrivacy(): NativeDiscordActivityPartyPrivacy = this.ordinal
-
-internal fun NativeDiscordActivityPartyPrivacy.toDiscordActivityPartyPrivacy(): DiscordActivityPartyPrivacy =
-    when (this) {
-        in DiscordActivityPartyPrivacy.values().indices -> DiscordActivityPartyPrivacy.values()[this]
-        else -> throw IllegalArgumentException()
-    }
+public enum class DiscordRelationshipType {
+    None,
+    Friend,
+    Blocked,
+    PendingIncoming,
+    PendingOutgoing,
+    Implicit,
+}

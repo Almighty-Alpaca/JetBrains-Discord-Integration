@@ -16,11 +16,11 @@
 
 package gamesdk.api.types
 
-public enum class DiscordRelationshipType {
-    None,
-    Friend,
-    Blocked,
-    PendingIncoming,
-    PendingOutgoing,
-    Implicit,
-}
+// Undocumented overlay stuff
+
+public class DiscordRect(
+    public val left: Int,
+    public val top: Int,
+    public val right: Int,
+    public val bottom: Int
+)

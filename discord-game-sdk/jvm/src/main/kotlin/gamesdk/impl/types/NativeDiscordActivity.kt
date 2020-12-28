@@ -19,22 +19,26 @@ package gamesdk.impl.types
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
 import gamesdk.api.types.*
 
+public typealias NativeDiscordApplicationId = NativeDiscordSnowflake
+
+public typealias NativeDiscordPartySizeValue = int32_t
+
 internal class NativeDiscordActivity(
-    val type: Int,
-    val applicationId: int64_t,
+    val applicationId: NativeDiscordApplicationId,
+    val type: NativeDiscordActivityType,
     val name: @StringLength(max = 128) String,
     val state: @StringLength(max = 128) String,
     val details: @StringLength(max = 128) String,
-    val timestampStart: DiscordTimestamp,
-    val timestampEnd: DiscordTimestamp,
+    val timestampStart: NativeDiscordTimestamp,
+    val timestampEnd: NativeDiscordTimestamp,
     val assetsLargeImage: @StringLength(max = 128) String,
     val assetsLargeText: @StringLength(max = 128) String,
     val assetsSmallImage: @StringLength(max = 128) String,
     val assetsSmallText: @StringLength(max = 128) String,
     val partyId: @StringLength(max = 128) String,
-    val partyCurrentSize: int32_t,
-    val partyMaxSize: int32_t,
-    val partyPrivacy: Int,
+    val partyCurrentSize: NativeDiscordPartySizeValue,
+    val partyMaxSize: NativeDiscordPartySizeValue,
+    val partyPrivacy: NativeDiscordActivityPartyPrivacy,
     val secretsMatch: @StringLength(max = 128) String,
     val secretsJoin: @StringLength(max = 128) String,
     val secretsSpectate: @StringLength(max = 128) String,
@@ -94,3 +98,43 @@ internal fun NativeDiscordActivity.toDiscordActivity(): DiscordActivity = Discor
     ),
     instance = this.instance
 )
+
+internal typealias NativeDiscordActivityActionType = Int
+
+internal fun DiscordActivityActionType.toNativeDiscordActivityActionType(): NativeDiscordActivityActionType = this.ordinal
+
+internal fun NativeDiscordActivityActionType.toDiscordActivityActionType(): DiscordActivityActionType =
+    when (this) {
+        in DiscordActivityActionType.values().indices -> DiscordActivityActionType.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordActivityJoinRequestReply = Int
+
+internal fun DiscordActivityJoinRequestReply.toNativeDiscordActivityJoinRequestReply(): NativeDiscordActivityJoinRequestReply = this.ordinal
+
+internal fun NativeDiscordActivityJoinRequestReply.toDiscordActivityJoinRequestReply(): DiscordActivityJoinRequestReply =
+    when (this) {
+        in DiscordActivityJoinRequestReply.values().indices -> DiscordActivityJoinRequestReply.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordActivityPartyPrivacy = Int
+
+internal fun DiscordActivityPartyPrivacy.toNativeDiscordActivityPartyPrivacy(): NativeDiscordActivityPartyPrivacy = this.ordinal
+
+internal fun NativeDiscordActivityPartyPrivacy.toDiscordActivityPartyPrivacy(): DiscordActivityPartyPrivacy =
+    when (this) {
+        in DiscordActivityPartyPrivacy.values().indices -> DiscordActivityPartyPrivacy.values()[this]
+        else -> throw IllegalArgumentException()
+    }
+
+internal typealias NativeDiscordActivityType = Int
+
+internal fun DiscordActivityType.toNativeDiscordActivityType(): NativeDiscordActivityType = this.ordinal
+
+internal fun NativeDiscordActivityType.toDiscordActivityType(): DiscordActivityType =
+    when (this) {
+        in DiscordActivityType.values().indices -> DiscordActivityType.values()[this]
+        else -> throw IllegalArgumentException()
+    }

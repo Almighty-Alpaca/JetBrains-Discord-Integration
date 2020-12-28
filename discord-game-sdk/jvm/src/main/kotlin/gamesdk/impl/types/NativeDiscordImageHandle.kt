@@ -16,7 +16,7 @@
 
 package gamesdk.impl.types
 
-import gamesdk.api.types.*
+import gamesdk.api.types.DiscordImageHandle
 
 internal class NativeDiscordImageHandle(
     val type: Int,
@@ -30,7 +30,7 @@ internal fun DiscordImageHandle.toNativeDiscordImageHandle(): NativeDiscordImage
     size = this.size
 )
 
-internal fun NativeDiscordImageHandle.toDiscordImageHandle(): DiscordImageHandle =DiscordImageHandle(
+internal fun NativeDiscordImageHandle.toDiscordImageHandle(): DiscordImageHandle = DiscordImageHandle(
     type = this.type.toDiscordImageType(),
     id = this.id,
     size = this.size
