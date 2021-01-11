@@ -57,8 +57,7 @@ fun main() {
         .setShutdownAutomatically(true)
         .build()
 
-    JDABuilder()
-        .setToken(config[Settings.token])
+    JDABuilder.createDefault(config[Settings.token])
         .addEventListeners(client)
         .addEventListeners(UserActivityStartListener(config))
         .build()
