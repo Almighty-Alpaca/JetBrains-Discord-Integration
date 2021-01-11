@@ -48,7 +48,6 @@ class UserActivityStartListener(private val config: Config) : ListenerAdapter() 
             return
 
         val guild = config[Settings.guilds]
-            .asSequence()
             .find { it.id == member.guild.idLong }
             ?: return
 
