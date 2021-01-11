@@ -27,6 +27,9 @@ import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.MemberCachePolicy
+import net.dv8tion.jda.api.utils.cache.CacheFlag
 import java.nio.file.Paths
 
 val isDocker by lazy { System.getenv("DOCKER") != null }
@@ -58,6 +61,9 @@ fun main() {
         .build()
 
     JDABuilder.createDefault(config[Settings.token])
+        .setMemberCachePolicy(MemberCachePolicy.ONLINE)
+        .enableIntents(GatewayIntent.GUILD_PRESENCES)
+        .enableCache(CacheFlag.ACTIVITY)
         .addEventListeners(client)
         .addEventListeners(UserActivityStartListener(config))
         .build()
