@@ -18,8 +18,9 @@
 
 #include <iostream>
 
-namespace types {
+#include "jniclasses.h"
 
+namespace types {
     jobject createIntegerObject(JNIEnv &env, jint value) {
         jclass int_class = env.FindClass("java/lang/Integer");
         jmethodID j_value_of = env.GetStaticMethodID(int_class, "valueOf", "(I)Ljava/lang/Integer;");
@@ -42,65 +43,36 @@ namespace types {
     }
 
     jobject createPair(JNIEnv &env, jobject first, jobject second) {
-        jclass pair_class = env.FindClass("kotlin/Pair");
-        jmethodID constructor = env.GetMethodID(pair_class, "<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V");
-        jobject pair = env.NewObject(pair_class, constructor, first, second);
+        namespace JPair = kotlin::Pair;
 
-        return pair;
+        return JPair::constructor0::invoke(env, first, second);
     }
 
     /**
       Activity is an jobject of type NativeDiscordActivity
     */
     DiscordActivity createDiscordActivity(JNIEnv &env, jobject &jActivity) {
-        jclass discord_activity_class = env.GetObjectClass(jActivity);
+        namespace JDiscordActivity = gamesdk::impl::types::NativeDiscordActivity;
 
-        // type signatures: https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures
-        jfieldID
-                type_field_id = env.GetFieldID(discord_activity_class, "type", "I"),
-                application_id_field_id = env.GetFieldID(discord_activity_class, "applicationId", "J"),
-                name_field_id = env.GetFieldID(discord_activity_class, "name", "Ljava/lang/String;"),
-                state_field_id = env.GetFieldID(discord_activity_class, "state", "Ljava/lang/String;"),
-                details_field_id = env.GetFieldID(discord_activity_class, "details", "Ljava/lang/String;"),
-                timestamp_start_field_id = env.GetFieldID(discord_activity_class, "timestampStart", "J"),
-                timestamp_end_field_id = env.GetFieldID(discord_activity_class, "timestampEnd", "J"),
-                assets_large_image_field_id = env.GetFieldID(discord_activity_class, "assetsLargeImage", "Ljava/lang/String;"),
-                assets_large_text_field_id = env.GetFieldID(discord_activity_class, "assetsLargeText", "Ljava/lang/String;"),
-                assets_small_image_field_id = env.GetFieldID(discord_activity_class, "assetsSmallImage", "Ljava/lang/String;"),
-                assets_small_text_field_id = env.GetFieldID(discord_activity_class, "assetsSmallText", "Ljava/lang/String;"),
-                party_id_field_id = env.GetFieldID(discord_activity_class, "partyId", "Ljava/lang/String;"),
-                party_current_size_field_id = env.GetFieldID(discord_activity_class, "partyCurrentSize", "I"),
-                party_max_size_field_id = env.GetFieldID(discord_activity_class, "partyMaxSize", "I"),
-                party_privacy_field_id = env.GetFieldID(discord_activity_class, "partyPrivacy", "I"),
-                secrets_match_field_id = env.GetFieldID(discord_activity_class, "secretsMatch", "Ljava/lang/String;"),
-                secrets_join_field_id = env.GetFieldID(discord_activity_class, "secretsJoin", "Ljava/lang/String;"),
-                secrets_spectate_field_id = env.GetFieldID(discord_activity_class, "secretsSpectate", "Ljava/lang/String;"),
-                instance_field_id = env.GetFieldID(discord_activity_class, "instance", "Z");
-
-        #pragma clang diagnostic push
-        #pragma ide diagnostic ignored "modernize-use-auto"
-
-        jint type = env.GetIntField(jActivity, type_field_id);
-        jlong application_id = env.GetLongField(jActivity, application_id_field_id);
-        jstring name = (jstring) env.GetObjectField(jActivity, name_field_id);
-        jstring state = (jstring) env.GetObjectField(jActivity, state_field_id);
-        jstring details = (jstring) env.GetObjectField(jActivity, details_field_id);
-        jlong timestamp_start = env.GetLongField(jActivity, timestamp_start_field_id);
-        jlong timestamp_end = env.GetLongField(jActivity, timestamp_end_field_id);
-        jstring assets_large_image = (jstring) env.GetObjectField(jActivity, assets_large_image_field_id);
-        jstring assets_large_text = (jstring) env.GetObjectField(jActivity, assets_large_text_field_id);
-        jstring assets_small_image = (jstring) env.GetObjectField(jActivity, assets_small_image_field_id);
-        jstring assets_small_text = (jstring) env.GetObjectField(jActivity, assets_small_text_field_id);
-        jstring party_id = (jstring) env.GetObjectField(jActivity, party_id_field_id);
-        jint party_current_size = env.GetIntField(jActivity, party_current_size_field_id);
-        jint party_max_size = env.GetIntField(jActivity, party_max_size_field_id);
-        jint party_privacy = env.GetIntField(jActivity, party_privacy_field_id);
-        jstring secrets_match = (jstring) env.GetObjectField(jActivity, secrets_match_field_id);
-        jstring secrets_join = (jstring) env.GetObjectField(jActivity, secrets_join_field_id);
-        jstring secrets_spectate = (jstring) env.GetObjectField(jActivity, secrets_spectate_field_id);
-        jboolean instance = env.GetBooleanField(jActivity, instance_field_id);
-
-        #pragma clang diagnostic pop
+        jint type = JDiscordActivity::getType(env, jActivity);
+        jlong application_id = JDiscordActivity::getApplicationId(env, jActivity);
+        jstring name = JDiscordActivity::getName(env, jActivity);
+        jstring state = JDiscordActivity::getState(env, jActivity);
+        jstring details = JDiscordActivity::getDetails(env, jActivity);
+        jlong timestamp_start = JDiscordActivity::getTimestampStart(env, jActivity);
+        jlong timestamp_end = JDiscordActivity::getTimestampEnd(env, jActivity);
+        jstring assets_large_image = JDiscordActivity::getAssetsLargeImage(env, jActivity);
+        jstring assets_large_text = JDiscordActivity::getAssetsLargeText(env, jActivity);
+        jstring assets_small_image = JDiscordActivity::getAssetsSmallImage(env, jActivity);
+        jstring assets_small_text = JDiscordActivity::getAssetsSmallText(env, jActivity);
+        jstring party_id = JDiscordActivity::getPartyId(env, jActivity);
+        jint party_current_size = JDiscordActivity::getPartyCurrentSize(env, jActivity);
+        jint party_max_size = JDiscordActivity::getPartyMaxSize(env, jActivity);
+        jint party_privacy = JDiscordActivity::getPartyPrivacy(env, jActivity);
+        jstring secrets_match = JDiscordActivity::getSecretsMatch(env, jActivity);
+        jstring secrets_join = JDiscordActivity::getSecretsJoin(env, jActivity);
+        jstring secrets_spectate = JDiscordActivity::getSecretsSpectate(env, jActivity);
+        jboolean instance = JDiscordActivity::getInstance(env, jActivity);
 
         const char *name_native = env.GetStringUTFChars(name, nullptr);
         const char *state_native = env.GetStringUTFChars(state, nullptr);
@@ -161,11 +133,6 @@ namespace types {
     }
 
     jobject createJavaActivity(JNIEnv &env, DiscordActivity &activity) {
-        jclass jActivityClass = env.FindClass("gamesdk/impl/types/NativeDiscordActivity");
-
-        static const auto jActivitySignature = "(IJLjava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V";
-        jmethodID jActivityConstructor = env.GetMethodID(jActivityClass, "<init>", jActivitySignature);
-
         auto jType = (jint) activity.type;
         auto jApplicationId = (jlong) activity.application_id;
         auto jName = env.NewStringUTF(activity.name);
@@ -191,32 +158,35 @@ namespace types {
 
         auto instance = (jboolean) activity.instance;
 
-        return env.NewObject(jActivityClass, jActivityConstructor,
-                             jType, jApplicationId, jName, jState, jDetails, jTimestampStart, jTimestampEnd, jAssetLargeImage, jAssetLargeText, jAssetSmallImage,
-                             jAssetSmallText, jPartyId, jPartySizeCurrent, jPartySizeMax, jPartyPrivacy, jSecretMatch, jSecretJoin, jSecretSpectate, instance);
+        namespace JDiscordActivity = gamesdk::impl::types::NativeDiscordActivity;
+
+        return JDiscordActivity::constructor0::invoke(
+                env,
+                jType, jApplicationId, jName, jState, jDetails, jTimestampStart,
+                jTimestampEnd, jAssetLargeImage, jAssetLargeText, jAssetSmallImage,
+                jAssetSmallText, jPartyId, jPartySizeCurrent, jPartySizeMax, jPartyPrivacy,
+                jSecretMatch, jSecretJoin, jSecretSpectate, instance);
     }
 
     jobject createJavaUser(JNIEnv &env, DiscordUser &user) {
-        jclass jUserClass = env.FindClass("gamesdk/api/types/DiscordUser");
-        jmethodID jUserConstructor = env.GetMethodID(jUserClass, "<init>", "(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
-
         auto jId = (jlong) user.id;
         auto jUsername = env.NewStringUTF(user.username);
         auto jDiscriminator = env.NewStringUTF(user.discriminator);
         auto jAvatar = env.NewStringUTF(user.avatar);
         auto jBot = (jboolean) user.bot;
 
-        return env.NewObject(jUserClass, jUserConstructor, jId, jUsername, jDiscriminator, jAvatar, jBot);
+        namespace JUser = gamesdk::api::types::DiscordUser;
+
+        return JUser::constructor0::invoke(env, jId, jUsername, jDiscriminator, jAvatar, jBot);
     }
 
     jobject createJavaPresence(JNIEnv &env, DiscordPresence &presence) {
-        jclass jPresenceClass = env.FindClass("gamesdk/impl/types/NativeDiscordPresence");
-        jmethodID jPresenceConstructor = env.GetMethodID(jPresenceClass, "<init>", "(ILgamesdk/impl/types/NativeDiscordActivity;)V");
-
         auto jStatus = (jint) presence.status;
         auto jActivity = createJavaActivity(env, presence.activity);
 
-        return env.NewObject(jPresenceClass, jPresenceConstructor, jStatus, jActivity);
+        namespace JPresence = gamesdk::impl::types::NativeDiscordPresence;
+
+        return JPresence::constructor0::invoke(env, jStatus, jActivity);
     }
 
     jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship) {
@@ -224,13 +194,9 @@ namespace types {
         jobject jUser = createJavaUser(env, relationship.user);
         jobject jPresence = createJavaPresence(env, relationship.presence);
 
-        jclass jRelationshipClass = env.FindClass("gamesdk/impl/types/NativeDiscordRelationship");
+        namespace JRelationship = gamesdk::impl::types::NativeDiscordRelationship;
 
-        jmethodID jRelationshipConstructor = env.GetMethodID(jRelationshipClass, "<init>", "(ILgamesdk/api/types/DiscordUser;Lgamesdk/impl/types/NativeDiscordPresence;)V");
-
-        jobject jRelationship = env.NewObject(jRelationshipClass, jRelationshipConstructor, jType, jUser, jPresence);
-
-        return jRelationship;
+        return JRelationship::constructor0::invoke(env, jType, jUser, jPresence);
     }
 
     jobject createNativeDiscordObjectResult(JNIEnv &env, EDiscordResult result, jobject object) {
@@ -242,14 +208,14 @@ namespace types {
     }
 
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object) {
-        jclass jSuccessClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Success");
-        jmethodID jSuccessConstructor = env.GetMethodID(jSuccessClass, "<init>", "(Ljava/lang/Object;)V");
-        return env.NewObject(jSuccessClass, jSuccessConstructor, object);
+        namespace JSuccess = gamesdk::impl::NativeDiscordObjectResult::Success;
+
+        return JSuccess::constructor0::invoke(env, object);
     }
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result) {
-        jclass jFailureClass = env.FindClass("gamesdk/impl/NativeDiscordObjectResult$Failure");
-        jmethodID jFailureConstructor = env.GetMethodID(jFailureClass, "<init>", "(I)V");
-        return env.NewObject(jFailureClass, jFailureConstructor, (jint) result);
+        namespace JFailure = gamesdk::impl::NativeDiscordObjectResult::Failure;
+
+        return JFailure::constructor0::invoke(env, (jint) result);
     }
 } // namespace types

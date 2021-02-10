@@ -96,4 +96,27 @@ tasks {
             // "-verbose:jni"
         )
     }
+
+    val jniHeaders by registering(JavaExec::class) task@{
+        val toolsProject = project(":tools:jniheaders")
+
+        val toolsSources = toolsProject.sourceSets.main.get()
+        val toolsJar = toolsProject.tasks.named(toolsSources.jarTaskName).get() as Jar
+        val projectCompileKotlin = compileKotlin.get() as KotlinCompile
+
+        group = "build"
+
+        classpath = toolsSources.runtimeClasspath + projectCompileKotlin.outputs.files + projectCompileKotlin.classpath
+
+        main = "tools.jniheaders.JniHeadersKt"
+
+        args = listOf(
+            project.layout.buildDirectory.dir("generated/headers").get().asFile.absolutePath,
+            "kotlin.Pair",
+            "gamesdk.api..*",
+            "gamesdk.api.types.*",
+            "gamesdk.impl.*",
+            "gamesdk.impl.types.*"
+        )
+    }
 }

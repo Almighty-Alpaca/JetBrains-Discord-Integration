@@ -24,8 +24,8 @@ public typealias NativeDiscordApplicationId = NativeDiscordSnowflake
 public typealias NativeDiscordPartySizeValue = int32_t
 
 internal class NativeDiscordActivity(
-    val applicationId: NativeDiscordApplicationId,
     val type: NativeDiscordActivityType,
+    val applicationId: NativeDiscordApplicationId,
     val name: @StringLength(max = 128) String,
     val state: @StringLength(max = 128) String,
     val details: @StringLength(max = 128) String,

@@ -21,8 +21,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
 public typealias DiscordApplicationId = DiscordSnowflake
 
 public class DiscordActivity(
-    public val applicationId: DiscordApplicationId,
     public val type: DiscordActivityType = DiscordActivityType.Playing,
+    public val applicationId: DiscordApplicationId,
     public val name: @StringLength(max = 128) String = "",
     public val state: @StringLength(max = 128) String = "",
     public val details: @StringLength(max = 128) String = "",

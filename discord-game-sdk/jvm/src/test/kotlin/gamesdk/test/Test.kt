@@ -23,7 +23,8 @@ import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
-import gamesdk.api.*
+import gamesdk.api.DiscordObjectResult
+import gamesdk.api.ThreadedCore
 import gamesdk.api.events.Subscription
 import gamesdk.api.events.subscribe
 import gamesdk.api.events.subscribeOnce
@@ -189,7 +190,7 @@ class Test {
                 if (core != null) {
                     println("Running")
                     if (i % 15 == 0) {
-                        val activity = DiscordActivity(310270644849737729, state = "Waiting", details = "...")
+                        val activity = DiscordActivity(applicationId = 310270644849737729, state = "Waiting", details = "...")
 
                         core.getActivityManager().updateActivity(activity) { result ->
                             println(result)

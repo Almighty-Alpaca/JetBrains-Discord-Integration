@@ -16,12 +16,13 @@
 
 rootProject.name = "JetBrains-Discord-Integration"
 
-include("icons")
-include("plugin")
-include("uploader")
-include("bot")
-include("discord-game-sdk:jvm")
-include("discord-game-sdk:native")
+include(":icons")
+include(":plugin")
+include(":uploader")
+include(":bot")
+include(":discord-game-sdk:jvm")
+include(":discord-game-sdk:native")
+include(":tools:jniheaders")
 
 pluginManagement {
     repositories {

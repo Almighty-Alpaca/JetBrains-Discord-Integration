@@ -23,8 +23,8 @@ import gamesdk.impl.types.*
 
 internal typealias NativeDiscordResult = NativeDiscordCode
 
-internal sealed class NativeDiscordObjectResult<out TResult1> {
-    internal data class Success<out TResult1>(val value: TResult1) : NativeDiscordObjectResult<TResult1>()
+internal sealed class NativeDiscordObjectResult<out TResult> {
+    internal data class Success<out TResult>(val value: TResult) : NativeDiscordObjectResult<TResult>()
     internal data class Failure(val reason: NativeDiscordCode) : NativeDiscordObjectResult<Nothing>()
 }
 

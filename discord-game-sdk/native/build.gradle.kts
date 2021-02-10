@@ -66,7 +66,7 @@ library {
         from(project.layout.projectDirectory.dir("src/main/headers"))
         from(project(":discord-game-sdk:jvm").layout.buildDirectory.dir("generated/headers"))
         builtBy(":discord-game-sdk:jvm:generateJniHeaders")
-
+        builtBy(":discord-game-sdk:jvm:jniHeaders")
         from(File(Jvm.current().javaHome, "include"))
 
         val os = OperatingSystem.current()
