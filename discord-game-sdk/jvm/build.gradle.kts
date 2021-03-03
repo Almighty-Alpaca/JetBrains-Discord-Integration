@@ -113,10 +113,16 @@ tasks {
         args = listOf(
             project.layout.buildDirectory.dir("generated/headers").get().asFile.absolutePath,
             "kotlin.Pair",
-            "gamesdk.api..*",
-            "gamesdk.api.types.*",
-            "gamesdk.impl.*",
-            "gamesdk.impl.types.*"
+            // "gamesdk.api..*",
+            // "gamesdk.api.types.*",
+            // "gamesdk.impl.*",
+            // "gamesdk.impl.types.*",
+            "gamesdk.api.types.DiscordUser",
+            "gamesdk.impl.NativeDiscordObjectResult.*",
+            "gamesdk.impl.types.NativeDiscordActivity",
+            "gamesdk.impl.types.NativeDiscordActivity",
+            "gamesdk.impl.types.NativeDiscordPresence",
+            "gamesdk.impl.types.NativeDiscordRelationship"
         )
     }
 }

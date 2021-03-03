@@ -21,7 +21,6 @@ import java.lang.reflect.*
 import java.nio.file.*
 import java.util.*
 import java.util.function.Function
-import kotlin.Array
 import kotlin.Boolean
 import kotlin.Byte
 import kotlin.Char
@@ -67,7 +66,7 @@ fun main(args: Array<String>) {
         ClassPath
             .from(ClassReference.javaClass.classLoader)
             .allClasses
-            .filter { c -> patterns.any { p -> p.matches(Paths.get(c.name)) } }
+            .filter { c -> patterns.any { p -> p.matches(Paths.get(c.name.replace('$', '.'))) } }
             .map(ClassPath.ClassInfo::load)
             .map(Class<*>::kotlin)
 
