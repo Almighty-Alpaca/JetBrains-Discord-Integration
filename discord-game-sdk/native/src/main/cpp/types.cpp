@@ -118,26 +118,27 @@ namespace types {
         activity.type = (EDiscordActivityType) type;
         activity.application_id = application_id;
 
-        strncpy_s(activity.name, name_native, sizeof(activity.name));
-        strncpy_s(activity.state, state_native, sizeof(activity.state));
-        strncpy_s(activity.details, details_native, sizeof(activity.details));
+        //TODO: Check if the length of an utf8 char * is checked beforehand
+        strncpy(activity.name, name_native, sizeof(activity.name));
+        strncpy(activity.state, state_native, sizeof(activity.state));
+        strncpy(activity.details, details_native, sizeof(activity.details));
 
         activity.timestamps.start = timestamp_start;
         activity.timestamps.end = timestamp_end;
 
-        strncpy_s(activity.assets.large_image, assets_large_image_native, sizeof(activity.assets.large_image));
-        strncpy_s(activity.assets.large_text, assets_large_text_native, sizeof(activity.assets.large_text));
-        strncpy_s(activity.assets.small_image, assets_small_image_native, sizeof(activity.assets.small_image));
-        strncpy_s(activity.assets.small_text, assets_small_text_native, sizeof(activity.assets.small_text));
+        strncpy(activity.assets.large_image, assets_large_image_native, sizeof(activity.assets.large_image));
+        strncpy(activity.assets.large_text, assets_large_text_native, sizeof(activity.assets.large_text));
+        strncpy(activity.assets.small_image, assets_small_image_native, sizeof(activity.assets.small_image));
+        strncpy(activity.assets.small_text, assets_small_text_native, sizeof(activity.assets.small_text));
 
-        strncpy_s(activity.party.id, party_id_native, sizeof(activity.party.id));
+        strncpy(activity.party.id, party_id_native, sizeof(activity.party.id));
         activity.party.size.current_size = party_current_size;
         activity.party.size.max_size = party_max_size;
         activity.party.privacy = (EDiscordActivityPartyPrivacy) party_privacy;
 
-        strncpy_s(activity.secrets.match, secrets_match_native, sizeof(activity.secrets.match));
-        strncpy_s(activity.secrets.join, secrets_join_native, sizeof(activity.secrets.join));
-        strncpy_s(activity.secrets.spectate, secrets_spectate_native, sizeof(activity.secrets.spectate));
+        strncpy(activity.secrets.match, secrets_match_native, sizeof(activity.secrets.match));
+        strncpy(activity.secrets.join, secrets_join_native, sizeof(activity.secrets.join));
+        strncpy(activity.secrets.spectate, secrets_spectate_native, sizeof(activity.secrets.spectate));
 
         activity.instance = instance;
 
