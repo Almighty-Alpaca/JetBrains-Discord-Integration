@@ -86,12 +86,12 @@ internal class DiscordUserManagerImpl(private val internalThisPointer: Long) : D
         native_getUser(userId) { result, user -> callback((result).toDiscordCode(), user) }
 
     override fun getCurrentUserPremiumType() = native_getCurrentUserPremiumType().mapFirst(NativeDiscordCode::toDiscordCode)
-    override fun currentUserHasFlag(flag: DiscordUserFlag) = native_currentUserHasFlag(flag).mapFirst(NativeDiscordCode::toDiscordCode)
+    override fun currentUserHasFlag(flag: DiscordUserFlag) = native_currentUserHasFlag(1 shl flag.offset).mapFirst(NativeDiscordCode::toDiscordCode)
 
     private external fun native_getCurrentUser(): Pair<Int, DiscordUser?>
     private external fun native_getUser(userId: DiscordUserId, callback: (result: Int, user: DiscordUser?) -> Unit)
     private external fun native_getCurrentUserPremiumType(): Pair<Int, DiscordPremiumType?>
-    private external fun native_currentUserHasFlag(flag: DiscordUserFlag): Pair<Int, Boolean>
+    private external fun native_currentUserHasFlag(flag: Int): Pair<Int, Boolean>
 }
 
 internal class DiscordImageManagerImpl(private val internalThisPointer: Long) : DiscordImageManager {

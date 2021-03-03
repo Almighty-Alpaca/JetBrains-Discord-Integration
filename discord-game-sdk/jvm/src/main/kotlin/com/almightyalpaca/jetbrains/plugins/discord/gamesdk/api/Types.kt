@@ -23,6 +23,16 @@ public sealed class Result<out T, out E>
 public data class Success<out T>(val value: T) : Result<T, Nothing>()
 public data class Failure<out E>(val reason: E) : Result<Nothing, E>()
 
+public inline fun <T, E> Result<T, E>.successOr(value: T?, failure: ((E) -> Unit) = {}): T? = when (this) {
+    is Success -> this.value
+    is Failure -> {
+        failure(this.reason)
+        value
+    }
+}
+
+public fun <T, E> Result<T, E>.successOrNull(): T? = successOr(null)
+
 public typealias DiscordApplicationEvents = @VoidPointer Long
 public typealias DiscordImageEvents = @VoidPointer Long
 public typealias DiscordStorageEvents = @VoidPointer Long

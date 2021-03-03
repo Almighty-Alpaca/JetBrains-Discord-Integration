@@ -19,9 +19,11 @@ package gamesdk.test
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.successOrNull
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
 import gamesdk.api.DiscordObjectResult
 import gamesdk.api.ThreadedCore
@@ -43,14 +45,17 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
 class Test {
+    @OptIn(ExperimentalUnsignedTypes::class)
+    val clientId = 768507783167344680U
+    val applicationId = 768507783167344680
+
     @Test
     @OptIn(ExperimentalTime::class)
     fun testActivity() {
-        @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
-        when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
+        when (val result = ThreadedCore.create(clientId, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
             is DiscordObjectResult.Failure -> println(result.code)
             is DiscordObjectResult.Success -> result.value.use { core ->
-                val activity = DiscordActivity(applicationId = 768507783167344680, state = "Testing...")
+                val activity = DiscordActivity(applicationId = applicationId, state = "Testing...")
 
                 runBlocking {
                     val updateResult = core.activityManager.updateActivity(activity)
@@ -73,7 +78,7 @@ class Test {
     @Timeout(value = 15, unit = TimeUnit.SECONDS)
     fun testGetCurrentUser() {
         @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
-        when (val result = ThreadedCore.create(clientId = 768507783167344680U, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
+        when (val result = ThreadedCore.create(clientId, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
             is DiscordObjectResult.Failure ->
                 println("ERROR: ${result.code}")
             is DiscordObjectResult.Success -> result.value.use { core ->
@@ -108,7 +113,7 @@ class Test {
         println("Start")
 
         @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
-        when (val result = ThreadedCore.create(768507783167344680U, DiscordCreateFlags.NoRequireDiscord)) {
+        when (val result = ThreadedCore.create(clientId, DiscordCreateFlags.NoRequireDiscord)) {
             is DiscordObjectResult.Failure -> println(result.code)
             is DiscordObjectResult.Success -> result.value.use { core ->
                 runBlocking {
@@ -174,13 +179,7 @@ class Test {
     @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
     fun testActivity2() {
         runBlocking {
-            var core: DiscordCore? = when (val result = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)) {
-                is Success -> result.value
-                is Failure -> {
-                    println("Error " + result.reason)
-                    null
-                }
-            }
+            var core: DiscordCore? = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()
 
             // core.setLogHook(DiscordLogLevel.Debug) { level, message ->
             //     println("Discord($level): $message")
@@ -190,7 +189,7 @@ class Test {
                 if (core != null) {
                     println("Running")
                     if (i % 15 == 0) {
-                        val activity = DiscordActivity(applicationId = 310270644849737729, state = "Waiting", details = "...")
+                        val activity = DiscordActivity(applicationId = applicationId, state = "Waiting", details = "...")
 
                         core.getActivityManager().updateActivity(activity) { result ->
                             println(result)
@@ -208,7 +207,7 @@ class Test {
                 } else {
                     println("Trying to reconnect")
 
-                    core = when (val result = DiscordCoreImpl.create(310270644849737729UL, DiscordCreateFlags.NoRequireDiscord)) {
+                    core = when (val result = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord)) {
                         is Success -> result.value
                         is Failure -> {
                             println("Error " + result.reason)
@@ -224,6 +223,26 @@ class Test {
             }
 
             core?.close()
+        }
+    }
+
+    @ExperimentalTime
+    @Test
+    fun getCurrentUser() {
+        runBlocking {
+            val core: DiscordCore = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()!!
+
+            delay(5.seconds)
+            val (result, user) = core.getUserManager().getCurrentUser()
+
+            println("Result: ${result.ordinal}")
+
+            assertThat { result }.isEqualTo(DiscordCode.Ok)
+            assertThat { user }.isNotNull()
+
+            println(user)
+
+            core.close()
         }
     }
 }
