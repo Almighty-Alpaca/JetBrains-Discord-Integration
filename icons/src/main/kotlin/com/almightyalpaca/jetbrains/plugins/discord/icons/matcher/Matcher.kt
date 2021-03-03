@@ -48,10 +48,10 @@ sealed class Matcher {
     }
 
     enum class Target(val id: String) {
-        EXTENSION("extension"),
+        PATH("path"),
         NAME("name"),
         BASENAME("basename"),
-        PATH("path");
+        EXTENSION("extension");
         // CONTENT("content") // TODO: implement content/magic byte matching
         // EDITOR("editor") // TODO: implement matching the editor type
 
