@@ -22,7 +22,7 @@
 #include <iostream>
 
 namespace jnihelpers {
-    template<typename T>
+    template<typename T, typename = std::enable_if_t<std::is_invocable_r<void, T, JNIEnv&>::value>>
     void withEnv(JavaVM &jvm, T &&call){
         JNIEnv *env{};
         jint getEnvResult = jvm.GetEnv((void **) &env, JNI_VERSION_1_8);

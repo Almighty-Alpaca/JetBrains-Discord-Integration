@@ -101,7 +101,6 @@ tasks {
         val toolsProject = project(":tools:jniheaders")
 
         val toolsSources = toolsProject.sourceSets.main.get()
-        val toolsJar = toolsProject.tasks.named(toolsSources.jarTaskName).get() as Jar
         val projectCompileKotlin = compileKotlin.get() as KotlinCompile
 
         group = "build"

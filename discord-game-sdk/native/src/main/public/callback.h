@@ -35,7 +35,7 @@ namespace callback {
 
     void run(void *data, EDiscordResult result);
 
-    template<typename T>
+    template<typename T, typename = std::enable_if_t<std::is_invocable_r<jobject, T, JNIEnv&>::value>>
     void run(void *data, EDiscordResult result, T &&converter) {
         auto *callbackData = (CallbackData *) data;
 

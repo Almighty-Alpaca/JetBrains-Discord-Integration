@@ -18,6 +18,7 @@ package tools.jniheaders
 
 import com.google.common.reflect.ClassPath
 import java.lang.reflect.*
+import java.nio.ByteBuffer
 import java.nio.file.*
 import java.util.*
 import java.util.function.Function
@@ -55,12 +56,12 @@ fun main(args: Array<String>) {
 
     val fileSystem = FileSystems.getDefault()
 
-    val patterns = buildList<String> {
-        addAll(args)
-        removeAt(0)
-    }
+    val patterns = args
+        .asSequence()
+        .drop(1)
         .map("glob:"::plus)
         .map(fileSystem::getPathMatcher)
+        .toList()
 
     val classes =
         ClassPath
