@@ -17,21 +17,18 @@
 package com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.VoidPointer
+import gamesdk.api.DiscordObjectResult
+import gamesdk.api.types.DiscordCode
 
-public sealed class Result<out T, out E>
-
-public data class Success<out T>(val value: T) : Result<T, Nothing>()
-public data class Failure<out E>(val reason: E) : Result<Nothing, E>()
-
-public inline fun <T, E> Result<T, E>.successOr(value: T?, failure: ((E) -> Unit) = {}): T? = when (this) {
-    is Success -> this.value
-    is Failure -> {
-        failure(this.reason)
+public inline fun <T> DiscordObjectResult<T>.successOr(value: T?, failure: (DiscordCode) -> Unit = {}): T? = when (this) {
+    is DiscordObjectResult.Success -> this.value
+    is DiscordObjectResult.Failure -> {
+        failure(this.code)
         value
     }
 }
 
-public fun <T, E> Result<T, E>.successOrNull(): T? = successOr(null)
+public fun <T> DiscordObjectResult<T>.successOrNull(): T? = successOr(null)
 
 public typealias DiscordApplicationEvents = @VoidPointer Long
 public typealias DiscordImageEvents = @VoidPointer Long

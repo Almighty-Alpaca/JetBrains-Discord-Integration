@@ -33,7 +33,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_get
     DiscordUser user{};
     EDiscordResult result = userManager->get_current_user(userManager, &user);
 
-    return types::createNativeDiscordObjectResult(*env, result, types::createJavaUser(*env, user));
+    return types::createNativeDiscordObjectResult(*env, result, [&user](JNIEnv &env) -> jobject { return types::createJavaUser(env, user); });
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getUser(
@@ -52,7 +52,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_get
     EDiscordPremiumType type;
     EDiscordResult result = userManager->get_current_user_premium_type(userManager, &type);
 
-    return types::createNativeDiscordObjectResult(*env, result, types::createIntegerObject(*env, type));
+    return types::createNativeDiscordObjectResult(*env, result, [type](JNIEnv &env) -> jobject { return types::createIntegerObject(env, type); });
 }
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_currentUserHasFlag(
@@ -63,7 +63,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_cur
     bool value;
     EDiscordResult result = userManager->current_user_has_flag(userManager, (EDiscordUserFlag) jFlag, &value);
 
-    return types::createNativeDiscordObjectResult(*env, result, types::createBooleanObject(*env, value));
+    return types::createNativeDiscordObjectResult(*env, result, [value](JNIEnv &env) -> jobject { return types::createBooleanObject(env, value); });
 }
 
 #pragma clang diagnostic pop
