@@ -62,9 +62,6 @@ namespace callback {
         });
     }
 
-    namespace {
-    }
-
     void run(void *data, EDiscordResult result, DiscordOAuth2Token *token) {
         run(data, result, [&token](JNIEnv &env) { return types::createJavaOAuth2Token(env, env.NewStringUTF(token->access_token), env.NewStringUTF(token->scopes), token->expires); });
     }
