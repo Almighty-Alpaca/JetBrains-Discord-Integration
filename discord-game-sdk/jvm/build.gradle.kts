@@ -117,6 +117,8 @@ tasks {
             // "gamesdk.impl.*",
             // "gamesdk.impl.types.*",
             "gamesdk.api.types.DiscordUser",
+            "gamesdk.impl.Events",
+            "gamesdk.impl.events.*",
             "gamesdk.impl.NativeCallback",
             "gamesdk.impl.NativeDiscordObjectResult.*",
             "gamesdk.impl.types.NativeDiscordActivity",

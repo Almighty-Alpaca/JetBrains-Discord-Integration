@@ -21,10 +21,13 @@
 #include <string>
 #include <tuple>
 
+#include "jniclasses.h"
 #include "jnihelpers.h"
 #include "types.h"
 
 namespace events {
+    namespace JEvents = gamesdk::impl::Events;
+
     struct EventData {
         JavaVM &jvm;
         jobject jEventsGlobal;
@@ -53,59 +56,48 @@ namespace events {
         delete eventData;
     }
 
-    template<class... Args>
+    template<class... JArgs, class... Args>
     void onEvent(
             void *data,
-            const std::string &eventBusName,
-            const std::string &eventClassName,
-            const std::string &eventClassConstructorSignature,
-            std::function<std::tuple<Args...>(JNIEnv &)> eventClassConstructorArgSupplier
+            jobject (*eventBusGetter)(JNIEnv &, jobject),
+            jobject (*eventClassConstructor)(JNIEnv &, JArgs...),
+            std::tuple<JArgs...> (*eventClassConstructorArgumentConverter)(JNIEnv &, Args...),
+            std::tuple<Args...> eventClassConstructorArguments
     ) {
         auto *eventData = (EventData *) data;
 
         JavaVM &jvm = eventData->jvm;
         jobject jEventsGlobal = eventData->jEventsGlobal;
 
-        jnihelpers::withEnv(jvm, [& jEventsGlobal, & eventBusName, & eventClassName, &eventClassConstructorSignature, &eventClassConstructorArgSupplier](JNIEnv &env) {
-            jclass jEventsClass = env.GetObjectClass(jEventsGlobal);
+        jnihelpers::withEnv(jvm, [& jEventsGlobal, & eventBusGetter, & eventClassConstructor, &eventClassConstructorArgumentConverter, &eventClassConstructorArguments](JNIEnv &env) {
+            std::tuple<JArgs...> eventClassConstructorJArgs = std::apply(eventClassConstructorArgumentConverter, std::tuple_cat(std::forward_as_tuple(env), eventClassConstructorArguments));
 
-            auto eventBusGetterName = "get" + eventBusName;
-            if (eventBusGetterName.size() > 3) {
-                eventBusGetterName[3] = toupper(eventBusGetterName[3]);
-            }
+            jobject jEvent = std::apply(eventClassConstructor, std::tuple_cat(std::forward_as_tuple(env), eventClassConstructorJArgs));
 
-            jmethodID jEventsGetEventBus = env.GetMethodID(jEventsClass, eventBusGetterName.c_str(), "()Lgamesdk/impl/events/NativeNotifiableEventBus;");
+            jobject jEventBus = eventBusGetter(env, jEventsGlobal);
 
-            auto eventClassFullName = "gamesdk/impl/events/" + eventClassName;
+            namespace JNativeNotifiableEventBus = gamesdk::impl::events::NativeNotifiableEventBus;
 
-            jclass jEventClass = env.FindClass(eventClassFullName.c_str());
-
-            jmethodID jEventConstructor = env.GetMethodID(jEventClass, "<init>", eventClassConstructorSignature.c_str());
-
-            std::tuple<Args...> eventClassConstructorArgs = eventClassConstructorArgSupplier(env);
-
-            jobject jEvent = std::apply(&JNIEnv::NewObject, std::tuple_cat(std::forward_as_tuple(env, jEventClass, jEventConstructor), eventClassConstructorArgs));
-
-            jobject jEventBus = env.CallObjectMethod(jEventsGlobal, jEventsGetEventBus);
-
-            jclass jEventBusClass = env.GetObjectClass(jEventBus);
-
-            jmethodID jEventBusNotify = env.GetMethodID(jEventBusClass, "notify", "(Lgamesdk/impl/events/NativeEvent;)V");
-
-            env.CallObjectMethod(jEventBus, jEventBusNotify, jEvent);
+            JNativeNotifiableEventBus::notify(env, jEventBus, jEvent);
         });
     }
 
-    void onEvent(void *data, const std::string &eventBusName, const std::string &eventClassName) {
-        static std::function<std::tuple<>(JNIEnv &)> args = [](JNIEnv &env) -> std::tuple<> {
+    void onEvent(
+            void *data,
+            jobject (*eventBusGetter)(JNIEnv &, jobject),
+            jobject (*eventClassConstructor)(JNIEnv &)
+    ) {
+        static std::tuple<> (*argConverter)(JNIEnv &) = [](JNIEnv &env) -> std::tuple<> {
             return std::tuple<>();
         };
 
-        onEvent(data, eventBusName, eventClassName, "()V", args);
+        onEvent(data, eventBusGetter, eventClassConstructor, argConverter, std::tuple<>());
     }
 
     void onCurrentUserUpdate(void *data) {
-        onEvent(data, "currentUserUpdates", "NativeCurrentUserUpdateEvent");
+        namespace JNativeCurrentUserUpdateEvent = gamesdk::impl::events::NativeCurrentUserUpdateEvent;
+
+        onEvent(data, JEvents::getCurrentUserUpdates, JNativeCurrentUserUpdateEvent::constructor0::invoke);
     }
 
     IDiscordUserEvents *getUserEvents() {
@@ -117,15 +109,19 @@ namespace events {
     }
 
     void onRelationshipRefresh(void *data) {
-        onEvent(data, "relationshipRefreshes", "NativeRelationshipRefreshEvent");
+        namespace JNativeRelationshipRefreshEvent = gamesdk::impl::events::NativeRelationshipRefreshEvent;
+
+        onEvent(data, JEvents::getRelationshipRefreshes, JNativeRelationshipRefreshEvent::constructor0::invoke);
     }
 
     void onRelationshipUpdate(void *data, DiscordRelationship *relationship) {
-        std::function<std::tuple<jobject>(JNIEnv &)> args = [relationship](JNIEnv &env) -> std::tuple<jobject> {
+        static std::tuple<jobject> (*argConverter)(JNIEnv &, DiscordRelationship *) = [](JNIEnv &env, DiscordRelationship *relationship) -> std::tuple<jobject> {
             return {types::createJavaRelationship(env, *relationship)};
         };
 
-        onEvent(data, "relationshipUpdates", "NativeRelationshipUpdateEvent", "(Lgamesdk/impl/types/NativeDiscordRelationship;)V", args);
+        namespace JNativeRelationshipUpdateEvent = gamesdk::impl::events::NativeRelationshipUpdateEvent;
+
+        onEvent(data, JEvents::getRelationshipUpdates, JNativeRelationshipUpdateEvent::constructor0::invoke, argConverter, std::tuple<DiscordRelationship *>(relationship));
     }
 
     IDiscordRelationshipEvents *getRelationshipEvents() {
