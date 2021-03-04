@@ -212,10 +212,8 @@ namespace types {
     }
 
     jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires) {
-        jclass oauth2_token_class = env.FindClass("com/almightyalpaca/jetbrains/plugins/discord/gamesdk/api/DiscordOAuth2Token");
-        jmethodID constructor = env.GetMethodID(oauth2_token_class, "<init>", "(Ljava/lang/String;Ljava/lang/String;J)V");
-        jobject token = env.NewObject(oauth2_token_class, constructor, access_token, scopes, expires);
+        namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;
 
-        return token;
+        return JDiscordOAuth2Token::constructor0::invoke(env, access_token, scopes, expires);
     }
 } // namespace types

@@ -117,6 +117,7 @@ tasks {
             // "gamesdk.api.types.*",
             // "gamesdk.impl.*",
             // "gamesdk.impl.types.*",
+            "gamesdk.api.types.DiscordOAuth2Token",
             "gamesdk.api.types.DiscordUser",
             "gamesdk.impl.NativeDiscordObjectResult.*",
             "gamesdk.impl.types.NativeDiscordActivity",
