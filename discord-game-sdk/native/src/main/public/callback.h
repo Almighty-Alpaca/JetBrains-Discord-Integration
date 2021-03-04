@@ -47,7 +47,7 @@ namespace callback {
             jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)V");
 
             if (jCallbackMethodInvoke != nullptr) {
-                jobject jResult = types::createNativeDiscordObjectResult(env, result, [&converter](JNIEnv &env) { return converter(env); });
+                jobject jResult = types::createNativeDiscordObjectResult(env, result, converter);
 
                 env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
             } else {
