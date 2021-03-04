@@ -44,6 +44,8 @@ namespace types {
 
     jobject createJavaRelationship(JNIEnv &env, const DiscordRelationship &relationship);
 
+    jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires);
+
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object);
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);

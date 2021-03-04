@@ -63,17 +63,10 @@ namespace callback {
     }
 
     namespace {
-        jobject create_oauth2_token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires) {
-            jclass oauth2_token_class = env.FindClass("com/almightyalpaca/jetbrains/plugins/discord/gamesdk/api/DiscordOAuth2Token");
-            jmethodID constructor = env.GetMethodID(oauth2_token_class, "<init>", "(Ljava.lang.String;Ljava.lang.String;J)V");
-            jobject token = env.NewObject(oauth2_token_class, constructor, access_token, scopes, expires);
-
-            return token;
-        }
     }
 
     void run(void *data, EDiscordResult result, DiscordOAuth2Token *token) {
-        run(data, result, [&token](JNIEnv &env) { return create_oauth2_token(env, env.NewStringUTF(token->access_token), env.NewStringUTF(token->scopes), token->expires); });
+        run(data, result, [&token](JNIEnv &env) { return types::createJavaOAuth2Token(env, env.NewStringUTF(token->access_token), env.NewStringUTF(token->scopes), token->expires); });
     }
 
     void run(void *data, EDiscordResult result, const char *str) {
