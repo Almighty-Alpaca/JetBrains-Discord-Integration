@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "commons.h"
+#include "jniclasses.h"
 #include "jnihelpers.h"
 #include "types.h"
 
@@ -39,16 +40,9 @@ namespace callback {
         JavaVM &jvm = callbackData->jvm;
 
         jnihelpers::withEnv(jvm, [&jCallbackGlobal, &result](JNIEnv &env) {
-            jclass jCallbackClass = env.FindClass("kotlin/jvm/functions/Function1");
-            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            namespace JNativeCallback = gamesdk::impl::NativeCallback;
 
-            if (jCallbackMethodInvoke != nullptr) {
-                env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, types::createIntegerObject(env, (jint) result));
-            } else {
-                // TODO: Handle method not found
-
-                std::cout << "Could not find callback method" << std::endl;
-            }
+            JNativeCallback::invoke(env, jCallbackGlobal, types::createIntegerObject(env, (jint) result));
 
             env.DeleteGlobalRef(jCallbackGlobal);
         });

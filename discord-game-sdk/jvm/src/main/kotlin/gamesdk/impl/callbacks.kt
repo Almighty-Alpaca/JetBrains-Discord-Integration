@@ -25,33 +25,37 @@ import gamesdk.impl.types.NativeDiscordUser
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal typealias NativeDiscordResultCallback = (NativeDiscordResult) -> Unit
+internal fun interface NativeCallback<P, R> {
+    fun invoke(p: P): R
+}
 
-internal typealias NativeDiscordObjectResultCallback<T> = (NativeDiscordObjectResult<T>) -> Unit
+internal typealias NativeDiscordResultCallback = NativeCallback<NativeDiscordResult, Unit>
+
+internal typealias NativeDiscordObjectResultCallback<T> = NativeCallback<NativeDiscordObjectResult<T>, Unit>
 
 internal typealias NativeDiscordUserResultCallback = NativeDiscordObjectResultCallback<NativeDiscordUser>
 
 internal typealias NativeDiscordDiscordPremiumTypeResultCallback = NativeDiscordObjectResultCallback<NativeDiscordPremiumType>
 
-internal typealias NativeDiscordRelationshipFilter = (relationship: NativeDiscordRelationship) -> Boolean
+internal typealias NativeDiscordRelationshipFilter = NativeCallback<NativeDiscordRelationship, Boolean>
 
 internal fun DiscordResultCallback.toNativeDiscordResultCallback(): NativeDiscordResultCallback =
-    mapCallback(NativeDiscordResult::toDiscordResult)
+    mapToNativeCallback(NativeDiscordResult::toDiscordResult)
 
 internal fun NativeDiscordResultCallback.fromDiscordResultCallback(): DiscordResultCallback =
-    mapCallback(DiscordResult::toNativeDiscordResult)
+    mapToCallback(DiscordResult::toNativeDiscordResult)
 
 //internal fun <T> DiscordObjectResultCallback<T>.toNativeDiscordResultObjectCallback(): NativeDiscordObjectResultCallback<T> =
 //    toNativeDiscordResultObjectCallback {it}
 
 internal inline fun <T, TN> DiscordObjectResultCallback<T>.toNativeDiscordResultObjectCallback(crossinline converter: (TN) -> T): NativeDiscordObjectResultCallback<TN> =
-    mapCallback { it.toDiscordObjectResult(converter) }
+    mapToNativeCallback { it.toDiscordObjectResult(converter) }
 
 //internal fun <T> NativeDiscordObjectResultCallback<T>.toDiscordResultObjectCallback(): DiscordObjectResultCallback<T> =
 //    mapCallback(DiscordObjectResult<T>::toNativeDiscordObjectResult)
 
 internal inline fun <TN, T> NativeDiscordObjectResultCallback<TN>.toDiscordResultObjectCallback(crossinline converter: (T) -> TN): DiscordObjectResultCallback<T> =
-    mapCallback { it.toNativeDiscordObjectResult(converter) }
+    mapToCallback { it.toNativeDiscordObjectResult(converter) }
 
 internal suspend inline fun <T> suspendCallback(crossinline callback: ((T) -> Unit) -> Unit): T =
     suspendCoroutine { continuation ->
@@ -60,5 +64,8 @@ internal suspend inline fun <T> suspendCallback(crossinline callback: ((T) -> Un
         }
     }
 
-internal inline fun <TFrom, TTo, TResult> ((TTo) -> TResult).mapCallback(crossinline converter: (TFrom) -> TTo): (TFrom) -> TResult =
-    { it: TFrom -> invoke(converter(it)) }
+internal inline fun <TFrom, TTo, TResult> (NativeCallback<TTo, TResult>).mapToCallback(crossinline converter: (TFrom) -> TTo): (TFrom) -> TResult =
+    { from: TFrom -> invoke(converter(from)) }
+
+internal inline fun <TFrom, TTo, TResult> ((TTo) -> TResult).mapToNativeCallback(crossinline converter: (TFrom) -> TTo): NativeCallback<TFrom, TResult> =
+    NativeCallback { from: TFrom -> invoke(converter(from)) }
