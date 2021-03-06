@@ -18,7 +18,6 @@ package tools.jniheaders
 
 import com.google.common.reflect.ClassPath
 import java.lang.reflect.*
-import java.nio.ByteBuffer
 import java.nio.file.*
 import java.util.*
 import java.util.function.Function
@@ -93,17 +92,31 @@ private fun writeClasses(path: Path, classes: Iterable<KClass<*>>): Sequence<Str
 
         Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { writer ->
             with(writer) {
-                appendHeader()
+                val guard = clazz.qualifiedName!!.replace('.', '_').toUpperCase()
+
+                appendHeader(guard)
 
                 (sequenceOf(clazz)).forEach(this::appendClass)
+
+                appendFooter(guard)
             }
         }
     }
     .map(Pair<*, String>::second)
 
-private fun Appendable.appendHeader(): Appendable {
+private fun Appendable.appendHeader(guard: String): Appendable {
+    appendLine("#ifndef $guard")
+    appendLine("#define $guard")
+    appendLine()
     appendLine("#include <jni.h>")
     appendLine()
+
+    return this
+}
+
+private fun Appendable.appendFooter(guard: String): Appendable {
+    appendLine()
+    appendLine("#endif // $guard")
 
     return this
 }
