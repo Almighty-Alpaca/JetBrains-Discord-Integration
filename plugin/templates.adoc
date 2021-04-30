@@ -22,6 +22,99 @@ Here is a list of all the variables that you can use:
 - `${IsTextEditor}`/`$IsTextEditor`: `true` if the currently opened editor is a text editor. Meant to be used with `%if`.
 - `${DebbuggerActive}`/`$DebuggerActive`: `true` if the current project is in a debugging session. Meant to be used with `%if`.
 
+=== Availability in different contexts
+
+
+[cols="1,1,1,1"]
+|===
+| Data | Application | Project | File
+
+| `$ApplicationVersion`
+| Available
+| Availabe
+| Available
+
+| `$ProjectName`
+| Not available
+| Available
+| Available
+
+| `$ProjectName`
+| Not available
+| Available
+| Available
+
+| `$ProjectDescription`
+| Not available
+| Available
+| Available
+
+| `$VcsBranch`
+| Not available
+| Available
+| Available
+
+| `$FileName`
+| Not available
+| Not available
+| Available
+
+| `$FileName`
+| Not available
+| Not available
+| Available
+
+| `$FileNameUnique`
+| Not available
+| Not available
+| Available
+
+| `$CaretLine`
+| Not available
+| Not available
+| Available
+
+| `$LineCount`
+| Not available
+| Not available
+| Available
+
+| `$Language`
+| Not available
+| Not available
+| Available
+
+| `$ModuleName`
+| Not available
+| Not available
+| Available
+
+| `$PathInModule`
+| Not available
+| Not available
+| Available
+
+| `$FileSize`
+| Not available
+| Not available
+| Available
+
+| `$FileIsWritable`
+| Not available
+| Not available
+| Available
+
+| `$IsTextEditor`
+| Not available
+| Not available
+| Available
+
+| `$DebuggerActive`
+| Not available
+| Available
+| Available
+|===
+
 == Raw strings
 `\#" ... "#` will allow you to use `%`, `(`, `)`, `$`, `{` and `}`, while not interpreting them.
 
