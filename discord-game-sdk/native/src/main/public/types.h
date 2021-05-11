@@ -20,6 +20,7 @@
 #include "discord_game_sdk.h"
 
 #include <jni.h>
+#include <type_traits>
 
 namespace types {
     jobject createIntegerObject(JNIEnv &env, jint value);
@@ -33,21 +34,30 @@ namespace types {
     /**
      * Activity is an jobject of type NativeDiscordActivity
      */
-    DiscordActivity createDiscordActivity(JNIEnv &env, jobject &jActivity);
+    DiscordActivity createDiscordActivity(JNIEnv &env, const jobject &jActivity);
 
-    jobject createJavaActivity(JNIEnv &env, DiscordActivity &activity);
+    jobject createJavaActivity(JNIEnv &env, const DiscordActivity &activity);
 
-    jobject createJavaUser(JNIEnv &env, DiscordUser &user);
+    jobject createJavaUser(JNIEnv &env, const DiscordUser &user);
 
-    jobject createJavaPresence(JNIEnv &env, DiscordPresence &presence);
+    jobject createJavaPresence(JNIEnv &env, const DiscordPresence &presence);
 
-    jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship);
+    jobject createJavaRelationship(JNIEnv &env, const DiscordRelationship &relationship);
 
-    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject object);
+    jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires);
 
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object);
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);
+
+    template<typename T, typename = std::enable_if_t<std::is_invocable_r_v<jobject, T, JNIEnv &>>>
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, T &&call) {
+        if (result == DiscordResult_Ok) {
+            return createNativeDiscordObjectResultSuccess(env, call(env));
+        } else {
+            return createNativeDiscordObjectResultFailure(env, result);
+        }
+    }
 } // namespace types
 
 #endif // TYPES_H

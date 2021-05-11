@@ -22,11 +22,11 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
     const char* nameNative = env->GetStringUTFChars(name, nullptr);
 
-    int return_code = manager->register_command(manager, nameNative);
+    EDiscordResult return_code = manager->register_command(manager, nameNative);
 
     env->ReleaseStringUTFChars(name, nameNative);
 
-    return return_code;
+    return (jint)return_code;
 }
 
 /*
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
     IDiscordActivityManager* manager;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordActivityManager, manager);
 
-    return manager->register_steam(manager, steam_id);
+    return (jint) manager->register_steam(manager, steam_id);
 }
 
 /*

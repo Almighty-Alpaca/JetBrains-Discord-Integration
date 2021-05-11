@@ -35,7 +35,7 @@ namespace callback {
 
     void run(void *data, EDiscordResult result);
 
-    template<typename T, typename = std::enable_if_t<std::is_invocable_r<jobject, T, JNIEnv&>::value>>
+    template<typename T, typename = std::enable_if_t<std::is_invocable_r<jobject, T, JNIEnv &>::value>>
     void run(void *data, EDiscordResult result, T &&converter) {
         auto *callbackData = (CallbackData *) data;
 
@@ -44,10 +44,10 @@ namespace callback {
 
         jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & converter](JNIEnv &env) {
             jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);
-            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(I)V");
+            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)V");
 
             if (jCallbackMethodInvoke != nullptr) {
-                jobject jResult = types::createNativeDiscordObjectResult(env, result, converter(env));
+                jobject jResult = types::createNativeDiscordObjectResult(env, result, converter);
 
                 env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
             } else {
@@ -63,6 +63,10 @@ namespace callback {
     }
 
     void run(void *data, EDiscordResult result, DiscordUser *user);
+
+    void run(void *data, EDiscordResult result, DiscordOAuth2Token *token);
+
+    void run(void *data, EDiscordResult result, const char *str);
 } // namespace callback
 
 #endif // CALLBACK_H

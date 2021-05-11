@@ -51,7 +51,7 @@ namespace types {
     /**
       Activity is an jobject of type NativeDiscordActivity
     */
-    DiscordActivity createDiscordActivity(JNIEnv &env, jobject &jActivity) {
+    DiscordActivity createDiscordActivity(JNIEnv &env, const jobject &jActivity) {
         namespace JDiscordActivity = gamesdk::impl::types::NativeDiscordActivity;
 
         jint type = JDiscordActivity::getType(env, jActivity);
@@ -132,7 +132,7 @@ namespace types {
         return activity;
     }
 
-    jobject createJavaActivity(JNIEnv &env, DiscordActivity &activity) {
+    jobject createJavaActivity(JNIEnv &env, const DiscordActivity &activity) {
         auto jType = (jint) activity.type;
         auto jApplicationId = (jlong) activity.application_id;
         auto jName = env.NewStringUTF(activity.name);
@@ -168,7 +168,7 @@ namespace types {
                 jSecretMatch, jSecretJoin, jSecretSpectate, instance);
     }
 
-    jobject createJavaUser(JNIEnv &env, DiscordUser &user) {
+    jobject createJavaUser(JNIEnv &env, const DiscordUser &user) {
         auto jId = (jlong) user.id;
         auto jUsername = env.NewStringUTF(user.username);
         auto jDiscriminator = env.NewStringUTF(user.discriminator);
@@ -180,7 +180,7 @@ namespace types {
         return JUser::constructor0::invoke(env, jId, jUsername, jDiscriminator, jAvatar, jBot);
     }
 
-    jobject createJavaPresence(JNIEnv &env, DiscordPresence &presence) {
+    jobject createJavaPresence(JNIEnv &env, const DiscordPresence &presence) {
         auto jStatus = (jint) presence.status;
         auto jActivity = createJavaActivity(env, presence.activity);
 
@@ -189,7 +189,7 @@ namespace types {
         return JPresence::constructor0::invoke(env, jStatus, jActivity);
     }
 
-    jobject createJavaRelationship(JNIEnv &env, DiscordRelationship &relationship) {
+    jobject createJavaRelationship(JNIEnv &env, const DiscordRelationship &relationship) {
         jint jType = (jint) relationship.type;
         jobject jUser = createJavaUser(env, relationship.user);
         jobject jPresence = createJavaPresence(env, relationship.presence);
@@ -197,14 +197,6 @@ namespace types {
         namespace JRelationship = gamesdk::impl::types::NativeDiscordRelationship;
 
         return JRelationship::constructor0::invoke(env, jType, jUser, jPresence);
-    }
-
-    jobject createNativeDiscordObjectResult(JNIEnv &env, EDiscordResult result, jobject object) {
-        if (result == DiscordResult_Ok) {
-            return createNativeDiscordObjectResultSuccess(env, object);
-        } else {
-            return createNativeDiscordObjectResultFailure(env, result);
-        }
     }
 
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object) {
@@ -217,5 +209,11 @@ namespace types {
         namespace JFailure = gamesdk::impl::NativeDiscordObjectResult::Failure;
 
         return JFailure::constructor0::invoke(env, (jint) result);
+    }
+
+    jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires) {
+        namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;
+
+        return JDiscordOAuth2Token::constructor0::invoke(env, access_token, scopes, expires);
     }
 } // namespace types

@@ -21,8 +21,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Failure
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.Success
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.successOrNull
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
 import gamesdk.api.DiscordObjectResult
@@ -191,7 +189,7 @@ class Test {
                     if (i % 15 == 0) {
                         val activity = DiscordActivity(applicationId = applicationId, state = "Waiting", details = "...")
 
-                        core.getActivityManager().updateActivity(activity) { result ->
+                        core.activityManager.updateActivity(activity) { result ->
                             println(result)
                         }
                     }
@@ -207,18 +205,12 @@ class Test {
                 } else {
                     println("Trying to reconnect")
 
-                    core = when (val result = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord)) {
-                        is Success -> result.value
-                        is Failure -> {
-                            println("Error " + result.reason)
-                            null
-                        }
-                    }
+                    core = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()
                 }
                 delay(1.seconds)
             }
 
-            core?.getActivityManager()?.clearActivity { result ->
+            core?.activityManager?.clearActivity { result ->
                 println(result)
             }
 
@@ -233,14 +225,11 @@ class Test {
             val core: DiscordCore = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()!!
 
             delay(5.seconds)
-            val (result, user) = core.getUserManager().getCurrentUser()
+            val result = core.userManager.getCurrentUser()
 
-            println("Result: ${result.ordinal}")
+            println("Result: $result")
 
-            assertThat { result }.isEqualTo(DiscordCode.Ok)
-            assertThat { user }.isNotNull()
-
-            println(user)
+            assertThat { result }.isInstanceOf(DiscordObjectResult.Success::class)
 
             core.close()
         }

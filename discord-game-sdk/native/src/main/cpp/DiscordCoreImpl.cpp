@@ -12,9 +12,8 @@
  * Signature:  ()V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1destroy
-  (JNIEnv *env, jobject this_ptr)
-{
-    IDiscordCore* core;
+        (JNIEnv *env, jobject this_ptr) {
+    IDiscordCore *core;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordCore, core);
     core->destroy(core);
 }
@@ -25,37 +24,32 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  ()I
  */
 JNIEXPORT jint JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1runCallbacks
-  (JNIEnv *env, jobject this_ptr)
-{
-    IDiscordCore* core;
+        (JNIEnv *env, jobject this_ptr) {
+    IDiscordCore *core;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordCore, core);
     return (jint) core->run_callbacks(core);
 }
 
 namespace discordcore {
     struct native_callback_data {
-        JavaVM* jvm;
+        JavaVM *jvm;
         jobject callback;
     };
 
-    static void log_hook_callback(void* vp_cb_data, enum EDiscordLogLevel level, const char* message){
-        auto* cb_data = (native_callback_data*) vp_cb_data;
+    static void log_hook_callback(void *vp_cb_data, enum EDiscordLogLevel level, const char *message) {
+        auto *cb_data = (native_callback_data *) vp_cb_data;
         jobject j_callback_global = cb_data->callback;
         JavaVM *jvm = cb_data->jvm;
         JNIEnv *env{};
 
-        jint getEnvResult = jvm->GetEnv((void **)&env, JNI_VERSION_1_8);
+        jint getEnvResult = jvm->GetEnv((void **) &env, JNI_VERSION_1_8);
 
-        if (getEnvResult == JNI_EVERSION)
-        {
+        if (getEnvResult == JNI_EVERSION) {
             // TODO: handle wrong version
-        }
-        else if (getEnvResult == JNI_EDETACHED)
-        {
-            jint jAttachResult = jvm->AttachCurrentThread((void **)&env, nullptr);
+        } else if (getEnvResult == JNI_EDETACHED) {
+            jint jAttachResult = jvm->AttachCurrentThread((void **) &env, nullptr);
 
-            if (jAttachResult != JNI_OK)
-            {
+            if (jAttachResult != JNI_OK) {
                 // TODO: Check and handle error code (jni.h:160). What about the global reference?
 
                 std::cout << "Could not attach to VM! Code: " << jAttachResult << std::endl;
@@ -65,13 +59,10 @@ namespace discordcore {
         jclass jCallbackClass = env->GetObjectClass(j_callback_global);
         jmethodID jCallbackMethodInvoke = env->GetMethodID(jCallbackClass, "invoke", "(ILjava/lang/String;)V");
 
-        if (jCallbackMethodInvoke != nullptr)
-        {
+        if (jCallbackMethodInvoke != nullptr) {
             jstring j_message = env->NewStringUTF(message);
-            env->CallObjectMethod(j_callback_global, jCallbackMethodInvoke, (jint)level, j_message);
-        }
-        else
-        {
+            env->CallObjectMethod(j_callback_global, jCallbackMethodInvoke, (jint) level, j_message);
+        } else {
             // TODO: Handle method not found
 
             std::cout << "Could not find callback method" << std::endl;
@@ -80,11 +71,9 @@ namespace discordcore {
         env->DeleteGlobalRef(j_callback_global);
 
         // Only detach if thread wasn't previously attached
-        if (getEnvResult == JNI_EDETACHED)
-        {
+        if (getEnvResult == JNI_EDETACHED) {
             jint jDetachResult = jvm->DetachCurrentThread();
-            if (jDetachResult != JNI_OK)
-            {
+            if (jDetachResult != JNI_OK) {
                 // TODO: Check and handle error code (jni.h:160)
 
                 std::cout << "Could not detach from VM! Code: " << jDetachResult << std::endl;
@@ -92,7 +81,7 @@ namespace discordcore {
         }
     }
 
-    static native_callback_data* setup_native_callback_data(JNIEnv* env, jobject j_callback) {
+    static native_callback_data *setup_native_callback_data(JNIEnv *env, jobject j_callback) {
         jobject jCallbackGlobal = env->NewGlobalRef(j_callback);
 
         JavaVM *jvm{};
@@ -112,9 +101,8 @@ namespace discordcore {
  * Signature:  (ILkotlin/jvm/functions/Function2;)V
  */
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1setLogHook
-  (JNIEnv *env, jobject this_ptr, jint min_level, jobject p_callback)
-{
-    IDiscordCore* core;
+        (JNIEnv *env, jobject this_ptr, jint min_level, jobject p_callback) {
+    IDiscordCore *core;
     GET_INTERFACE_PTR(env, this_ptr, IDiscordCore, core);
     auto ncb_data = discordcore::setup_native_callback_data(env, p_callback);
 
@@ -133,8 +121,7 @@ JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getApplicationManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(application)
 }
 
@@ -144,8 +131,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getUserManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(user)
 }
 
@@ -155,8 +141,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getImageManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(image)
 }
 
@@ -166,8 +151,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getActivityManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(activity)
 }
 
@@ -177,8 +161,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getRelationshipManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(relationship)
 }
 
@@ -188,8 +171,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getLobbyManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(lobby)
 }
 /*
@@ -198,8 +180,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getNetworkManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(network)
 }
 
@@ -209,8 +190,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getOverlayManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(overlay)
 }
 
@@ -220,8 +200,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getStorageManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(storage)
 }
 
@@ -231,8 +210,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getStoreManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(store)
 }
 
@@ -242,8 +220,7 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getVoiceManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(voice)
 }
 
@@ -253,21 +230,20 @@ JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesd
  * Signature:  ()J
  */
 JNIEXPORT jlong JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1getAchievementManager
-  (JNIEnv *env, jobject this_ptr)
-{
+        (JNIEnv *env, jobject this_ptr) {
     GetMgr(achievement)
 }
 
 
-/*extern*/ IDiscordUserEvents           user_manager_events;
-extern IDiscordActivityEvents       activity_manager_events;
-/*extern*/ IDiscordRelationshipEvents   relationship_manager_events;
-/*extern*/ IDiscordLobbyEvents          lobby_manager_events;
-/*extern*/ IDiscordNetworkEvents        network_manager_events;
-/*extern*/ IDiscordOverlayEvents        overlay_manager_events;
-/*extern*/ IDiscordStoreEvents          store_manager_events;
-/*extern*/ IDiscordVoiceEvents          voice_manager_events;
-/*extern*/ IDiscordAchievementEvents    achievement_manager_events;
+/*extern*/ IDiscordUserEvents user_manager_events;
+extern IDiscordActivityEvents activity_manager_events;
+/*extern*/ IDiscordRelationshipEvents relationship_manager_events;
+/*extern*/ IDiscordLobbyEvents lobby_manager_events;
+/*extern*/ IDiscordNetworkEvents network_manager_events;
+/*extern*/ IDiscordOverlayEvents overlay_manager_events;
+/*extern*/ IDiscordStoreEvents store_manager_events;
+/*extern*/ IDiscordVoiceEvents voice_manager_events;
+/*extern*/ IDiscordAchievementEvents achievement_manager_events;
 
 /*
  * Class:      com_almightyalpaca_jetbrains_plugins_discord_gamesdk_DiscordCoreImpl
@@ -275,9 +251,8 @@ extern IDiscordActivityEvents       activity_manager_events;
  * Signature:  (JI)J
  */
 JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordCoreImpl_native_1create_0002dJSWoG40
-  (JNIEnv *env, jclass class_, jlong client_id, jint flags)
-{
-    IDiscordCore* core = nullptr;
+        (JNIEnv *env, jclass class_, jlong client_id, jint flags) {
+    IDiscordCore *core = nullptr;
     DiscordCreateParams params{};
     DiscordCreateParamsSetDefault(&params);
     params.client_id = client_id;
@@ -296,7 +271,5 @@ JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_game
 
     auto result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    jobject pair = types::createPair(*env, types::createLongObject(*env, (jlong) core), types::createIntegerObject(*env, (jint) result));
-
-    return pair;
+    return types::createNativeDiscordObjectResult(*env, result, [&core](JNIEnv &env) { return types::createLongObject(env, (long long) core); });
 }
