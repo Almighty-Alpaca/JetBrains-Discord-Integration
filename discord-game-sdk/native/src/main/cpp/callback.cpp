@@ -41,7 +41,9 @@ namespace callback {
         jnihelpers::withEnv(jvm, [&jCallbackGlobal, &result](JNIEnv &env) {
             namespace JNativeCallback = gamesdk::impl::NativeCallback;
 
-            JNativeCallback::invoke(env, jCallbackGlobal, types::createIntegerObject(env, (jint) result));
+            jobject jResult = types::createIntegerObject(env, (jint) result);
+
+            JNativeCallback::invoke(env, jCallbackGlobal, jResult);
 
             env.DeleteGlobalRef(jCallbackGlobal);
         });
@@ -57,20 +59,11 @@ namespace callback {
         JavaVM &jvm = callbackData->jvm;
 
         jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & converter, &argument](JNIEnv &env) {
-            // namespace JNativeCallback = gamesdk::impl::NativeCallback;
-            jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);
+            namespace JNativeCallback = gamesdk::impl::NativeCallback;
 
-            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(I)V");
+            jobject jResult = types::createNativeDiscordObjectResult(env, result, converter, argument);
 
-            if (jCallbackMethodInvoke != nullptr) {
-                jobject jResult = types::createNativeDiscordObjectResult<T>(env, result, converter, argument);
-
-                env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
-            } else {
-                // TODO: Handle method not found
-
-                std::cout << "Could not find callback method" << std::endl;
-            }
+            JNativeCallback::invoke(env, jCallbackGlobal, jResult);
 
             env.DeleteGlobalRef(jCallbackGlobal);
         });
