@@ -22,7 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.renderService
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class ForceRenderUpdateAction : DumbAwareAction(DiscordBundle("action.forceRenderUpdate")) {
+class UpdateAction : DumbAwareAction(DiscordBundle["action.update"]) {
     override fun actionPerformed(e: AnActionEvent) {
         DiscordPlugin.LOG.info("Forcing manual render")
 

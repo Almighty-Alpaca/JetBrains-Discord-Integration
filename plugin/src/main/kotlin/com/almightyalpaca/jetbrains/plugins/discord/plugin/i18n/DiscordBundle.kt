@@ -17,17 +17,22 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.i18n
 
 import com.intellij.AbstractBundle
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 import java.util.*
+import java.util.function.Supplier
+
+interface Message : Supplier<String>
 
 object DiscordBundle {
     @NonNls
-    private const val PATH = "i18n.DiscordBundle"
+    private const val PATH = "com.almightyalpaca.jetbrains.plugins.discord.plugin.i18n.DiscordBundle"
 
     private val bundle: ResourceBundle by lazy { ResourceBundle.getBundle(PATH) }
 
-    operator fun invoke(@PropertyKey(resourceBundle = PATH) key: String, vararg params: Any): String {
-        return AbstractBundle.messageOrDefault(bundle, key, key, *params)
+    @Nls
+    operator fun get(@PropertyKey(resourceBundle = PATH) key: String, vararg params: Any): Message = object : Message {
+        override fun get(): String = AbstractBundle.messageOrDefault(bundle, key, key, *params) // This is going to be way prettier once moving to Kotlin 1.4
     }
 }

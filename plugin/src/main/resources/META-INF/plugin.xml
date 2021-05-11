@@ -102,9 +102,9 @@
             <separator/>
 
             <action id="DiscordActionGroup.RenderUpdateAction"
-                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ForceRenderUpdateAction"/>
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.UpdateAction"/>
             <action id="DiscordActionGroup.ReconnectAction"
-                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.ForceReconnectAction"/>
+                    class="com.almightyalpaca.jetbrains.plugins.discord.plugin.actions.RestartAction"/>
         </group>
     </actions>
 

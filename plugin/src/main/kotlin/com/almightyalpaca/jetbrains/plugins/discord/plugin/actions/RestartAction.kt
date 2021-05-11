@@ -23,7 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.rpcService
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
-class ForceReconnectAction : DumbAwareAction(DiscordBundle("action.forceReconnect")) {
+class RestartAction : DumbAwareAction(DiscordBundle["action.restart"]) {
     override fun actionPerformed(e: AnActionEvent) {
         DiscordPlugin.LOG.info("Forcing manual reconnect")
 
