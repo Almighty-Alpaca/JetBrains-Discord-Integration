@@ -41,7 +41,6 @@ JNIEXPORT jstring JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_game
     return j_branch;
 }
 
-
 JNIEXPORT void JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_gamesdk_impl_DiscordApplicationManagerImpl_native_1getOAuth2Token
         (JNIEnv *env, jobject this_ptr, jobject j_callback) {
     IDiscordApplicationManager *manager;

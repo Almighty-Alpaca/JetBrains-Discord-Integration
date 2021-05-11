@@ -22,8 +22,8 @@
 #include "types.h"
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedLocalVariable"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "UnusedParameter"
 
 JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_registerCommand(
         JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jstring jCommand

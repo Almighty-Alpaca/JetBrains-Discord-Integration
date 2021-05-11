@@ -111,13 +111,14 @@ tasks {
 
         args = listOf(
             project.layout.buildDirectory.dir("generated/headers").get().asFile.absolutePath,
-            "kotlin.Pair",
-            // "gamesdk.api..*",
+            // Including everything produces a huge amount of headers that aren't needed currently
+            // "gamesdk.api.*",
             // "gamesdk.api.types.*",
             // "gamesdk.impl.*",
             // "gamesdk.impl.types.*",
             "gamesdk.api.types.DiscordOAuth2Token",
             "gamesdk.api.types.DiscordUser",
+            "gamesdk.api.types.DiscordOAuth2Token",
             "gamesdk.impl.Events",
             "gamesdk.impl.events.*",
             "gamesdk.impl.NativeCallback",

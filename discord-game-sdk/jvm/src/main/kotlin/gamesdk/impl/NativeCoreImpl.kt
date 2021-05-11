@@ -16,12 +16,16 @@
 
 package gamesdk.impl
 
-import gamesdk.api.*
+import gamesdk.api.Core
+import gamesdk.api.DiscordObjectResult
+import gamesdk.api.DiscordResult
 import gamesdk.api.events.CurrentUserUpdateEvent
 import gamesdk.api.events.RelationshipRefreshEvent
 import gamesdk.api.events.RelationshipUpdateEvent
 import gamesdk.api.managers.*
-import gamesdk.api.types.*
+import gamesdk.api.types.DiscordClientId
+import gamesdk.api.types.DiscordCreateFlags
+import gamesdk.api.types.DiscordLogLevel
 import gamesdk.impl.events.*
 import gamesdk.impl.managers.NativeActivityManagerImpl
 import gamesdk.impl.managers.NativeRelationshipManagerImpl
@@ -32,6 +36,7 @@ import gamesdk.impl.types.toNativeDiscordCreateFlags
 /**
  * **WARNING**: Do not make the properties in this class internal!
  * The name mangling done by the Kotlin compiler will break the native code.
+ * Only way around this is using [`@JvmName`][JvmName] on all getters.
  */
 internal class Events {
     val currentUserUpdates: NativeNotifiableEventBus<CurrentUserUpdateEvent, NativeCurrentUserUpdateEvent> =
@@ -48,16 +53,16 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer, intern
         get() = TODO("Not yet implemented")
 
     override val userManager: UserManager
-            by lazy { NativeUserManagerImpl(this@NativeCoreImpl) }
+            by lazy { NativeUserManagerImpl(this) }
 
     override val imageManager: ImageManager
         get() = TODO("Not yet implemented")
 
     override val activityManager: ActivityManager
-            by lazy { NativeActivityManagerImpl(this@NativeCoreImpl) }
+            by lazy { NativeActivityManagerImpl(this) }
 
     override val relationshipManager: RelationshipManager
-            by lazy { NativeRelationshipManagerImpl(this@NativeCoreImpl) }
+            by lazy { NativeRelationshipManagerImpl(this) }
 
     override val lobbyManager: LobbyManager
         get() = TODO("Not yet implemented")
@@ -88,7 +93,7 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer, intern
         internal fun create(clientId: DiscordClientId, createFlags: DiscordCreateFlags): DiscordObjectResult<Core> {
             val events = Events()
             return native { create(clientId, createFlags.toNativeDiscordCreateFlags(), events) }
-                .toDiscordObjectResult { NativeCoreImpl(it, events) }
+                .toDiscordObjectResult { pointer -> NativeCoreImpl(pointer, events) }
         }
     }
 }

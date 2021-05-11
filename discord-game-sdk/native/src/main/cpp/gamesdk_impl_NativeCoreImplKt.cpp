@@ -18,15 +18,14 @@
 
 #include <iostream>
 
-#include "commons.h"
 #include "discord_game_sdk.h"
 #include "events.h"
 #include "instance.h"
 #include "types.h"
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedLocalVariable"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "UnusedParameter"
 
 JNIEXPORT jobject JNICALL Java_gamesdk_impl_NativeCoreImplKt_create_0002d47qCbFM(
         JNIEnv *env, jclass jClass, jobject jReceiver, jlong jClientId, jint jCreateFlags, jobject jEvents

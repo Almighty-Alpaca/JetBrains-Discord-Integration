@@ -16,14 +16,10 @@
 
 package gamesdk.api.managers
 
-import gamesdk.api.types.DiscordActivity
-import gamesdk.api.types.DiscordUserId
 import gamesdk.api.DiscordResult
 import gamesdk.api.DiscordResultCallback
 import gamesdk.api.NativeObject
-import gamesdk.api.types.DiscordActivityActionType
-import gamesdk.api.types.DiscordActivityJoinRequestReply
-import gamesdk.api.types.SteamId
+import gamesdk.api.types.*
 
 public interface ActivityManager : NativeObject {
     public fun registerCommand(command: String): DiscordResult

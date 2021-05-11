@@ -271,5 +271,5 @@ JNIEXPORT jobject JNICALL Java_com_almightyalpaca_jetbrains_plugins_discord_game
 
     auto result = DiscordCreate(DISCORD_VERSION, &params, &core);
 
-    return types::createNativeDiscordObjectResult(*env, result, [&core](JNIEnv &env) { return types::createLongObject(env, (long long) core); });
+    return types::createNativeDiscordObjectResult(*env, result, types::createLongObject, (jlong) core);
 }

@@ -17,13 +17,9 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
 
-#include <functional>
 #include <jni.h>
 
-#include "commons.h"
 #include "discord_game_sdk.h"
-#include "jnihelpers.h"
-#include "types.h"
 
 namespace callback {
     struct CallbackData {
@@ -34,33 +30,6 @@ namespace callback {
     void *create(JNIEnv *env, jobject jCallback);
 
     void run(void *data, EDiscordResult result);
-
-    template<typename T, typename = std::enable_if_t<std::is_invocable_r<jobject, T, JNIEnv &>::value>>
-    void run(void *data, EDiscordResult result, T &&converter) {
-        auto *callbackData = (CallbackData *) data;
-
-        jobject jCallbackGlobal = callbackData->jCallback;
-        JavaVM &jvm = callbackData->jvm;
-
-        jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & converter](JNIEnv &env) {
-            jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);
-            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(Ljava/lang/Object;)V");
-
-            if (jCallbackMethodInvoke != nullptr) {
-                jobject jResult = types::createNativeDiscordObjectResult(env, result, converter);
-
-                env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
-            } else {
-                // TODO: Handle method not found
-
-                std::cout << "Could not find callback method" << std::endl;
-            }
-
-            env.DeleteGlobalRef(jCallbackGlobal);
-        });
-
-        delete callbackData;
-    }
 
     void run(void *data, EDiscordResult result, DiscordUser *user);
 

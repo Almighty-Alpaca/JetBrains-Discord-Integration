@@ -25,7 +25,6 @@ import gamesdk.api.types.DiscordUserFlag
 import gamesdk.api.types.DiscordUserId
 import gamesdk.impl.*
 import gamesdk.impl.types.*
-import gamesdk.impl.types.toDiscordPremiumType
 
 internal class NativeUserManagerImpl(private val core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), UserManager {
     override val currentUserUpdates

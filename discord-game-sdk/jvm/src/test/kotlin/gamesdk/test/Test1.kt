@@ -19,10 +19,6 @@ package gamesdk.test
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import assertk.assertions.isNotNull
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.DiscordCore
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.successOrNull
-import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.impl.DiscordCoreImpl
 import gamesdk.api.DiscordObjectResult
 import gamesdk.api.ThreadedCore
 import gamesdk.api.events.Subscription
@@ -31,6 +27,7 @@ import gamesdk.api.events.subscribeOnce
 import gamesdk.api.types.DiscordActivity
 import gamesdk.api.types.DiscordCode
 import gamesdk.api.types.DiscordCreateFlags
+import gamesdk.api.types.DiscordUser
 import gamesdk.impl.events.NativeCurrentUserUpdateEvent
 import gamesdk.impl.events.NativeNotifiableEventBus
 import gamesdk.impl.events.toCurrentUserUpdateEvent
@@ -42,10 +39,10 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
-class Test {
+class Test1 {
     @OptIn(ExperimentalUnsignedTypes::class)
-    val clientId = 768507783167344680U
-    val applicationId = 768507783167344680
+    private val clientId = 768507783167344680U
+    private val applicationId = 768507783167344680
 
     @Test
     @OptIn(ExperimentalTime::class)
@@ -56,8 +53,10 @@ class Test {
                 val activity = DiscordActivity(applicationId = applicationId, state = "Testing...")
 
                 runBlocking {
-                    val updateResult = core.activityManager.updateActivity(activity)
-                    println(updateResult.code)
+                    val updateResult = core.activityManager.updateActivity(activity) {
+                        // Exception().printStackTrace()
+                    }
+                    // println(updateResult.code)
 
                     delay(10.seconds)
 
@@ -89,6 +88,12 @@ class Test {
                                 val result = userManager.getCurrentUser()
 
                                 assertThat(result).isInstanceOf(DiscordObjectResult.Success::class)
+
+                                assertThat(result.code).isEqualTo(DiscordCode.Ok)
+
+                                result as DiscordObjectResult.Success<DiscordUser>
+
+                                println(result.value.username)
 
                                 registerInvocation()
                             } catch (e: Throwable) {
@@ -171,67 +176,5 @@ class Test {
         assertion2.result { assertThat(::invocations).isEqualTo(2) }
         assertion3.result { assertThat(::invocations).isEqualTo(3) }
         assertion4.result { assertThat(::invocations).isEqualTo(4) }
-    }
-
-    @Test
-    @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
-    fun testActivity2() {
-        runBlocking {
-            var core: DiscordCore? = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()
-
-            // core.setLogHook(DiscordLogLevel.Debug) { level, message ->
-            //     println("Discord($level): $message")
-            // }
-
-            for (i in 0..180) {
-                if (core != null) {
-                    println("Running")
-                    if (i % 15 == 0) {
-                        val activity = DiscordActivity(applicationId = applicationId, state = "Waiting", details = "...")
-
-                        core.activityManager.updateActivity(activity) { result ->
-                            println(result)
-                        }
-                    }
-
-                    val result = core.runCallbacks()
-                    println("Callback result: $result")
-
-                    if (result == DiscordCode.Failure.NotRunning) {
-                        println("Discord is not running anymore")
-                        core.close()
-                        core = null
-                    }
-                } else {
-                    println("Trying to reconnect")
-
-                    core = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()
-                }
-                delay(1.seconds)
-            }
-
-            core?.activityManager?.clearActivity { result ->
-                println(result)
-            }
-
-            core?.close()
-        }
-    }
-
-    @ExperimentalTime
-    @Test
-    fun getCurrentUser() {
-        runBlocking {
-            val core: DiscordCore = DiscordCoreImpl.create(clientId, DiscordCreateFlags.NoRequireDiscord).successOrNull()!!
-
-            delay(5.seconds)
-            val result = core.userManager.getCurrentUser()
-
-            println("Result: $result")
-
-            assertThat { result }.isInstanceOf(DiscordObjectResult.Success::class)
-
-            core.close()
-        }
     }
 }

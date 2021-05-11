@@ -16,13 +16,7 @@
 
 package gamesdk.impl
 
-import gamesdk.impl.events.NativeNotifiableEventBus
 import gamesdk.impl.events.NativeRelationshipUpdateEvent
-import gamesdk.impl.events.NotifiableEventBus
-import gamesdk.impl.types.NativeDiscordActivity
-import gamesdk.impl.types.NativeDiscordPresence
-import gamesdk.impl.types.NativeDiscordRelationship
-import gamesdk.impl.types.NativeDiscordUser
 import java.lang.reflect.Array
 import java.lang.reflect.Constructor
 import java.lang.reflect.Executable
@@ -42,13 +36,13 @@ public fun main() {
     for (executable in Class.forName(className).let { it.methods.toList() + it.constructors }) {
 //        if (executable.name == methodName) {
         if (executable.declaringClass.name != "java.lang.Object") {
-        val name = when (executable) {
-            is Constructor<*> -> "<init>"
-            is Method -> executable.name
-            else -> throw IllegalStateException("Unknown type ${executable.javaClass.name}")
-        }
+            val name = when (executable) {
+                is Constructor<*> -> "<init>"
+                is Method -> executable.name
+                else -> throw IllegalStateException("Unknown type ${executable.javaClass.name}")
+            }
 
-        println("${className.replace('.', '/')} $name ${getSignature(executable)}")
+            println("${className.replace('.', '/')} $name ${getSignature(executable)}")
         }
     }
 }

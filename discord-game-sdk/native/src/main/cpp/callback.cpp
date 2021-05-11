@@ -18,7 +18,6 @@
 
 #include <iostream>
 
-#include "commons.h"
 #include "jniclasses.h"
 #include "jnihelpers.h"
 #include "types.h"
@@ -50,17 +49,56 @@ namespace callback {
         delete callbackData;
     }
 
-    void run(void *data, EDiscordResult result, DiscordUser *user) {
-        run(data, result, [&user](JNIEnv &env) -> jobject {
-            return types::createJavaUser(env, *user);
+    template<typename T>
+    void run(void *data, EDiscordResult result, jobject (&converter)(JNIEnv &, T), T argument) {
+        auto *callbackData = (CallbackData *) data;
+
+        jobject jCallbackGlobal = callbackData->jCallback;
+        JavaVM &jvm = callbackData->jvm;
+
+        jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & converter, &argument](JNIEnv &env) {
+            // namespace JNativeCallback = gamesdk::impl::NativeCallback;
+            jclass jCallbackClass = env.GetObjectClass(jCallbackGlobal);
+
+            jmethodID jCallbackMethodInvoke = env.GetMethodID(jCallbackClass, "invoke", "(I)V");
+
+            if (jCallbackMethodInvoke != nullptr) {
+                jobject jResult = types::createNativeDiscordObjectResult<T>(env, result, converter, argument);
+
+                env.CallObjectMethod(jCallbackGlobal, jCallbackMethodInvoke, jResult);
+            } else {
+                // TODO: Handle method not found
+
+                std::cout << "Could not find callback method" << std::endl;
+            }
+
+            env.DeleteGlobalRef(jCallbackGlobal);
         });
+
+        delete callbackData;
+    }
+
+    void run(void *data, EDiscordResult result, DiscordUser *user) {
+        static jobject (*converter)(JNIEnv &, DiscordUser *) = [](JNIEnv &env, DiscordUser *user) -> jobject {
+            return user == nullptr ? nullptr : types::createJavaUser(env, *user);
+        };
+
+        run(data, result, *converter, user);
     }
 
     void run(void *data, EDiscordResult result, DiscordOAuth2Token *token) {
-        run(data, result, [&token](JNIEnv &env) { return types::createJavaOAuth2Token(env, env.NewStringUTF(token->access_token), env.NewStringUTF(token->scopes), token->expires); });
+        static jobject (*converter)(JNIEnv &, DiscordOAuth2Token *) =  [](JNIEnv &env, DiscordOAuth2Token *token) -> jobject {
+            return token == nullptr ? nullptr : types::createJavaOAuth2Token(env, *token);
+        };
+
+        run(data, result, *converter, token);
     }
 
-    void run(void *data, EDiscordResult result, const char *str) {
-        run(data, result, [str](JNIEnv &env) { return str != nullptr ? env.NewStringUTF(str) : nullptr; });
+    void run(void *data, EDiscordResult result, const char *string) {
+        static jobject (*converter)(JNIEnv &, const char *) = [](JNIEnv &env, const char *string) -> jobject {
+            return string == nullptr ? nullptr : env.NewStringUTF(string);
+        };
+
+        run(data, result, *converter, string);
     }
 } // namespace callback

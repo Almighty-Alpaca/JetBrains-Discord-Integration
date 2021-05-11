@@ -16,9 +16,6 @@
 
 #include "events.h"
 
-#include <functional>
-#include <iostream>
-#include <string>
 #include <tuple>
 
 #include "jniclasses.h"

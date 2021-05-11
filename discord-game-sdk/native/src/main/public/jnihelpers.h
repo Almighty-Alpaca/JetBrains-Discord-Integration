@@ -18,8 +18,10 @@
 #define JNIHELPERS_H
 
 #include <functional>
-#include <jni.h>
 #include <iostream>
+#include <type_traits>
+
+#include <jni.h>
 
 namespace jnihelpers {
     template<typename T, typename = std::enable_if_t<std::is_invocable_r<void, T, JNIEnv&>::value>>

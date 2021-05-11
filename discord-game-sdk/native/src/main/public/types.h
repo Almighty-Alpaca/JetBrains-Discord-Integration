@@ -29,8 +29,6 @@ namespace types {
 
     jobject createBooleanObject(JNIEnv &env, jboolean value);
 
-    jobject createPair(JNIEnv &env, jobject first, jobject second);
-
     /**
      * Activity is an jobject of type NativeDiscordActivity
      */
@@ -44,16 +42,16 @@ namespace types {
 
     jobject createJavaRelationship(JNIEnv &env, const DiscordRelationship &relationship);
 
-    jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires);
+    jobject createJavaOAuth2Token(JNIEnv &env, DiscordOAuth2Token &token);
 
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object);
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);
 
-    template<typename T, typename = std::enable_if_t<std::is_invocable_r_v<jobject, T, JNIEnv &>>>
-    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, T &&call) {
+    template<typename T>
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject (&converter)(JNIEnv &, const T), T argument) {
         if (result == DiscordResult_Ok) {
-            return createNativeDiscordObjectResultSuccess(env, call(env));
+            return createNativeDiscordObjectResultSuccess(env, converter(env, argument));
         } else {
             return createNativeDiscordObjectResultFailure(env, result);
         }

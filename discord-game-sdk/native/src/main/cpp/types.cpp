@@ -42,12 +42,6 @@ namespace types {
         return env.CallStaticObjectMethod(jBooleanClass, jBooleanValueOfMethod, value);
     }
 
-    jobject createPair(JNIEnv &env, jobject first, jobject second) {
-        namespace JPair = kotlin::Pair;
-
-        return JPair::constructor0::invoke(env, first, second);
-    }
-
     /**
       Activity is an jobject of type NativeDiscordActivity
     */
@@ -199,6 +193,16 @@ namespace types {
         return JRelationship::constructor0::invoke(env, jType, jUser, jPresence);
     }
 
+    jobject createJavaOAuth2Token(JNIEnv &env, DiscordOAuth2Token &token) {
+        jstring jAccessToken = env.NewStringUTF(token.access_token);
+        jstring jScopes = env.NewStringUTF(token.scopes);
+        jlong jExpires = token.expires;
+
+        namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;
+
+        return JDiscordOAuth2Token::constructor0::invoke(env, jAccessToken, jScopes, jExpires);
+    }
+
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object) {
         namespace JSuccess = gamesdk::impl::NativeDiscordObjectResult::Success;
 
@@ -209,11 +213,5 @@ namespace types {
         namespace JFailure = gamesdk::impl::NativeDiscordObjectResult::Failure;
 
         return JFailure::constructor0::invoke(env, (jint) result);
-    }
-
-    jobject createJavaOAuth2Token(JNIEnv &env, jstring access_token, jstring scopes, jlong expires) {
-        namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;
-
-        return JDiscordOAuth2Token::constructor0::invoke(env, access_token, scopes, expires);
     }
 } // namespace types
