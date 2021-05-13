@@ -45,6 +45,10 @@ internal class NativeDiscordActivity(
     val instance: Boolean
 )
 
+/*
+* TODO: Maybe check the length in before passing it though JNI?
+*       Currently they are just being cut to length
+ */
 internal fun DiscordActivity.toNativeDiscordActivity(): NativeDiscordActivity = NativeDiscordActivity(
     type = this.type.toNativeDiscordActivityType(),
     applicationId = this.applicationId,

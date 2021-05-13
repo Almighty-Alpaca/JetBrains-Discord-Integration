@@ -21,24 +21,34 @@ import java.lang.reflect.*
 import java.nio.file.*
 import java.util.*
 import java.util.function.Function
+import kotlin.Array
 import kotlin.Boolean
+import kotlin.BooleanArray
 import kotlin.Byte
+import kotlin.ByteArray
 import kotlin.Char
+import kotlin.CharArray
 import kotlin.Double
+import kotlin.DoubleArray
 import kotlin.Float
+import kotlin.FloatArray
 import kotlin.Int
+import kotlin.IntArray
 import kotlin.Long
+import kotlin.LongArray
 import kotlin.Short
+import kotlin.ShortArray
 import kotlin.String
 import kotlin.reflect.*
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.*
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import java.lang.reflect.Array as ReflectArray
 
 private val FIELD_COMPARATOR: Comparator<Field> =
     Comparator.comparing(Field::getName)
 
-private val CONSTRUCTOR_COMPARATOR: Comparator<KFunction<*>> =
+private val CONSTRUCTOR_COMPARATOR: Comparator<Constructor<*>> =
     Comparator.comparing { constructor -> constructor.parameters.joinToString(separator = ",", transform = { clazz -> clazz.javaClass.jniType }) }
 
 private val METHOD_COMPARATOR: Comparator<Method> =
@@ -55,20 +65,35 @@ fun main(args: Array<String>) {
 
     val fileSystem = FileSystems.getDefault()
 
-    val patterns = args
+    val classNames = args
         .asSequence()
         .drop(1)
+        .toList()
+
+    val patterns = classNames
         .map("glob:"::plus)
         .map(fileSystem::getPathMatcher)
         .toList()
 
-    val classes =
-        ClassPath
-            .from(ClassReference.javaClass.classLoader)
-            .allClasses
-            .filter { c -> patterns.any { p -> p.matches(Paths.get(c.name.replace('$', '.'))) } }
-            .map(ClassPath.ClassInfo::load)
-            .map(Class<*>::kotlin)
+    val patternClasses = ClassPath
+        .from(ClassLoader.getSystemClassLoader())
+        .allClasses
+        .filter { c -> patterns.any { p -> p.matches(Paths.get(c.name.replace('$', '.'))) } }
+        .map(ClassPath.ClassInfo::load)
+        .map(Class<*>::kotlin)
+        .toList()
+
+    val directClasses = classNames
+        .mapNotNull {
+            try {
+                Class.forName(it).kotlin
+            } catch (ignored: Exception) {
+                null
+            }
+        }
+        .toList()
+
+    val classes = (patternClasses + directClasses).distinct()
 
     val files = writeClasses(path, classes)
 
@@ -96,7 +121,7 @@ private fun writeClasses(path: Path, classes: Iterable<KClass<*>>): Sequence<Str
 
                 appendHeader(guard)
 
-                (sequenceOf(clazz)).forEach(this::appendClass)
+                sequenceOf(clazz).forEach(this::appendClass)
 
                 appendFooter(guard)
             }
@@ -155,86 +180,177 @@ private fun Appendable.appendMethods(clazz: Class<*>): Appendable {
     for ((groupIndex, methodGroup) in methods.groupBy(Method::getName).values.withIndex()) {
         for ((methodIndex, method) in methodGroup.withIndex()) {
 
-            val function = method.kotlinFunction
-                ?: clazz.kotlin.memberProperties.flatMap {
-                    if (it is KMutableProperty<*>)
-                        listOf(it.getter, it.setter)
-                    else
-                        listOf(it.getter)
-                }.find { it.javaMethod == method } ?: throw IllegalStateException("Could not find KFunction for $method")
+            val function = try {
+                method.kotlinFunction
+                    ?: clazz.kotlin.memberProperties.flatMap {
+                        if (it is KMutableProperty<*>)
+                            listOf(it.getter, it.setter)
+                        else
+                            listOf(it.getter)
+                    }.find { it.javaMethod == method } ?: throw IllegalStateException("Could not find KFunction for $method")
+            } catch (e: KotlinReflectionInternalError) {
+                appendMethodJava(method, clazz, groupIndex, methodIndex, methodGroup)
 
-            val parameters = function.parameters.filter { !(it.kind == KParameter.Kind.INSTANCE && it.type.jvmErasure.java == clazz) }
-
-            if (parameters.any { it.type.classifier == null })
                 continue
-
-            if ((groupIndex != 0 || methodIndex != 0))
-                appendLine()
-
-            val methodName = when (methodGroup.size) {
-                1 -> method.name.substringBefore('-')
-                else -> "${method.name.substringBefore('-')}$methodIndex"
             }
 
-            appendLine("    namespace methods::${methodName} {")
-            appendLine("        const auto NAME = \"${method.name}\";")
-            appendLine("        const auto SIGNATURE = \"${method.jniSignature}\";")
-            appendLine()
-            appendLine("        inline jmethodID getId(JNIEnv &env) {")
-            appendLine("            return env.GetMethodID(getClass(env), NAME, SIGNATURE);")
-            appendLine("        }")
-            appendLine()
-            appendLine("        inline jmethodID getId(JNIEnv &env, jclass clazz) {")
-            appendLine("            return env.GetMethodID(clazz, NAME, SIGNATURE);")
-            appendLine("        }")
-            appendLine("    }") // namespace methods
-            appendLine()
-
-            val parametersDoc = parameters.map { ParameterDoc(it.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???", it.type.javaType.typeName) }.toTypedArray()
-
-            appendMethodDoc(
-                "    ",
-                ParameterDoc("env", "JNIEnv&"),
-                ParameterDoc("object", "jobject"),
-                ParameterDoc("method", "jmethodID"),
-                *parametersDoc,
-                returnType = clazz.typeName
-            )
-            append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object, jmethodID method")
-
-            for (parameter in parameters) {
-                append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???")
-            }
-            appendLine(") {")
-            append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, method")
-            for (parameter in parameters) {
-                append(", ").append(parameter.name)
-            }
-            appendLine(");")
-            appendLine("    }")
-            appendLine()
-            appendMethodDoc(
-                "    ",
-                ParameterDoc("env", "JNIEnv&"),
-                ParameterDoc("object", "jobject"),
-                *parametersDoc,
-                returnType = clazz.typeName
-            )
-            append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object")
-            for (parameter in parameters) {
-                append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???")
-            }
-            appendLine(") {")
-            append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, methods::${methodName}::getId(env)")
-            for (parameter in parameters) {
-                append(", ").append(parameter.name)
-            }
-            appendLine(");")
-            appendLine("    }")
+            appendMethodKotlin(function, method, clazz, groupIndex, methodIndex, methodGroup)
         }
     }
 
     return this
+}
+
+private fun Appendable.appendMethodKotlin(
+    function: KFunction<Any?>,
+    method: Method,
+    clazz: Class<*>,
+    groupIndex: Int,
+    methodIndex: Int,
+    methodGroup: List<Method>
+) {
+    val parameters = function.parameters.filter { !(it.kind == KParameter.Kind.INSTANCE && it.type.jvmErasure.java == clazz) }
+
+    if (parameters.any { it.type.classifier == null })
+        return
+
+    if ((groupIndex != 0 || methodIndex != 0))
+        appendLine()
+
+    val methodName = when (methodGroup.size) {
+        1 -> method.name.substringBefore('-')
+        else -> "${method.name.substringBefore('-')}$methodIndex"
+    }
+
+    appendLine("    namespace methods::${methodName} {")
+    appendLine("        const auto NAME = \"${method.name}\";")
+    appendLine("        const auto SIGNATURE = \"${method.jniSignature}\";")
+    appendLine()
+    appendLine("        inline jmethodID getId(JNIEnv &env) {")
+    appendLine("            return env.GetMethodID(getClass(env), NAME, SIGNATURE);")
+    appendLine("        }")
+    appendLine()
+    appendLine("        inline jmethodID getId(JNIEnv &env, jclass clazz) {")
+    appendLine("            return env.GetMethodID(clazz, NAME, SIGNATURE);")
+    appendLine("        }")
+    appendLine("    }") // namespace methods
+    appendLine()
+
+    val parametersDoc = parameters.map { ParameterDoc(it.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???", it.type.javaType.typeName) }.toTypedArray()
+
+    appendMethodDoc(
+        "    ",
+        ParameterDoc("env", "JNIEnv&"),
+        ParameterDoc("object", "jobject"),
+        ParameterDoc("method", "jmethodID"),
+        *parametersDoc,
+        returnType = clazz.typeName
+    )
+    append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object, jmethodID method")
+
+    for (parameter in parameters) {
+        append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???")
+    }
+    appendLine(") {")
+    append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, method")
+    for (parameter in parameters) {
+        append(", ").append(parameter.name)
+    }
+    appendLine(");")
+    appendLine("    }")
+    appendLine()
+    appendMethodDoc(
+        "    ",
+        ParameterDoc("env", "JNIEnv&"),
+        ParameterDoc("object", "jobject"),
+        *parametersDoc,
+        returnType = clazz.typeName
+    )
+    append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object")
+    for (parameter in parameters) {
+        append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name ?: (function as? KProperty.Getter<*>)?.property?.name ?: "???")
+    }
+    appendLine(") {")
+    append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, methods::${methodName}::getId(env)")
+    for (parameter in parameters) {
+        append(", ").append(parameter.name)
+    }
+    appendLine(");")
+    appendLine("    }")
+}
+
+private fun Appendable.appendMethodJava(
+    method: Method,
+    clazz: Class<*>,
+    groupIndex: Int,
+    methodIndex: Int,
+    methodGroup: List<Method>,
+) {
+    val parameters = method.parameters.filter { it.type != clazz }
+
+    if ((groupIndex != 0 || methodIndex != 0))
+        appendLine()
+
+    val methodName = when (methodGroup.size) {
+        1 -> method.name.substringBefore('-')
+        else -> "${method.name.substringBefore('-')}$methodIndex"
+    }
+
+    appendLine("    namespace methods::${methodName} {")
+    appendLine("        const auto NAME = \"${method.name}\";")
+    appendLine("        const auto SIGNATURE = \"${method.jniSignature}\";")
+    appendLine()
+    appendLine("        inline jmethodID getId(JNIEnv &env) {")
+    appendLine("            return env.GetMethodID(getClass(env), NAME, SIGNATURE);")
+    appendLine("        }")
+    appendLine()
+    appendLine("        inline jmethodID getId(JNIEnv &env, jclass clazz) {")
+    appendLine("            return env.GetMethodID(clazz, NAME, SIGNATURE);")
+    appendLine("        }")
+    appendLine("    }") // namespace methods
+    appendLine()
+
+    val parametersDoc = parameters.map { ParameterDoc(it.name ?: "???", it.type.typeName) }.toTypedArray()
+
+    appendMethodDoc(
+        "    ",
+        ParameterDoc("env", "JNIEnv&"),
+        ParameterDoc("object", "jobject"),
+        ParameterDoc("method", "jmethodID"),
+        *parametersDoc,
+        returnType = clazz.typeName
+    )
+    append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object, jmethodID method")
+
+    for (parameter in parameters) {
+        append(", ").append(parameter.type.jniType).append(" ").append(parameter.name ?: "???")
+    }
+    appendLine(") {")
+    append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, method")
+    for (parameter in parameters) {
+        append(", ").append(parameter.name)
+    }
+    appendLine(");")
+    appendLine("    }")
+    appendLine()
+    appendMethodDoc(
+        "    ",
+        ParameterDoc("env", "JNIEnv&"),
+        ParameterDoc("object", "jobject"),
+        *parametersDoc,
+        returnType = clazz.typeName
+    )
+    append("    inline ${method.returnType.jniType} ${methodName}(JNIEnv &env, jobject object")
+    for (parameter in parameters) {
+        append(", ").append(parameter.type.jniType).append(" ").append(parameter.name ?: "???")
+    }
+    appendLine(") {")
+    append("        return (${method.returnType.jniType}) env.${method.returnType.jniCallMethodName}(object, methods::${methodName}::getId(env)")
+    for (parameter in parameters) {
+        append(", ").append(parameter.name)
+    }
+    appendLine(");")
+    appendLine("    }")
 }
 
 private fun Appendable.appendFields(clazz: Class<*>): Appendable {
@@ -265,19 +381,17 @@ private fun Appendable.appendConstructors(clazz: KClass<*>): Appendable {
     val jClazz = clazz.java
 
     val constructors = clazz
+        .java
         .constructors
         // .filterNot(Constructor<*>::isSynthetic)
-        .filter { it.visibility == KVisibility.PUBLIC }
+        .filter { Modifier.isPublic(it.modifiers)}
         // .filter { !Modifier.isStrict(it.modifiers) }
         .sortedWith(CONSTRUCTOR_COMPARATOR)
 
     for ((i, constructor) in constructors.withIndex()) {
-        if (constructor.parameters.any { it.type.classifier == null })
-            continue
-
         appendLine()
         appendLine("    namespace constructor$i {")
-        appendLine("        const auto SIGNATURE = \"${constructor.javaConstructor!!.jniSignature}\";")
+        appendLine("        const auto SIGNATURE = \"${constructor.jniSignature}\";")
         appendLine()
         appendLine("        inline jmethodID getId(JNIEnv &env) {")
         appendLine("            return env.GetMethodID(getClass(env), \"<init>\", SIGNATURE);")
@@ -293,7 +407,7 @@ private fun Appendable.appendConstructors(clazz: KClass<*>): Appendable {
             .map {
                 ParameterDoc(
                     it.name!!,
-                    it.type.javaType.typeName
+                    it.type.typeName
                 )
             }
             .toTypedArray()
@@ -307,12 +421,12 @@ private fun Appendable.appendConstructors(clazz: KClass<*>): Appendable {
             parameters,
             returnType = jClazz.typeName
         )
-        append("        inline jobject invoke(JNIEnv &env, jclass clazz, jmethodID method")
+        append("        inline ").append(constructor.declaringClass.jniType).append(" invoke(JNIEnv &env, jclass clazz, jmethodID method")
         for (parameter in constructor.parameters) {
-            append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name)
+            append(", ").append(parameter.type.jniType).append(" ").append(parameter.name)
         }
         appendLine(") {")
-        append("            return env.NewObject(clazz, method")
+        append("            return (").append(constructor.declaringClass.jniType).append(") env.NewObject(clazz, method")
         for (parameter in constructor.parameters) {
             append(", ").append(parameter.name)
         }
@@ -325,13 +439,13 @@ private fun Appendable.appendConstructors(clazz: KClass<*>): Appendable {
             *parameters,
             returnType = jClazz.typeName
         )
-        append("        inline jobject invoke(JNIEnv &env")
+        append("        inline ").append(constructor.declaringClass.jniType).append(" invoke(JNIEnv &env")
         for (parameter in constructor.parameters) {
-            append(", ").append(parameter.type.jvmErasure.java.jniType).append(" ").append(parameter.name)
+            append(", ").append(parameter.type.jniType).append(" ").append(parameter.name)
         }
         appendLine(") {")
         appendLine("            jclass clazz = getClass(env);")
-        append("            return env.NewObject(clazz, getId(env, clazz)")
+        append("            return (").append(constructor.declaringClass.jniType).append(") env.NewObject(clazz, getId(env, clazz)")
         for (parameter in constructor.parameters) {
             append(", ").append(parameter.name)
         }
@@ -360,6 +474,7 @@ private fun Appendable.appendMethodDoc(indentation: String, vararg parameters: P
 private val Class<*>.jniType: String
     get() = when (this) {
         Void::class.javaPrimitiveType -> "void"
+
         Boolean::class.javaPrimitiveType -> "jboolean"
         Byte::class.javaPrimitiveType -> "jbyte"
         Char::class.javaPrimitiveType -> "jchar"
@@ -368,8 +483,25 @@ private val Class<*>.jniType: String
         Long::class.javaPrimitiveType -> "jlong"
         Float::class.javaPrimitiveType -> "jfloat"
         Double::class.javaPrimitiveType -> "jdouble"
-        String::class.javaObjectType -> "jstring" // TODO: Special case, test if this works everywhere
-        else -> "jobject"
+
+        BooleanArray::class.javaObjectType -> "jbooleanArray"
+        ByteArray::class.javaObjectType -> "jbyteArray"
+        CharArray::class.javaObjectType -> "jcharArray"
+        ShortArray::class.javaObjectType -> "jshortArray"
+        IntArray::class.javaObjectType -> "jintArray"
+        LongArray::class.javaObjectType -> "jlongArray"
+        FloatArray::class.javaObjectType -> "jfloatArray"
+        DoubleArray::class.javaObjectType -> "jdoubleArray"
+
+        // TODO: Special cases, test if this works everywhere
+        String::class.javaObjectType -> "jstring"
+        Class::class.javaObjectType -> "jclass"
+        Array::class.javaObjectType -> "jobject"
+
+        else -> when {
+            Throwable::class.javaObjectType.isAssignableFrom(this) -> "jthrowable"
+            else -> "jobject"
+        }
     }
 
 private val Class<*>.jniCallMethodName: String

@@ -17,10 +17,46 @@
 #include "types.h"
 
 #include <iostream>
+#include <kotlin/String.h>
 
 #include "jniclasses.h"
 
 namespace types {
+    std::string createNativeString(JNIEnv &env, jstring string) {
+        namespace JString = java::lang::String;
+
+        jbyteArray bytes = JString::getBytes0(env, string);
+
+        auto length = env.GetArrayLength(bytes);
+
+        auto target = std::string();
+        target.reserve(length);
+
+        env.GetByteArrayRegion(bytes, 0, length, (jbyte *) target.data());
+
+        return target;
+    }
+
+    jstring createJavaString(JNIEnv &env, const char *string) {
+        namespace JString = java::lang::String;
+
+        auto length = strlen(string) - 1;
+
+        if (length > MAXLONG) { // TODO: find better way to handle this
+            return nullptr;
+        }
+
+        jbyteArray bytes = env.NewByteArray((jint) length);
+        env.SetByteArrayRegion(bytes, 0, (jint) length, (jbyte *) string);
+
+        // This is guaranteed to be unproblematic due to being ASCII only
+        auto charset = env.NewStringUTF("UTF-8");
+
+        // This is potentially problematic as there is no guarantee that
+        // the constructor is at the same position in other JDKs or Java versions
+        return JString::constructor7::invoke(env, bytes, charset);
+    }
+
     jobject createIntegerObject(JNIEnv &env, jint value) {
         jclass int_class = env.FindClass("java/lang/Integer");
         jmethodID j_value_of = env.GetStaticMethodID(int_class, "valueOf", "(I)Ljava/lang/Integer;");
@@ -48,80 +84,32 @@ namespace types {
     DiscordActivity createDiscordActivity(JNIEnv &env, const jobject &jActivity) {
         namespace JDiscordActivity = gamesdk::impl::types::NativeDiscordActivity;
 
-        jint type = JDiscordActivity::getType(env, jActivity);
-        jlong application_id = JDiscordActivity::getApplicationId(env, jActivity);
-        jstring name = JDiscordActivity::getName(env, jActivity);
-        jstring state = JDiscordActivity::getState(env, jActivity);
-        jstring details = JDiscordActivity::getDetails(env, jActivity);
-        jlong timestamp_start = JDiscordActivity::getTimestampStart(env, jActivity);
-        jlong timestamp_end = JDiscordActivity::getTimestampEnd(env, jActivity);
-        jstring assets_large_image = JDiscordActivity::getAssetsLargeImage(env, jActivity);
-        jstring assets_large_text = JDiscordActivity::getAssetsLargeText(env, jActivity);
-        jstring assets_small_image = JDiscordActivity::getAssetsSmallImage(env, jActivity);
-        jstring assets_small_text = JDiscordActivity::getAssetsSmallText(env, jActivity);
-        jstring party_id = JDiscordActivity::getPartyId(env, jActivity);
-        jint party_current_size = JDiscordActivity::getPartyCurrentSize(env, jActivity);
-        jint party_max_size = JDiscordActivity::getPartyMaxSize(env, jActivity);
-        jint party_privacy = JDiscordActivity::getPartyPrivacy(env, jActivity);
-        jstring secrets_match = JDiscordActivity::getSecretsMatch(env, jActivity);
-        jstring secrets_join = JDiscordActivity::getSecretsJoin(env, jActivity);
-        jstring secrets_spectate = JDiscordActivity::getSecretsSpectate(env, jActivity);
-        jboolean instance = JDiscordActivity::getInstance(env, jActivity);
-
-        const char *name_native = env.GetStringUTFChars(name, nullptr);
-        const char *state_native = env.GetStringUTFChars(state, nullptr);
-        const char *details_native = env.GetStringUTFChars(details, nullptr);
-        const char *assets_large_image_native = env.GetStringUTFChars(assets_large_image, nullptr);
-        const char *assets_large_text_native = env.GetStringUTFChars(assets_large_text, nullptr);
-        const char *assets_small_image_native = env.GetStringUTFChars(assets_small_image, nullptr);
-        const char *assets_small_text_native = env.GetStringUTFChars(assets_small_text, nullptr);
-        const char *party_id_native = env.GetStringUTFChars(party_id, nullptr);
-        const char *secrets_match_native = env.GetStringUTFChars(secrets_match, nullptr);
-        const char *secrets_join_native = env.GetStringUTFChars(secrets_join, nullptr);
-        const char *secrets_spectate_native = env.GetStringUTFChars(secrets_spectate, nullptr);
-
         DiscordActivity activity{};
-        activity.type = (EDiscordActivityType) type;
-        activity.application_id = application_id;
+        activity.type = (EDiscordActivityType) JDiscordActivity::getType(env, jActivity);
+        activity.application_id = JDiscordActivity::getApplicationId(env, jActivity);
 
-        //TODO: Check if the length of an utf8 char * is checked beforehand
-        strncpy(activity.name, name_native, sizeof(activity.name));
-        strncpy(activity.state, state_native, sizeof(activity.state));
-        strncpy(activity.details, details_native, sizeof(activity.details));
+        createNativeString<128>(env, JDiscordActivity::getName(env, jActivity), activity.name);
+        createNativeString<128>(env, JDiscordActivity::getState(env, jActivity), activity.state);
+        createNativeString<128>(env, JDiscordActivity::getDetails(env, jActivity), activity.details);
 
-        activity.timestamps.start = timestamp_start;
-        activity.timestamps.end = timestamp_end;
+        activity.timestamps.start = JDiscordActivity::getTimestampStart(env, jActivity);
+        activity.timestamps.end = JDiscordActivity::getTimestampEnd(env, jActivity);
 
-        strncpy(activity.assets.large_image, assets_large_image_native, sizeof(activity.assets.large_image));
-        strncpy(activity.assets.large_text, assets_large_text_native, sizeof(activity.assets.large_text));
-        strncpy(activity.assets.small_image, assets_small_image_native, sizeof(activity.assets.small_image));
-        strncpy(activity.assets.small_text, assets_small_text_native, sizeof(activity.assets.small_text));
+        createNativeString<128>(env, JDiscordActivity::getAssetsLargeImage(env, jActivity), activity.assets.large_image);
+        createNativeString<128>(env, JDiscordActivity::getAssetsLargeText(env, jActivity), activity.assets.large_text);
+        createNativeString<128>(env, JDiscordActivity::getAssetsSmallImage(env, jActivity), activity.assets.small_image);
+        createNativeString<128>(env, JDiscordActivity::getAssetsSmallText(env, jActivity), activity.assets.small_text);
 
-        strncpy(activity.party.id, party_id_native, sizeof(activity.party.id));
-        activity.party.size.current_size = party_current_size;
-        activity.party.size.max_size = party_max_size;
-        activity.party.privacy = (EDiscordActivityPartyPrivacy) party_privacy;
+        createNativeString<128>(env, JDiscordActivity::getPartyId(env, jActivity), activity.party.id);
+        activity.party.size.current_size = JDiscordActivity::getPartyCurrentSize(env, jActivity);
+        activity.party.size.max_size = JDiscordActivity::getPartyMaxSize(env, jActivity);
+        activity.party.privacy = (EDiscordActivityPartyPrivacy) JDiscordActivity::getPartyPrivacy(env, jActivity);
 
-        strncpy(activity.secrets.match, secrets_match_native, sizeof(activity.secrets.match));
-        strncpy(activity.secrets.join, secrets_join_native, sizeof(activity.secrets.join));
-        strncpy(activity.secrets.spectate, secrets_spectate_native, sizeof(activity.secrets.spectate));
+        createNativeString<128>(env, JDiscordActivity::getSecretsMatch(env, jActivity), activity.secrets.match);
+        createNativeString<128>(env, JDiscordActivity::getSecretsJoin(env, jActivity), activity.secrets.join);
+        createNativeString<128>(env, JDiscordActivity::getSecretsSpectate(env, jActivity), activity.secrets.spectate);
 
-        activity.instance = instance;
-
-        env.ReleaseStringUTFChars(name, name_native);
-        env.ReleaseStringUTFChars(state, state_native);
-        env.ReleaseStringUTFChars(details, details_native);
-
-        env.ReleaseStringUTFChars(assets_large_image, assets_large_image_native);
-        env.ReleaseStringUTFChars(assets_large_text, assets_large_text_native);
-        env.ReleaseStringUTFChars(assets_small_image, assets_small_image_native);
-        env.ReleaseStringUTFChars(assets_small_text, assets_small_text_native);
-
-        env.ReleaseStringUTFChars(party_id, party_id_native);
-
-        env.ReleaseStringUTFChars(secrets_match, secrets_match_native);
-        env.ReleaseStringUTFChars(secrets_join, secrets_join_native);
-        env.ReleaseStringUTFChars(secrets_spectate, secrets_spectate_native);
+        activity.instance = JDiscordActivity::getInstance(env, jActivity);
 
         return activity;
     }
@@ -129,26 +117,26 @@ namespace types {
     jobject createJavaActivity(JNIEnv &env, const DiscordActivity &activity) {
         auto jType = (jint) activity.type;
         auto jApplicationId = (jlong) activity.application_id;
-        auto jName = env.NewStringUTF(activity.name);
-        auto jState = env.NewStringUTF(activity.state);
-        auto jDetails = env.NewStringUTF(activity.details);
+        auto jName = createJavaString(env, activity.name);
+        auto jState = createJavaString(env, activity.state);
+        auto jDetails = createJavaString(env, activity.details);
 
         auto jTimestampStart = (jlong) activity.timestamps.start;
         auto jTimestampEnd = (jlong) activity.timestamps.end;
 
-        auto jAssetLargeImage = env.NewStringUTF(activity.assets.large_image);
-        auto jAssetLargeText = env.NewStringUTF(activity.assets.large_text);
-        auto jAssetSmallImage = env.NewStringUTF(activity.assets.small_image);
-        auto jAssetSmallText = env.NewStringUTF(activity.assets.small_text);
+        auto jAssetLargeImage = createJavaString(env, activity.assets.large_image);
+        auto jAssetLargeText = createJavaString(env, activity.assets.large_text);
+        auto jAssetSmallImage = createJavaString(env, activity.assets.small_image);
+        auto jAssetSmallText = createJavaString(env, activity.assets.small_text);
 
-        auto jPartyId = env.NewStringUTF(activity.party.id);
+        auto jPartyId = createJavaString(env, activity.party.id);
         auto jPartySizeCurrent = (jint) activity.party.size.current_size;
         auto jPartySizeMax = (jint) activity.party.size.max_size;
         auto jPartyPrivacy = (jint) activity.party.privacy;
 
-        auto jSecretMatch = env.NewStringUTF(activity.secrets.match);
-        auto jSecretJoin = env.NewStringUTF(activity.secrets.join);
-        auto jSecretSpectate = env.NewStringUTF(activity.secrets.spectate);
+        auto jSecretMatch = createJavaString(env, activity.secrets.match);
+        auto jSecretJoin = createJavaString(env, activity.secrets.join);
+        auto jSecretSpectate = createJavaString(env, activity.secrets.spectate);
 
         auto instance = (jboolean) activity.instance;
 
@@ -164,9 +152,9 @@ namespace types {
 
     jobject createJavaUser(JNIEnv &env, const DiscordUser &user) {
         auto jId = (jlong) user.id;
-        auto jUsername = env.NewStringUTF(user.username);
-        auto jDiscriminator = env.NewStringUTF(user.discriminator);
-        auto jAvatar = env.NewStringUTF(user.avatar);
+        auto jUsername = createJavaString(env, user.username);
+        auto jDiscriminator = createJavaString(env, user.discriminator);
+        auto jAvatar = createJavaString(env, user.avatar);
         auto jBot = (jboolean) user.bot;
 
         namespace JUser = gamesdk::api::types::DiscordUser;
@@ -194,8 +182,8 @@ namespace types {
     }
 
     jobject createJavaOAuth2Token(JNIEnv &env, DiscordOAuth2Token &token) {
-        jstring jAccessToken = env.NewStringUTF(token.access_token);
-        jstring jScopes = env.NewStringUTF(token.scopes);
+        jstring jAccessToken = createJavaString(env, token.access_token);
+        jstring jScopes = createJavaString(env, token.scopes);
         jlong jExpires = token.expires;
 
         namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;

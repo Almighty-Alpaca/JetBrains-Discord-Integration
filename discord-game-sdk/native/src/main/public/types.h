@@ -21,8 +21,27 @@
 
 #include <jni.h>
 #include <type_traits>
+#include <string>
+#include <kotlin/String.h>
 
 namespace types {
+    template<int N>
+    void createNativeString(JNIEnv &env, jstring string, char target[N]) {
+        std::fill_n(target, N, 0);
+
+        namespace JString = java::lang::String;
+
+        jbyteArray bytes = JString::getBytes0(env, string);
+
+        auto length = env.GetArrayLength(bytes);
+
+        env.GetByteArrayRegion(bytes, 0, min(N - 1, length), (jbyte *) target);
+    }
+
+    std::string createNativeString(JNIEnv &env, jstring string);
+
+    jstring createJavaString(JNIEnv &env, const char *string);
+
     jobject createIntegerObject(JNIEnv &env, jint value);
 
     jobject createLongObject(JNIEnv &env, jlong value);

@@ -111,6 +111,7 @@ tasks {
 
         args = listOf(
             project.layout.buildDirectory.dir("generated/headers").get().asFile.absolutePath,
+            "java.lang.String",
             // Including everything produces a huge amount of headers that aren't needed currently
             // "gamesdk.api.*",
             // "gamesdk.api.types.*",

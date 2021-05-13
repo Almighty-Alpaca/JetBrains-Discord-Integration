@@ -229,7 +229,6 @@ private fun Appendable.appendFields(clazz: Class<*>): Appendable {
 }
 
 private fun Appendable.appendConstructors(clazz: Class<*>): Appendable {
-    java.lang.Integer::class
     val constructors = clazz
         .constructors
         .filterNot(Constructor<*>::isSynthetic)

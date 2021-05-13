@@ -40,10 +40,11 @@ public inline fun <T : Event> EventBus<T>.subscribe(times: Int, crossinline list
     if (times <= 0)
         CompletedSubscription
     else {
-        var i = times
+        var invocationsLeft = times
         subscribeUntil remove@{
             listener(it)
-            return@remove --i == 0
+            invocationsLeft--
+            return@remove invocationsLeft == 0
         }
     }
 

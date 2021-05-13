@@ -30,11 +30,9 @@ JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_re
 ) {
     IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
-    const char *command = env->GetStringUTFChars(jCommand, nullptr);
+    const auto command = types::createNativeString(*env, jCommand);
 
-    EDiscordResult result = activityManager->register_command(activityManager, command);
-
-    env->ReleaseStringUTFChars(jCommand, command);
+    EDiscordResult result = activityManager->register_command(activityManager, command.c_str());
 
     return (jint) result;
 }
@@ -80,11 +78,9 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_se
 ) {
     IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
-    const char *content = env->GetStringUTFChars(jContent, nullptr);
+    const auto content = types::createNativeString(*env, jContent);
 
-    activityManager->send_invite(activityManager, (DiscordUserId) jUserId, (EDiscordActivityActionType) jType, content, callback::create(env, jCallback), callback::run);
-
-    env->ReleaseStringUTFChars(jContent, content);
+    activityManager->send_invite(activityManager, (DiscordUserId) jUserId, (EDiscordActivityActionType) jType, content.c_str(), callback::create(env, jCallback), callback::run);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_acceptInvite(
