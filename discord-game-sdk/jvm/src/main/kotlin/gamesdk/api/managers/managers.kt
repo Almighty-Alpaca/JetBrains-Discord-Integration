@@ -16,20 +16,20 @@
 
 package gamesdk.api.managers
 
-public interface ApplicationManager
+public interface ApplicationManager // TODO: Implement ApplicationManager
 
-public interface ImageManager
+public interface ImageManager // TODO: Implement ImageManager
 
-public interface LobbyManager
+public interface LobbyManager // TODO: Implement LobbyManager
 
-public interface NetworkManager
+public interface NetworkManager // TODO: Implement NetworkManager
 
-public interface OverlayManager
+public interface OverlayManager // TODO: Implement OverlayManager
 
-public interface StorageManager
+public interface StorageManager // TODO: Implement StorageManager
 
-public interface StoreManager
+public interface StoreManager // TODO: Implement StoreManager
 
-public interface VoiceManager
+public interface VoiceManager // TODO: Implement VoiceManager
 
-public interface AchievementManager
+public interface AchievementManager // TODO: Implement AchievementManager

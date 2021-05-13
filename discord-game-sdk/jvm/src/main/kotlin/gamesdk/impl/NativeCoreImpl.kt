@@ -27,9 +27,7 @@ import gamesdk.api.types.DiscordClientId
 import gamesdk.api.types.DiscordCreateFlags
 import gamesdk.api.types.DiscordLogLevel
 import gamesdk.impl.events.*
-import gamesdk.impl.managers.NativeActivityManagerImpl
-import gamesdk.impl.managers.NativeRelationshipManagerImpl
-import gamesdk.impl.managers.NativeUserManagerImpl
+import gamesdk.impl.managers.*
 import gamesdk.impl.types.NativeDiscordCreateFlags
 import gamesdk.impl.types.toNativeDiscordCreateFlags
 
@@ -50,13 +48,13 @@ internal class Events {
 
 internal class NativeCoreImpl private constructor(pointer: NativePointer, internal val events: Events) : NativeObjectImpl.Closeable(pointer), Core {
     override val applicationManager: ApplicationManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeApplicationManagerImpl(this) }
 
     override val userManager: UserManager
             by lazy { NativeUserManagerImpl(this) }
 
     override val imageManager: ImageManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeImageManagerImpl(this) }
 
     override val activityManager: ActivityManager
             by lazy { NativeActivityManagerImpl(this) }
@@ -65,24 +63,27 @@ internal class NativeCoreImpl private constructor(pointer: NativePointer, intern
             by lazy { NativeRelationshipManagerImpl(this) }
 
     override val lobbyManager: LobbyManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeLobbyManagerImpl(this) }
+
     override val networkManager: NetworkManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeNetworkManagerImpl(this) }
+
     override val overlayManager: OverlayManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeOverlayManagerImpl(this) }
+
     override val storageManager: StorageManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeStorageManagerImpl(this) }
+
     override val storeManager: StoreManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeStoreManagerImpl(this) }
+
     override val voiceManager: VoiceManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeVoiceManagerImpl(this) }
+
     override val achievementManager: AchievementManager
-        get() = TODO("Not yet implemented")
+            by lazy { NativeAchievementManagerImpl(this) }
 
     override fun runCallbacks(): DiscordResult = native { pointer -> runCallbacks(pointer).toDiscordResult() }
-
-//    override val logMessages
-//        get() = events.logMessages
 
     override fun setLogHook(minLevel: DiscordLogLevel, hook: (level: DiscordLogLevel, message: String) -> Unit): Unit =
         TODO("Not yet implemented")
