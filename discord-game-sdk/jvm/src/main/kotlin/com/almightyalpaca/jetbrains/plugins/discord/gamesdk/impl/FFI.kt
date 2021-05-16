@@ -32,8 +32,8 @@ internal class DiscordLobbyTransactionImpl(private val internalThisPointer: Long
     override fun setType(type: DiscordLobbyType) = native_setType(type.toNativeDiscordLobbyType()).toDiscordCode()
     override fun setOwner(ownerId: DiscordUserId) = (native_setOwner(ownerId)).toDiscordCode()
     override fun setCapacity(capacity: uint32_t) = (native_setCapacity(capacity)).toDiscordCode()
-    override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = (native_setMetadata(metadataKey, metadataValue)).toDiscordCode()
-    override fun deleteMetadata(metadataKey: DiscordMetadataKey) = (native_deleteMetadata(metadataKey)).toDiscordCode()
+    override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = (native_setMetadata(metadataKey.toNativeString(), metadataValue.toNativeString())).toDiscordCode()
+    override fun deleteMetadata(metadataKey: DiscordMetadataKey) = (native_deleteMetadata(metadataKey.toNativeString())).toDiscordCode()
     override fun setLocked(locked: Boolean) = (native_setLocked(locked)).toDiscordCode()
 
     private external fun native_setType(type: NativeDiscordLobbyType): NativeDiscordResult
@@ -45,8 +45,8 @@ internal class DiscordLobbyTransactionImpl(private val internalThisPointer: Long
 }
 
 internal class DiscordLobbyMemberTransactionImpl(private val internalThisPointer: Long) : DiscordLobbyMemberTransaction {
-    override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = (native_setMetadata(metadataKey, metadataValue)).toDiscordCode()
-    override fun deleteMetadata(metadataKey: DiscordMetadataKey) = (native_deleteMetadata(metadataKey)).toDiscordCode()
+    override fun setMetadata(metadataKey: DiscordMetadataKey, metadataValue: DiscordMetadataValue) = (native_setMetadata(metadataKey.toNativeString(), metadataValue.toNativeString())).toDiscordCode()
+    override fun deleteMetadata(metadataKey: DiscordMetadataKey) = (native_deleteMetadata(metadataKey.toNativeString())).toDiscordCode()
 
     private external fun native_setMetadata(metadataKey: NativeDiscordMetadataKey, metadataValue: NativeDiscordMetadataValue): NativeDiscordResult
     private external fun native_deleteMetadata(metadataKey: NativeDiscordMetadataKey): NativeDiscordResult
@@ -54,9 +54,9 @@ internal class DiscordLobbyMemberTransactionImpl(private val internalThisPointer
 
 internal class DiscordLobbySearchQueryImpl(private val internalThisPointer: Long) : DiscordLobbySearchQuery {
     override fun filter(key: DiscordMetadataKey, comparison: DiscordLobbySearchComparison, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) =
-        (native_filter(key, comparison.toNativeDiscordLobbySearchComparison(), cast.toNativeDiscordLobbySearchCast(), value)).toDiscordCode()
+        (native_filter(key.toNativeString(), comparison.toNativeDiscordLobbySearchComparison(), cast.toNativeDiscordLobbySearchCast(), value.toNativeString())).toDiscordCode()
 
-    override fun sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = (native_sort(key, cast.toNativeDiscordLobbySearchCast(), value)).toDiscordCode()
+    override fun sort(key: DiscordMetadataKey, cast: DiscordLobbySearchCast, value: DiscordMetadataValue) = (native_sort(key.toNativeString(), cast.toNativeDiscordLobbySearchCast(), value.toNativeString())).toDiscordCode()
     override fun limit(limit: uint32_t) = (native_limit(limit)).toDiscordCode()
     override fun distance(distance: DiscordLobbySearchDistance) = (native_distance(distance.toNativeDiscordLobbySearchDistance())).toDiscordCode()
 
@@ -71,20 +71,20 @@ internal class DiscordApplicationManagerImpl(private val internalThisPointer: Lo
 
     override fun getCurrentLocale() = native_getCurrentLocale()
     override fun getCurrentBranch() = native_getDiscordBranch()
-    override fun getOAuth2Token(callback: DiscordObjectResultCallback<DiscordOAuth2Token>) = native_getOAuth2Token { callback(it.toDiscordObjectResult()) }
+    override fun getOAuth2Token(callback: DiscordObjectResultCallback<DiscordOAuth2Token>) = native_getOAuth2Token { callback(it.toDiscordObjectResult(NativeDiscordOAuth2Token::toDiscordOAuth2Token)) }
 
     override fun getTicket(callback: DiscordObjectResultCallback<String>) = native_getTicket { callback(it.toDiscordObjectResult()) }
 
     private external fun native_validateOrExit(callback: NativeDiscordResultCallback)
     private external fun native_getCurrentLocale(): DiscordLocale
     private external fun native_getDiscordBranch(): DiscordBranch
-    private external fun native_getOAuth2Token(callback: NativeDiscordObjectResultCallback<DiscordOAuth2Token>)
+    private external fun native_getOAuth2Token(callback: NativeDiscordObjectResultCallback<NativeDiscordOAuth2Token>)
     private external fun native_getTicket(callback: NativeDiscordObjectResultCallback<String>)
 }
 
 internal class DiscordUserManagerImpl(private val internalThisPointer: Long) : DiscordUserManager {
     override fun getCurrentUser(): DiscordObjectResult<DiscordUser> = native_getCurrentUser().toDiscordObjectResult(NativeDiscordUser::toDiscordUser)
-    override fun getUser(userId: DiscordUserId, callback: DiscordObjectResultCallback<DiscordUser>) = native_getUser(userId) { callback(it.toDiscordObjectResult()) }
+    override fun getUser(userId: DiscordUserId, callback: DiscordObjectResultCallback<DiscordUser>) = native_getUser(userId) { callback(it.toDiscordObjectResult(NativeDiscordUser::toDiscordUser)) }
 
     override fun getCurrentUserPremiumType() = native_getCurrentUserPremiumType().toDiscordObjectResult(NativeDiscordPremiumType::toDiscordPremiumType)
     override fun currentUserHasFlag(flag: DiscordUserFlag) = native_currentUserHasFlag(1 shl flag.offset).toDiscordObjectResult()

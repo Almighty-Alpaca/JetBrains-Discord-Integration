@@ -43,6 +43,7 @@ toolChains {
         eachPlatform {
             cppCompiler.withArguments {
                 add("/std:c++17")
+                add("/DNOMINMAX")
             }
         }
     }

@@ -18,28 +18,34 @@ package gamesdk.impl.types
 
 import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
 
-public typealias int8_t = Byte
+internal typealias int8_t = Byte
 @OptIn(ExperimentalUnsignedTypes::class)
-public typealias uint8_t = UByte
-public typealias int32_t = Int
+internal typealias uint8_t = UByte
+internal typealias int32_t = Int
 @OptIn(ExperimentalUnsignedTypes::class)
-public typealias uint32_t = UInt
-public typealias int64_t = Long
+internal typealias uint32_t = UInt
+internal typealias int64_t = Long
 @OptIn(ExperimentalUnsignedTypes::class)
-public typealias uint64_t = ULong
+internal typealias uint64_t = ULong
 
-public typealias NativeDiscordClientId = uint64_t
-public typealias NativeDiscordSnowflake = int64_t
-public typealias NativeDiscordTimestamp = int64_t
-public typealias NativeDiscordUserId = NativeDiscordSnowflake
-public typealias NativeDiscordLocale = @StringLength(max = 128) String
-public typealias NativeDiscordBranch = @StringLength(max = 4096) String
-public typealias NativeDiscordMetadataKey = @StringLength(max = 256) String
-public typealias NativeDiscordMetadataValue = @StringLength(max = 4096) String
-public typealias NativeDiscordNetworkPeerId = uint64_t
-public typealias NativeDiscordNetworkChannelId = uint8_t
-public typealias NativeDiscordPath = @StringLength(max = 4096) String
-public typealias NativeDiscordDateTime = @StringLength(max = 64) String
+internal typealias NativeString = ByteArray
 
-public typealias NativeSteamId = uint32_t
+internal fun String.toNativeString(): NativeString = this.encodeToByteArray()
+
+internal fun NativeString.toKotlinString(): String = this.decodeToString()
+
+internal typealias NativeDiscordClientId = uint64_t
+internal typealias NativeDiscordSnowflake = int64_t
+internal typealias NativeDiscordTimestamp = int64_t
+internal typealias NativeDiscordUserId = NativeDiscordSnowflake
+internal typealias NativeDiscordLocale = @StringLength(max = 128) NativeString
+internal typealias NativeDiscordBranch = @StringLength(max = 4096) NativeString
+internal typealias NativeDiscordMetadataKey = @StringLength(max = 256) NativeString
+internal typealias NativeDiscordMetadataValue = @StringLength(max = 4096) NativeString
+internal typealias NativeDiscordNetworkPeerId = uint64_t
+internal typealias NativeDiscordNetworkChannelId = uint8_t
+internal typealias NativeDiscordPath = @StringLength(max = 4096) NativeString
+internal typealias NativeDiscordDateTime = @StringLength(max = 64) NativeString
+
+internal typealias NativeSteamId = uint32_t
 

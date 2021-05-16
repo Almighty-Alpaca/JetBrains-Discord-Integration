@@ -92,7 +92,7 @@ class Test2 {
 
             println("Result: $result")
 
-            assertThat { result }.isInstanceOf(DiscordObjectResult.Success::class)
+            assertThat(result).isInstanceOf(DiscordObjectResult.Success::class)
 
             core.close()
         }

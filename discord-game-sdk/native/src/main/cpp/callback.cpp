@@ -51,8 +51,8 @@ namespace callback {
         delete callbackData;
     }
 
-    template<typename T>
-    void run(void *data, EDiscordResult result, jobject (&converter)(JNIEnv &, T), T argument) {
+    template<typename T, typename R, typename = std::enable_if<std::is_base_of<jobject, R>::value>>
+    void run(void *data, EDiscordResult result, R (&converter)(JNIEnv &, const T), T argument) {
         auto *callbackData = (CallbackData *) data;
 
         jobject jCallbackGlobal = callbackData->jCallback;
@@ -88,8 +88,8 @@ namespace callback {
     }
 
     void run(void *data, EDiscordResult result, const char *string) {
-        static jobject (*converter)(JNIEnv &, const char *) = [](JNIEnv &env, const char *string) -> jobject {
-            return string == nullptr ? nullptr : env.NewStringUTF(string);
+        static jbyteArray (*converter)(JNIEnv &, const char *) = [](JNIEnv &env, const char *string) -> jbyteArray {
+            return string == nullptr ? nullptr : types::createJavaString(env, string);
         };
 
         run(data, result, *converter, string);

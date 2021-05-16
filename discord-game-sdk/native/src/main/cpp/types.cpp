@@ -16,20 +16,15 @@
 
 #include "types.h"
 
-#include <iostream>
-#include <kotlin/String.h>
+#include <limits>
 
 #include "jniclasses.h"
 
 namespace types {
-    std::string createNativeString(JNIEnv &env, jstring string) {
-        namespace JString = java::lang::String;
-
-        jbyteArray bytes = JString::getBytes0(env, string);
-
+    std::string createNativeString(JNIEnv &env, jbyteArray bytes) {
         auto length = env.GetArrayLength(bytes);
 
-        auto target = std::string();
+        std::string target(length, ' '); // TODO: Is a space the best idea here? Probably doesn't matter though
         target.reserve(length);
 
         env.GetByteArrayRegion(bytes, 0, length, (jbyte *) target.data());
@@ -37,24 +32,17 @@ namespace types {
         return target;
     }
 
-    jstring createJavaString(JNIEnv &env, const char *string) {
-        namespace JString = java::lang::String;
+    jbyteArray createJavaString(JNIEnv &env, const char *string) {
+        auto length = strlen(string);
 
-        auto length = strlen(string) - 1;
-
-        if (length > MAXLONG) { // TODO: find better way to handle this
+        if (length > std::numeric_limits<jint>::max()) {
             return nullptr;
         }
 
         jbyteArray bytes = env.NewByteArray((jint) length);
         env.SetByteArrayRegion(bytes, 0, (jint) length, (jbyte *) string);
 
-        // This is guaranteed to be unproblematic due to being ASCII only
-        auto charset = env.NewStringUTF("UTF-8");
-
-        // This is potentially problematic as there is no guarantee that
-        // the constructor is at the same position in other JDKs or Java versions
-        return JString::constructor7::invoke(env, bytes, charset);
+        return bytes;
     }
 
     jobject createIntegerObject(JNIEnv &env, jint value) {
@@ -157,7 +145,7 @@ namespace types {
         auto jAvatar = createJavaString(env, user.avatar);
         auto jBot = (jboolean) user.bot;
 
-        namespace JUser = gamesdk::api::types::DiscordUser;
+        namespace JUser = gamesdk::impl::types::NativeDiscordUser;
 
         return JUser::constructor0::invoke(env, jId, jUsername, jDiscriminator, jAvatar, jBot);
     }
@@ -182,11 +170,11 @@ namespace types {
     }
 
     jobject createJavaOAuth2Token(JNIEnv &env, DiscordOAuth2Token &token) {
-        jstring jAccessToken = createJavaString(env, token.access_token);
-        jstring jScopes = createJavaString(env, token.scopes);
-        jlong jExpires = token.expires;
+        auto jAccessToken = createJavaString(env, token.access_token);
+        auto jScopes = createJavaString(env, token.scopes);
+        auto jExpires = (jlong) token.expires;
 
-        namespace JDiscordOAuth2Token = gamesdk::api::types::DiscordOAuth2Token;
+        namespace JDiscordOAuth2Token = gamesdk::impl::types::NativeDiscordOAuth2Token;
 
         return JDiscordOAuth2Token::constructor0::invoke(env, jAccessToken, jScopes, jExpires);
     }

@@ -23,6 +23,10 @@ add_library(native SHARED ${SOURCE_FILES})
 
 target_compile_features(native PUBLIC cxx_std_17)
 
+if (MSVC)
+    target_compile_definitions(native PUBLIC NOMINMAX)
+endif ()
+
 find_package(JNI REQUIRED)
 include_directories(${JNI_INCLUDE_DIRS} "../jvm/build/generated/headers/" "src/main/headers/" "src/main/public/")
 

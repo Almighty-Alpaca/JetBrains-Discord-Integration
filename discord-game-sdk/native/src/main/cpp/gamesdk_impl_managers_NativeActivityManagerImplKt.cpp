@@ -26,7 +26,7 @@
 #pragma ide diagnostic ignored "UnusedParameter"
 
 JNIEXPORT jint JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_registerCommand(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jstring jCommand
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jbyteArray jCommand
 ) {
     IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 
@@ -74,7 +74,7 @@ JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_se
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeActivityManagerImplKt_sendInvite(
-        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jint jType, jstring jContent, jobject jCallback
+        JNIEnv *env, jclass jClass, jobject jReceiver, jlong jPointer, jlong jUserId, jint jType, jbyteArray jContent, jobject jCallback
 ) {
     IDiscordActivityManager *activityManager = instance::getActivityManager((Instance *) jPointer);
 

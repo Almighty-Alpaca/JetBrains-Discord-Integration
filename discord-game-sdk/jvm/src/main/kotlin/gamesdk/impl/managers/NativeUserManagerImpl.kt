@@ -31,7 +31,7 @@ internal class NativeUserManagerImpl(private val core: NativeCoreImpl) : NativeO
         get() = core.events.currentUserUpdates
 
     override fun getCurrentUser(): DiscordUserResult =
-        native { pointer -> getCurrentUser(pointer).toDiscordObjectResult() }
+        native { pointer -> getCurrentUser(pointer).toDiscordObjectResult(NativeDiscordUser::toDiscordUser) }
 
     override fun getUser(userId: DiscordUserId, callback: DiscordUserResultCallback) =
         native { pointer -> getUser(pointer, userId, callback.toNativeDiscordResultObjectCallback(NativeDiscordUser::toDiscordUser)) }

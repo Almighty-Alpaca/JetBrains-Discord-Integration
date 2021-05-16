@@ -16,16 +16,35 @@
 
 package gamesdk.impl.types
 
+import com.almightyalpaca.jetbrains.plugins.discord.gamesdk.api.StringLength
 import gamesdk.api.types.DiscordUser
 import gamesdk.api.types.DiscordUserFlag
 import gamesdk.api.types.DiscordUserFlags
 import java.util.*
 
-internal typealias NativeDiscordUser = DiscordUser
+internal class NativeDiscordUser(
+    val id: NativeDiscordUserId,
+    val username: @StringLength(max = 256) NativeString,
+    val discriminator: @StringLength(max = 8) NativeString,
+    val avatar: @StringLength(max = 128) NativeString,
+    val bot: Boolean
+)
 
-internal fun DiscordUser.toNativeDiscordUser(): NativeDiscordUser = this
+internal fun DiscordUser.toNativeDiscordUser(): NativeDiscordUser = NativeDiscordUser(
+    id = id,
+    username = username.toNativeString(),
+    discriminator = discriminator.toNativeString(),
+    avatar = avatar.toNativeString(),
+    bot = bot
+)
 
-internal fun NativeDiscordUser.toDiscordUser(): DiscordUser = this
+internal fun NativeDiscordUser.toDiscordUser(): DiscordUser = DiscordUser(
+    id = id,
+    username = username.toKotlinString(),
+    discriminator = discriminator.toKotlinString(),
+    avatar = avatar.toKotlinString(),
+    bot = bot
+)
 
 internal typealias  NativeDiscordUserFlag = Int
 

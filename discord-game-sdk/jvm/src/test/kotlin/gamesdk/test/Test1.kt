@@ -50,13 +50,11 @@ class Test1 {
         when (val result = ThreadedCore.create(clientId, createFlags = DiscordCreateFlags.NoRequireDiscord)) {
             is DiscordObjectResult.Failure -> println(result.code)
             is DiscordObjectResult.Success -> result.value.use { core ->
-                val activity = DiscordActivity(applicationId = applicationId, state = "Testing...")
+                val activity = DiscordActivity(applicationId = applicationId, state = "Testing \u2665")
 
                 runBlocking {
-                    val updateResult = core.activityManager.updateActivity(activity) {
-                        // Exception().printStackTrace()
-                    }
-                    // println(updateResult.code)
+                    val updateResult = core.activityManager.updateActivity(activity)
+                    println(updateResult.code)
 
                     delay(10.seconds)
 
@@ -67,6 +65,7 @@ class Test1 {
                 }
             }
         }
+
         println("Done")
     }
 
@@ -93,7 +92,9 @@ class Test1 {
 
                                 result as DiscordObjectResult.Success<DiscordUser>
 
-                                println(result.value.username)
+                                val user = result.value
+
+                                println(user.username + "#" + user.discriminator)
 
                                 registerInvocation()
                             } catch (e: Throwable) {

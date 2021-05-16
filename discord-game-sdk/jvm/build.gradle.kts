@@ -111,23 +111,21 @@ tasks {
 
         args = listOf(
             project.layout.buildDirectory.dir("generated/headers").get().asFile.absolutePath,
-            "java.lang.String",
             // Including everything produces a huge amount of headers that aren't needed currently
             // "gamesdk.api.*",
             // "gamesdk.api.types.*",
             // "gamesdk.impl.*",
             // "gamesdk.impl.types.*",
-            "gamesdk.api.types.DiscordOAuth2Token",
-            "gamesdk.api.types.DiscordUser",
-            "gamesdk.api.types.DiscordOAuth2Token",
             "gamesdk.impl.Events",
             "gamesdk.impl.events.*",
             "gamesdk.impl.NativeCallback",
             "gamesdk.impl.NativeDiscordObjectResult.*",
             "gamesdk.impl.types.NativeDiscordActivity",
             "gamesdk.impl.types.NativeDiscordActivity",
+            "gamesdk.impl.types.NativeDiscordOAuth2Token",
             "gamesdk.impl.types.NativeDiscordPresence",
-            "gamesdk.impl.types.NativeDiscordRelationship"
+            "gamesdk.impl.types.NativeDiscordRelationship",
+            "gamesdk.impl.types.NativeDiscordUser"
         )
     }
 }

@@ -20,27 +20,24 @@
 #include "discord_game_sdk.h"
 
 #include <jni.h>
-#include <type_traits>
 #include <string>
-#include <kotlin/String.h>
+#include <type_traits>
 
 namespace types {
     template<int N>
-    void createNativeString(JNIEnv &env, jstring string, char target[N]) {
+    void createNativeString(JNIEnv &env, jbyteArray bytes, char target[N]) {
         std::fill_n(target, N, 0);
-
-        namespace JString = java::lang::String;
-
-        jbyteArray bytes = JString::getBytes0(env, string);
 
         auto length = env.GetArrayLength(bytes);
 
-        env.GetByteArrayRegion(bytes, 0, min(N - 1, length), (jbyte *) target);
+        auto *buf = (jbyte *) target;
+
+        env.GetByteArrayRegion(bytes, 0, std::min(N - 1L, length), buf); // N-1 to make sure the last char is \0
     }
 
-    std::string createNativeString(JNIEnv &env, jstring string);
+    std::string createNativeString(JNIEnv &env, jbyteArray string);
 
-    jstring createJavaString(JNIEnv &env, const char *string);
+    jbyteArray createJavaString(JNIEnv &env, const char *string);
 
     jobject createIntegerObject(JNIEnv &env, jint value);
 
@@ -67,8 +64,8 @@ namespace types {
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);
 
-    template<typename T>
-    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject (&converter)(JNIEnv &, const T), T argument) {
+    template<typename T, typename R, typename = std::enable_if<std::is_base_of<jobject, R>::value>>
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, R (&converter)(JNIEnv &, const T), T argument) {
         if (result == DiscordResult_Ok) {
             return createNativeDiscordObjectResultSuccess(env, converter(env, argument));
         } else {

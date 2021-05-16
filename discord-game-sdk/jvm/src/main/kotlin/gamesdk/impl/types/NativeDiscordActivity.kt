@@ -26,22 +26,22 @@ public typealias NativeDiscordPartySizeValue = int32_t
 internal class NativeDiscordActivity(
     val type: NativeDiscordActivityType,
     val applicationId: NativeDiscordApplicationId,
-    val name: @StringLength(max = 128) String,
-    val state: @StringLength(max = 128) String,
-    val details: @StringLength(max = 128) String,
+    val name: @StringLength(max = 128) NativeString,
+    val state: @StringLength(max = 128) NativeString,
+    val details: @StringLength(max = 128) NativeString,
     val timestampStart: NativeDiscordTimestamp,
     val timestampEnd: NativeDiscordTimestamp,
-    val assetsLargeImage: @StringLength(max = 128) String,
-    val assetsLargeText: @StringLength(max = 128) String,
-    val assetsSmallImage: @StringLength(max = 128) String,
-    val assetsSmallText: @StringLength(max = 128) String,
-    val partyId: @StringLength(max = 128) String,
+    val assetsLargeImage: @StringLength(max = 128) NativeString,
+    val assetsLargeText: @StringLength(max = 128) NativeString,
+    val assetsSmallImage: @StringLength(max = 128) NativeString,
+    val assetsSmallText: @StringLength(max = 128) NativeString,
+    val partyId: @StringLength(max = 128) NativeString,
     val partyCurrentSize: NativeDiscordPartySizeValue,
     val partyMaxSize: NativeDiscordPartySizeValue,
     val partyPrivacy: NativeDiscordActivityPartyPrivacy,
-    val secretsMatch: @StringLength(max = 128) String,
-    val secretsJoin: @StringLength(max = 128) String,
-    val secretsSpectate: @StringLength(max = 128) String,
+    val secretsMatch: @StringLength(max = 128) NativeString,
+    val secretsJoin: @StringLength(max = 128) NativeString,
+    val secretsSpectate: @StringLength(max = 128) NativeString,
     val instance: Boolean
 )
 
@@ -52,43 +52,43 @@ internal class NativeDiscordActivity(
 internal fun DiscordActivity.toNativeDiscordActivity(): NativeDiscordActivity = NativeDiscordActivity(
     type = this.type.toNativeDiscordActivityType(),
     applicationId = this.applicationId,
-    name = this.name,
-    state = this.state,
-    details = this.details,
+    name = this.name.toNativeString(),
+    state = this.state.toNativeString(),
+    details = this.details.toNativeString(),
     timestampStart = this.timestamps.start,
     timestampEnd = this.timestamps.end,
-    assetsLargeImage = this.assets.large_image,
-    assetsLargeText = this.assets.large_text,
-    assetsSmallImage = this.assets.small_image,
-    assetsSmallText = this.assets.small_text,
-    partyId = this.party.id,
+    assetsLargeImage = this.assets.large_image.toNativeString(),
+    assetsLargeText = this.assets.large_text.toNativeString(),
+    assetsSmallImage = this.assets.small_image.toNativeString(),
+    assetsSmallText = this.assets.small_text.toNativeString(),
+    partyId = this.party.id.toNativeString(),
     partyCurrentSize = this.party.size.currentSize,
     partyMaxSize = this.party.size.maxSize,
     partyPrivacy = this.party.privacy.toNativeDiscordActivityPartyPrivacy(),
-    secretsMatch = this.secrets.match,
-    secretsJoin = this.secrets.join,
-    secretsSpectate = this.secrets.spectate,
+    secretsMatch = this.secrets.match.toNativeString(),
+    secretsJoin = this.secrets.join.toNativeString(),
+    secretsSpectate = this.secrets.spectate.toNativeString(),
     instance = this.instance
 )
 
 internal fun NativeDiscordActivity.toDiscordActivity(): DiscordActivity = DiscordActivity(
     type = this.type.toDiscordActivityType(),
     applicationId = this.applicationId,
-    name = this.name,
-    state = this.state,
-    details = this.details,
+    name = this.name.toKotlinString(),
+    state = this.state.toKotlinString(),
+    details = this.details.toKotlinString(),
     timestamps = DiscordActivityTimestamps(
         start = timestampStart,
         end = timestampEnd
     ),
     assets = DiscordActivityAssets(
-        large_image = this.assetsLargeImage,
-        large_text = this.assetsLargeText,
-        small_image = this.assetsSmallImage,
-        small_text = this.assetsSmallText
+        large_image = this.assetsLargeImage.toKotlinString(),
+        large_text = this.assetsLargeText.toKotlinString(),
+        small_image = this.assetsSmallImage.toKotlinString(),
+        small_text = this.assetsSmallText.toKotlinString()
     ),
     party = DiscordActivityParty(
-        id = this.partyId,
+        id = this.partyId.toKotlinString(),
         size = DiscordPartySize(
             currentSize = this.partyCurrentSize,
             maxSize = this.partyMaxSize
@@ -96,9 +96,9 @@ internal fun NativeDiscordActivity.toDiscordActivity(): DiscordActivity = Discor
         privacy = this.partyPrivacy.toDiscordActivityPartyPrivacy()
     ),
     secrets = DiscordActivitySecrets(
-        match = this.secretsMatch,
-        join = this.secretsJoin,
-        spectate = this.secretsSpectate
+        match = this.secretsMatch.toKotlinString(),
+        join = this.secretsJoin.toKotlinString(),
+        spectate = this.secretsSpectate.toKotlinString()
     ),
     instance = this.instance
 )
