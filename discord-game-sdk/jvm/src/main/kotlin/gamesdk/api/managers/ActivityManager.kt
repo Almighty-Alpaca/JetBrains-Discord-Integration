@@ -35,8 +35,8 @@ public interface ActivityManager : NativeObject {
     public suspend fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply): DiscordResult
     public fun sendRequestReply(userId: DiscordUserId, reply: DiscordActivityJoinRequestReply, callback: DiscordResultCallback)
 
-    public suspend fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String): DiscordResult
-    public fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String, callback: DiscordResultCallback)
+    public suspend fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String = ""): DiscordResult
+    public fun sendInvite(userId: DiscordUserId, type: DiscordActivityActionType, content: String = "", callback: DiscordResultCallback)
 
     public suspend fun acceptInvite(userId: DiscordUserId): DiscordResult
     public fun acceptInvite(userId: DiscordUserId, callback: DiscordResultCallback)
