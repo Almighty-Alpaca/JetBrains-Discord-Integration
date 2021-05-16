@@ -105,11 +105,11 @@ internal fun NativeDiscordActivity.toDiscordActivity(): DiscordActivity = Discor
 
 internal typealias NativeDiscordActivityActionType = Int
 
-internal fun DiscordActivityActionType.toNativeDiscordActivityActionType(): NativeDiscordActivityActionType = this.ordinal
+internal fun DiscordActivityActionType.toNativeDiscordActivityActionType(): NativeDiscordActivityActionType = this.ordinal + 1
 
 internal fun NativeDiscordActivityActionType.toDiscordActivityActionType(): DiscordActivityActionType =
-    when (this) {
-        in DiscordActivityActionType.values().indices -> DiscordActivityActionType.values()[this]
+    when (this - 1) {
+        in DiscordActivityActionType.values().indices -> DiscordActivityActionType.values()[this - 1]
         else -> throw IllegalArgumentException()
     }
 

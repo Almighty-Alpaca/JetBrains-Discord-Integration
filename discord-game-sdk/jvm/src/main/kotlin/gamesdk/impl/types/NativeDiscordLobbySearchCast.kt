@@ -23,21 +23,21 @@ import gamesdk.api.types.DiscordLobbyType
 
 internal typealias NativeDiscordLobbySearchCast = Int
 
-internal fun DiscordLobbySearchCast.toNativeDiscordLobbySearchCast(): NativeDiscordLobbySearchCast = this.ordinal
+internal fun DiscordLobbySearchCast.toNativeDiscordLobbySearchCast(): NativeDiscordLobbySearchCast = this.ordinal + 1
 
 internal fun NativeDiscordLobbySearchCast.toDiscordLobbySearchCast(): DiscordLobbySearchCast =
-    when (this) {
-        in DiscordLobbySearchCast.values().indices -> DiscordLobbySearchCast.values()[this]
+    when (this - 1) {
+        in DiscordLobbySearchCast.values().indices -> DiscordLobbySearchCast.values()[this - 1]
         else -> throw IllegalArgumentException()
     }
 
 internal typealias NativeDiscordLobbySearchComparison = Int
 
-internal fun DiscordLobbySearchComparison.toNativeDiscordLobbySearchComparison(): NativeDiscordLobbySearchComparison = this.ordinal
+internal fun DiscordLobbySearchComparison.toNativeDiscordLobbySearchComparison(): NativeDiscordLobbySearchComparison = this.ordinal - 2
 
 internal fun NativeDiscordLobbySearchComparison.toDiscordLobbySearchComparison(): DiscordLobbySearchComparison =
-    when (this) {
-        in DiscordLobbySearchComparison.values().indices -> DiscordLobbySearchComparison.values()[this]
+    when (this + 2) {
+        in DiscordLobbySearchComparison.values().indices -> DiscordLobbySearchComparison.values()[this + 2]
         else -> throw IllegalArgumentException()
     }
 
@@ -53,10 +53,10 @@ internal fun NativeDiscordLobbySearchDistance.toDiscordLobbySearchDistance(): Di
 
 internal typealias NativeDiscordLobbyType = Int
 
-internal fun DiscordLobbyType.toNativeDiscordLobbyType(): NativeDiscordLobbyType = this.ordinal
+internal fun DiscordLobbyType.toNativeDiscordLobbyType(): NativeDiscordLobbyType = this.ordinal + 1
 
 internal fun NativeDiscordLobbyType.toDiscordLobbyType(): DiscordLobbyType =
-    when (this) {
-        in DiscordLobbyType.values().indices -> DiscordLobbyType.values()[this]
+    when (this - 1) {
+        in DiscordLobbyType.values().indices -> DiscordLobbyType.values()[this - 1]
         else -> throw IllegalArgumentException()
     }

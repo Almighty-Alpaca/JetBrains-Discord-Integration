@@ -22,7 +22,7 @@ public class DiscordEntitlement(
     public val skuId: DiscordSnowflake
 )
 
-public enum class DiscordEntitlementType {
+public enum class DiscordEntitlementType { // TODO: native type starts at 1
     Purchase,
     PremiumSubscription,
     DeveloperGift,

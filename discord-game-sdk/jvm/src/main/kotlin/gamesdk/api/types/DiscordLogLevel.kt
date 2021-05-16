@@ -16,7 +16,7 @@
 
 package gamesdk.api.types
 
-public enum class DiscordLogLevel {
+public enum class DiscordLogLevel { // TODO: native type starts at 1
     Error,
     Warn,
     Info,

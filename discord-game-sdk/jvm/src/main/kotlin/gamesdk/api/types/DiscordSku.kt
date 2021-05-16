@@ -25,7 +25,7 @@ public class DiscordSku(
     public val price: DiscordSkuPrice
 )
 
-public enum class DiscordSkuType {
+public enum class DiscordSkuType { // TODO: native type starts at 1
     Application,
     DLC,
     Consumable,
