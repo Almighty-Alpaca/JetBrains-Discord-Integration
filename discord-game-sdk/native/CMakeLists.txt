@@ -30,10 +30,18 @@ endif ()
 find_package(JNI REQUIRED)
 include_directories(${JNI_INCLUDE_DIRS} "../jvm/build/generated/headers/" "src/main/headers/" "src/main/public/")
 
-#find_library(
-#        DISCORD_LIBRARY discord_game_sdk
-#        NO_CMAKE_FIND_ROOT_PATH
-#        PATHS "${PROJECT_SOURCE_DIR}/lib/discord_game_sdk/"
-#        PATH_SUFFIXES "windows/x86" "windows/x86-64"
-#)
-#target_link_libraries(native PUBLIC ${DISCORD_LIBRARY})
+if (${CMAKE_SIZEOF_VOID_P} STREQUAL "8")
+    set(ARCHITECTURE_TYPE x86-64) # 64 Bit
+else ()
+    set(ARCHITECTURE_TYPE x86) # 32 Bit
+endif ()
+
+find_library(
+        DISCORD_LIBRARY
+        NAMES "${CMAKE_SHARED_LIBRARY_PREFIX}discord_game_sdk${CMAKE_SHARED_LIBRARY_SUFFIX}"
+        NO_CMAKE_FIND_ROOT_PATH
+        HINTS "lib/discord_game_sdk/"
+        PATH_SUFFIXES "windows/${ARCHITECTURE_TYPE}" "linux/${ARCHITECTURE_TYPE}" "macos/${ARCHITECTURE_TYPE}"
+)
+
+target_link_libraries(native PUBLIC ${DISCORD_LIBRARY})
