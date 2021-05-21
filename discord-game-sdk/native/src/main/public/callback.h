@@ -31,6 +31,8 @@ namespace callback {
 
     void run(void *data, EDiscordResult result);
 
+    void run(void *data, EDiscordResult result, DiscordImageHandle handle);
+
     void run(void *data, EDiscordResult result, DiscordUser *user);
 
     void run(void *data, EDiscordResult result, DiscordOAuth2Token *token);

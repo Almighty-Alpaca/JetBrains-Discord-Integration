@@ -17,10 +17,7 @@
 package gamesdk.api
 
 import gamesdk.api.managers.DiscordRelationshipListSize
-import gamesdk.api.types.DiscordCode
-import gamesdk.api.types.DiscordPremiumType
-import gamesdk.api.types.DiscordRelationship
-import gamesdk.api.types.DiscordUser
+import gamesdk.api.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -83,14 +80,18 @@ public inline fun <T, R> DiscordObjectResult<T>.flatMap(block: (T) -> DiscordObj
 //    data class Failure(val reason: DiscordCode.Failure) : DiscordObjectObjectResult<Nothing, Nothing>(reason)
 //}
 
+public typealias DiscordBooleanResult = DiscordObjectResult<Boolean>
+
 public typealias DiscordCoreResult = DiscordObjectResult<Core>
 
-public typealias DiscordUserResult = DiscordObjectResult<DiscordUser>
+public typealias DiscordImageDimensionsResult = DiscordObjectResult<DiscordImageDimensions>
+
+public typealias DiscordImageHandleResult = DiscordObjectResult<DiscordImageHandle>
 
 public typealias DiscordPremiumTypeResult = DiscordObjectResult<DiscordPremiumType>
 
+public typealias DiscordRelationshipListSizeResult = DiscordObjectResult<DiscordRelationshipListSize>
+
 public typealias DiscordRelationshipResult = DiscordObjectResult<DiscordRelationship>
 
-public typealias DiscordBooleanResult = DiscordObjectResult<Boolean>
-
-public typealias DiscordRelationshipListSizeResult = DiscordObjectResult<DiscordRelationshipListSize>
+public typealias DiscordUserResult = DiscordObjectResult<DiscordUser>

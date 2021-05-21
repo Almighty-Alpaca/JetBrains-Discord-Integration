@@ -19,6 +19,7 @@ package gamesdk.impl
 import gamesdk.api.DiscordObjectResultCallback
 import gamesdk.api.DiscordResult
 import gamesdk.api.DiscordResultCallback
+import gamesdk.impl.types.NativeDiscordImageHandle
 import gamesdk.impl.types.NativeDiscordPremiumType
 import gamesdk.impl.types.NativeDiscordRelationship
 import gamesdk.impl.types.NativeDiscordUser
@@ -32,6 +33,8 @@ internal fun interface NativeCallback<P, R> {
 internal typealias NativeDiscordResultCallback = NativeCallback<NativeDiscordResult, Unit>
 
 internal typealias NativeDiscordObjectResultCallback<T> = NativeCallback<NativeDiscordObjectResult<T>, Unit>
+
+internal typealias NativeDiscordImageHandleResultCallback =  NativeDiscordObjectResultCallback<NativeDiscordImageHandle>
 
 internal typealias NativeDiscordUserResultCallback = NativeDiscordObjectResultCallback<NativeDiscordUser>
 

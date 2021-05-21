@@ -52,6 +52,12 @@ namespace types {
 
     jobject createJavaActivity(JNIEnv &env, const DiscordActivity &activity);
 
+    jobject createJavaImageDimensions(JNIEnv &env, const DiscordImageDimensions &dimensions);
+
+    DiscordImageHandle createDiscordImageHandle(JNIEnv &env, const jobject &jHandle);
+
+    jobject createJavaImageHandle(JNIEnv &env, const DiscordImageHandle &handle);
+
     jobject createJavaUser(JNIEnv &env, const DiscordUser &user);
 
     jobject createJavaPresence(JNIEnv &env, const DiscordPresence &presence);
@@ -63,6 +69,8 @@ namespace types {
     jobject createNativeDiscordObjectResultSuccess(JNIEnv &env, jobject object);
 
     jobject createNativeDiscordObjectResultFailure(JNIEnv &env, EDiscordResult result);
+
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject object);
 
     template<typename T, typename R, typename = std::enable_if<std::is_base_of<jobject, R>::value>>
     jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, R (&converter)(JNIEnv &, const T), T argument) {

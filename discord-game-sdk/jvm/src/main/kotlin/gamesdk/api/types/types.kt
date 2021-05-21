@@ -34,5 +34,3 @@ public typealias DiscordPath = @StringLength(max = 4096) String
 public typealias DiscordDateTime = @StringLength(max = 64) String
 
 public typealias SteamId = UInt
-
-public typealias DiscordImageDimension = UInt

@@ -138,6 +138,36 @@ namespace types {
                 jSecretMatch, jSecretJoin, jSecretSpectate, instance);
     }
 
+    jobject createJavaImageDimensions(JNIEnv &env, const DiscordImageDimensions &dimensions) {
+        auto jWidth = (jint) dimensions.width;
+        auto jHeight = (jint) dimensions.height;
+
+        namespace JDiscordImageDimensions = gamesdk::impl::types::NativeDiscordImageDimensions;
+
+        return JDiscordImageDimensions::constructor0::invoke(env, jWidth, jHeight, nullptr); // TODO: WTF
+    }
+
+    DiscordImageHandle createDiscordImageHandle(JNIEnv &env, const jobject &jHandle) {
+        namespace JDiscordImageHandle = gamesdk::impl::types::NativeDiscordImageHandle;
+
+        DiscordImageHandle handle{};
+        handle.type = (EDiscordImageType) JDiscordImageHandle::getType(env, jHandle);
+        handle.id = JDiscordImageHandle::getId(env, jHandle);
+        handle.size = JDiscordImageHandle::getSize(env, jHandle);
+
+        return handle;
+    }
+
+    jobject createJavaImageHandle(JNIEnv &env, const DiscordImageHandle &handle) {
+        auto jType = (jint) handle.type;
+        auto jId = (jlong) handle.id;
+        auto jSize = (jint) handle.size;
+
+        namespace JDiscordImageHandle = gamesdk::impl::types::NativeDiscordImageHandle;
+
+        return JDiscordImageHandle::constructor0::invoke(env, jType, jId, jSize, nullptr); // TODO: WTF
+    }
+
     jobject createJavaUser(JNIEnv &env, const DiscordUser &user) {
         auto jId = (jlong) user.id;
         auto jUsername = createJavaString(env, user.username);
@@ -189,5 +219,13 @@ namespace types {
         namespace JFailure = gamesdk::impl::NativeDiscordObjectResult::Failure;
 
         return JFailure::constructor0::invoke(env, (jint) result);
+    }
+
+    jobject createNativeDiscordObjectResult(JNIEnv &env, enum EDiscordResult result, jobject object) {
+        if (result == DiscordResult_Ok) {
+            return createNativeDiscordObjectResultSuccess(env, object);
+        } else {
+            return createNativeDiscordObjectResultFailure(env, result);
+        }
     }
 } // namespace types

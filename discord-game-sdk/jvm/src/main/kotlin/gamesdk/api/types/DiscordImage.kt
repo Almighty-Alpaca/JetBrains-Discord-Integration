@@ -23,7 +23,17 @@ public class DiscordImageHandle(
     public val type: DiscordImageType,
     public val id: DiscordUserId,
     public val size: DiscordImageSize
-)
+) {
+    public companion object {
+        @Suppress("FunctionName")
+        @OptIn(ExperimentalUnsignedTypes::class)
+        public fun User(id: DiscordUserId, size: DiscordImageSize = 128u): DiscordImageHandle =
+            DiscordImageHandle(DiscordImageType.User, id, size)
+    }
+}
+
+@OptIn(ExperimentalUnsignedTypes::class)
+public typealias DiscordImageDimension = UInt
 
 public class DiscordImageDimensions(
     public val width: DiscordImageDimension,

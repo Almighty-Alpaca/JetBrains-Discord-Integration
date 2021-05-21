@@ -28,6 +28,8 @@ internal sealed class NativeDiscordObjectResult<out TResult> {
     internal data class Failure(val reason: NativeDiscordCode) : NativeDiscordObjectResult<Nothing>()
 }
 
+internal typealias NativeDiscordImageDimensionsResult = NativeDiscordObjectResult<NativeDiscordImageDimensions>
+
 internal typealias NativeDiscordUserResult = NativeDiscordObjectResult<NativeDiscordUser>
 
 internal typealias NativeDiscordPremiumTypeResult = NativeDiscordObjectResult<NativeDiscordPremiumType>

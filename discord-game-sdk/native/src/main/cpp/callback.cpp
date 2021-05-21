@@ -61,7 +61,7 @@ namespace callback {
         jnihelpers::withEnv(jvm, [& jCallbackGlobal, & result, & converter, &argument](JNIEnv &env) {
             namespace JNativeCallback = gamesdk::impl::NativeCallback;
 
-            jobject jResult = types::createNativeDiscordObjectResult(env, result, converter, argument);
+            jobject jResult = types::createNativeDiscordObjectResult<T, R>(env, result, converter, argument);
 
             JNativeCallback::invoke(env, jCallbackGlobal, jResult);
 
@@ -69,6 +69,10 @@ namespace callback {
         });
 
         delete callbackData;
+    }
+
+    void run(void *data, EDiscordResult result, DiscordImageHandle handle) {
+        run<const DiscordImageHandle &>(data, result, types::createJavaImageHandle, handle);
     }
 
     void run(void *data, EDiscordResult result, DiscordUser *user) {

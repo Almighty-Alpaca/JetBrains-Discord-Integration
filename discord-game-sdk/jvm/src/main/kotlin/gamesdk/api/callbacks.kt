@@ -16,12 +16,15 @@
 
 package gamesdk.api
 
+import gamesdk.api.types.DiscordImageHandle
 import gamesdk.api.types.DiscordRelationship
 import gamesdk.api.types.DiscordUser
 
 public typealias DiscordResultCallback = (result: DiscordResult) -> Unit
 
 public typealias DiscordObjectResultCallback<T> = (result: DiscordObjectResult<T>) -> Unit
+
+public typealias DiscordImageHandleResultCallback = DiscordObjectResultCallback<DiscordImageHandle>
 
 public typealias DiscordUserResultCallback = DiscordObjectResultCallback<DiscordUser>
 

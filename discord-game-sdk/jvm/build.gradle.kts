@@ -121,7 +121,7 @@ tasks {
             "gamesdk.impl.NativeCallback",
             "gamesdk.impl.NativeDiscordObjectResult.*",
             "gamesdk.impl.types.NativeDiscordActivity",
-            "gamesdk.impl.types.NativeDiscordActivity",
+            "gamesdk.impl.types.NativeDiscordImage*",
             "gamesdk.impl.types.NativeDiscordOAuth2Token",
             "gamesdk.impl.types.NativeDiscordPresence",
             "gamesdk.impl.types.NativeDiscordRelationship",

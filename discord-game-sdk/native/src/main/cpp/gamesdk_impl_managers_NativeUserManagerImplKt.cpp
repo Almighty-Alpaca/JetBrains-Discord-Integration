@@ -33,7 +33,7 @@ JNIEXPORT jobject JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_get
     DiscordUser user{};
     EDiscordResult result = userManager->get_current_user(userManager, &user);
 
-    return types::createNativeDiscordObjectResult<const DiscordUser&>(*env, result, types::createJavaUser, user);
+    return types::createNativeDiscordObjectResult<const DiscordUser &>(*env, result, types::createJavaUser, user);
 }
 
 JNIEXPORT void JNICALL Java_gamesdk_impl_managers_NativeUserManagerImplKt_getUser(

@@ -13,6 +13,8 @@ namespace instance {
 
     IDiscordActivityManager *getActivityManager(Instance *instance);
 
+    IDiscordImageManager *getImageManager(Instance *instance);
+
     IDiscordUserManager *getUserManager(Instance *instance);
 }
 

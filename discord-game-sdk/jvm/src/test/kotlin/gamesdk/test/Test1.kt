@@ -24,10 +24,7 @@ import gamesdk.api.ThreadedCore
 import gamesdk.api.events.Subscription
 import gamesdk.api.events.subscribe
 import gamesdk.api.events.subscribeOnce
-import gamesdk.api.types.DiscordActivity
-import gamesdk.api.types.DiscordCode
-import gamesdk.api.types.DiscordCreateFlags
-import gamesdk.api.types.DiscordUser
+import gamesdk.api.types.*
 import gamesdk.impl.events.NativeCurrentUserUpdateEvent
 import gamesdk.impl.events.NativeNotifiableEventBus
 import gamesdk.impl.events.toCurrentUserUpdateEvent
@@ -36,6 +33,9 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.util.concurrent.TimeUnit
+import javax.swing.ImageIcon
+import javax.swing.JFrame
+import javax.swing.JLabel
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -109,6 +109,35 @@ class Test1 {
                 }
             }
         }
+    }
+
+    @Test
+    @OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
+    @Timeout(value = 1500, unit = TimeUnit.SECONDS)
+    fun testGetImage() = runBlocking {
+        ThreadedCore.create(clientId, createFlags = DiscordCreateFlags.NoRequireDiscord).checkSuccess().value.use { core ->
+            val imageManager = core.imageManager
+
+            println("REACHED 1")
+
+            val image = imageManager.getImage(DiscordImageHandle.User(id = 107490111414882304, size = 1024u)).checkSuccess().value
+
+            println("REACHED 2")
+
+            println("size = (${image.width},${image.height})")
+
+            JFrame().apply {
+                add(JLabel(ImageIcon(image)))
+
+                pack()
+                isAlwaysOnTop = true
+                setLocationRelativeTo(null)
+
+                isVisible = true
+            }
+        }
+
+        delay(30.seconds)
     }
 
     @Test

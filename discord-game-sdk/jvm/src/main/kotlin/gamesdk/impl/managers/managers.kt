@@ -22,8 +22,6 @@ import gamesdk.impl.NativeObjectImpl
 
 internal class NativeApplicationManagerImpl(core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), ApplicationManager
 
-internal class NativeImageManagerImpl(core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), ImageManager
-
 internal class NativeLobbyManagerImpl(core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), LobbyManager
 
 internal class NativeNetworkManagerImpl(core: NativeCoreImpl) : NativeObjectImpl.Delegate(core), NetworkManager

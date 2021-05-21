@@ -18,8 +18,6 @@ package gamesdk.api.managers
 
 public interface ApplicationManager // TODO: Implement ApplicationManager
 
-public interface ImageManager // TODO: Implement ImageManager
-
 public interface LobbyManager // TODO: Implement LobbyManager
 
 public interface NetworkManager // TODO: Implement NetworkManager
