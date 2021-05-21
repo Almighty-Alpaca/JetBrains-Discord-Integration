@@ -21,9 +21,23 @@ import gamesdk.api.types.DiscordCode
 import gamesdk.api.types.DiscordPremiumType
 import gamesdk.api.types.DiscordRelationship
 import gamesdk.api.types.DiscordUser
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 public sealed class DiscordResult {
     public abstract val code: DiscordCode
+
+    @OptIn(ExperimentalContracts::class)
+    public fun checkSuccess(): Success {
+        contract {
+            returns() implies (this@DiscordResult is Success)
+        }
+
+        when (this) {
+            is Failure -> throw DiscordException(code)
+            is Success -> return this
+        }
+    }
 
     public object Success : DiscordResult() {
         override val code: DiscordCode = DiscordCode.Ok
@@ -35,12 +49,26 @@ public sealed class DiscordResult {
 public sealed class DiscordObjectResult<out T> {
     public abstract val code: DiscordCode
 
+    @OptIn(ExperimentalContracts::class)
+    public fun checkSuccess(): Success<T> {
+        contract {
+            returns() implies (this@DiscordObjectResult is Success<T>)
+        }
+
+        when (this) {
+            is Failure -> throw DiscordException(code)
+            is Success<T> -> return this
+        }
+    }
+
     public data class Success<out T>(val value: T) : DiscordObjectResult<T>() {
         override val code: DiscordCode = DiscordCode.Ok
     }
 
     public data class Failure(override val code: DiscordCode.Failure) : DiscordObjectResult<Nothing>()
 }
+
+public class DiscordException(public val code: DiscordCode.Failure) : Exception("Discord returned error code $code")
 
 public inline fun <T, R> DiscordObjectResult<T>.map(block: (T) -> R): DiscordObjectResult<R> =
     flatMap { DiscordObjectResult.Success(block(it)) }
