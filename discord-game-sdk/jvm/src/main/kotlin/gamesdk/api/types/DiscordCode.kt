@@ -17,6 +17,11 @@
 package gamesdk.api.types
 
 public sealed class DiscordCode(public val ordinal: Int) {
+    private val name = this::class.simpleName
+
+    override fun toString(): String = "$name($ordinal)"
+
+
     /** Everything is good */
     public object Ok : DiscordCode(0)
 
@@ -208,6 +213,4 @@ public sealed class DiscordCode(public val ordinal: Int) {
     public companion object {
         public val VALUES: List<DiscordCode> by lazy { listOf(Ok) + Failure.VALUES }
     }
-
-    override fun toString(): String = "$ordinal"
 }
