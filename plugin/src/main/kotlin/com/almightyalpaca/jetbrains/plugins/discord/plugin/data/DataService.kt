@@ -54,11 +54,8 @@ class DataService {
 
         val applicationSettings = settings
 
-        if (!settings.show.getStoredValue()) {
+        if (!settings.show.getStoredValue() || timeService.idle && settings.timeoutEnabled.getStoredValue())
             return Data.None
-        } else if (timeService.idle && settings.timeoutEnabled.getStoredValue()) {
-            return Data.None
-        }
 
         val application = ApplicationManager.getApplication()
         val applicationInfo = ApplicationInfoEx.getInstance()
