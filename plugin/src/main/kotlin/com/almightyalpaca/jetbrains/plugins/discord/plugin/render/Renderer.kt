@@ -29,7 +29,7 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-abstract class Renderer(private val context: RenderContext) {
+abstract class Renderer(protected val context: RenderContext) {
     fun render(): RichPresence = context.render()
 
     protected abstract fun RenderContext.render(): RichPresence
@@ -130,7 +130,13 @@ abstract class Renderer(private val context: RenderContext) {
             companion object : None()
         }
 
-        open class Application protected constructor() : None() {
+        open class Idle protected constructor() : Type() {
+            override fun createRenderer(context: RenderContext): Renderer? = IdleRenderer(context)
+
+            companion object : Idle()
+        }
+
+        open class Application protected constructor() : Type() {
             override fun createRenderer(context: RenderContext): Renderer = ApplicationRenderer(context)
 
             companion object : Application()
