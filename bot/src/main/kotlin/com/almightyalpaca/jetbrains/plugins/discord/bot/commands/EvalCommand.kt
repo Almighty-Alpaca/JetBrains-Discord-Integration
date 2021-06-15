@@ -16,51 +16,44 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 
-import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.CommandClient
-import com.jagrosh.jdautilities.command.CommandEvent
 import com.uchuhimo.konf.Config
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.interactions.commands.OptionType
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
-private const val imports = """
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.self
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.bot
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.channel
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.guild
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.client
-    import com.almightyalpaca.discord.bot.jetbrains.commands.EvalCommand.EvalVars.config
-    """
-
-class EvalCommand(private val config: Config) : Command() {
+class EvalCommand(private val config: Config) : Command(config, "eval", "Run a Kotlin script", true) {
     init {
-        name = "eval"
-        hidden = true
-        guildOnly = true
-        ownerCommand = true
+        addOption(OptionType.STRING, "script", "The script to execute", true)
     }
 
     private val manager = ScriptEngineManager()
 
-    override fun execute(event: CommandEvent) {
+    override fun execute(event: SlashCommandEvent) {
         val engine = manager.getEngineByExtension("kts")
 
         with(EvalVars) {
-            self = event.member
-            bot = event.selfMember
+            user = event.user
+            member = event.member!!
             channel = event.textChannel
-            guild = event.guild
-            client = event.client
+            guild = event.guild!!
             config = this@EvalCommand.config
         }
 
         val startTime = System.nanoTime()
 
         val result = try {
-            engine.eval(imports + event.args)
+            val script = """
+                ${EvalVars::class.qualifiedName}.*
+                
+                ${event.getOption("script")!!.asString}
+            """
+
+            engine.eval(script)
         } catch (e: ScriptException) {
             e
         }
@@ -69,24 +62,37 @@ class EvalCommand(private val config: Config) : Command() {
         val timeUsed = endTime - startTime
 
         val response = "Executed in ${timeUsed}ns"
-        if (result is Exception) {
-            result.printStackTrace()
 
-            val cause = result.cause
-            if (cause == null)
-                event.replyError("$response with ${result.javaClass.simpleName}: ${result.message} on line ${result.stackTrace[0].lineNumber}")
-            else
-                event.replyError("$response with ${cause.javaClass.simpleName}: ${cause.message} on line ${cause.stackTrace[0].lineNumber}")
-        } else if (result != null)
-            event.replySuccess("$response , result = $result")
+        val message: String = when {
+            result is Exception -> {
+                result.printStackTrace()
+
+                val cause = result.cause
+
+                if (cause == null) {
+                    "$response with ${result.javaClass.simpleName}: ${result.message} on line ${result.stackTrace[0].lineNumber}"
+                } else {
+                    "$response with ${cause.javaClass.simpleName}: ${cause.message} on line ${cause.stackTrace[0].lineNumber}"
+                }
+            }
+            result != null -> {
+                "$response , result = $result"
+            }
+            else -> response
+        }
+
+        event.reply(message).setEphemeral(true).queue()
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     object EvalVars {
-        lateinit var self: Member
-        lateinit var bot: Member
+        lateinit var user: User
+        lateinit var member: Member
         lateinit var channel: TextChannel
         lateinit var guild: Guild
-        lateinit var client: CommandClient
-        var config: Config = Config()
+        lateinit var config: Config
+
+        val botMember get() = guild.selfMember
+        val botUser get() = botMember.user
     }
 }

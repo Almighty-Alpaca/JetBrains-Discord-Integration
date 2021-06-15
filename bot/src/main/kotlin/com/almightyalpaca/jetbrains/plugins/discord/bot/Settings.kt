@@ -23,10 +23,7 @@ import java.util.*
 object Settings : ConfigSpec("") {
     val token by required<String>()
 
-    val owner by required<Long>()
-    val coOwners by optional<Set<Long>>(Collections.emptySet())
-
-    val command_prefix by required<String>()
+    val admins by optional<Set<Long>>(Collections.emptySet())
 
     val development by optional(false)
 

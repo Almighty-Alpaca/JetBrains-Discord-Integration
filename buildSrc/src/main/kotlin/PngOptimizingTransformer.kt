@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 import java.awt.Image
@@ -38,7 +38,6 @@ import java.nio.file.StandardCopyOption
 import java.nio.file.StandardOpenOption
 import javax.imageio.IIOImage
 import javax.imageio.ImageIO
-import javax.imageio.ImageWriteParam
 
 @Suppress("FunctionName")
 fun Project.PngOptimizingTransformer(size: Int, vararg includePaths: Regex): Transformer =
@@ -46,16 +45,21 @@ fun Project.PngOptimizingTransformer(size: Int, vararg includePaths: Regex): Tra
 
 @CacheableTransformer
 class PngOptimizingTransformer(
-    @Input
-    private val size: Int,
-    @InputDirectory
-    private val cacheDir: Path,
-    @Input
-    private vararg val includePaths: Regex
+    @get:Input
+    val size: Int,
+
+    @get:Internal
+    val cacheDir: Path,
+
+    @get:Input
+    vararg val includePaths: Regex
 ) : Transformer {
+
     private val files = mutableMapOf<String, Path>()
 
     private val cacheFileTemp: Path = cacheDir.resolve("new")
+
+    override fun getName() = "PngOptimizingTransformer"
 
     override fun canTransformResource(element: FileTreeElement): Boolean {
         val path = element.relativePath.pathString
