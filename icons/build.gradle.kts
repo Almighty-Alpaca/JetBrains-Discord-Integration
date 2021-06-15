@@ -26,10 +26,12 @@ dependencies {
     val versionCommonsIo: String by project
     val versionJackson: String by project
 
-    implementation(kotlin(module = "stdlib"))
+    // Kotlin is provided by the IDE and the uploaded themselves. this reduces dependency version conflicts
 
-    implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
-    implementation(kotlinx("coroutines-core"))
+    compileOnly(kotlin(module = "stdlib"))
+
+    compileOnly(platform(kotlinx("coroutines-bom", versionCoroutines)))
+    compileOnly(kotlinx("coroutines-core"))
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
@@ -73,10 +75,6 @@ tasks {
         paths += "discord/applications"
         paths += "discord/languages"
         paths += "discord/themes"
-    }
-
-    checkImplicitDependencies {
-        ignore("org.jetbrains", "annotations")
     }
 
     val generateIcons = create("generate-icons") {

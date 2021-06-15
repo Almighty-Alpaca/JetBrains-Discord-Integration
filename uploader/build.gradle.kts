@@ -24,7 +24,6 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    jcenter()
     maven { url = URI("https://kotlin.bintray.com/kotlinx") }
 }
 
@@ -61,10 +60,6 @@ dependencies {
 }
 
 tasks {
-    checkImplicitDependencies {
-        ignore("org.jetbrains", "annotations")
-    }
-
     val graphsDot by registering(JavaExec::class) task@{
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.graphs.GraphsKt"

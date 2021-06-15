@@ -26,7 +26,6 @@ plugins {
     kotlin("jvm") apply false
     id("com.github.ben-manes.versions")
     id("com.palantir.git-version")
-    id("com.palantir.baseline-exact-dependencies")
 }
 
 group = "com.almightyalpaca.jetbrains.plugins.discord"
@@ -44,7 +43,6 @@ project.version = version
 allprojects {
     repositories {
         mavenCentral()
-        jcenter()
     }
 
     fun secret(name: String) {
@@ -57,12 +55,10 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "com.palantir.baseline-exact-dependencies")
-
     group = rootProject.group.toString() + "." + project.name.toLowerCase()
     version = rootProject.version
 
-    val secrets = rootProject.file("secrets.gradle.kts")
+    val secrets: File = rootProject.file("secrets.gradle.kts")
     if (secrets.exists()) {
         apply(from = secrets)
     }
@@ -93,10 +89,20 @@ tasks {
         gradleReleaseChannel = GradleReleaseChannel.CURRENT.toString()
 
         rejectVersionIf {
-            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", """M\d+""")
-                .map { qualifier -> Regex(""".*[.-]$qualifier(release|[.\d-_])*""", RegexOption.IGNORE_CASE) }
-                .any { regex -> regex.matches(candidate.version) }
+            sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", "M")
+                .map { qualifier -> Regex("""[+_.-]?$qualifier[.\d-_]*$""", RegexOption.IGNORE_CASE) }
+                .any { regex -> regex.containsMatchIn(candidate.version) }
+                .apply {
+                    if (!this) {
+                        println("Accepting ${candidate.version}")
+                    }
+
+
+                    this
+                }
         }
+
+        rejectVersionIf { candidate.group.startsWith("org.jetbrains.kotlin") && candidate.version != currentVersion }
     }
 
     withType<Wrapper> {

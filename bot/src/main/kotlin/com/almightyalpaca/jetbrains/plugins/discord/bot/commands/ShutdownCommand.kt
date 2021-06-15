@@ -16,22 +16,13 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 
-import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.CommandEvent
+import com.uchuhimo.konf.Config
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 
-class ShutdownCommand : Command() {
-    init {
-        name = "shutdown"
-        hidden = true
-        ownerCommand = true
-    }
-
-    override fun execute(event: CommandEvent) {
-        event.jda.shutdown()
-
-        with(event.jda.httpClient) {
-            connectionPool.evictAll() // Remove once https://github.com/square/okhttp/issues/4029 has been fixed
-            dispatcher.executorService.shutdown()
+class ShutdownCommand(config: Config) : Command(config, "shutdown", "Stop the bot", true) {
+    override fun execute(event: SlashCommandEvent) {
+        event.reply("Done").submit().thenRun {
+            event.jda.shutdown()
         }
     }
 }

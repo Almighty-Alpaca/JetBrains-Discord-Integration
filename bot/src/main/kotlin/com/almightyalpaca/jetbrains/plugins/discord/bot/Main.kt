@@ -20,9 +20,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.EvalCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.PingCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.ShutdownCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.listeners.UserActivityStartListener
-import com.almightyalpaca.jetbrains.plugins.discord.bot.utils.setCoOwnerIds
-import com.almightyalpaca.jetbrains.plugins.discord.bot.utils.setOwnerId
-import com.jagrosh.jdautilities.command.CommandClientBuilder
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml
 import net.dv8tion.jda.api.JDABuilder
@@ -47,24 +44,20 @@ fun main() {
         .from.env()
         .from.systemProperties()
 
-    val client = CommandClientBuilder()
-        .setOwnerId(config[Settings.owner])
-        .setPrefix(config[Settings.command_prefix])
-        .setCoOwnerIds(config[Settings.coOwners])
-        // .setGame(Game.of(config[Bot.Status.type], config[Bot.Status.name], config[Bot.Status.url]))
-        .setActivity(Activity.playing("with roles"))
-        // .setServerInvite(config[Guild.invite])
-        .addCommand(EvalCommand(config))
-        .addCommand(PingCommand())
-        .addCommand(ShutdownCommand())
-        .setShutdownAutomatically(true)
-        .build()
+    val commands = arrayOf(
+        EvalCommand(config),
+        PingCommand(config),
+        ShutdownCommand(config)
+    )
 
-    JDABuilder.createDefault(config[Settings.token])
+    val jda = JDABuilder.createDefault(config[Settings.token])
         .setMemberCachePolicy(MemberCachePolicy.ONLINE)
         .enableIntents(GatewayIntent.GUILD_PRESENCES)
         .enableCache(CacheFlag.ACTIVITY)
-        .addEventListeners(client)
+        .setActivity(Activity.playing("with roles"))
         .addEventListeners(UserActivityStartListener(config))
+        .addEventListeners(*commands)
         .build()
+
+    jda.updateCommands().addCommands(*commands).queue()
 }

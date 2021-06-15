@@ -28,7 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class NotificationStartupActivity : StartupActivity.Background, DisposableCoroutineScope {
+class NotificationPostStartupActivity : StartupActivity.Background, StartupActivity.DumbAware, DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
 
     override fun runActivity(project: Project) {
