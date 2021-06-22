@@ -185,6 +185,10 @@ tasks {
         outputDirectory = generatedJavaSourceDir.resolve(packageName.replace('.', File.separatorChar))
     }
 
+    compileKotlin {
+        dependsOn(generateGrammarSource)
+    }
+
     clean {
         delete(generatedSourceDir)
     }
