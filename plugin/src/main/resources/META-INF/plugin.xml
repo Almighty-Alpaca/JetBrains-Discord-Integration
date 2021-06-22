@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration" requires-restart="true">
+<idea-plugin url="https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration" require-restart="true">
     <id>com.almightyalpaca.intellij.plugins.discord</id>
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
