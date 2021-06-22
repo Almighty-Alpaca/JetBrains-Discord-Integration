@@ -16,15 +16,9 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 
-import com.jagrosh.jdautilities.command.Command
-import com.jagrosh.jdautilities.command.CommandEvent
+import com.uchuhimo.konf.Config
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 
-class PingCommand : Command() {
-    init {
-        name = "ping"
-        hidden = true
-        guildOnly = false
-    }
-
-    override fun execute(event: CommandEvent) = event.reply("pong")
+class PingCommand(config: Config)  : Command(config, "ping", "Ping Pong") {
+    override fun execute(event: SlashCommandEvent) = event.hook.setEphemeral(true).sendMessage("pong").queue()
 }

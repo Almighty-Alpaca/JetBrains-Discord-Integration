@@ -20,13 +20,13 @@ import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.EvalCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.PingCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.ShutdownCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.listeners.UserActivityStartListener
-import com.almightyalpaca.jetbrains.plugins.discord.bot.utils.setCoOwnerIds
-import com.almightyalpaca.jetbrains.plugins.discord.bot.utils.setOwnerId
-import com.jagrosh.jdautilities.command.CommandClientBuilder
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.MemberCachePolicy
+import net.dv8tion.jda.api.utils.cache.CacheFlag
 import java.nio.file.Paths
 
 val isDocker by lazy { System.getenv("DOCKER") != null }
@@ -44,22 +44,20 @@ fun main() {
         .from.env()
         .from.systemProperties()
 
-    val client = CommandClientBuilder()
-        .setOwnerId(config[Settings.owner])
-        .setPrefix(config[Settings.command_prefix])
-        .setCoOwnerIds(config[Settings.coOwners])
-        // .setGame(Game.of(config[Bot.Status.type], config[Bot.Status.name], config[Bot.Status.url]))
+    val commands = arrayOf(
+        EvalCommand(config),
+        PingCommand(config),
+        ShutdownCommand(config)
+    )
+
+    val jda = JDABuilder.createDefault(config[Settings.token])
+        .setMemberCachePolicy(MemberCachePolicy.ONLINE)
+        .enableIntents(GatewayIntent.GUILD_PRESENCES)
+        .enableCache(CacheFlag.ACTIVITY)
         .setActivity(Activity.playing("with roles"))
-        // .setServerInvite(config[Guild.invite])
-        .addCommand(EvalCommand(config))
-        .addCommand(PingCommand())
-        .addCommand(ShutdownCommand())
-        .setShutdownAutomatically(true)
+        .addEventListeners(UserActivityStartListener(config))
+        .addEventListeners(*commands)
         .build()
 
-    JDABuilder()
-        .setToken(config[Settings.token])
-        .addEventListeners(client)
-        .addEventListeners(UserActivityStartListener(config))
-        .build()
+    jda.updateCommands().addCommands(*commands).queue()
 }

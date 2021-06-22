@@ -1,7 +1,6 @@
 token: "<TOKEN>"
 command_prefix: "<PREFIX>"
-owner: <ID>
-coCowners:?
+admins:?
   - <ID>
 development:? true
 guilds:

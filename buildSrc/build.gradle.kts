@@ -22,7 +22,8 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    gradlePluginPortal()
+    mavenCentral()
 }
 
 val properties = Properties().apply {
@@ -39,7 +40,7 @@ dependencies {
     val versionShadow: String by properties
     val versionZeroAllocationHashing: String by properties
 
-    implementation(group = "com.github.jengelman.gradle.plugins", name = "shadow", version = versionShadow)
+    implementation(group = "gradle.plugin.com.github.jengelman.gradle.plugins", name = "shadow", version = versionShadow)
 
     implementation(group = "com.github.depsypher", name = "pngtastic", version = versionPngtastic)
 

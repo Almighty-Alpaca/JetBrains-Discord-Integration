@@ -54,6 +54,10 @@ dependencies {
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
 }
 
+repositories {
+    jcenter() // TODO: remove once using GameSDK
+}
+
 val generatedSourceDir = project.file("src/generated")
 val generatedJavaSourceDir = generatedSourceDir.resolve("java")
 
@@ -77,7 +81,7 @@ configurations {
         }
 
         resolutionStrategy.dependencySubstitution {
-            val ideaDependency = "com.jetbrains:${intellij.ideaDependency.name}:${intellij.ideaDependency.version}"
+            val ideaDependency = intellij.getIdeaDependency(project).let { "com.jetbrains:${it.name}:${it.version}" }
 
             val ideaModules = listOf(
                 "org.jetbrains.kotlin:kotlin-reflect",
@@ -109,17 +113,17 @@ val isCI by lazy { System.getenv("CI") != null }
 intellij {
     val versionIde: String by project
 
-    version = versionIde
+    version.set(versionIde)
 
-    downloadSources = !isCI
+    downloadSources.set(!isCI)
 
-    updateSinceUntilBuild = false
+    updateSinceUntilBuild.set(false)
 
-    sandboxDirectory = "${project.rootDir.absolutePath}/.sandbox"
+    sandboxDir.set("${project.rootDir.absolutePath}/.sandbox")
 
-    instrumentCode = false
+    instrumentCode.set(false)
 
-    setPlugins("git4idea")
+    plugins.add("git4idea")
 
     // For testing with a custom theme
     // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
@@ -140,17 +144,9 @@ tasks {
         transform(PngOptimizingTransformer(128, *iconPaths))
     }
 
-    checkUnusedDependencies {
-        ignore("com.jetbrains", "ideaIU")
-    }
-
-    checkImplicitDependencies {
-        ignore("org.jetbrains", "annotations")
-    }
-
     patchPluginXml {
-        changeNotes(readInfoFile(project.file("changelog.md")))
-        pluginDescription(readInfoFile(project.file("description.md")))
+        changeNotes.set(readInfoFile(project.file("changelog.md")))
+        pluginDescription.set(readInfoFile(project.file("description.md")))
     }
 
     runIde {
@@ -169,15 +165,15 @@ tasks {
 
     publishPlugin {
         if (project.extra.has("JETBRAINS_TOKEN")) {
-            token(project.extra["JETBRAINS_TOKEN"])
+            token.set(project.extra["JETBRAINS_TOKEN"] as String?)
         } else {
             enabled = false
         }
 
         if (!(version as String).matches(Regex("""\d+\.\d+\.\d+"""))) {
-            channels("eap")
+            channels.set(listOf("eap"))
         } else {
-            channels("default", "eap")
+            channels.set(listOf("default", "eap"))
         }
     }
 
@@ -193,7 +189,7 @@ tasks {
     prepareSandbox task@{
         dependsOn(minimizedJar)
 
-        pluginJar(minimizedJar.map { it.archiveFile }.get())
+        pluginJar.set(minimizedJar.flatMap { it.archiveFile })
     }
 
     build {
@@ -216,6 +212,10 @@ tasks {
 
         arguments = arguments + listOf("-package", packageName, "-no-listener")
         outputDirectory = generatedJavaSourceDir.resolve(packageName.replace('.', File.separatorChar))
+    }
+
+    compileKotlin {
+        dependsOn(generateGrammarSource)
     }
 
     clean {

@@ -1,0 +1,7 @@
+name: Zig
+asset: zig
+parent: text
+match:
+  extension:
+    equals:
+      - .zig

@@ -18,7 +18,6 @@ plugins {
     application
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
-    id("com.palantir.baseline-exact-dependencies")
     id("docker")
 }
 
@@ -31,17 +30,18 @@ docker {
 }
 
 application {
-    mainClassName = "com.almightyalpaca.jetbrains.plugins.discord.bot.MainKt"
+    mainClass.set("com.almightyalpaca.jetbrains.plugins.discord.bot.MainKt")
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven(url = "https://m2.dv8tion.net/releases")
 }
 
 dependencies {
     val versionJda: String by project
     val versionOkHttp: String by project
-    val versionJdaUtilities: String by project
+//    val versionJdaUtilities: String by project
     val versionKonf: String by project
     val versionLogback: String by project
 
@@ -62,9 +62,9 @@ dependencies {
     }
 
     // JDA-Utilities
-    implementation(group = "com.jagrosh", name = "jda-utilities-command", version = versionJdaUtilities)
+//    implementation(group = "com.jagrosh", name = "jda-utilities-command", version = versionJdaUtilities)
 
-    // Konf (support for unused formats removed)
+    // Konf (dependencies for unused formats removed to reduce size)
     implementation(group = "com.uchuhimo", name = "konf", version = versionKonf) {
         exclude(group = "com.moandjiezana.toml", module = "toml4j")
         exclude(group = "org.dom4j", module = "dom4j")
@@ -78,21 +78,4 @@ dependencies {
 
     // Logback Classic
     implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
-}
-
-tasks {
-    checkUnusedDependencies {
-        // Logging backend
-        ignore("ch.qos.logback", "logback-classic")
-
-        // Kotlin compiler & scripting engine
-        ignore("org.jetbrains.kotlin", "kotlin-compiler-embeddable")
-        ignore("org.jetbrains.kotlin", "kotlin-script-util")
-        ignore("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
-    }
-
-    checkImplicitDependencies {
-        // Nullability annotations
-        ignore("org.jetbrains", "annotations")
-    }
 }

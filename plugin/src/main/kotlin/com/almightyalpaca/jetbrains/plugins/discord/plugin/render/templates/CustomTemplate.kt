@@ -22,12 +22,14 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr.TemplateParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import java.util.regex.PatternSyntaxException
+import kotlin.math.floor
 
 /**
  * Some utils
  */
 object Utils {
-    fun getVarValue(varName: String, context: CustomTemplateContext): String? =
+    private fun getVarValue(varName: String, context: CustomTemplateContext): String? =
         when (varName) {
             "ApplicationVersion" -> context.applicationData?.applicationVersion
             "ProjectName" -> context.projectData?.projectName
@@ -56,14 +58,29 @@ object Utils {
         return "${twoDecimals(size.toDouble() / (1 shl 30))} GiB" // 1 GiB ..
     }
 
-    private fun twoDecimals(num: Double) = (Math.floor(num * 100.0) / 100.0)
+    private fun twoDecimals(num: Double) = (floor(num * 100.0) / 100.0)
 
     private fun varNullCheck(context: CustomTemplateContext, varName: String): Boolean = getVarValue(varName, context) != null
 
-    fun evalVisitor(context: CustomTemplateContext, tree: TemplateParser.Text_evalContext): String {
-        var ret = ""
-        for (child in tree.children ?: listOf()) {
-            ret += when (child) {
+    private fun tryBuildRegex(pattern: String): Regex? =
+        try {
+            Regex(pattern)
+        } catch (_: PatternSyntaxException) {
+            null
+        }
+
+    private inline fun withRegex(pattern: String, valueIfInvalid: String = "Invalid regex", f: (Regex) -> String): String =
+        tryBuildRegex(pattern)?.let(f) ?: valueIfInvalid
+
+    private fun boolEval(s: String): Boolean =
+        when (s) {
+            "null", "false", "Invalid regex", "" -> false
+            else -> true
+        }
+
+    fun evalVisitor(context: CustomTemplateContext, tree: TemplateParser.Text_evalContext): String =
+        tree.children.orEmpty().joinToString(separator = "") { child ->
+            when (child) {
                 is TemplateParser.VarContext -> {
                     getVarValue(child.NAME()?.text ?: "", context) ?: ""
                 }
@@ -75,7 +92,7 @@ object Utils {
                         "ReplaceFirst", "ReplaceAll" -> 3
                         else -> 0
                     }
-                    if (child.text_eval().size < req) {
+                    if (req == 0 || child.text_eval().size < req) {
                         child.text
                     } else {
                         val arr = child.text_eval()
@@ -84,24 +101,27 @@ object Utils {
                                 Regex.escape(evalVisitor(context, arr[0]))
                             }
                             "NotNull" -> {
-                                if (varNullCheck(context, evalVisitor(context, arr[0]))) {
-                                    "true"
-                                } else {
-                                    "false"
-                                }
+                                varNullCheck(context, evalVisitor(context, arr[0]))
+                                    .toString()
                             }
                             "Matches" -> {
-                                if (evalVisitor(context, arr[0]).matches(Regex(evalVisitor(context, arr[1])))) {
-                                    "true"
-                                } else {
-                                    "false"
+                                withRegex(evalVisitor(context, arr[1])) {
+                                    evalVisitor(context, arr[0])
+                                        .matches(it)
+                                        .toString()
                                 }
                             }
                             "ReplaceFirst" -> {
-                                evalVisitor(context, arr[0]).replaceFirst(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                                withRegex(evalVisitor(context, arr[1])) {
+                                    evalVisitor(context, arr[0])
+                                        .replaceFirst(it, evalVisitor(context, arr[2]))
+                                }
                             }
                             "ReplaceAll" -> {
-                                evalVisitor(context, arr[0]).replace(Regex(evalVisitor(context, arr[1])), evalVisitor(context, arr[2]))
+                                withRegex(evalVisitor(context, arr[1])) {
+                                    evalVisitor(context, arr[0])
+                                        .replace(it, evalVisitor(context, arr[2]))
+                                }
                             }
                             else -> ""
                         }
@@ -116,10 +136,7 @@ object Utils {
                     // This if is meant to prevent that
                     val conditionValue =
                         if (args.size > 0)
-                            when (evalVisitor(context, args[0])) {
-                                "null", "false", "" -> false
-                                else -> true
-                            }
+                            boolEval(evalVisitor(context, args[0]))
                         else false
 
                     if (conditionValue) {
@@ -141,8 +158,6 @@ object Utils {
                 else -> child.text // NAME/TEXT/parentheses from the grammar
             }
         }
-        return ret
-    }
 }
 
 /**
@@ -160,9 +175,7 @@ class CustomTemplate(val template: String) {
         rootNode = parser.template().text_eval()
     }
 
-    fun execute(context: CustomTemplateContext): String? {
-        return Utils.evalVisitor(context, rootNode)
-    }
+    fun execute(context: CustomTemplateContext): String = Utils.evalVisitor(context, rootNode)
 }
 
 data class CustomTemplateContext(val language: String?, val data: TemplateData) {
@@ -175,10 +188,10 @@ data class CustomTemplateContext(val language: String?, val data: TemplateData) 
     }
 }
 
-private fun Data.asTemplateData(): TemplateData {
+private fun Data.asTemplateData(): TemplateData =
     when (this) {
-        is Data.File -> {
-            return TemplateData.File(
+        is Data.File ->
+            TemplateData.File(
                 this.applicationVersion,
                 this.projectName,
                 this.projectDescription,
@@ -195,26 +208,18 @@ private fun Data.asTemplateData(): TemplateData {
                 this.pathInModule,
                 this.fileSize
             )
-        }
-        is Data.Project -> {
-            return TemplateData.Project(
+        is Data.Project ->
+            TemplateData.Project(
                 this.applicationVersion, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
             )
-        }
-        is Data.Application -> {
-            return TemplateData.Application(
+        is Data.Application ->
+            TemplateData.Application(
                 this.applicationVersion
             )
-        }
-        else -> {
-            throw IllegalArgumentException()
-        }
+        else -> throw IllegalArgumentException()
     }
-}
 
-fun RenderContext.asCustomTemplateContext(): CustomTemplateContext {
-    return CustomTemplateContext.from(this)
-}
+fun RenderContext.asCustomTemplateContext() = CustomTemplateContext.from(this)
 
 sealed class TemplateData {
     open class Application(

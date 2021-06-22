@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration">
+<idea-plugin url="https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration" require-restart="true">
     <id>com.almightyalpaca.intellij.plugins.discord</id>
     <name>Discord Integration</name>
     <vendor email="aljoschagrebe@gmail.com" url="https://github.com/Almighty-Alpaca">Almighty Alpaca</vendor>
@@ -24,14 +24,6 @@
     <depends>com.intellij.modules.lang</depends>
 
     <depends optional="true" config-file="git-extension.xml">Git4Idea</depends>
-
-    <application-components>
-        <component>
-            <implementation-class>
-                com.almightyalpaca.jetbrains.plugins.discord.plugin.development.DisableDynamicPluginComponent
-            </implementation-class>
-        </component>
-    </application-components>
 
     <applicationListeners>
         <listener
@@ -84,7 +76,7 @@
                 instance="com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ProjectConfigurable"/>
 
         <backgroundPostStartupActivity
-                implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.NotificationStartupActivity"/>
+                implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.NotificationPostStartupActivity"/>
     </extensions>
 
     <actions>
