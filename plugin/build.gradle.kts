@@ -69,6 +69,27 @@ sourceSets {
     }
 }
 
+val isCI by lazy { System.getenv("CI") != null }
+
+intellij {
+    val versionIde: String by project
+
+    version.set(versionIde)
+
+    downloadSources.set(!isCI)
+
+    updateSinceUntilBuild.set(false)
+
+    sandboxDir.set("${project.rootDir.absolutePath}/.sandbox")
+
+    instrumentCode.set(false)
+
+    plugins.add("git4idea")
+
+    // For testing with a custom theme
+    // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
+}
+
 configurations {
     // https://github.com/gradle/gradle/issues/820
     compile {
@@ -108,27 +129,6 @@ configurations {
     }
 }
 
-val isCI by lazy { System.getenv("CI") != null }
-
-intellij {
-    val versionIde: String by project
-
-    version.set(versionIde)
-
-    downloadSources.set(!isCI)
-
-    updateSinceUntilBuild.set(false)
-
-    sandboxDir.set("${project.rootDir.absolutePath}/.sandbox")
-
-    instrumentCode.set(false)
-
-    plugins.add("git4idea")
-
-    // For testing with a custom theme
-    // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
-}
-
 tasks {
     val minimizedJar by registering(ShadowJar::class) {
         group = "build"
@@ -160,7 +160,7 @@ tasks {
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
 
         // Use Discord GameSDK
-         environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "gamesdk"
+        environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "gamesdk"
     }
 
     publishPlugin {
