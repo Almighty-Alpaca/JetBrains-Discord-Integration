@@ -28,18 +28,16 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.atomic.AtomicReference
+import com.jagrosh.discordipc.entities.User as UserEntity
 
 private var CONNECTED: AtomicReference<NativeRpcConnection?> = AtomicReference(null)
 
 class NativeRpcConnection(override val appId: Long, private val userCallback: (User?) -> Unit) :
     RpcConnection, DisposableCoroutineScope, IPCListener {
     override val parentJob: Job = SupervisorJob()
-
     private var updateJob: Job? = null
 
-    private lateinit var callbackRunner: ScheduledExecutorService
     private lateinit var ipcClient: IPCClient
 
     override var running: Boolean = false
@@ -87,9 +85,7 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
             return
         }
 
-        callbackRunner.shutdownNow()
         ipcClient.close()
-
         CONNECTED.set(null)
     }
 
@@ -99,16 +95,16 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
         super.dispose()
     }
 
-    override fun onReady(client: IPCClient?) {
-        super.onReady(client)
+    override fun onReady(client: IPCClient, user: UserEntity) {
+        super.onReady(client, user)
 
         DiscordPlugin.LOG.info("Rpc connected")
 
         running = true
-        userCallback(null)
+        userCallback(user.toGeneric())
     }
 
-    override fun onClose(client: IPCClient?, json: JSONObject?) {
+    override fun onClose(client: IPCClient, json: JSONObject) {
         super.onClose(client, json)
 
         DiscordPlugin.LOG.info("Rpc disconnected: $json")
@@ -117,15 +113,17 @@ class NativeRpcConnection(override val appId: Long, private val userCallback: (U
         userCallback(null)
     }
 
-    override fun onDisconnect(client: IPCClient?, t: Throwable?) {
+    override fun onDisconnect(client: IPCClient, t: Throwable) {
         super.onDisconnect(client, t)
 
-        DiscordPlugin.LOG.info("Rpc disconnected", t)
+        DiscordPlugin.LOG.info("Rpc disconnected ", t)
 
         running = false
         userCallback(null)
     }
 }
+
+private fun UserEntity.toGeneric() = User.Normal(name, discriminator, idLong, avatarId)
 
 private fun RichPresence.toNative() = Builder().apply {
     this@toNative.state?.let { setState(it) }
