@@ -218,6 +218,10 @@ tasks {
         dependsOn(generateGrammarSource)
     }
 
+    compileTestKotlin {
+        dependsOn(generateTestGrammarSource)
+    }
+
     clean {
         delete(generatedSourceDir)
     }
