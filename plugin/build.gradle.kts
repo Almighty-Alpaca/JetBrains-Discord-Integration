@@ -33,6 +33,7 @@ dependencies {
     val versionJackson: String by project
     val versionOkHttp: String by project
     val versionIpc: String by project
+    val versionRpc: String by project
     val versionJUnit: String by project
     val versionAntlr: String by project
 
@@ -43,6 +44,7 @@ dependencies {
     }
 
     implementation(group = "com.github.cbyrneee", name = "DiscordIPC", version = versionIpc)
+    implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")

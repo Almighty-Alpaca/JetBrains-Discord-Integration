@@ -17,6 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.IPCConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.NativeRpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.RpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
@@ -118,7 +119,7 @@ class RpcService : DisposableCoroutineScope {
                         connection = null
                     }
 
-                    connection = NativeRpcConnection(presence.appId, ::updateUser).apply {
+                    connection = createConnection(presence.appId).apply {
                         Disposer.register(this@RpcService, this@apply)
                         connect()
                     }
@@ -140,4 +141,14 @@ class RpcService : DisposableCoroutineScope {
 
         super.dispose()
     }
+
+    private fun createConnection(appId: Long): RpcConnection =
+        when (System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.toLowerCase()) {
+            "rpc" -> NativeRpcConnection(appId, ::updateUser)
+            "ipc" -> IPCConnection(appId, ::updateUser)
+            else -> when {
+                System.getProperty("os.arch")?.toLowerCase() == "aarch64" -> IPCConnection(appId, ::updateUser)
+                else -> NativeRpcConnection(appId, ::updateUser)
+            }
+        }
 }
