@@ -29,6 +29,7 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
             ?.getIconSet(settings.applicationType.getValue().applicationName)
     }
 
+    val idleData = data as? Data.Idle
     val applicationData = data as? Data.Application
     val projectData = data as? Data.Project
     val fileData = data as? Data.File
@@ -38,6 +39,7 @@ class RenderContext(val source: Source, val data: Data, val mode: Renderer.Mode)
     fun createRenderer(): Renderer? {
         val type = when (data) {
             is Data.None -> Renderer.Type.None
+            is Data.Idle -> Renderer.Type.Idle
             is Data.File -> Renderer.Type.File
             is Data.Project -> Renderer.Type.Project
             is Data.Application -> Renderer.Type.Application

@@ -18,10 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.OptionHolder
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationTypeValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.IconValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TextValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.TimeValue
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.service
 import org.jdom.Element
@@ -32,9 +29,11 @@ val settings: ApplicationSettings
 interface ApplicationSettings : PersistentStateComponent<Element>, OptionHolder {
     val show: BooleanValue
 
-    val timeoutEnabled: BooleanValue
+    // val timeoutEnabled: BooleanValue
     val timeoutMinutes: IntValue
     val timeoutResetTimeEnabled: BooleanValue
+
+    val idle: IdleVisibilityValue
 
     val filePrefixEnabled: BooleanValue
     val fileHideVcsIgnored: BooleanValue

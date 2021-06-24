@@ -19,10 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.impl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.ApplicationSettings
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.impl.PersistentStateOptionHolderImpl
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.*
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceIcon
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceText
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.PresenceTime
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 
@@ -30,8 +27,11 @@ import com.intellij.openapi.components.Storage
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
     override val show by check("Enable Rich Presence", true)
 
-    private val timeoutToggle by toggleable<Boolean>(false)
-    override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
+    private val timeoutToggle by toggleable<IdleVisibility>(false)
+
+    override val idle by timeoutToggle.toggle { it != IdleVisibility.IGNORE }.selection(text = "When idle", initialValue = IdleVisibility.IDLE)
+
+    // override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
 
     private val timeoutOptionPair by timeoutToggle.option.pair()
     override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")

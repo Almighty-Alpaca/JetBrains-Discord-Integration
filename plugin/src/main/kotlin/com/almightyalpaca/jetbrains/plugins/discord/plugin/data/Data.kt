@@ -27,8 +27,12 @@ sealed class Data {
     open class None private constructor() : Data() {
         companion object : None()
 
+        override fun toString(): String = "Data.None"
+    }
+
+    open class Idle (val idleTimestamp: Long) : Data() {
         override fun toString(): String {
-            return "Data.None"
+            return "Data.Idle(idleTimestamp=$idleTimestamp)"
         }
     }
 
