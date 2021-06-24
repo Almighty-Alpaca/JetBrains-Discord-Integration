@@ -32,6 +32,7 @@ dependencies {
     val versionCommonsIo: String by project
     val versionJackson: String by project
     val versionOkHttp: String by project
+    val versionIpc: String by project
     val versionRpc: String by project
     val versionJUnit: String by project
     val versionAntlr: String by project
@@ -42,6 +43,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
 
+    implementation(group = "com.github.cbyrneee", name = "DiscordIPC", version = versionIpc)
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
@@ -63,6 +65,7 @@ dependencies {
 
 repositories {
     jcenter() // TODO: remove once using GameSDK
+    maven("https://jitpack.io")
 }
 
 val generatedSourceDir = project.file("src/generated")
@@ -125,14 +128,14 @@ tasks {
     }
 
     runIde {
-        // use local icons
+        // Force a specific icon source
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
-
-        // use icons from specific bintray repo
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
-
-        // use classpath icons
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
+
+        // Force a specific rpc connection type
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "rpc"
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "ipc"
     }
 
     publishPlugin {
