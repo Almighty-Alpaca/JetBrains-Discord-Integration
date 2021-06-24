@@ -128,14 +128,14 @@ tasks {
     }
 
     runIde {
-        // use local icons
+        // Force a specific icon source
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
-
-        // use icons from specific bintray repo
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
-
-        // use classpath icons
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
+
+        // Force a specific rpc connection type
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "rpc"
+        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "ipc"
     }
 
     publishPlugin {

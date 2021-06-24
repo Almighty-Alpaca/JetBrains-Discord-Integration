@@ -19,52 +19,64 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.UserCallback
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.jagrosh.discordipc.IPCClient
 import com.jagrosh.discordipc.IPCListener
 import com.jagrosh.discordipc.entities.RichPresence.Builder
+import com.jagrosh.discordipc.entities.pipe.PipeStatus
+import com.jagrosh.discordipc.exceptions.NoDiscordClientException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
-import java.util.concurrent.atomic.AtomicReference
 import com.jagrosh.discordipc.entities.User as UserEntity
 
-private var ipcClient: IPCClient? = null
-
-class IPCConnection(override val appId: Long, private val userCallback: (User?) -> Unit) :
-    RpcConnection, DisposableCoroutineScope, IPCListener {
+class DiscordIpcConnection(override val appId: Long, private val userCallback: UserCallback) :
+    DiscordConnection, DisposableCoroutineScope, IPCListener {
     override val parentJob: Job = SupervisorJob()
-    override var running: Boolean = false
 
-    @Synchronized
-    override fun connect() {
-        if (ipcClient == null) {
+    private val mutex = Mutex()
+
+    private var ipcClient: IPCClient = IPCClient(appId).apply {
+        setListener(this@DiscordIpcConnection)
+    }
+
+    override val running
+        get() = ipcClient.status == PipeStatus.CONNECTED
+
+    override suspend fun connect(): Unit = mutex.withLock {
+        if (ipcClient.status != PipeStatus.CONNECTED) {
             DiscordPlugin.LOG.debug("Starting new ipc connection")
 
-            ipcClient = IPCClient(appId)
-            ipcClient?.setListener(this)
-            ipcClient?.connect()
+            try {
+                ipcClient.connect()
+            } catch (ignored: NoDiscordClientException) {
+                // Closed client can be ignored
+            }
         }
     }
 
     @Synchronized
-    override fun send(presence: RichPresence?) {
+    override suspend fun send(presence: RichPresence?): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Sending new presence")
 
-        when (presence) {
-            null -> ipcClient?.sendRichPresence(null)
-            else -> ipcClient?.sendRichPresence(presence.toNative())
-        }
+        if (running)
+            ipcClient.sendRichPresence(presence?.toNative())
     }
 
     @Synchronized
-    override fun disconnect() {
+    override suspend fun disconnect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Closing IPC connection")
-        ipcClient?.close()
+
+        if (ipcClient.status == PipeStatus.CONNECTED)
+            ipcClient.close()
     }
 
     override fun dispose() {
-        disconnect()
+        runBlocking { disconnect() }
 
         super.dispose()
     }
@@ -72,7 +84,6 @@ class IPCConnection(override val appId: Long, private val userCallback: (User?) 
     override fun onReady(client: IPCClient, user: UserEntity) {
         DiscordPlugin.LOG.info("IPC connected")
 
-        running = true
         userCallback(user.toGeneric())
     }
 
@@ -87,7 +98,6 @@ class IPCConnection(override val appId: Long, private val userCallback: (User?) 
     private fun onIPCDisconnect(reason: String) {
         DiscordPlugin.LOG.info("IPC disconnected: $reason")
 
-        running = false
         userCallback(null)
     }
 }
