@@ -117,17 +117,14 @@ tasks {
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.find.UnusedIconFinderKt"
     }
 
-    fun Task.checkTokens() {
-        if (!project.extra.has("DISCORD_TOKEN") || !project.extra.has("BINTRAY_KEY")) {
+    val uploadDiscord by registering(JavaExec::class) task@{
+        if (!project.extra.has("DISCORD_TOKEN")) {
             enabled = false
         }
-    }
 
-    val uploadDiscord by registering(JavaExec::class) task@{
         group = "upload"
 
         dependsOn(checkIcons)
-        checkTokens()
 
         sourceSets.main.configure { this@task.classpath = runtimeClasspath }
         main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.DiscordUploaderKt"
@@ -139,28 +136,11 @@ tasks {
         }
     }
 
-    val uploadBintray by registering(JavaExec::class) task@{
-        group = "upload"
-
-        dependsOn(checkLanguages)
-        checkTokens()
-
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.BintrayUploaderKt"
-
-        if ("BINTRAY_KEY" in project.extra) {
-            environment("BINTRAY_KEY", project.extra["BINTRAY_KEY"] as String)
-        } else {
-            enabled = false
-        }
-    }
-
     create("upload") {
         group = "upload"
 
         dependsOn(check)
 
-        dependsOn(uploadBintray)
         dependsOn(uploadDiscord)
     }
 }

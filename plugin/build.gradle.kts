@@ -46,12 +46,6 @@ dependencies {
     implementation(group = "com.github.cbyrneee", name = "DiscordIPC", version = versionIpc)
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    }
-
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
@@ -130,7 +124,6 @@ tasks {
     runIde {
         // Force a specific icon source
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "local:${project(":icons").parent!!.projectDir.absolutePath}"
-        // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "bintray:almightyalpaca/JetBrains-Discord-Integration/Icons"
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.source"] = "classpath:discord"
 
         // Force a specific rpc connection type
