@@ -59,11 +59,6 @@ Here is a list of all the variables that you can use:
 | Not available
 | Available
 
-| `$FileName`
-| Not available
-| Not available
-| Available
-
 | `$FileNameUnique`
 | Not available
 | Not available
