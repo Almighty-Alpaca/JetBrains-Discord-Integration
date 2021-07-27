@@ -1,3 +1,11 @@
+## v1.7.0
+- Add option to show a simple "Idling" message instead of hiding everything when afk (#163)
+- Support for Apple Silicon (#166)
+- Support for IntelliJ version 2021.2 (#159, #164)
+- Enhance template documentation (#155)
+- Better icon search order (#147) 
+- Better error handling in templates
+
 ## v1.6.1
 - Fix unneeded dependencies inflating plugin size 
 
