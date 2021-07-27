@@ -41,7 +41,7 @@ repositories {
 dependencies {
     val versionJda: String by project
     val versionOkHttp: String by project
-//    val versionJdaUtilities: String by project
+    // val versionJdaUtilities: String by project
     val versionKonf: String by project
     val versionLogback: String by project
 
@@ -52,6 +52,7 @@ dependencies {
     implementation(kotlin(module = "script-util"))
     implementation(kotlin(module = "compiler-embeddable"))
     implementation(kotlin(module = "scripting-compiler-embeddable"))
+    implementation(kotlin(module = "script-runtime"))
 
     // JDA (without audio)
     implementation(group = "net.dv8tion", name = "JDA", version = versionJda) {
@@ -59,7 +60,7 @@ dependencies {
     }
 
     // JDA-Utilities
-//    implementation(group = "com.jagrosh", name = "jda-utilities-command", version = versionJdaUtilities)
+    // implementation(group = "com.jagrosh", name = "jda-utilities-command", version = versionJdaUtilities)
 
     // Konf (dependencies for unused formats removed to reduce size)
     implementation(group = "com.uchuhimo", name = "konf", version = versionKonf) {
