@@ -75,7 +75,7 @@ sourceSets {
 
 // https://github.com/gradle/gradle/issues/820
 configurations {
-    compile {
+    api {
         setExtendsFrom(extendsFrom.filter { it != antlr.get() })
     }
 }
