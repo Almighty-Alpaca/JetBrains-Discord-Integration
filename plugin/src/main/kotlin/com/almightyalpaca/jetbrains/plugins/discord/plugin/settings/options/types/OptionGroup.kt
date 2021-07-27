@@ -83,9 +83,9 @@ class OptionGroup(description: String) : Option<Group>(description), OptionHolde
 
     override fun writeXml(element: Element, key: String) {
         for ((childKey, option) in options) {
-            if (!option.isDefault) {
+            // if (!option.isDefault) {
                 option.writeXml(element, childKey)
-            }
+            // }
         }
     }
 

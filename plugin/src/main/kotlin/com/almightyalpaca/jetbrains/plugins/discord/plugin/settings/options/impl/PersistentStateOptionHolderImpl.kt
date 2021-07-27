@@ -20,13 +20,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import org.jdom.Element
 
 abstract class PersistentStateOptionHolderImpl : PersistentStateComponent<Element>, OptionHolderImpl() {
-    override fun getState(): Element? {
-        val state = Element("dummy")
-
-        writeExternal(state)
-
-        return state
-    }
+    override fun getState(): Element? = Element("dummy").apply(::writeExternal)
 
     override fun loadState(state: Element): Unit = readExternal(state)
 }

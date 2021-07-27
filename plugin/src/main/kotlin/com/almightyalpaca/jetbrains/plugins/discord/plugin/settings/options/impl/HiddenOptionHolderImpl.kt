@@ -37,9 +37,9 @@ open class HiddenOptionHolderImpl : OptionHolder {
 
     fun writeExternal(element: Element) {
         for ((key, option) in options) {
-            if (!option.isDefault) {
-                option.writeXml(element, key)
-            }
+            // if (!option.isDefault) {
+            option.writeXml(element, key)
+            // }
         }
     }
 }
