@@ -92,14 +92,6 @@ tasks {
             sequenceOf("alpha", "beta", "rc", "cr", "m", "preview", "eap", "pr", "M")
                 .map { qualifier -> Regex("""[+_.-]?$qualifier[.\d-_]*$""", RegexOption.IGNORE_CASE) }
                 .any { regex -> regex.containsMatchIn(candidate.version) }
-                .apply {
-                    if (!this) {
-                        println("Accepting ${candidate.version}")
-                    }
-
-
-                    this
-                }
         }
 
         rejectVersionIf { candidate.group.startsWith("org.jetbrains.kotlin") && candidate.version != currentVersion }
@@ -108,7 +100,7 @@ tasks {
     withType<Wrapper> {
         val versionGradle: String by project
 
-        distributionType = Wrapper.DistributionType.ALL
+        distributionType = Wrapper.DistributionType.BIN
         gradleVersion = versionGradle
     }
 
