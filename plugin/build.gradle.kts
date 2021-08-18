@@ -73,6 +73,8 @@ val isCI by lazy { System.getenv("CI") != null }
 intellij {
     val versionIde: String by project
 
+    pluginName(rootProject.name)
+
     version.set(versionIde)
 
     downloadSources.set(!isCI)
