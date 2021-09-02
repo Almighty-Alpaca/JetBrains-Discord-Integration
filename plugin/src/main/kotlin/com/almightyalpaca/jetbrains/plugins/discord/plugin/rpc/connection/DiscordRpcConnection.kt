@@ -86,7 +86,7 @@ class DiscordRpcConnection(
         DiscordRPC.INSTANCE.Discord_Initialize(appId.toString(), this, false, null)
 
         callbackRunner = Executors.newSingleThreadScheduledExecutor()
-        callbackRunner.scheduleWithFixedDelay(delay = 2, unit = TimeUnit.SECONDS, command = this::runCallbacks)
+        callbackRunner.scheduleWithFixedDelay(delay = 2, unit = TimeUnit.SECONDS, action = this::runCallbacks)
     }
 
     private fun runCallbacks() {

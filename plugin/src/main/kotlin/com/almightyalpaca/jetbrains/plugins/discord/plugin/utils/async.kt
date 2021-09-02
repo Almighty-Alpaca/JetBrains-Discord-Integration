@@ -21,33 +21,24 @@ import com.intellij.openapi.application.runReadAction
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import javax.swing.SwingUtilities
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, command: () -> Unit): ScheduledFuture<*> =
-    scheduleWithFixedDelay(Runnable(command), initialDelay, delay, unit)
+fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, action: () -> Unit): ScheduledFuture<*> =
+    scheduleWithFixedDelay(Runnable(action), initialDelay, delay, unit)
 
-suspend fun <T> invokeOnEventThread(runnable: () -> T): T = when {
-    ApplicationManager.getApplication()?.isDispatchThread != false && SwingUtilities.isEventDispatchThread() -> runnable()
-    else -> suspendCoroutine { continuation ->
-        SwingUtilities.invokeLater {
+suspend fun <T> invokeOnEventThread(action: () -> T): T = invokeWithin(action, ApplicationManager.getApplication()::invokeLater)
+
+suspend fun <T> invokeReadAction(action: () -> T): T = invokeWithin(action, ::runReadAction)
+
+suspend inline fun <T> invokeWithin(crossinline action: () -> T, crossinline environment: (() -> Unit) -> Unit): T =
+    suspendCoroutine { continuation ->
+        environment {
             try {
-                continuation.resume(runnable())
+                continuation.resume(action())
             } catch (e: Exception) {
                 continuation.resumeWithException(e)
             }
         }
     }
-}
-
-suspend fun <T> invokeReadAction(runnable: () -> T): T = suspendCoroutine { continuation ->
-    runReadAction {
-        try {
-            continuation.resume(runnable())
-        } catch (e: Exception) {
-            continuation.resumeWithException(e)
-        }
-    }
-}
