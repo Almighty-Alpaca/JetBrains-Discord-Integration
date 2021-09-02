@@ -52,7 +52,7 @@ tasks {
     val minimizedJar by registering(ShadowJar::class) {
         group = "build"
 
-        archiveClassifier.set("minimized")
+        archiveClassifier("minimized")
 
         from(sourceSets.main.map(SourceSet::getOutput))
 

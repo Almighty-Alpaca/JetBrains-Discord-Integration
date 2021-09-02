@@ -75,15 +75,15 @@ intellij {
 
     pluginName(rootProject.name)
 
-    version.set(versionIde)
+    version(versionIde)
 
-    downloadSources.set(!isCI)
+    downloadSources(!isCI)
 
-    updateSinceUntilBuild.set(false)
+    updateSinceUntilBuild(false)
 
-    sandboxDir.set("${project.rootDir.absolutePath}/.sandbox")
+    sandboxDir("${project.rootDir.absolutePath}/.sandbox")
 
-    instrumentCode.set(false)
+    instrumentCode(false)
 
     plugins.add("git4idea")
 
@@ -135,7 +135,7 @@ tasks {
     val minimizedJar by registering(ShadowJar::class) {
         group = "build"
 
-        archiveClassifier.set("minimized")
+        archiveClassifier("minimized")
 
         from(sourceSets.main.map(org.gradle.api.tasks.SourceSet::getOutput))
 
@@ -147,8 +147,8 @@ tasks {
     }
 
     patchPluginXml {
-        changeNotes.set(readInfoFile(project.file("changelog.md")))
-        pluginDescription.set(readInfoFile(project.file("description.md")))
+        changeNotes(readInfoFile(project.file("changelog.md")))
+        pluginDescription(readInfoFile(project.file("description.md")))
     }
 
     runIde {
@@ -165,20 +165,20 @@ tasks {
 
     publishPlugin {
         if (project.extra.has("JETBRAINS_TOKEN")) {
-            token.set(project.extra["JETBRAINS_TOKEN"] as String?)
+            token(project.extra["JETBRAINS_TOKEN"] as String)
         } else {
             enabled = false
         }
 
         if (!(version as String).matches(Regex("""\d+\.\d+\.\d+"""))) {
-            channels.set(listOf("eap"))
+            channels("eap")
         } else {
-            channels.set(listOf("default", "eap"))
+            channels(listOf("default", "eap"))
         }
     }
 
     buildPlugin {
-        archiveBaseName.set(rootProject.name)
+        archiveBaseName(rootProject.name)
     }
 
     buildSearchableOptions {
@@ -186,14 +186,14 @@ tasks {
     }
 
     jarSearchableOptions {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("options")
+        archiveBaseName(project.name)
+        archiveClassifier("options")
     }
 
     prepareSandbox task@{
         dependsOn(minimizedJar)
 
-        pluginJar.set(minimizedJar.flatMap { it.archiveFile })
+        pluginJar(minimizedJar.flatMap { it.archiveFile })
     }
 
     build {
