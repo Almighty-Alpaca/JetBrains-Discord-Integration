@@ -31,17 +31,12 @@ val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 dependencies {
     val versionCommonsIo: String by project
     val versionJackson: String by project
-    val versionOkHttp: String by project
     val versionIpc: String by project
     val versionRpc: String by project
     val versionJUnit: String by project
     val versionAntlr: String by project
 
-    implementation(project(path = ":icons", configuration = "minimizedJar")) {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
-    }
+    implementation(project(path = ":icons", configuration = "minimizedJar"))
 
     implementation(group = "com.github.cbyrneee", name = "DiscordIPC", version = versionIpc)
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
@@ -50,8 +45,8 @@ dependencies {
 
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
 
-    antlr("org.antlr", name = "antlr4", version = versionAntlr)
-    implementation("org.antlr", name = "antlr4-runtime", version = versionAntlr)
+    antlr(group = "org.antlr", name = "antlr4", version = versionAntlr)
+    implementation(group = "org.antlr", name = "antlr4-runtime", version = versionAntlr)
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
@@ -70,13 +65,6 @@ sourceSets {
         java {
             srcDir(generatedJavaSourceDir)
         }
-    }
-}
-
-// https://github.com/gradle/gradle/issues/820
-configurations {
-    api {
-        setExtendsFrom(extendsFrom.filter { it != antlr.get() })
     }
 }
 
@@ -99,6 +87,46 @@ intellij {
 
     // For testing with a custom theme
     // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
+}
+
+configurations {
+    // https://github.com/gradle/gradle/issues/820
+    api {
+        setExtendsFrom(extendsFrom.filter { it != antlr.get() })
+    }
+
+    // Replace Kotlin with the one provided by IntelliJ
+    all {
+        if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
+            return@all
+        }
+
+        resolutionStrategy.dependencySubstitution {
+            val ideaDependency = intellij.getIdeaDependency(project).let { "com.jetbrains:${it.name}:${it.version}" }
+
+            val ideaModules = listOf(
+                "org.jetbrains.kotlin:kotlin-reflect",
+                "org.jetbrains.kotlin:kotlin-stdlib",
+                "org.jetbrains.kotlin:kotlin-stdlib-common",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
+                "org.jetbrains.kotlin:kotlin-test",
+                "org.jetbrains.kotlin:kotlin-test-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
+                "org.slf4j:slf4j-api"
+            )
+
+            all action@{
+                val requested = requested as? ModuleComponentSelector ?: return@action
+
+                if ("${requested.group}:${requested.module}" in ideaModules) {
+                    useTarget(ideaDependency)
+                }
+            }
+        }
+    }
 }
 
 tasks {
@@ -129,6 +157,8 @@ tasks {
         // Force a specific rpc connection type
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "rpc"
         // environment["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"] = "ipc"
+
+        enableAssertions = true
     }
 
     publishPlugin {
@@ -147,6 +177,10 @@ tasks {
 
     buildPlugin {
         archiveBaseName.set(rootProject.name)
+    }
+
+    buildSearchableOptions {
+        enabled = false
     }
 
     jarSearchableOptions {
