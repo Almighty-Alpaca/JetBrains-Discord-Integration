@@ -25,7 +25,10 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.Proje
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeOnEventThread
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.application.runReadAction
@@ -75,14 +78,9 @@ class DataService {
             }
         }
 
-        val project: Project?
-        val editor: FileEditor?
+        val project: Project? = IdeFocusManager.getGlobalInstance().lastFocusedFrame?.project
 
-        val window = IdeFocusManager.getGlobalInstance().lastFocusedFrame
-
-        project = window?.project
-
-        editor = project?.let { invokeOnEventThread { FileEditorManager.getInstance(project)?.selectedEditor } }
+        val editor: FileEditor? = project?.let { invokeOnEventThread { FileEditorManager.getInstance(project)?.selectedEditor } }
 
         if (project != null) {
             if (project.settings.show.getValue() <= ProjectShow.DISABLE) {
@@ -105,7 +103,7 @@ class DataService {
                         val fileName = file.name
                         val fileUniqueName = when (DumbService.isDumb(project)) {
                             true -> fileName
-                            false -> invokeReadAction {
+                            false -> invokeOnEventThread {
                                 tryOrDefault(fileName) {
                                     EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
                                 }
