@@ -17,7 +17,6 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -28,17 +27,28 @@ import kotlin.coroutines.suspendCoroutine
 fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: Long = delay, unit: TimeUnit, action: () -> Unit): ScheduledFuture<*> =
     scheduleWithFixedDelay(Runnable(action), initialDelay, delay, unit)
 
-suspend fun <T> invokeOnEventThread(action: () -> T): T = invokeWithin(action, ApplicationManager.getApplication()::invokeLater)
+suspend fun <T> invokeOnEventThread(action: () -> T): T {
+    val app = ApplicationManager.getApplication()
 
-suspend fun <T> invokeReadAction(action: () -> T): T = invokeWithin(action, ::runReadAction)
+    return when {
+        app.isDispatchThread -> action()
+        else -> invokeSuspending(action, app::invokeLater)
+    }
+}
 
-suspend inline fun <T> invokeWithin(crossinline action: () -> T, crossinline environment: (() -> Unit) -> Unit): T =
+suspend fun <T> invokeReadAction(action: () -> T): T {
+    val app = ApplicationManager.getApplication()
+
+    return invokeSuspending(action, app::runReadAction)
+}
+
+suspend fun <T> invokeSuspending(action: () -> T, executor: (Runnable) -> Unit): T =
     suspendCoroutine { continuation ->
-        environment {
+        executor(Runnable {
             try {
                 continuation.resume(action())
             } catch (e: Exception) {
                 continuation.resumeWithException(e)
             }
-        }
+        })
     }
