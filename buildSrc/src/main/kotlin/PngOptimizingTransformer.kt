@@ -74,7 +74,9 @@ class PngOptimizingTransformer(
         val data = IOUtils.toByteArray(context.`is`)
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
+        // For tome reason toULong() can't be resolved here
+        // val hash = LongHashFunction.xx().hashBytes(data).toULong().toString()
+        val hash = java.lang.Long.toUnsignedString(LongHashFunction.xx().hashBytes(data))
 
         val cacheFile = cacheDir.resolve("$hash-$size")
 

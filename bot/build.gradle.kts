@@ -30,7 +30,7 @@ docker {
 }
 
 application {
-    mainClass.set("com.almightyalpaca.jetbrains.plugins.discord.bot.MainKt")
+    mainClass("com.almightyalpaca.jetbrains.plugins.discord.bot.MainKt")
 }
 
 repositories {
