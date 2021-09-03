@@ -181,10 +181,6 @@ tasks {
         archiveBaseName(rootProject.name)
     }
 
-    buildSearchableOptions {
-        enabled = false
-    }
-
     jarSearchableOptions {
         archiveBaseName(project.name)
         archiveClassifier("options")
