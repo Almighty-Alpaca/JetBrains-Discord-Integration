@@ -17,18 +17,17 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import java.awt.event.HierarchyEvent
 import javax.swing.ImageIcon
 import javax.swing.JLabel
-import kotlin.coroutines.CoroutineContext
+import javax.swing.Timer
 
-class JPreview : JLabel(), CoroutineScope {
-    private val parentJob: Job = SupervisorJob()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + parentJob
+class JPreview : JLabel() {
 
     private val preview = PreviewRenderer()
+
+    private val worker = Timer(100) { update() }
 
     var type: Renderer.Type.Application = Renderer.Type.Application
         set(value) {
@@ -36,31 +35,34 @@ class JPreview : JLabel(), CoroutineScope {
             update()
         }
 
-    private var updateJob: Job? = null
-
     init {
         icon = ImageIcon(preview.dummy)
 
         update(true)
+
+        worker.start()
+
+        addHierarchyListener { e ->
+            if (e.hasChangeFlag(HierarchyEvent.SHOWING_CHANGED)) {
+                if (isShowing) {
+                    worker.start()
+                } else {
+                    worker.stop()
+                }
+            }
+        }
     }
 
     @Synchronized
     fun update(force: Boolean = false) {
-        updateJob?.cancel()
+        if (isShowing) {
+            val (modified, image) = runBlocking { preview.draw(type, force) }
 
-        updateJob = launch {
-            if (isShowing) {
-                val (modified, image) = preview.draw(type, force)
-
-                if (modified) {
-                    icon = ImageIcon(image)
-                }
-            }
-
-            updateJob = launch {
-                delay(1000)
-                update()
+            if (modified) {
+                icon = ImageIcon(image)
             }
         }
     }
 }
+
+private fun HierarchyEvent.hasChangeFlag(flag: Int) = (changeFlags and flag.toLong()) != 0L

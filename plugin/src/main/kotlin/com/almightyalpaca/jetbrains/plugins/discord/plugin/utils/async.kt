@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -30,25 +31,35 @@ fun ScheduledExecutorService.scheduleWithFixedDelay(delay: Long, initialDelay: L
 suspend fun <T> invokeOnEventThread(action: () -> T): T {
     val app = ApplicationManager.getApplication()
 
-    return when {
-        app.isDispatchThread -> action()
-        else -> invokeSuspending(action, app::invokeLater)
-    }
+    return invokeSuspendingOn(action, app::isDispatchThread, app::invokeLater)
 }
 
 suspend fun <T> invokeReadAction(action: () -> T): T {
     val app = ApplicationManager.getApplication()
 
-    return invokeSuspending(action, app::runReadAction)
+    return invokeSuspendingOn(action, app::isReadAccessAllowed, app::runReadAction)
 }
 
-suspend fun <T> invokeSuspending(action: () -> T, executor: (Runnable) -> Unit): T =
-    suspendCoroutine { continuation ->
-        executor(Runnable {
-            try {
-                continuation.resume(action())
-            } catch (e: Exception) {
-                continuation.resumeWithException(e)
-            }
-        })
+suspend fun <T> invokeWriteAction(action: () -> T): T {
+    val app = ApplicationManager.getApplication()
+
+    return invokeSuspendingOn(action, app::isWriteAccessAllowed, app::runWriteAction)
+}
+
+suspend fun <T> invokeSuspendingOn(action: () -> T, executorNotRequired: () -> Boolean, executor: (Runnable) -> Unit): T =
+    if (executorNotRequired()) {
+        action()
+    } else {
+        suspendCoroutine { continuation ->
+            executor(Runnable { continuation.resumeWithAction(action) })
+        }
     }
+
+fun <T> Continuation<T>.resumeWithAction(action: () -> T) {
+    try {
+        val result = action()
+        resume(result)
+    } catch (e: Exception) {
+        resumeWithException(e)
+    }
+}

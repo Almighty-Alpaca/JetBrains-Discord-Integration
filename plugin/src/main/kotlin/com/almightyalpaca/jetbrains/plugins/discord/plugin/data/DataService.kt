@@ -50,7 +50,7 @@ val dataService: DataService
 
 @Service
 class DataService {
-    suspend fun getData(mode: Renderer.Mode) = tryOrNull { mode.run { getData() } }
+    suspend fun getData(mode: Renderer.Mode): Data? = tryOrNull { mode.run { getData() } }
 
     @JvmName("getDataInternal")
     private suspend fun (Renderer.Mode).getData(): Data {
@@ -80,7 +80,11 @@ class DataService {
 
         val project: Project? = IdeFocusManager.getGlobalInstance().lastFocusedFrame?.project
 
-        val editor: FileEditor? = project?.let { invokeOnEventThread { FileEditorManager.getInstance(project)?.selectedEditor } }
+        val editor: FileEditor? = project?.let {
+            invokeOnEventThread {
+                FileEditorManager.getInstance(project)?.selectedEditor
+            }
+        }
 
         if (project != null) {
             if (project.settings.show.getValue() <= ProjectShow.DISABLE) {

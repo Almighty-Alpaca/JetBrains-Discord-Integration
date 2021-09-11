@@ -91,7 +91,10 @@ class PreviewRenderer {
 
     @Synchronized
     suspend fun draw(type: Renderer.Type.Application, force: Boolean = false): ModifiedImage {
-        val data = dataService.getData(Renderer.Mode.PREVIEW)?.completeMissingData() ?: return ModifiedImage(false, image)
+        val data = dataService
+            .getData(Renderer.Mode.PREVIEW)
+            ?.completeMissingData()
+            ?: return ModifiedImage(false, image)
 
         val context = RenderContext(sourceService.source, data, Renderer.Mode.PREVIEW)
         val renderer = type.createRenderer(context)
