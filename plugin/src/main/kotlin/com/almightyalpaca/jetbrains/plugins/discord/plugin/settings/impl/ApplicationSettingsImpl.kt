@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 
+@Suppress("unused")
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
     override val show by check("Enable Rich Presence", true)
@@ -44,6 +45,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     /* ---------- Application Tab ---------- */
 
     private val applicationTab = tabs["Application"]
+    private val applicationInfo by applicationTab.info("Visible when no project is open")
 
     private val applicationDetailsToggle by applicationTab.toggleable<PresenceText>()
     override val applicationDetails by applicationDetailsToggle.toggle { it == PresenceText.CUSTOM }.selection("First line", PresenceText.Application1)
@@ -70,6 +72,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     /* ---------- Project Tab ---------- */
 
     private val projectTab = tabs["Project"]
+    private val projectInfo by projectTab.info("Visible when a project is open but no editor")
 
     private val projectDetailsToggle by projectTab.toggleable<PresenceText>()
     override val projectDetails by projectDetailsToggle.enableOn(PresenceText.CUSTOM).selection("First line", PresenceText.Project1)
@@ -96,6 +99,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     /* ---------- File Tab ---------- */
 
     private val fileTab = tabs["File"]
+    private val fileInfo by fileTab.info("Visible when a file is open in an editor")
 
     private val fileDetailsToggle by fileTab.toggleable<PresenceText>()
     override val fileDetails by fileDetailsToggle.enableOn(PresenceText.CUSTOM).selection("First line", PresenceText.File1)
