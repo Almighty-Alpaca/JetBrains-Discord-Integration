@@ -55,7 +55,7 @@ class ThemeDialog(private val themes: ThemeMap, private val initialValue: String
         title = "Themes"
     }
 
-    override fun createCenterPanel(): JComponent? = JPanel().apply panel@{
+    override fun createCenterPanel(): JComponent = JPanel().apply panel@{
         // val tabs = JTabbedPane().apply {
         //     for (themeChooser in themes.values) {
         //         val tab = JPanel().apply tab@{
