@@ -35,8 +35,8 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     // override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
 
     private val timeoutOptionPair by timeoutToggle.option.pair()
-    override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", 5, 1..120, format = "# Minutes")
-    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", true)
+    override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", "Time required before idling", 5, 1..120, format = "# Minutes")
+    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", "Reset open time when coming back", true)
 
     private val group by group("Rich Presence Layout")
     private val preview by group.preview()
@@ -125,7 +125,7 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
 
     override val filePrefixEnabled by fileTab.check("Prefix files names with Reading/Editing", true)
 
-    override val fileHideVcsIgnored by fileTab.check("Hide VCS ignored files", false)
+    override val fileHideVcsIgnored by fileTab.check("Hide VCS ignored files", "E.g. files in your .gitignore", false)
 
     override val applicationType by selection("Application name", ApplicationType.IDE_EDITION)
     override val theme by themeChooser("Theme")
