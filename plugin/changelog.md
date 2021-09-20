@@ -1,3 +1,7 @@
+## v1.7.1
+- Fix conflict with other plugins using the same project structure (e.g. Perl) (#192)
+- Fix `Access is allowed from event dispatch thread only` error in commit view (#191)
+
 ## v1.7.0
 - Add option to show a simple "Idling" message instead of hiding everything when afk (#163)
 - Support for Apple Silicon (#166)
