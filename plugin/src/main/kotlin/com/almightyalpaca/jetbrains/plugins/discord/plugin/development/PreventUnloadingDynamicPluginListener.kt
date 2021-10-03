@@ -23,7 +23,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 
 class PreventUnloadingDynamicPluginListener : DynamicPluginListener {
     override fun checkUnloadPlugin(pluginDescriptor: IdeaPluginDescriptor) {
-        DiscordPlugin.LOG.debug("Processing unload event for ${pluginDescriptor.pluginId?.idString}")
+        DiscordPlugin.LOG.debug("Processing unload event for ${pluginDescriptor.pluginId.idString}")
 
         if (pluginDescriptor.pluginId == Plugin.pluginId) {
             DiscordPlugin.LOG.info("Preventing plugin unload")

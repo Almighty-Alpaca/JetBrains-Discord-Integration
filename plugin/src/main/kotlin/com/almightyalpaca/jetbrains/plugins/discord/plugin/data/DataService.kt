@@ -25,10 +25,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.Proje
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeActive
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeOpened
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.time.timeService
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.invokeOnEventThread
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.isVcsIgnored
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrDefault
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.tryOrNull
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.application.runReadAction
@@ -37,7 +34,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
-import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
+import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -107,9 +104,9 @@ class DataService {
                         val fileName = file.name
                         val fileUniqueName = when (DumbService.isDumb(project)) {
                             true -> fileName
-                            false -> invokeOnEventThread {
+                            false -> invokeReadAction {
                                 tryOrDefault(fileName) {
-                                    EditorTabPresentationUtil.getUniqueEditorTabTitle(project, file, null)
+                                    UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(project, file)
                                 }
                             }
                         }
@@ -118,6 +115,7 @@ class DataService {
                         val fileTimeActive = file.timeActive
                         val filePath = file.path
                         val fileIsWriteable = file.isWritable
+
                         val editorIsTextEditor: Boolean
                         val caretLine: Int
                         val lineCount: Int
