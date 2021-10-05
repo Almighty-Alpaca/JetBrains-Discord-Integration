@@ -39,11 +39,6 @@ Here is a list of all the variables that you can use:
 | Available
 | Available
 
-| `$ProjectName`
-| Not available
-| Available
-| Available
-
 | `$ProjectDescription`
 | Not available
 | Available
