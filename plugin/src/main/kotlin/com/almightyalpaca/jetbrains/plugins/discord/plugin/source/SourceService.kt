@@ -19,6 +19,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.source
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.local.LocalSource
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import java.nio.file.Paths
@@ -35,7 +36,7 @@ class SourceService {
         val platform = env[0]
         val location = env.getOrNull(1)
 
-        source = when (platform.toLowerCase()) {
+        source = when (platform.lowercase()) {
             "local" -> LocalSource(Paths.get(location ?: throw IllegalStateException("LocalSource needs a path")))
             "classpath" -> ClasspathSource(location ?: "discord")
             else -> ClasspathSource("discord")

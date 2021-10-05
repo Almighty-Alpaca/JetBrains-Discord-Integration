@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.application.ApplicationNamesInfo
 import java.util.*
 
@@ -47,7 +48,7 @@ enum class ApplicationType(override val text: String, override val description: 
     val applicationName by lazy {
         applicationNameReadable.split(' ')
             .asSequence()
-            .map { it.toLowerCase(Locale.ENGLISH) }
+            .map { it.lowercase() }
             .joinToString(separator = "_")
     }
 }

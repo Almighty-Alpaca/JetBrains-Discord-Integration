@@ -22,6 +22,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.Discor
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.DiscordRpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -29,6 +30,7 @@ import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.*
 
 val rpcService: RpcService
     get() = service()
@@ -146,11 +148,11 @@ class RpcService : DisposableCoroutineScope {
     }
 
     private fun createConnection(appId: Long): DiscordConnection =
-        when (System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.toLowerCase()) {
+        when (System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.lowercase()) {
             "rpc" -> DiscordRpcConnection(appId, ::updateUser)
             "ipc" -> DiscordIpcConnection(appId, ::updateUser)
             else -> {
-                when (System.getProperty("os.arch")?.toLowerCase() == "aarch64") {
+                when (System.getProperty("os.arch")?.lowercase() == "aarch64") {
                     true -> DiscordIpcConnection(appId, ::updateUser)
                     false -> DiscordRpcConnection(appId, ::updateUser)
                 }

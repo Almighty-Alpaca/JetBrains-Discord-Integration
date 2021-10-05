@@ -17,6 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.utils
 
 import java.awt.FontMetrics
+import java.util.*
 import java.util.stream.IntStream
 
 fun CharSequence.find(char: Char, ignoreCase: Boolean = false): IntStream =
@@ -73,3 +74,5 @@ fun verifyingLength(initialValue: String?, range: IntRange) =
 fun CharSequence.isInvisible(): Boolean {
     return indices.all { this[it].isWhitespace() || this[it] == '\u200B' }
 }
+
+fun String.lowercase() = toLowerCase(Locale.ROOT)

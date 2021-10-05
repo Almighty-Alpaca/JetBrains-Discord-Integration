@@ -176,7 +176,7 @@ class SelectionOption<T>(
     }
 
     override val isModified
-        get() = currentValue != componentImpl.selectedItem
+        get() = componentImpl.selectedItem != currentValue
 
     @Suppress("UNCHECKED_CAST")
     override fun apply() {
