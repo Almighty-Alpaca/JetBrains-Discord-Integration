@@ -23,10 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.intellij.ui.JBIntSpinner
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import javax.swing.JComponent
-import javax.swing.JPanel
-import javax.swing.JSpinner
-import javax.swing.SpinnerNumberModel
+import javax.swing.*
 
 fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled: Boolean = true) =
     OptionProviderImpl(this, IntSpinnerOption(text, description, initialValue, step, minValue, maxValue, format, enabled))
@@ -63,7 +60,10 @@ class IntSpinnerOption(
 
     override val component: JComponent by lazy {
         JPanel().apply {
-            layout = GridBagLayout()
+            layout = BoxLayout(this, BoxLayout.X_AXIS)
+
+
+            toolTipText = description
 
             val label = label(text).apply {
                 this.isEnabled = enabled

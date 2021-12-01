@@ -22,24 +22,31 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])
 class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolderImpl() {
     override val show by check("Enable Rich Presence", true)
 
-    private val timeoutToggle by toggleable<IdleVisibility>(false)
+    /* ========== Timeout / Idle ========== */
 
-    override val idle by timeoutToggle.toggle { it != IdleVisibility.IGNORE }.selection(text = "When idle", initialValue = IdleVisibility.IDLE)
+    private val timeoutOptionPair by pair()
+    override val timeoutMinutes by timeoutOptionPair.first.spinner(
+        "Time required before considered idle",
+        "Time without any activity before the plugin marks the session as idle. Changes mighty require a restart to take effect",
+        5,
+        1..24 * 60,
+        format = "# " + "Minutes"
+    )
+    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time when returning", "Reset open time for the application as well as open projects and files", true)
 
-    // override val timeoutEnabled by timeoutToggle.toggle.check("Hide Rich Presence after inactivity", true)
+    override val idle by selection(text = "While idle", "While the session is marked as idle", initialValue = IdleVisibility.IDLE)
 
-    private val timeoutOptionPair by timeoutToggle.option.pair()
-    override val timeoutMinutes by timeoutOptionPair.first.spinner("Timeout", "Time required before idling", 5, 1..120, format = "# Minutes")
-    override val timeoutResetTimeEnabled by timeoutOptionPair.second.check("Reset open time", "Reset open time when coming back", true)
+    /* ========== Layout ========== */
 
-    private val group by group("Rich Presence Layout")
-    private val preview by group.preview()
+    private val layoutGroup by group("Layout")
+    private val preview by layoutGroup.preview()
     private val tabs by preview.tabbed()
 
     /* ---------- Application Tab ---------- */
@@ -126,6 +133,8 @@ class ApplicationSettingsImpl : ApplicationSettings, PersistentStateOptionHolder
     override val filePrefixEnabled by fileTab.check("Prefix files names with Reading/Editing", true)
 
     override val fileHideVcsIgnored by fileTab.check("Hide VCS ignored files", "E.g. files in your .gitignore", false)
+
+    /* ========== General Settings ========== */
 
     override val applicationType by selection("Application name", ApplicationType.IDE_EDITION)
     override val theme by themeChooser("Theme")
