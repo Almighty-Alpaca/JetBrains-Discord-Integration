@@ -95,7 +95,7 @@ class SelectionOption<T>(
                     index: Int,
                     isSelected: Boolean,
                     cellHasFocus: Boolean
-                ): Component? {
+                ): Component {
                     super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
 
                     value as UiValueType

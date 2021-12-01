@@ -40,7 +40,7 @@ fun OptionCreator<in CustomTemplate>.template(text: String, initialValue: String
 
 class TemplateOption(text: String, description: String?, initialValue: String) : SimpleOption<CustomTemplate>(text, description, CustomTemplate(initialValue)) {
 
-    private val textFieldInfoExtension = ExtendableTextComponent.Extension.create(AllIcons.General.Information, "Supports templates") {
+    private val textFieldInfoExtension = ExtendableTextComponent.Extension.create(AllIcons.General.Information, "Supports templates (click for more info)") {
         Desktop.getDesktop().browse(URI.create(Plugin.branchBase + "/plugin/templates.adoc"))
     }
 

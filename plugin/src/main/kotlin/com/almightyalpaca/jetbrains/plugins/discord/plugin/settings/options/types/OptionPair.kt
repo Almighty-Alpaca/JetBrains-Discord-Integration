@@ -48,8 +48,6 @@ class OptionPair : Option<Pair>(""), Pair.Provider {
             add(first.second.component)
             add(Box.createHorizontalStrut(20))
             add(second.second.component)
-
-            add(Box.createHorizontalGlue())
         }
     }
     override var isComponentEnabled: Boolean = true

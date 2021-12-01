@@ -38,8 +38,9 @@ fun createErrorMessage(message: String): JComponent = JPanel().apply warning@{
     border = JBUI.Borders.merge(JBUI.Borders.empty(10), JBUI.Borders.customLine(Color(255, 25, 25, 200)), true)
 }
 
-fun label(text: String): JComponent = JBLabel(text).apply {
+fun label(text: String, description: String? = null): JComponent = JBLabel(text).apply {
     border = JBUI.Borders.emptyRight(10)
+    toolTipText = description
 }
 
 operator fun <T> DefaultComboBoxModel<T>.contains(o: Any?) = getIndexOf(o) != -1

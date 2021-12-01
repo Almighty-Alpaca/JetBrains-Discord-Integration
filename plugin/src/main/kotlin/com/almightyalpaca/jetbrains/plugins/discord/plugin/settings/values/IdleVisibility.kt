@@ -26,7 +26,7 @@ enum class IdleVisibility(
     override val description: String? = null
 ) : UiValueType {
     // Do not reorder these, some logic depends on the order
-    IGNORE("Ignore"),
-    IDLE("Show Idling"),
-    HIDE("Hide Completely");
+    IGNORE("Keep showing rich presence"),
+    IDLE("Show \"Idling\""),
+    HIDE("Hide completely");
 }

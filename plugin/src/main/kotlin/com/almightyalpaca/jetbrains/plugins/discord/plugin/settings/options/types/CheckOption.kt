@@ -32,6 +32,7 @@ class CheckOption(text: String, description: String?, initialValue: Boolean, pri
     override val componentImpl by lazy {
         JBCheckBox(text, currentValue).apply {
             this.isEnabled = enabled
+            this.toolTipText = description
         }
     }
 
