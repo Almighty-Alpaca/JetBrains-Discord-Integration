@@ -1,3 +1,8 @@
+## v1.8.0
+- Fix compatibility with IntelliJ version 2021.3 (#204)
+- Add support for DataSpell (#205)
+- Make some settings easier to understand (#206)
+
 ## v1.7.1
 - Fix conflict with other plugins using the same project structure (e.g. Perl) (#192)
 - Fix `Access is allowed from event dispatch thread only` error in commit view (#191)
@@ -144,7 +149,7 @@
 - Added Git
 - Fixed ConcurrentModificationExceptions when running multiple instances
 
-## v0.5.0 - Settings and more
+## v0.5.0
 - Added Vue.js
 - Fixed file name change handling
 - Fixed rare issue with locale settings (#13)
