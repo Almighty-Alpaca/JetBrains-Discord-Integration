@@ -33,7 +33,7 @@ pluginManagement {
     }
 
     val versionGitVersions: String by properties
-    val versionIntelliJ: String by properties
+    val versionIntelliJGradle: String by properties
     val versionShadow: String by properties
     val versionVersions: String by properties
     val versionKotlin: String by properties
@@ -41,7 +41,7 @@ pluginManagement {
     plugins {
         kotlin("jvm") version versionKotlin
         id("com.github.ben-manes.versions") version versionVersions
-        id("org.jetbrains.intellij") version versionIntelliJ
+        id("org.jetbrains.intellij") version versionIntelliJGradle
         id("com.github.johnrengelman.shadow") version versionShadow
         id("com.palantir.git-version") version versionGitVersions
     }

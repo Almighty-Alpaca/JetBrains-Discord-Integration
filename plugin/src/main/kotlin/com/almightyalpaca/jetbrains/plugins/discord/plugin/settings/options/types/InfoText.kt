@@ -42,7 +42,7 @@ class InfoText(text: String, bold: Boolean) :
 
     override var componentValue: Unit?
         get() = null
-        set(value) = Unit
+        set(@Suppress("UNUSED_PARAMETER") value) = Unit
 
     override fun addChangeListener(listener: (Unit?) -> Unit) = Unit
 

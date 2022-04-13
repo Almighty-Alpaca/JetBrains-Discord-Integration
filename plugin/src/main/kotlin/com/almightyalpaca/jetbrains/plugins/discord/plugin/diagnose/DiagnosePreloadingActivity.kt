@@ -18,11 +18,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.application.PreloadingActivity
+import com.intellij.openapi.progress.ProgressIndicator
 
-class DiagnoseAppLifecycleListener : AppLifecycleListener {
-    override fun appStarting(projectFromCommandLine: Project?) {
+class DiagnosePreloadingActivity : PreloadingActivity() {
+    override fun preload(indicator: ProgressIndicator) {
         DiscordPlugin.LOG.info("App starting, diagnosing environment")
 
         DiscordPlugin.LOG.debug("Application identifiers: ${ApplicationType.IDE.applicationName}, ${ApplicationType.IDE_EDITION.applicationName}")

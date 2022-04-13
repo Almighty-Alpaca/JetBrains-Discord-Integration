@@ -1,3 +1,6 @@
+## EAP
+- Support IntelliJ version 2022.1
+
 ## v1.8.0
 - Fix compatibility with IntelliJ version 2021.3 (#204)
 - Add support for DataSpell (#205)

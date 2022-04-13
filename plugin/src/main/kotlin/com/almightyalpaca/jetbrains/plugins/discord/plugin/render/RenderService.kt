@@ -54,11 +54,6 @@ class RenderService : DisposableCoroutineScope {
         renderJob = launch {
             DiscordPlugin.LOG.debug("Scheduling render, force=$force")
 
-            if (Disposer.isDisposed(this@RenderService)) {
-                DiscordPlugin.LOG.debug("Skipping render, service already disposed")
-                return@launch
-            }
-
             val data = dataService.getData(Renderer.Mode.NORMAL) ?: return@launch
 
             val context = RenderContext(sourceService.source, data, Renderer.Mode.NORMAL)

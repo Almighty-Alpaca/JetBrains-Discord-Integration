@@ -16,14 +16,16 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.time
 
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
-import com.intellij.ide.plugins.DynamicPluginListener
-import com.intellij.ide.plugins.IdeaPluginDescriptor
+// Implement when dynamic loading works
 
-class TimeDynamicPluginListener : DynamicPluginListener {
-    override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
-        if (pluginDescriptor.pluginId.idString == Plugin.getId()) {
-            timeService.load()
-        }
-    }
-}
+//import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
+//import com.intellij.ide.plugins.DynamicPluginListener
+//import com.intellij.ide.plugins.IdeaPluginDescriptor
+//
+//class TimeDynamicPluginListener : DynamicPluginListener {
+//    override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
+//        if (pluginDescriptor.pluginId.idString == Plugin.getId()) {
+//            timeService.load()
+//        }
+//    }
+//}

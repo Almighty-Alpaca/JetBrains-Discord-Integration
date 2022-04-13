@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.application.PreloadingActivity
+import com.intellij.openapi.progress.ProgressIndicator
 
-class RenderAppLifecycleListener : AppLifecycleListener {
-    override fun appStarting(projectFromCommandLine: Project?) {
+class RenderPreloadingActivity : PreloadingActivity() {
+    override fun preload(indicator: ProgressIndicator) {
         renderService.startRenderClock()
     }
 }

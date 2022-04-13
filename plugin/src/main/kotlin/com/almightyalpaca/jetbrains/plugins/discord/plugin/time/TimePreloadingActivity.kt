@@ -16,11 +16,11 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.time
 
-import com.intellij.ide.AppLifecycleListener
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.application.PreloadingActivity
+import com.intellij.openapi.progress.ProgressIndicator
 
-class TimeAppLifecycleListener : AppLifecycleListener {
-    override fun appStarting(projectFromCommandLine: Project?) {
+class TimePreloadingActivity : PreloadingActivity() {
+    override fun preload(indicator: ProgressIndicator) {
         timeService.load()
     }
 }
