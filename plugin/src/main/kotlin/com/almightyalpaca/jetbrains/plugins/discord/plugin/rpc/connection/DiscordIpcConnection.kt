@@ -59,7 +59,6 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
         }
     }
 
-    @Synchronized
     override suspend fun send(presence: RichPresence?): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Sending new presence")
 
@@ -67,7 +66,6 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
             ipcClient.sendRichPresence(presence?.toNative())
     }
 
-    @Synchronized
     override suspend fun disconnect(): Unit = mutex.withLock {
         DiscordPlugin.LOG.debug("Closing IPC connection")
 

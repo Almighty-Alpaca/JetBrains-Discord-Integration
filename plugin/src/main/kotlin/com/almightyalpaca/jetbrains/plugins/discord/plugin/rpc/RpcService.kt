@@ -82,11 +82,6 @@ class RpcService : DisposableCoroutineScope {
             try {
                 DiscordPlugin.LOG.debugLazy { "Updating presence, forceUpdate=$forceUpdate, forceReconnect=$forceReconnect" }
 
-                if (Disposer.isDisposed(this@RpcService)) {
-                    DiscordPlugin.LOG.debug("Skipping presence update, service already disposed")
-                    return@withLock
-                }
-
                 // TODO: check if this is the source of stuck updates
                 // if (!forceUpdate && !forceReconnect && lastPresence == presence) {
                 //     DiscordPlugin.LOG.debug("Skipping presence update, nothing to do")

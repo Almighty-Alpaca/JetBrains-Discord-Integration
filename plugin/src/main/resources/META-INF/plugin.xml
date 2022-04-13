@@ -27,14 +27,6 @@
 
     <applicationListeners>
         <listener
-                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnoseAppLifecycleListener"
-                topic="com.intellij.ide.AppLifecycleListener"/>
-
-        <listener
-                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderAppLifecycleListener"
-                topic="com.intellij.ide.AppLifecycleListener"/>
-
-        <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.development.PreventUnloadingDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
 
@@ -44,9 +36,7 @@
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeProjectManagerListener"
                 topic="com.intellij.openapi.project.ProjectManagerListener"/>
-        <listener
-                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeAppLifecycleListener"
-                topic="com.intellij.ide.AppLifecycleListener"/>
+
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeFileEditorManagerListener"
                 topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
@@ -77,6 +67,12 @@
 
         <backgroundPostStartupActivity
                 implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications.NotificationPostStartupActivity"/>
+
+        <preloadingActivity implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimePreloadingActivity"/>
+
+        <preloadingActivity implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose.DiagnosePreloadingActivity"/>
+
+        <preloadingActivity implementation="com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderPreloadingActivity"/>
     </extensions>
 
     <actions>
