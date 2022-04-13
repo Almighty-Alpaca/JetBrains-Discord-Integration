@@ -1,4 +1,4 @@
-## EAP
+## v1.9.0
 - Support IntelliJ version 2022.1
 - Add classic Godot icon (#211)
 
