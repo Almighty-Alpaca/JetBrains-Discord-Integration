@@ -156,7 +156,7 @@ class DataService {
                             projectName,
                             projectDescription,
                             projectTimeOpened,
-                            applicationTimeActive,
+                            projectTimeActive,
                             projectSettings,
                             vcsBranch,
                             debuggerActive,
