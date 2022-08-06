@@ -1,3 +1,9 @@
+## v1.10.0
+- Fix `Cannot create listener` exception (#230)
+- Fix active time for projects (#237)
+- Update Zig icon (#239)
+- Update Dart icon (#214)
+
 ## v1.9.0
 - Support IntelliJ version 2022.1 (#221)
 - Add classic Godot icon (#222)
