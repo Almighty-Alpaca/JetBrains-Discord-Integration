@@ -1,6 +1,6 @@
 ## v1.9.0
-- Support IntelliJ version 2022.1
-- Add classic Godot icon (#211)
+- Support IntelliJ version 2022.1 (#221)
+- Add classic Godot icon (#222)
 
 ## v1.8.0
 - Fix compatibility with IntelliJ version 2021.3 (#204)
