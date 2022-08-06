@@ -44,7 +44,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-@ExperimentalCoroutinesApi
 suspend fun main() {
     val token = System.getenv("DISCORD_TOKEN")!!
 
@@ -137,9 +136,18 @@ private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: Str
 }
 
 private fun CoroutineScope.deleteIcon(client: HttpClient, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
-    client.delete<Unit> {
-        url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
+    try {
+        client.delete<Unit> {
+            url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
+        }
     }
+     catch (e: ClientRequestException) {
+         if (e.response.status.value == 404) {
+             // Icon was probably already deleted, eventually consistent™
+         } else {
+             throw e
+         }
+     }
 }
 
 private sealed class DiscordChange {
@@ -148,7 +156,6 @@ private sealed class DiscordChange {
     class Override(val appId: Long, val iconId: Long, val source: ClasspathSource, val path: String, val name: String) : DiscordChange()
 }
 
-@ExperimentalCoroutinesApi
 private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: ClasspathSource, theme: Theme) = async(Dispatchers.IO) {
     supervisorScope {
         val changes = Collections.newSetFromMap<DiscordChange>(ConcurrentHashMap())
@@ -172,10 +179,12 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: Cla
                         println("Create ${theme.id}/$icon ($applicationName)")
                         changes += DiscordChange.Create(applicationId, local.await().getValue(icon), icon)
                     }
+
                     !in local.await() -> {
                         println("Delete ${theme.id}/$icon ($applicationName)")
                         changes += DiscordChange.Delete(applicationId, discord.await().getValue(icon))
                     }
+
                     else -> {
                         launch {
                             if (!contentEqualsAsync(client, source, local.await()[icon], getAssetUrl(applicationId, discord.await()[icon])).await()) {
@@ -194,8 +203,6 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: Cla
     }
 }
 
-@Suppress("BlockingMethodInNonBlockingContext")
-@ExperimentalCoroutinesApi
 private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: ClasspathSource, local: String?, remote: URL) = async(Dispatchers.IO) {
     if (local == null)
         return@async false
@@ -210,7 +217,7 @@ private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: Classp
         println("Error comparing $local with $remote")
         e.printStackTrace()
 
-        true
+        return@async true
     }
 }
 
@@ -232,12 +239,12 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
     val response = client.get<HttpResponse> {
-        url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
+        url(URL("https://discord.com/api/v9/oauth2/applications/$appId/assets"))
     }
 
     val array = ObjectMapper().readTree(response.readBytes()) as ArrayNode
 
-    mapWith(array.size()) { i ->
+    return@async mapWith(array.size()) { i ->
         val node = (array[i] as ObjectNode)
         node["name"].asText() to node["id"].asLong()
     }
