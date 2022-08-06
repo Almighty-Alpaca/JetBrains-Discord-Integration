@@ -30,9 +30,11 @@
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.development.PreventUnloadingDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
 
+        <!--
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeDynamicPluginListener"
                 topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+        -->
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeProjectManagerListener"
                 topic="com.intellij.openapi.project.ProjectManagerListener"/>
