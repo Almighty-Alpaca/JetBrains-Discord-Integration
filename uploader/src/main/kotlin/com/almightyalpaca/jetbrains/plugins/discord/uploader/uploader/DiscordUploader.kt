@@ -232,7 +232,7 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
     val response = client.get<HttpResponse> {
-        url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
+        url(URL("https://discord.com/api/v9/oauth2/applications/$appId/assets"))
     }
 
     val array = ObjectMapper().readTree(response.readBytes()) as ArrayNode
