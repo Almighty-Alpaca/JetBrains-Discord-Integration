@@ -1,3 +1,6 @@
+## development
+- Fix compatibility with IntelliJ version 2022.3
+
 ## v1.10.0
 - Fix `Cannot create listener` exception (#230)
 - Fix active time for projects (#237)
