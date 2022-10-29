@@ -67,7 +67,7 @@ class LocalSource(location: Path, retry: Boolean = true) : Source, CoroutineScop
         val mapper = ObjectMapper(YAMLFactory())
 
         return Files.list(path)
-            .filter { p -> p.extension.toLowerCase() == "yaml" }
+            .filter { p -> p.extension.lowercase() == "yaml" }
             .map { p ->
                 val node: JsonNode = mapper.readTree(Files.newInputStream(p))
                 val id = p.baseName

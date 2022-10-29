@@ -30,7 +30,6 @@ import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.*
 
 val rpcService: RpcService
     get() = service()
@@ -146,12 +145,7 @@ class RpcService : DisposableCoroutineScope {
         when (System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.lowercase()) {
             "rpc" -> DiscordRpcConnection(appId, ::updateUser)
             "ipc" -> DiscordIpcConnection(appId, ::updateUser)
-            else -> {
-                when (System.getProperty("os.arch")?.lowercase() == "aarch64") {
-                    true -> DiscordIpcConnection(appId, ::updateUser)
-                    false -> DiscordRpcConnection(appId, ::updateUser)
-                }
-            }
+            else -> DiscordIpcConnection(appId, ::updateUser)
         }
 
 }
