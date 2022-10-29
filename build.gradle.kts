@@ -69,7 +69,7 @@ subprojects {
                 jvmTarget = "11"
                 freeCompilerArgs += "-Xjvm-default=enable"
 
-                languageVersion = "1.4"
+                languageVersion = "1.5"
             }
         }
 

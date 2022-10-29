@@ -65,7 +65,6 @@ tasks {
     }
 
     artifacts {
-        @Suppress("UnstableApiUsage")
         add("minimizedJar", minimizedJar.flatMap { it.archiveFile }) {
             builtBy(minimizedJar)
         }

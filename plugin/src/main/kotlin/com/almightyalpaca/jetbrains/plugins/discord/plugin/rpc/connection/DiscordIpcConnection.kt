@@ -21,94 +21,106 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.User
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.UserCallback
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
-import com.jagrosh.discordipc.IPCClient
-import com.jagrosh.discordipc.IPCListener
-import com.jagrosh.discordipc.entities.RichPresence.Builder
-import com.jagrosh.discordipc.entities.pipe.PipeStatus
-import com.jagrosh.discordipc.exceptions.NoDiscordClientException
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.errorLazy
+import dev.cbyrne.kdiscordipc.KDiscordIPC
+import dev.cbyrne.kdiscordipc.core.event.impl.CurrentUserUpdateEvent
+import dev.cbyrne.kdiscordipc.core.event.impl.ErrorEvent
+import dev.cbyrne.kdiscordipc.core.event.impl.ReadyEvent
+import dev.cbyrne.kdiscordipc.data.activity.activity
+import dev.cbyrne.kdiscordipc.data.activity.largeImage
+import dev.cbyrne.kdiscordipc.data.activity.smallImage
+import dev.cbyrne.kdiscordipc.data.activity.timestamps
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import org.json.JSONObject
-import com.jagrosh.discordipc.entities.User as UserEntity
+import dev.cbyrne.kdiscordipc.data.user.User as NativeUser
 
 class DiscordIpcConnection(override val appId: Long, private val userCallback: UserCallback) :
-    DiscordConnection, DisposableCoroutineScope, IPCListener {
+    DiscordConnection, DisposableCoroutineScope {
     override val parentJob: Job = SupervisorJob()
 
-    private val mutex = Mutex()
-
-    private var ipcClient: IPCClient = IPCClient(appId).apply {
-        setListener(this@DiscordIpcConnection)
+    private var ipcClient: KDiscordIPC = KDiscordIPC(appId.toString()).apply {
+        // listening to an event doesn't actually do anything async, so we can just block here
+        runBlocking {
+            on<ReadyEvent>(::onReady)
+            on<ErrorEvent>(::onError)
+            on<CurrentUserUpdateEvent>(::onCurrentUserUpdate)
+        }
+//        setListener(this@DiscordIpcConnection)
     }
 
-    override val running
-        get() = ipcClient.status == PipeStatus.CONNECTED
+    override val running by ipcClient::connected
 
-    override suspend fun connect(): Unit = mutex.withLock {
-        if (ipcClient.status != PipeStatus.CONNECTED) {
+    override suspend fun connect() {
+        if (!ipcClient.connected) {
             DiscordPlugin.LOG.debug("Starting new ipc connection")
 
-            try {
-                ipcClient.connect()
-            } catch (ignored: NoDiscordClientException) {
-                // Closed client can be ignored
-            }
+            launch { ipcClient.connect() }
+
+            DiscordPlugin.LOG.debug("Started new ipc connection")
         }
     }
 
-    override suspend fun send(presence: RichPresence?): Unit = mutex.withLock {
+    override suspend fun send(presence: RichPresence?) {
         DiscordPlugin.LOG.debug("Sending new presence")
 
         if (running)
-            ipcClient.sendRichPresence(presence?.toNative())
+            ipcClient.activityManager.setActivity(presence?.toNative())
     }
 
-    override suspend fun disconnect(): Unit = mutex.withLock {
+    override suspend fun disconnect() = disconnectInternal()
+
+    private fun disconnectInternal() {
         DiscordPlugin.LOG.debug("Closing IPC connection")
 
-        if (ipcClient.status == PipeStatus.CONNECTED)
-            ipcClient.close()
+        ipcClient.disconnect()
     }
 
     override fun dispose() {
-        runBlocking { disconnect() }
+        disconnectInternal()
 
         super.dispose()
     }
 
-    override fun onReady(client: IPCClient, user: UserEntity) {
+    private fun onReady(event: ReadyEvent) {
         DiscordPlugin.LOG.info("IPC connected")
 
-        userCallback(user.toGeneric())
+        userCallback(event.data.user.toGeneric())
     }
 
-    override fun onClose(client: IPCClient, json: JSONObject) {
-        onIPCDisconnect(json.toString())
+    private fun onError(event: ErrorEvent) {
+        DiscordPlugin.LOG.errorLazy { "IPC error: ${event.data}" }
     }
 
-    override fun onDisconnect(client: IPCClient, t: Throwable) {
-        onIPCDisconnect(t.localizedMessage)
+    private fun onCurrentUserUpdate(event: CurrentUserUpdateEvent) {
+        userCallback(event.data.toGeneric())
     }
 
-    private fun onIPCDisconnect(reason: String) {
-        DiscordPlugin.LOG.info("IPC disconnected: $reason")
-
-        userCallback(null)
-    }
+    // TODO: Register once the library exposes this again
+    // private fun onDisconnect(reason: String) {
+    //     DiscordPlugin.LOG.info("IPC disconnected: $reason")
+    //
+    //     userCallback(null)
+    // }
 }
 
-private fun UserEntity.toGeneric() = User.Normal(name, discriminator, idLong, avatarId)
+private fun NativeUser.toGeneric() = User.Normal(this.username, discriminator, this.id.toLong(), this.avatar)
 
-private fun RichPresence.toNative() = Builder().apply {
-    this@toNative.state?.let { setState(it) }
-    this@toNative.details?.let { setDetails(it) }
-    this@toNative.startTimestamp?.let { setStartTimestamp(it) }
-    this@toNative.endTimestamp?.let { setEndTimestamp(it) }
-    this@toNative.largeImage?.key?.let { setLargeImage(it, this@toNative.largeImage?.text ?: "") }
-    this@toNative.smallImage?.key?.let { setSmallImage(it, this@toNative.smallImage?.text ?: "") }
+private fun RichPresence.toNative() = activity(
+    this@toNative.state ?: "",
+    this@toNative.details ?: ""
+) {
 
-    setInstance(this@toNative.instance)
-}.build()
+    this@toNative.startTimestamp?.let {
+        this.timestamps(
+            start = it.toEpochSecond(),
+            end = this@toNative.endTimestamp?.toEpochSecond()
+        )
+    }
+
+    this@toNative.largeImage?.key?.let { this.largeImage(it, this@toNative.largeImage?.text ?: "") }
+    this@toNative.smallImage?.key?.let { this.smallImage(it, this@toNative.smallImage?.text ?: "") }
+
+    this.instance = this@toNative.instance
+}

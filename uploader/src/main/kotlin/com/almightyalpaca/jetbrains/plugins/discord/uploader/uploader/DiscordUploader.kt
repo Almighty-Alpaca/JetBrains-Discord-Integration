@@ -24,8 +24,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.okhttp.*
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.content.*
@@ -38,6 +39,7 @@ import okhttp3.Dispatcher
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import java.io.File
+import java.io.InputStream
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -122,7 +124,7 @@ suspend fun main() {
 }
 
 private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: String, source: ClasspathSource, path: String) = launch {
-    client.post<Unit> {
+    client.post {
         url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
 
         val data = JsonNodeFactory(false).objectNode().apply {
@@ -131,13 +133,13 @@ private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: Str
             put("type", 1)
         }
 
-        body = TextContent(ObjectMapper().writeValueAsString(data), ContentType.Application.Json)
+        setBody(TextContent(ObjectMapper().writeValueAsString(data), ContentType.Application.Json))
     }
 }
 
 private fun CoroutineScope.deleteIcon(client: HttpClient, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
     try {
-        client.delete<Unit> {
+        client.delete{
             url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
         }
     }
@@ -207,12 +209,12 @@ private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: Classp
     if (local == null)
         return@async false
 
-    val response = client.get<HttpResponse> {
+    val response: HttpResponse = client.get {
         url(remote)
     }
 
     try {
-        IOUtils.contentEquals(response.content.toInputStream(), source.loadResource(local))
+        IOUtils.contentEquals(response.bodyAsChannel().toInputStream(), source.loadResource(local))
     } catch (e: Exception) {
         println("Error comparing $local with $remote")
         e.printStackTrace()
@@ -238,7 +240,7 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
 }
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
-    val response = client.get<HttpResponse> {
+    val response = client.get{
         url(URL("https://discord.com/api/v9/oauth2/applications/$appId/assets"))
     }
 

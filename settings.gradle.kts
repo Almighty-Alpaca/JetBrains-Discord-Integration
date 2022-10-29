@@ -26,6 +26,7 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
         maven(url = "https://palantir.bintray.com/releases")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 
     val properties = java.util.Properties().apply {

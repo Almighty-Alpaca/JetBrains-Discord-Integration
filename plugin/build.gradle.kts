@@ -17,7 +17,6 @@
 @file:Suppress("SuspiciousCollectionReassignment")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jsoup.Jsoup
 
 plugins {
@@ -38,7 +37,7 @@ dependencies {
 
     implementation(project(path = ":icons", configuration = "minimizedJar"))
 
-    implementation(group = "com.github.cbyrneee", name = "DiscordIPC", version = versionIpc)
+    implementation(group = "com.github.cbyrneee", name = "KDiscordIPC", version = versionIpc)
     implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
 
     implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
@@ -97,65 +96,31 @@ configurations {
         setExtendsFrom(extendsFrom.filter { it != antlr.get() })
     }
 
-    // Replace Kotlin with the one provided by IntelliJ
-    all {
-        if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
-            return@all
-        }
+    implementation {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        exclude("org.jetbrains.kotlin", "kotlin-test")
+        exclude("org.jetbrains.kotlin", "kotlin-test-common")
+        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
+        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core-common")
+        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")
+        exclude("org.slf4j", "slf4j-api")
     }
 }
 
 tasks {
     setupDependencies {
         configurations {
-
             // Replace Kotlin with the one provided by IntelliJ
             all {
                 if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
                     return@all
                 }
-
-                exclude("org.jetbrains.kotlin", "kotlin-reflect")
-                exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-                exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-                exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-                exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-                exclude("org.jetbrains.kotlin", "kotlin-test")
-                exclude("org.jetbrains.kotlin", "kotlin-test-common")
-                exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
-                exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core-common")
-                exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")
-                exclude("org.slf4j", "slf4j-api")
-
-
-//                resolutionStrategy.dependencySubstitution {
-//                    val ideaDependency = this@setupDependencies.idea.map { "com.jetbrains:${it.name}:${it.version}" }
-//
-//                    val ideaModules = listOf(
-//                        "org.jetbrains.kotlin:kotlin-reflect",
-//                        "org.jetbrains.kotlin:kotlin-stdlib",
-//                        "org.jetbrains.kotlin:kotlin-stdlib-common",
-//                        "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
-//                        "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-//                        "org.jetbrains.kotlin:kotlin-test",
-//                        "org.jetbrains.kotlin:kotlin-test-common",
-//                        "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-//                        "org.jetbrains.kotlinx:kotlinx-coroutines-core-common",
-//                        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
-//                        "org.slf4j:slf4j-api"
-//                    )
-//
-//                    all action@{
-//                        val requested = requested as? ModuleComponentSelector ?: return@action
-//
-//                        if ("${requested.group}:${requested.module}" in ideaModules) {
-//                            useTarget(ideaDependency)
-//                        }
-//                    }
-//                }
             }
         }
-
     }
 
     val minimizedJar by registering(ShadowJar::class) {
@@ -228,12 +193,6 @@ tasks {
 
     check {
         dependsOn(verifyPlugin)
-    }
-
-    withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-        }
     }
 
     generateGrammarSource {

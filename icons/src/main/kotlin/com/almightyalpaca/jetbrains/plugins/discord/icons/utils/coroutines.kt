@@ -16,10 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.icons.utils
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 fun <T> Deferred<T>.getCompletedOrNull() = when (isCompleted) {
