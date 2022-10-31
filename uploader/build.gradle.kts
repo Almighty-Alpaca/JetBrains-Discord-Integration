@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2020 Aljoscha Grebe
+ * Copyright 2017.2020 Aljoscha Grebe
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   https://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE.2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,55 +14,57 @@
  * limitations under the License.
  */
 
-import java.net.URI
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
 }
 
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0.SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url = URI("https://kotlin.bintray.com/kotlinx") }
+    maven(url = "https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {
-    val versionCoroutines: String by project
-    val versionCommonsIo: String by project
-    val versionCommonsText: String by project
-    val versionJackson: String by project
-    val versionKtor: String by project
-    val versionOkHttp: String by project
-
     implementation(project(":icons"))
 
-    implementation(kotlin("stdlib"))
+    implementation(platform(libs.kotlin.bom.latest))
+    implementation(libs.kotlin.stdlib)
 
-    implementation(platform(kotlinx("coroutines-bom", versionCoroutines)))
-    implementation(kotlinx("coroutines-core"))
+    implementation(platform(libs.kotlinx.coroutines.bom.latest))
+    implementation(libs.kotlinx.coroutines.core)
 
-    implementation(platform(ktor("bom", versionKtor)))
-    implementation(ktor("client-okhttp"))
-    implementation(ktor("client-auth-jvm"))
-    implementation(ktor("client-core-jvm"))
-    implementation(ktor("http-jvm"))
-    implementation(ktor("utils-jvm"))
-    implementation(ktor("io-jvm"))
+    implementation(platform(libs.ktor.bom))
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.auth.jvm)
+    implementation(libs.ktor.client.core.jvm)
+    implementation(libs.ktor.http.jvm)
+    implementation(libs.ktor.utils.jvm)
+    implementation(libs.ktor.io.jvm)
 
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
+    implementation(libs.okhttp3)
 
-    implementation(group = "org.apache.commons", name = "commons-text", version = versionCommonsText)
-    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
+    implementation(libs.commons.text)
+    implementation(libs.commons.io)
 
-    implementation(platform("com.fasterxml.jackson:jackson-bom:$versionJackson"))
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
+    implementation(platform(libs.jackson.bom))
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
 }
 
 tasks {
+    withType<KotlinCompile> {
+        kotlinOptions {
+            apiVersion = kotlinLanguageVersion(libs.versions.kotlin.latest())
+            languageVersion = kotlinLanguageVersion(libs.versions.kotlin.latest())
+        }
+    }
+
     val graphsDot by registering(JavaExec::class) task@{
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.graphs.GraphsKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.graphs.GraphsKt")
     }
 
     create("graphs") {
@@ -86,22 +88,22 @@ tasks {
     val checkLanguages by registering(JavaExec::class) task@{
         group = "verification"
 
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.LanguageValidatorKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.LanguageValidatorKt")
     }
 
     val checkExtensions by registering(JavaExec::class) task@{
         group = "verification"
 
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.FileExtensionDuplicateFinderKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.FileExtensionDuplicateFinderKt")
     }
 
     val checkIcons by registering(JavaExec::class) task@{
         group = "verification"
 
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.IconValidatorKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.validator.IconValidatorKt")
     }
 
     check {
@@ -113,8 +115,8 @@ tasks {
     create<JavaExec>("checkUnusedIcons") task@{
         group = "verification"
 
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.find.UnusedIconFinderKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.find.UnusedIconFinderKt")
     }
 
     val uploadDiscord by registering(JavaExec::class) task@{
@@ -126,8 +128,8 @@ tasks {
 
         dependsOn(checkIcons)
 
-        sourceSets.main.configure { this@task.classpath = runtimeClasspath }
-        main = "com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.DiscordUploaderKt"
+        classpath = sourceSets.main().runtimeClasspath
+        mainClass("com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader.DiscordUploaderKt")
 
         if ("DISCORD_TOKEN" in project.extra) {
             environment("DISCORD_TOKEN", project.extra["DISCORD_TOKEN"] as String)

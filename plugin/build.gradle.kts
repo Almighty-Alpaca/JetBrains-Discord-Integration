@@ -20,35 +20,29 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jsoup.Jsoup
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.intellij")
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.intellij)
+
     antlr
 }
 
 val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 
 dependencies {
-    val versionCommonsIo: String by project
-    val versionJackson: String by project
-    val versionIpc: String by project
-    val versionRpc: String by project
-    val versionJUnit: String by project
-    val versionAntlr: String by project
-
     implementation(project(path = ":icons", configuration = "minimizedJar"))
 
-    implementation(group = "com.github.cbyrneee", name = "KDiscordIPC", version = versionIpc)
-    implementation(group = "club.minnced", name = "java-discord-rpc", version = versionRpc)
+    implementation(libs.discord.ipc)
+    implementation(libs.discord.rpc)
 
-    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
+    implementation(libs.commons.io)
 
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = versionJackson)
+    implementation(libs.jackson.dataformat.yaml)
 
-    antlr(group = "org.antlr", name = "antlr4", version = versionAntlr)
-    implementation(group = "org.antlr", name = "antlr4-runtime", version = versionAntlr)
+    antlr(libs.antlr)
+    implementation(libs.antlr.runtime)
 
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = versionJUnit)
-    testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = versionJUnit)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 repositories {
@@ -70,11 +64,9 @@ sourceSets {
 val isCI by lazy { System.getenv("CI") != null }
 
 intellij {
-    val versionIde: String by project
-
     pluginName(rootProject.name)
 
-    version(versionIde)
+    version(libs.versions.ide)
 
     downloadSources(!isCI)
 
@@ -84,10 +76,10 @@ intellij {
 
     instrumentCode(false)
 
-    plugins.add("git4idea")
+    plugins("git4idea")
 
     // For testing with a custom theme
-    // setPlugins("git4idea", "com.chrisrm.idea.MaterialThemeUI:3.10.0")
+    // plugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")
 }
 
 configurations {
@@ -112,17 +104,6 @@ configurations {
 }
 
 tasks {
-    setupDependencies {
-        configurations {
-            // Replace Kotlin with the one provided by IntelliJ
-            all {
-                if (name.contains("kotlin", ignoreCase = true) || name.contains("idea", ignoreCase = true)) {
-                    return@all
-                }
-            }
-        }
-    }
-
     val minimizedJar by registering(ShadowJar::class) {
         group = "build"
 

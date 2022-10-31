@@ -19,6 +19,7 @@ import java.util.*
 
 plugins {
     `kotlin-dsl`
+    alias(libs.plugins.versions)
 }
 
 repositories {
@@ -31,21 +32,17 @@ val properties = Properties().apply {
 }
 
 dependencies {
-    val versionCommonsIo: String by properties
-    val versionPngtastic: String by properties
-    val versionShadow: String by properties
-    val versionZeroAllocationHashing: String by properties
+    implementation(libs.gradle.shadow)
 
-    implementation(group = "gradle.plugin.com.github.jengelman.gradle.plugins", name = "shadow", version = versionShadow)
+    implementation(libs.pngtastic)
+    implementation(libs.zeroAllocationHashing)
 
-    implementation(group = "com.github.depsypher", name = "pngtastic", version = versionPngtastic)
-    implementation(group = "net.openhft", name = "zero-allocation-hashing", version = versionZeroAllocationHashing)
+    implementation(libs.commons.io)
+    implementation(libs.commons.lang)
 
-    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
-
-    implementation(group = "com.github.docker-java", name = "docker-java", version = "3.2.1")
+    implementation(libs.docker)
     // Because docker-java includes an ancient version of guava
-    implementation(group = "com.google.guava", name = "guava", version = "29.0-jre")
+    implementation(libs.guava)
 }
 
 gradlePlugin {

@@ -1,0 +1,81 @@
+[versions]
+antlr                       = "4.11.1"
+commons-io                  = "2.11.0"
+commons-lang                = "3.12.0"
+commons-text                = "1.10.0"
+discord-ipc                 = "09bc0cc"
+discord-rpc                 = "2.0.2"
+docker                      = "3.2.13"
+gitversion                  = "0.15.0"
+gradle                      = "7.4.2"
+guava                       = "31.1-jre"
+ide                         = "2021.3.3"
+#ide                         = "2022.2.2"
+#ide                         = "LATEST-EAP-SNAPSHOT"
+intellij                    = "1.9.0"
+jackson                     = "2.13.4"
+jda                         = "4.4.0_352"
+junit                       = "5.9.1"
+junit-jupiter               = "5.9.1"
+konf                        = "1.1.2"
+kotlin-ide                  = "1.5.10"
+kotlin-latest               = "1.7.20"
+kotlinx-coroutines-ide      = "1.5.0"
+kotlinx-coroutines-latest   = "1.6.4"
+ktor                        = "2.1.3"
+logback                     = "1.4.4"
+okhttp3                     = "4.10.0"
+pngtastic                   = "1.7"
+shadow                      = "7.0.0"
+versions                    = "0.43.0"
+zeroAllocationHashing       = "0.16"
+
+[libraries]
+antlr                                   = { group = "org.antlr", name = "antlr4", version.ref = "antlr" }
+antlr-runtime                           = { group = "org.antlr", name = "antlr4-runtime", version.ref = "antlr" }
+commons-io                              = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
+commons-lang                            = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang" }
+commons-text                            = { group = "org.apache.commons", name = "commons-text", version.ref = "commons-text" }
+discord-ipc                             = { group = "com.github.cbyrneee", name = "KDiscordIPC", version.ref = "discord-ipc" }
+discord-rpc                             = { group = "club.minnced", name = "java-discord-rpc", version.ref = "discord-rpc" }
+docker                                  = { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
+gradle-shadow                           = { group = "gradle.plugin.com.github.jengelman.gradle.plugins", name = "shadow", version.ref = "shadow" }
+guava                                   = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+jackson-bom                             = { group = "com.fasterxml.jackson", name = "jackson-bom", version.ref = "jackson" }
+jackson-core                            = { group = "com.fasterxml.jackson.core", name = "jackson-core" }
+jackson-databind                        = { group = "com.fasterxml.jackson.core", name = "jackson-databind" }
+jackson-dataformat-yaml                 = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml" }
+jda                                     = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
+junit-jupiter-api                       = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit"}
+junit-jupiter-engine                    = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit"}
+konf-core                               = { group = "com.uchuhimo", name = "konf-core", version.ref = "konf"}
+konf-yaml                               = { group = "com.uchuhimo", name = "konf-yaml", version.ref = "konf"}
+kotlin-bom-ide                          = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin-ide" }
+kotlin-bom-latest                       = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin-latest" }
+kotlin-compiler-embeddable              = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable" }
+kotlin-script-runtime                   = { group = "org.jetbrains.kotlin", name = "kotlin-script-runtime" }
+kotlin-script-util                      = { group = "org.jetbrains.kotlin", name = "kotlin-script-util" }
+kotlin-scripting-compiler-embeddable    = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable" }
+kotlin-stdlib                           = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib" }
+kotlinx-coroutines-bom-ide              = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines-ide" }
+kotlinx-coroutines-bom-latest           = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines-latest" }
+kotlinx-coroutines-core                 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core" }
+ktor-bom                                = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
+ktor-client-auth-jvm                    = { group = "io.ktor", name = "ktor-client-auth-jvm" }
+ktor-client-core-jvm                    = { group = "io.ktor", name = "ktor-client-core-jvm" }
+ktor-client-okhttp                      = { group = "io.ktor", name = "ktor-client-okhttp" }
+ktor-http-jvm                           = { group = "io.ktor", name = "ktor-http-jvm" }
+ktor-io-jvm                             = { group = "io.ktor", name = "ktor-io-jvm" }
+ktor-utils-jvm                          = { group = "io.ktor", name = "ktor-utils-jvm" }
+logback                                 = { group = "ch.qos.logback", name = "logback-classic" , version.ref = "logback" }
+okhttp3                                 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
+pngtastic                               = { group = "com.github.depsypher", name = "pngtastic", version.ref = "pngtastic" }
+zeroAllocationHashing                   = { group = "net.openhft", name = "zero-allocation-hashing", version.ref = "zeroAllocationHashing" }
+
+[plugins]
+docker          = { id = "docker" }
+gitversion      = { id = "com.palantir.git-version", version.ref = "gitversion" }
+intellij        = { id = "org.jetbrains.intellij", version.ref = "intellij" }
+kotlin          = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-latest" }
+shadow          = { id = "com.github.johnrengelman.shadow" }
+versions        = { id = "com.github.ben-manes.versions", version.ref = "versions" }
