@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.apache.commons.lang3.StringUtils
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -29,3 +30,10 @@ operator fun <T> ListProperty<T>.invoke(values: Iterable<T>): Unit = this.addAll
 operator fun <T> ListProperty<T>.invoke(values: Provider<Iterable<T>>): Unit = this.addAll(values)
 
 operator fun <T> Provider<T>.invoke(): T = this.get()
+
+fun kotlinLanguageVersion(dependencyVersion: String): String {
+    return when (val index = StringUtils.ordinalIndexOf(dependencyVersion, ".", 2)) {
+        -1 -> dependencyVersion
+        else -> dependencyVersion.substring(0, index)
+    }
+}

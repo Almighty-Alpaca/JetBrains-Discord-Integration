@@ -16,9 +16,11 @@
 
 plugins {
     application
-    kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
-    id("docker")
+
+    alias(libs.plugins.kotlin)
+    com.github.johnrengelman.shadow
+
+    docker
 }
 
 docker {
@@ -39,41 +41,24 @@ repositories {
 }
 
 dependencies {
-    val versionJda: String by project
-    val versionOkHttp: String by project
-    // val versionJdaUtilities: String by project
-    val versionKonf: String by project
-    val versionLogback: String by project
-
     // Kotlin standard library
-    implementation(kotlin(module = "stdlib"))
+    implementation(libs.kotlin.stdlib)
 
     // implementation script engine
-    implementation(kotlin(module = "script-util"))
-    implementation(kotlin(module = "compiler-embeddable"))
-    implementation(kotlin(module = "scripting-compiler-embeddable"))
-    implementation(kotlin(module = "script-runtime"))
+    implementation(libs.kotlin.script.util)
+    implementation(libs.kotlin.compiler.embeddable)
+    implementation(libs.kotlin.scripting.compiler.embeddable)
+    implementation(libs.kotlin.script.runtime)
 
     // JDA (without audio)
-    implementation(group = "net.dv8tion", name = "JDA", version = versionJda) {
+    implementation(libs.jda) {
         exclude(group = "club.minnced", module = "opus-java")
     }
 
-    // JDA-Utilities
-    // implementation(group = "com.jagrosh", name = "jda-utilities-command", version = versionJdaUtilities)
-
-    // Konf (dependencies for unused formats removed to reduce size)
-    implementation(group = "com.uchuhimo", name = "konf", version = versionKonf) {
-        exclude(group = "com.moandjiezana.toml", module = "toml4j")
-        exclude(group = "org.dom4j", module = "dom4j")
-        exclude(group = "org.eclipse.jgit", module = "org.eclipse.jgit")
-
-        // TODO: exclude more modules from Konf
-        // exclude(group = "", module = "")
-    }
-
-    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = versionOkHttp)
+    // Konf
+    implementation(libs.konf.core)
+    implementation(libs.konf.yaml)
 
     // Logback Classic
-    implementation(group = "ch.qos.logback", name = "logback-classic", version = versionLogback)
+    implementation(libs.logback)
 }

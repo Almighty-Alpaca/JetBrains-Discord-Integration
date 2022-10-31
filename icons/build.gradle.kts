@@ -17,28 +17,23 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin)
     fileIndices
 }
 
 dependencies {
-    val versionCoroutines: String by project
-    val versionCommonsIo: String by project
-    val versionJackson: String by project
+    implementation(platform(libs.kotlin.bom.ide))
+    implementation(libs.kotlin.stdlib)
 
-    // Kotlin is provided by the IDE and the uploaded themselves. this reduces dependency version conflicts
+    implementation(platform(libs.kotlinx.coroutines.bom.ide))
+    implementation(libs.kotlinx.coroutines.core)
 
-    compileOnly(kotlin(module = "stdlib"))
+    implementation(libs.commons.io)
 
-    compileOnly(platform(kotlinx("coroutines-bom", versionCoroutines)))
-    compileOnly(kotlinx("coroutines-core"))
-
-    implementation(group = "commons-io", name = "commons-io", version = versionCommonsIo)
-
-    implementation(platform("com.fasterxml.jackson:jackson-bom:$versionJackson"))
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core")
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-databind")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml")
+    implementation(platform(libs.jackson.bom))
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
+    implementation(libs.jackson.dataformat.yaml)
 }
 
 val minimizedJar: Configuration by configurations.creating {
