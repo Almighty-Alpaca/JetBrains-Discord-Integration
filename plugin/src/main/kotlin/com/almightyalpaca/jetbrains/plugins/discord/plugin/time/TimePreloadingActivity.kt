@@ -17,10 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.time
 
 import com.intellij.openapi.application.PreloadingActivity
-import com.intellij.openapi.progress.ProgressIndicator
 
+@Suppress("UnstableApiUsage")
 class TimePreloadingActivity : PreloadingActivity() {
-    override fun preload(indicator: ProgressIndicator) {
+    @Suppress("MissingRecentApi")
+    override fun preload() {
         timeService.load()
     }
 }

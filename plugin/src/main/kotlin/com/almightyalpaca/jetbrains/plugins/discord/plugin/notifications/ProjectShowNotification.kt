@@ -37,9 +37,9 @@ private val group = NotificationGroup(
 
 object ProjectShowNotification {
     suspend fun show(project: Project) = suspendCoroutine<ProjectShow> { continuation ->
-        group.createNotification(title, null, content, NotificationType.INFORMATION)
+        group.createNotification(title, content, NotificationType.INFORMATION)
             .apply {
-                collapseActionsDirection = Notification.CollapseActionsDirection.KEEP_LEFTMOST
+                collapseDirection = Notification.CollapseActionsDirection.KEEP_LEFTMOST
                 for (value in project.settings.show.selectableValues) {
                     addAction(DumbAwareAction.create(value.text) {
                         expire()
