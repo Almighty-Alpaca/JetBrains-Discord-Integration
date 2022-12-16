@@ -147,6 +147,7 @@ class RpcService : DisposableCoroutineScope {
                 "rpc" -> {
                     // before initializing the connection
                     System.setProperty("jna.nounpack", "false")
+                    System.setProperty("jna.noclasspath", "false")
 
                     DiscordRpcConnection(appId, ::updateUser)
                 }
