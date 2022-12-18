@@ -76,7 +76,7 @@ intellij {
 
     instrumentCode(false)
 
-    plugins("git4idea")
+    plugins("vcs-git")
 
     // For testing with a custom theme
     // plugins("com.chrisrm.idea.MaterialThemeUI:3.10.0")

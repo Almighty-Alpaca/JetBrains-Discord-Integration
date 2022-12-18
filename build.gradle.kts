@@ -66,7 +66,7 @@ subprojects {
     tasks {
         withType<KotlinCompile> {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
                 freeCompilerArgs += "-Xjvm-default=enable"
 
                 apiVersion = kotlinLanguageVersion(libs.versions.kotlin.ide())
@@ -75,11 +75,11 @@ subprojects {
         }
 
         withType<JavaCompile> {
-            targetCompatibility = "11"
-            sourceCompatibility = "11"
+            targetCompatibility = "17"
+            sourceCompatibility = "17"
 
             if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
-                options.compilerArgs as MutableList<String> += listOf("--release", "11")
+                options.compilerArgs as MutableList<String> += listOf("--release", "17")
             }
         }
     }

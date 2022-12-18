@@ -17,10 +17,11 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
 import com.intellij.openapi.application.PreloadingActivity
-import com.intellij.openapi.progress.ProgressIndicator
 
+@Suppress("UnstableApiUsage")
 class RenderPreloadingActivity : PreloadingActivity() {
-    override fun preload(indicator: ProgressIndicator) {
+    @Suppress("MissingRecentApi")
+    override fun preload() {
         renderService.startRenderClock()
     }
 }

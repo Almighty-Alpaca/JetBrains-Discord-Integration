@@ -141,11 +141,24 @@ class RpcService : DisposableCoroutineScope {
         super.dispose()
     }
 
-    private fun createConnection(appId: Long): DiscordConnection =
-        when (System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.lowercase()) {
-            "rpc" -> DiscordRpcConnection(appId, ::updateUser)
-            "ipc" -> DiscordIpcConnection(appId, ::updateUser)
-            else -> DiscordIpcConnection(appId, ::updateUser)
-        }
+    private fun createConnection(appId: Long): DiscordConnection {
+        fun forName(name: String?): DiscordConnection? =
+            when (name) {
+                "rpc" -> {
+                    // before initializing the connection
+                    System.setProperty("jna.nounpack", "false")
+                    System.setProperty("jna.noclasspath", "false")
+
+                    DiscordRpcConnection(appId, ::updateUser)
+                }
+
+                "ipc" -> DiscordIpcConnection(appId, ::updateUser)
+                else -> null
+            }
+
+        return forName(System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.lowercase())
+            ?: forName(System.getProperty("com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection")?.lowercase())
+            ?: DiscordIpcConnection(appId, ::updateUser)
+    }
 
 }

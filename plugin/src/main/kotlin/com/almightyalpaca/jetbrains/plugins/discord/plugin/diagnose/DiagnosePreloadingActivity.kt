@@ -19,10 +19,11 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.diagnose
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.ApplicationType
 import com.intellij.openapi.application.PreloadingActivity
-import com.intellij.openapi.progress.ProgressIndicator
 
+@Suppress("UnstableApiUsage")
 class DiagnosePreloadingActivity : PreloadingActivity() {
-    override fun preload(indicator: ProgressIndicator) {
+    @Suppress("MissingRecentApi")
+    override fun preload() {
         DiscordPlugin.LOG.info("App starting, diagnosing environment")
 
         DiscordPlugin.LOG.debug("Application identifiers: ${ApplicationType.IDE.applicationName}, ${ApplicationType.IDE_EDITION.applicationName}")

@@ -107,9 +107,14 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
 
 private fun NativeUser.toGeneric() = User.Normal(this.username, discriminator, this.id.toLong(), this.avatar)
 
+private fun stateDetails(s: String?): String {
+    if (s == null || s.length < 2) return "  "
+    return s
+}
+
 private fun RichPresence.toNative() = activity(
-    this@toNative.state ?: "",
-    this@toNative.details ?: ""
+    stateDetails(this@toNative.state),
+    stateDetails(this@toNative.details)
 ) {
 
     this@toNative.startTimestamp?.let {
