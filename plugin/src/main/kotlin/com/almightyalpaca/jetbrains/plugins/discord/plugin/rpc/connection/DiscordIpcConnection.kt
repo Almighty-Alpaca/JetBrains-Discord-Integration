@@ -113,8 +113,9 @@ private fun stateDetails(s: String?): String {
 }
 
 private fun RichPresence.toNative() = activity(
+    // kdiscordipc has them backwards
+    stateDetails(this@toNative.details),
     stateDetails(this@toNative.state),
-    stateDetails(this@toNative.details)
 ) {
 
     this@toNative.startTimestamp?.let {
