@@ -149,7 +149,7 @@ class DataService {
                         val customVariableData = CustomVariableData()
                         CustomVariableProvider.forApplication(customVariableData)
                         CustomVariableProvider.forProject(customVariableData, project)
-                        CustomVariableProvider.forFile(customVariableData, editor, file)
+                        CustomVariableProvider.forFile(customVariableData, project, editor, file)
 
 
                         DiscordPlugin.LOG.debug("Returning file data")

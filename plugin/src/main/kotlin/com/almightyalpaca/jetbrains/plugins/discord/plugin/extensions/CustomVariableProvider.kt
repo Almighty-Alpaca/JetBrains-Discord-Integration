@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 interface CustomVariableProvider {
     fun forApplication(variableData: CustomVariableData) {}
     fun forProject(variableData: CustomVariableData, project: Project) {}
-    fun forFile(variableData: CustomVariableData, editor: FileEditor, file: VirtualFile) {}
+    fun forFile(variableData: CustomVariableData, project: Project, editor: FileEditor, file: VirtualFile) {}
 
     companion object {
         private val EXTENSION_POINT_NAME = ExtensionPointName.create<CustomVariableProvider>("com.almightyalpaca.intellij.plugins.discord.customVariableProvider")
@@ -37,8 +37,8 @@ interface CustomVariableProvider {
             EXTENSION_POINT_NAME.extensions.forEach { it.forProject(variableData, project) }
         }
 
-        fun forFile(variableData: CustomVariableData, editor: FileEditor, file: VirtualFile) {
-            EXTENSION_POINT_NAME.extensions.forEach { it.forFile(variableData, editor, file) }
+        fun forFile(variableData: CustomVariableData, project: Project, editor: FileEditor, file: VirtualFile) {
+            EXTENSION_POINT_NAME.extensions.forEach { it.forFile(variableData, project, editor, file) }
         }
     }
 }
