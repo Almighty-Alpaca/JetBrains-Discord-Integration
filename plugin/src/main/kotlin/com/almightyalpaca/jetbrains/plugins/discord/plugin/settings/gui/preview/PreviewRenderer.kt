@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.gui.preview
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.CustomVariableData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.Data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.dataService
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
@@ -487,6 +488,7 @@ private fun Data.completeMissingData(): Data.File {
         applicationTimeOpened,
         applicationTimeActive,
         application?.applicationSettings ?: settings,
+        CustomVariableData(),
         project?.projectName ?: "Dummy project",
         if (projectDescription.isNullOrBlank()) "Dummies are very nice test objects" else projectDescription,
         project?.projectTimeOpened ?: applicationTimeOpened,
