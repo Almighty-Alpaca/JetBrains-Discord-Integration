@@ -30,7 +30,7 @@ sealed class Data {
         override fun toString(): String = "Data.None"
     }
 
-    open class Idle (val idleTimestamp: Long) : Data() {
+    open class Idle(val idleTimestamp: Long) : Data() {
         override fun toString(): String {
             return "Data.Idle(idleTimestamp=$idleTimestamp)"
         }
@@ -41,7 +41,8 @@ sealed class Data {
         val applicationVersion: String,
         val applicationTimeOpened: Long,
         val applicationTimeActive: Long,
-        val applicationSettings: ApplicationSettings
+        val applicationSettings: ApplicationSettings,
+        val customVariableData: CustomVariableData,
     ) : Data() {
         override fun toString(): String {
             return "Data.Application(applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, applicationSettings=$applicationSettings)"
@@ -54,6 +55,7 @@ sealed class Data {
         applicationTimeOpened: Long,
         applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
+        customVariableData: CustomVariableData,
         val projectName: String,
         val projectDescription: String,
         val projectTimeOpened: Long,
@@ -61,7 +63,7 @@ sealed class Data {
         val projectSettings: ProjectSettings,
         val vcsBranch: String?,
         val debuggerActive: Boolean
-    ) : Application(applicationName, applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings) {
+    ) : Application(applicationName, applicationVersion, applicationTimeOpened, applicationTimeActive, applicationSettings, customVariableData) {
         override fun toString(): String {
             return "Data.Project(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch)"
         }
@@ -73,6 +75,7 @@ sealed class Data {
         applicationTimeOpened: Long,
         applicationTimeActive: Long,
         applicationSettings: ApplicationSettings,
+        customVariableData: CustomVariableData,
         projectName: String,
         projectDescription: String,
         projectTimeOpened: Long,
@@ -98,6 +101,7 @@ sealed class Data {
         applicationTimeOpened,
         applicationTimeActive,
         applicationSettings,
+        customVariableData,
         projectName,
         projectDescription,
         projectTimeOpened,
@@ -133,5 +137,19 @@ sealed class Data {
         override fun toString(): String {
             return "Data.File(applicationName='$applicationName', applicationVersion='$applicationVersion', applicationTimeOpened=$applicationTimeOpened, applicationTimeActive=$applicationTimeActive, projectName='$projectName', projectDescription='$projectDescription', projectTimeOpened=$projectTimeOpened, projectTimeActive=$projectTimeActive, vcsBranch=$vcsBranch, fileName='$fileName', fileNameUnique='$fileNameUnique', fileTimeOpened=$fileTimeOpened, fileTimeActive=$fileTimeActive, filePath='$filePath', fileIsWriteable=$fileIsWriteable, editorIsTextEditor=$editorIsTextEditor, caretLine=$caretLine, lineCount=$lineCount, moduleName=$moduleName, pathInModule=$pathInModule, fileSize=$fileSize)"
         }
+    }
+}
+
+class CustomVariableData {
+    private val variables: MutableMap<String, String> = mutableMapOf()
+
+    operator fun set(name: String, value: String) {
+        variables[name] = value
+    }
+
+    operator fun get(name: String) = variables[name]
+
+    fun unset(name: String) {
+        variables.remove(name)
     }
 }

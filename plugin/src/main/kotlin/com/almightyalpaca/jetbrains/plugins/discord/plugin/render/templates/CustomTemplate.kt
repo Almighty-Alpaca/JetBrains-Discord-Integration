@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.CustomVariableData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.Data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr.TemplateLexer
@@ -47,7 +48,10 @@ object Utils {
             "IsTextEditor" -> context.fileData?.editorIsTextEditor.toString()
             "FileIsWritable" -> context.fileData?.fileIsWriteable.toString()
             "DebuggerActive" -> context.projectData?.debuggerActive.toString()
-            else -> null
+            else -> {
+                // application data has all the custom variables
+                context.applicationData?.customVariableData?.get(varName)
+            }
         }
 
     private fun sizeAsString(size: Int?): String? {
@@ -84,6 +88,7 @@ object Utils {
                 is TemplateParser.VarContext -> {
                     getVarValue(child.NAME()?.text ?: "", context) ?: ""
                 }
+
                 is TemplateParser.FunContext -> {
                     val name = child.NAME()?.symbol?.text ?: ""
                     val req = when (name) {
@@ -100,10 +105,12 @@ object Utils {
                             "RegexEscape" -> {
                                 Regex.escape(evalVisitor(context, arr[0]))
                             }
+
                             "NotNull" -> {
                                 varNullCheck(context, evalVisitor(context, arr[0]))
                                     .toString()
                             }
+
                             "Matches" -> {
                                 withRegex(evalVisitor(context, arr[1])) {
                                     evalVisitor(context, arr[0])
@@ -111,22 +118,26 @@ object Utils {
                                         .toString()
                                 }
                             }
+
                             "ReplaceFirst" -> {
                                 withRegex(evalVisitor(context, arr[1])) {
                                     evalVisitor(context, arr[0])
                                         .replaceFirst(it, evalVisitor(context, arr[2]))
                                 }
                             }
+
                             "ReplaceAll" -> {
                                 withRegex(evalVisitor(context, arr[1])) {
                                     evalVisitor(context, arr[0])
                                         .replace(it, evalVisitor(context, arr[2]))
                                 }
                             }
+
                             else -> ""
                         }
                     }
                 }
+
                 is TemplateParser.If_ruleContext -> {
                     val args = child.text_eval()
 
@@ -150,11 +161,13 @@ object Utils {
                         }
                     }
                 }
+
                 is TemplateParser.Raw_text_ruleContext -> {
                     val txt = child.text
                     txt.substring(2, txt.length - 2) // take out the first and last 2 characters(the '#"' at the beginning
                     // and '"#' at the end)
                 }
+
                 else -> child.text // NAME/TEXT/parentheses from the grammar
             }
         }
@@ -193,6 +206,7 @@ private fun Data.asTemplateData(): TemplateData =
         is Data.File ->
             TemplateData.File(
                 this.applicationVersion,
+                this.customVariableData,
                 this.projectName,
                 this.projectDescription,
                 this.vcsBranch,
@@ -208,14 +222,17 @@ private fun Data.asTemplateData(): TemplateData =
                 this.pathInModule,
                 this.fileSize
             )
+
         is Data.Project ->
             TemplateData.Project(
-                this.applicationVersion, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
+                this.applicationVersion, this.customVariableData, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
             )
+
         is Data.Application ->
             TemplateData.Application(
-                this.applicationVersion
+                this.applicationVersion, this.customVariableData
             )
+
         else -> throw IllegalArgumentException()
     }
 
@@ -223,19 +240,22 @@ fun RenderContext.asCustomTemplateContext() = CustomTemplateContext.from(this)
 
 sealed class TemplateData {
     open class Application(
-        val applicationVersion: String
+        val applicationVersion: String,
+        val customVariableData: CustomVariableData,
     ) : TemplateData()
 
     open class Project(
         applicationVersion: String,
+        customVariableData: CustomVariableData,
         val projectName: String,
         val projectDescription: String,
         val vcsBranch: String?,
         val debuggerActive: Boolean
-    ) : Application(applicationVersion)
+    ) : Application(applicationVersion, customVariableData)
 
     open class File(
         applicationVersion: String,
+        customVariableData: CustomVariableData,
         projectName: String,
         projectDescription: String,
         vcsBranch: String?,
@@ -253,6 +273,7 @@ sealed class TemplateData {
         val fileSize: Int
     ) : Project(
         applicationVersion,
+        customVariableData,
         projectName,
         projectDescription,
         vcsBranch,

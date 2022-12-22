@@ -17,6 +17,7 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.data
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.CustomVariableProvider
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.Renderer
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.settings
@@ -145,6 +146,12 @@ class DataService {
 
                         val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, file)
 
+                        val customVariableData = CustomVariableData()
+                        CustomVariableProvider.forApplication(customVariableData)
+                        CustomVariableProvider.forProject(customVariableData, project)
+                        CustomVariableProvider.forFile(customVariableData, editor, file)
+
+
                         DiscordPlugin.LOG.debug("Returning file data")
 
                         return Data.File(
@@ -153,6 +160,7 @@ class DataService {
                             applicationTimeOpened,
                             applicationTimeActive,
                             applicationSettings,
+                            customVariableData,
                             projectName,
                             projectDescription,
                             projectTimeOpened,
@@ -178,6 +186,10 @@ class DataService {
 
                 val vcsBranch = VcsInfoExtension.getCurrentVcsBranch(project, null)
 
+                val customVariableData = CustomVariableData()
+                CustomVariableProvider.forApplication(customVariableData)
+                CustomVariableProvider.forProject(customVariableData, project)
+
                 DiscordPlugin.LOG.debug("Returning project data")
 
                 return Data.Project(
@@ -186,6 +198,7 @@ class DataService {
                     applicationTimeOpened,
                     applicationTimeActive,
                     applicationSettings,
+                    customVariableData,
                     projectName,
                     projectDescription,
                     projectTimeOpened,
@@ -197,6 +210,9 @@ class DataService {
             }
         }
 
+        val customVariableData = CustomVariableData()
+        CustomVariableProvider.forApplication(customVariableData)
+
         DiscordPlugin.LOG.debug("Returning application data")
 
         return Data.Application(
@@ -204,7 +220,8 @@ class DataService {
             applicationVersion,
             applicationTimeOpened,
             applicationTimeActive,
-            applicationSettings
+            applicationSettings,
+            customVariableData,
         )
     }
 }

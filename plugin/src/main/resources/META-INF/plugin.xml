@@ -100,5 +100,6 @@
 
     <extensionPoints>
         <extensionPoint name="vcsInfo" interface="com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.VcsInfoExtension" dynamic="true"/>
+        <extensionPoint name="customVariableProvider" interface="com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.CustomVariableProvider" dynamic="true"/>
     </extensionPoints>
 </idea-plugin>
