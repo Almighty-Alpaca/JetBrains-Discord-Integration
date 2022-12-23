@@ -172,3 +172,78 @@ option in the settings like this:
 * Add `(caretline/linecount)` next to file, if it is in a text editor:
 
 `${FileName}%if($IsTextEditor){(${CaretLine}/${LineCount})}`
+
+== Custom variables
+
+Other plugins can provide custom variables through the
+`com.almightyalpaca.intellij.plugins.discord.customVariableProvider`
+extension point.
+
+Here's an example of an implementation that adds a `${FileExtension}`
+variable:
+
+[source,kotlin]
+----
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.CustomVariableData
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.extensions.CustomVariableProvider
+import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+
+object DiscordCustomVariableProvider : CustomVariableProvider {
+    override fun forFile(variableData: CustomVariableData, project: Project, editor: FileEditor, file: VirtualFile) {
+        val extension = file.extension
+
+        if (extension != null) {
+            variableData["FileExtension"] = extension
+        }
+    }
+
+    // can also override forApplication and forProject
+}
+----
+
+`forApplication` will always be run, `forProject` will be run when inside a project, and
+`forFile` will be run when there is a file opened, giving the following matrix:
+
+[cols="1,1,1,1"]
+|===
+| Method | Application | Project | File
+
+| `forApplication`
+| Yes
+| Yes
+| Yes
+
+| `forProject`
+| No
+| Yes
+| Yes
+
+| `forFile`
+| No
+| No
+| Yes
+
+|===
+
+And then add it in `plugin.xml`:
+
+[source,xml]
+----
+<idea-plugin>
+    <depends>com.almightyalpaca.intellij.plugins.discord</depends>
+
+    <!-- Or if you want it to be optional: -->
+    <depends optional="true" config-file="with-discord.xml">com.almightyalpaca.intellij.plugins.discord</depends>
+
+    <extensions defaultExtensionNs="com.almightyalpaca.intellij.plugins.discord">
+        <customVariableProvider implementation="DiscordCustomVariableProvider"/>
+    </extensions>
+</idea-plugin>
+----
+
+Furthermore, the order the methods are called in will always be
+`forApplication`, `forProject` and `forFile`.
+
+Note that it cannot overwrite the values for the predefined variables.
