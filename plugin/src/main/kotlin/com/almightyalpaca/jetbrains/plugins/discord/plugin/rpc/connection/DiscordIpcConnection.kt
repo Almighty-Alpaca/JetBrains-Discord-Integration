@@ -125,8 +125,8 @@ private fun RichPresence.toNative() = activity(
         )
     }
 
-    this@toNative.largeImage?.key?.let { this.largeImage(it, this@toNative.largeImage?.text ?: "") }
-    this@toNative.smallImage?.key?.let { this.smallImage(it, this@toNative.smallImage?.text ?: "") }
+    this@toNative.largeImage?.key?.let { this.largeImage(it, this@toNative.largeImage?.text) }
+    this@toNative.smallImage?.key?.let { this.smallImage(it, this@toNative.smallImage?.text) }
 
     this.instance = this@toNative.instance
 }
