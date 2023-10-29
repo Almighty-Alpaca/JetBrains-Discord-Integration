@@ -24,6 +24,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCorou
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.errorLazy
 import dev.cbyrne.kdiscordipc.KDiscordIPC
 import dev.cbyrne.kdiscordipc.core.event.impl.CurrentUserUpdateEvent
+import dev.cbyrne.kdiscordipc.core.event.impl.DisconnectedEvent
 import dev.cbyrne.kdiscordipc.core.event.impl.ErrorEvent
 import dev.cbyrne.kdiscordipc.core.event.impl.ReadyEvent
 import dev.cbyrne.kdiscordipc.data.activity.activity
@@ -46,6 +47,7 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
             on<ReadyEvent>(::onReady)
             on<ErrorEvent>(::onError)
             on<CurrentUserUpdateEvent>(::onCurrentUserUpdate)
+            on<DisconnectedEvent> { onDisconnect() }
         }
 //        setListener(this@DiscordIpcConnection)
     }
@@ -97,12 +99,10 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
         userCallback(event.data.toGeneric())
     }
 
-    // TODO: Register once the library exposes this again
-    // private fun onDisconnect(reason: String) {
-    //     DiscordPlugin.LOG.info("IPC disconnected: $reason")
-    //
-    //     userCallback(null)
-    // }
+    private fun onDisconnect() {
+        DiscordPlugin.LOG.info("IPC disconnected")
+        userCallback(null)
+    }
 }
 
 private fun NativeUser.toGeneric() = User.Normal(this.username, discriminator, this.id.toLong(), this.avatar)

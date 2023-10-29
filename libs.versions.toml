@@ -3,7 +3,7 @@ antlr                       = "4.11.1"
 commons-io                  = "2.11.0"
 commons-lang                = "3.12.0"
 commons-text                = "1.10.0"
-discord-ipc                 = "09bc0cc"
+discord-ipc                 = "0.2.2"
 discord-rpc                 = "2.0.2"
 docker                      = "3.2.13"
 gitversion                  = "0.15.0"
@@ -35,7 +35,7 @@ antlr-runtime                           = { group = "org.antlr", name = "antlr4-
 commons-io                              = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 commons-lang                            = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang" }
 commons-text                            = { group = "org.apache.commons", name = "commons-text", version.ref = "commons-text" }
-discord-ipc                             = { group = "com.github.cbyrneee", name = "KDiscordIPC", version.ref = "discord-ipc" }
+discord-ipc                             = { group = "com.github.caoimhebyrne", name = "KDiscordIPC", version.ref = "discord-ipc" }
 discord-rpc                             = { group = "club.minnced", name = "java-discord-rpc", version.ref = "discord-rpc" }
 docker                                  = { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
 gradle-shadow                           = { group = "gradle.plugin.com.github.jengelman.gradle.plugins", name = "shadow", version.ref = "shadow" }
