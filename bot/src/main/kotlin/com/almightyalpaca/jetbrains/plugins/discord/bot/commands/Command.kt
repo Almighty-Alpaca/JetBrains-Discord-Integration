@@ -19,15 +19,15 @@ package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 import com.almightyalpaca.jetbrains.plugins.discord.bot.Settings
 import com.uchuhimo.konf.Config
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.hooks.SubscribeEvent
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.internal.interactions.CommandDataImpl
 
-abstract class Command(private val config: Config, name: String, description: String, private val adminOnly: Boolean = false) : CommandData(name, description), EventListener {
+abstract class Command(private val config: Config, name: String, description: String, private val adminOnly: Boolean = false) : CommandDataImpl(name, description), EventListener {
     @SubscribeEvent
     final override fun onEvent(event: GenericEvent) {
-        if (event !is SlashCommandEvent)
+        if (event !is SlashCommandInteractionEvent)
             return
 
         if (event.guild == null)
@@ -44,5 +44,5 @@ abstract class Command(private val config: Config, name: String, description: St
         execute(event)
     }
 
-    abstract fun execute(event: SlashCommandEvent)
+    abstract fun execute(event: SlashCommandInteractionEvent)
 }

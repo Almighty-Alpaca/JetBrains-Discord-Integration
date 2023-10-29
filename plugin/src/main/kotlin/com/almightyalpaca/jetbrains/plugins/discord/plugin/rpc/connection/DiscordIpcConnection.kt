@@ -23,6 +23,7 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.UserCallback
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.errorLazy
 import dev.cbyrne.kdiscordipc.KDiscordIPC
+import dev.cbyrne.kdiscordipc.core.error.ConnectionError
 import dev.cbyrne.kdiscordipc.core.event.impl.CurrentUserUpdateEvent
 import dev.cbyrne.kdiscordipc.core.event.impl.DisconnectedEvent
 import dev.cbyrne.kdiscordipc.core.event.impl.ErrorEvent
@@ -49,7 +50,6 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
             on<CurrentUserUpdateEvent>(::onCurrentUserUpdate)
             on<DisconnectedEvent> { onDisconnect() }
         }
-//        setListener(this@DiscordIpcConnection)
     }
 
     override val running by ipcClient::connected
@@ -58,7 +58,19 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
         if (!ipcClient.connected) {
             DiscordPlugin.LOG.debug("Starting new ipc connection")
 
-            launch { ipcClient.connect() }
+            launch {
+                try {
+                    ipcClient.connect()
+                } catch (e: ConnectionError) {
+                    when (e) {
+                        ConnectionError.NoIPCFile -> disconnect()
+                        ConnectionError.AlreadyConnected -> DiscordPlugin.LOG.errorLazy { "IPC already connected" }
+                        ConnectionError.NotConnected -> DiscordPlugin.LOG.errorLazy { "IPC not connected" }
+                        ConnectionError.Failed -> DiscordPlugin.LOG.errorLazy { "IPC failed" }
+                        ConnectionError.Disconnected -> DiscordPlugin.LOG.errorLazy { "IPC disconnected" }
+                    }
+                }
+            }
 
             DiscordPlugin.LOG.debug("Started new ipc connection")
         }
@@ -76,7 +88,8 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
     private fun disconnectInternal() {
         DiscordPlugin.LOG.debug("Closing IPC connection")
 
-        ipcClient.disconnect()
+        if (ipcClient.connected)
+            ipcClient.disconnect()
     }
 
     override fun dispose() {
@@ -107,15 +120,14 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
 
 private fun NativeUser.toGeneric() = User.Normal(this.username, discriminator, this.id.toLong(), this.avatar)
 
-private fun stateDetails(s: String?): String {
+private fun emptyLineHack(s: String?): String {
     if (s == null || s.length < 2) return "  "
     return s
 }
 
 private fun RichPresence.toNative() = activity(
-    // kdiscordipc has them backwards
-    stateDetails(this@toNative.details),
-    stateDetails(this@toNative.state),
+    state = emptyLineHack(this@toNative.state),
+    details = emptyLineHack(this@toNative.details),
 ) {
 
     this@toNative.startTimestamp?.let {

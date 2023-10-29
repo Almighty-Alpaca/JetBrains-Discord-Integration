@@ -26,10 +26,6 @@
     <depends optional="true" config-file="git-extension.xml">Git4Idea</depends>
 
     <applicationListeners>
-        <listener
-                class="com.almightyalpaca.jetbrains.plugins.discord.plugin.development.PreventUnloadingDynamicPluginListener"
-                topic="com.intellij.ide.plugins.DynamicPluginListener"/>
-
         <!--
         <listener
                 class="com.almightyalpaca.jetbrains.plugins.discord.plugin.time.TimeDynamicPluginListener"

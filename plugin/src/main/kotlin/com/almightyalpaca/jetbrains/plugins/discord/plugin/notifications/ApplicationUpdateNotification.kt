@@ -18,6 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.notifications
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin
 import com.intellij.notification.*
+import java.net.URL
 
 object ApplicationUpdateNotification {
     private val title: (String) -> String = { version -> "Discord Integration updated to $version" }
@@ -29,7 +30,10 @@ object ApplicationUpdateNotification {
 
     private val group = NotificationGroup("${Plugin.getId()}.update", NotificationDisplayType.STICKY_BALLOON, true)
 
-    private fun getChangelog(): String = ApplicationUpdateNotification::class.java.getResource("/discord/changes.html").readText()
+    private fun getChangelog(): String {
+        val resource: URL = ApplicationUpdateNotification::class.java.getResource("/discord/changes.html")!!
+        return resource.readText()
+    }
 
     fun show(version: String) =
         group

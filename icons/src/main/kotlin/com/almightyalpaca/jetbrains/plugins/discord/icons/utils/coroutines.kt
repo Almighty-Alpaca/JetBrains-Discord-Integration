@@ -18,7 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.icons.utils
 
 import kotlinx.coroutines.*
 
-@Suppress("EXPERIMENTAL_API_USAGE")
+@OptIn(ExperimentalCoroutinesApi::class)
 fun <T> Deferred<T>.getCompletedOrNull() = when (isCompleted) {
     true -> getCompleted()
     false -> null

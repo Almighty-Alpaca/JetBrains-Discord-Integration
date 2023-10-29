@@ -19,10 +19,8 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.DiscordConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.DiscordIpcConnection
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection.DiscordRpcConnection
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.DisposableCoroutineScope
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.debugLazy
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -142,23 +140,6 @@ class RpcService : DisposableCoroutineScope {
     }
 
     private fun createConnection(appId: Long): DiscordConnection {
-        fun forName(name: String?): DiscordConnection? =
-            when (name) {
-                "rpc" -> {
-                    // before initializing the connection
-                    System.setProperty("jna.nounpack", "false")
-                    System.setProperty("jna.noclasspath", "false")
-
-                    DiscordRpcConnection(appId, ::updateUser)
-                }
-
-                "ipc" -> DiscordIpcConnection(appId, ::updateUser)
-                else -> null
-            }
-
-        return forName(System.getenv()["com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection"]?.lowercase())
-            ?: forName(System.getProperty("com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.connection")?.lowercase())
-            ?: DiscordIpcConnection(appId, ::updateUser)
+        return DiscordIpcConnection(appId, ::updateUser)
     }
-
 }

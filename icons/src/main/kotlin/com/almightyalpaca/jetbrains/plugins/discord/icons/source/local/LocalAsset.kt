@@ -32,6 +32,7 @@ class LocalAsset(private val source: LocalSource, id: String, theme: Theme, priv
                 source.pathApplications.resolve("$applicationName.png")
             }
         }
+
         else -> source.pathThemes.resolve("${theme.id}/$id.png")
     }.let { p -> Files.newInputStream(p) }.use(ImageIO::read)
 }

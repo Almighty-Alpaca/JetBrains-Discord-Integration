@@ -22,13 +22,8 @@ plugins {
 
 version = "1.0.0.SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    maven(url = "https://kotlin.bintray.com/kotlinx")
-}
-
 dependencies {
-    implementation(project(":icons"))
+    implementation(projects.icons)
 
     implementation(platform(libs.kotlin.bom.latest))
     implementation(libs.kotlin.stdlib)

@@ -30,7 +30,7 @@ sealed class Data {
         override fun toString(): String = "Data.None"
     }
 
-    open class Idle (val idleTimestamp: Long) : Data() {
+    open class Idle(val idleTimestamp: Long) : Data() {
         override fun toString(): String {
             return "Data.Idle(idleTimestamp=$idleTimestamp)"
         }

@@ -25,6 +25,7 @@ fun Activity.of(type: Activity.ActivityType? = null, name: String, url: String? 
                 null -> null
                 else -> Activity.streaming(name, url)
             }
+
         null -> null
         else -> Activity.of(type, name)
 

@@ -1,0 +1,78 @@
+[versions]
+antlr                      = "4.13.1"
+commons-io                 = "2.15.0"
+commons-lang               = "3.12.0"
+commons-text               = "1.11.0"
+discord-ipc                = "0.2.2"
+docker                     = "3.2.13"
+foojay-resolver-convention = "0.7.0" # Also update manually in settings.gradle.kts
+gitversion                 = "3.0.0"
+guava                      = "31.1-jre"
+ide                        = "2022.3.3" # Also update JDK version
+#ide                       = "LATEST-EAP-SNAPSHOT"
+intellij                   = "1.16.0"
+jackson                    = "2.15.3"
+jda                        = "5.0.0-beta.16"
+jdk                        = "17"
+junit                      = "5.10.0"
+junit-jupiter              = "5.10.0"
+konf                       = "1.1.2"
+kotlin-ide                 = "1.7.20"
+kotlin-latest              = "1.9.10"
+kotlinx-coroutines-ide     = "1.5.0"
+kotlinx-coroutines-latest  = "1.7.3"
+ktor                       = "2.3.5"
+logback                    = "1.4.11"
+okhttp3                    = "4.12.0"
+pngtastic                  = "1.7"
+shadow                     = "8.1.1"
+versions                   = "0.49.0"
+zeroAllocationHashing      = "0.16"
+
+[libraries]
+antlr                                = { group = "org.antlr"                                        , name = "antlr4"                                , version.ref = "antlr" }
+antlr-runtime                        = { group = "org.antlr"                                        , name = "antlr4-runtime"                        , version.ref = "antlr" }
+commons-io                           = { group = "commons-io"                                       , name = "commons-io"                            , version.ref = "commons-io" }
+commons-lang                         = { group = "org.apache.commons"                               , name = "commons-lang3"                         , version.ref = "commons-lang" }
+commons-text                         = { group = "org.apache.commons"                               , name = "commons-text"                          , version.ref = "commons-text" }
+discord-ipc                          = { group = "com.github.caoimhebyrne"                          , name = "KDiscordIPC"                           , version.ref = "discord-ipc" }
+docker                               = { group = "com.github.docker-java"                           , name = "docker-java"                           , version.ref = "docker" }
+gradle-shadow                        = { group = "gradle.plugin.com.github.jengelman.gradle.plugins", name = "shadow"                                , version.ref = "shadow" }
+guava                                = { group = "com.google.guava"                                 , name = "guava"                                 , version.ref = "guava" }
+jackson-bom                          = { group = "com.fasterxml.jackson"                            , name = "jackson-bom"                           , version.ref = "jackson" }
+jackson-core                         = { group = "com.fasterxml.jackson.core"                       , name = "jackson-core" }
+jackson-databind                     = { group = "com.fasterxml.jackson.core"                       , name = "jackson-databind" }
+jackson-dataformat-yaml              = { group = "com.fasterxml.jackson.dataformat"                 , name = "jackson-dataformat-yaml" }
+jda                                  = { group = "net.dv8tion"                                      , name = "JDA"                                   , version.ref = "jda" }
+konf-core                            = { group = "com.uchuhimo"                                     , name = "konf-core"                             , version.ref = "konf" }
+konf-yaml                            = { group = "com.uchuhimo"                                     , name = "konf-yaml"                             , version.ref = "konf" }
+kotlin-bom-ide                       = { group = "org.jetbrains.kotlin"                             , name = "kotlin-bom"                            , version.ref = "kotlin-ide" }
+kotlin-bom-latest                    = { group = "org.jetbrains.kotlin"                             , name = "kotlin-bom"                            , version.ref = "kotlin-latest" }
+kotlin-compiler-embeddable           = { group = "org.jetbrains.kotlin"                             , name = "kotlin-compiler-embeddable" }
+kotlin-script-runtime                = { group = "org.jetbrains.kotlin"                             , name = "kotlin-script-runtime" }
+kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin"                             , name = "kotlin-scripting-compiler-embeddable" }
+kotlin-stdlib                        = { group = "org.jetbrains.kotlin"                             , name = "kotlin-stdlib" }
+kotlin-test                          = { group = "org.jetbrains.kotlin"                             , name = "kotlin-test" }
+kotlinx-coroutines-bom-ide           = { group = "org.jetbrains.kotlinx"                            , name = "kotlinx-coroutines-bom"                , version.ref = "kotlinx-coroutines-ide" }
+kotlinx-coroutines-bom-latest        = { group = "org.jetbrains.kotlinx"                            , name = "kotlinx-coroutines-bom"                , version.ref = "kotlinx-coroutines-latest" }
+kotlinx-coroutines-core              = { group = "org.jetbrains.kotlinx"                            , name = "kotlinx-coroutines-core" }
+ktor-bom                             = { group = "io.ktor"                                          , name = "ktor-bom"                              , version.ref = "ktor" }
+ktor-client-auth-jvm                 = { group = "io.ktor"                                          , name = "ktor-client-auth-jvm" }
+ktor-client-core-jvm                 = { group = "io.ktor"                                          , name = "ktor-client-core-jvm" }
+ktor-client-okhttp                   = { group = "io.ktor"                                          , name = "ktor-client-okhttp" }
+ktor-http-jvm                        = { group = "io.ktor"                                          , name = "ktor-http-jvm" }
+ktor-io-jvm                          = { group = "io.ktor"                                          , name = "ktor-io-jvm" }
+ktor-utils-jvm                       = { group = "io.ktor"                                          , name = "ktor-utils-jvm" }
+logback                              = { group = "ch.qos.logback"                                   , name = "logback-classic"                       , version.ref = "logback" }
+okhttp3                              = { group = "com.squareup.okhttp3"                             , name = "okhttp"                                , version.ref = "okhttp3" }
+pngtastic                            = { group = "com.github.depsypher"                             , name = "pngtastic"                             , version.ref = "pngtastic" }
+zeroAllocationHashing                = { group = "net.openhft"                                      , name = "zero-allocation-hashing"               , version.ref = "zeroAllocationHashing" }
+
+[plugins]
+docker                     = { id = "docker" }
+foojay-resolver-convention = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay-resolver-convention" }
+gitversion                 = { id = "com.palantir.git-version"                        , version.ref = "gitversion" }
+intellij                   = { id = "org.jetbrains.intellij"                          , version.ref = "intellij" }
+kotlin                     = { id = "org.jetbrains.kotlin.jvm"                        , version.ref = "kotlin-latest" }
+shadow                     = { id = "com.github.johnrengelman.shadow"                 , version.ref = "shadow" }
+versions                   = { id = "com.github.ben-manes.versions"                   , version.ref = "versions" }

@@ -17,10 +17,10 @@
 package com.almightyalpaca.jetbrains.plugins.discord.bot.commands
 
 import com.uchuhimo.konf.Config
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class ShutdownCommand(config: Config) : Command(config, "shutdown", "Stop the bot", true) {
-    override fun execute(event: SlashCommandEvent) {
+    override fun execute(event: SlashCommandInteractionEvent) {
         event.reply("Done").submit().thenRun {
             event.jda.shutdown()
         }

@@ -16,7 +16,6 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.bot
 
-import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.EvalCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.PingCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.commands.ShutdownCommand
 import com.almightyalpaca.jetbrains.plugins.discord.bot.listeners.UserActivityStartListener
@@ -45,7 +44,6 @@ fun main() {
         .from.systemProperties()
 
     val commands = arrayOf(
-        EvalCommand(config),
         PingCommand(config),
         ShutdownCommand(config)
     )

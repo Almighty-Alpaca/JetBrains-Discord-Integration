@@ -22,7 +22,6 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.type
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 @State(name = "DiscordApplicationSettings", storages = [Storage("discord.xml")])

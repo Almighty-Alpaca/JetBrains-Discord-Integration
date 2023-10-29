@@ -25,6 +25,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
 import java.io.File
+import java.util.*
 
 fun Project.docker(action: DockerExtension.() -> Unit) = configure(action)
 
@@ -38,7 +39,7 @@ class DockerExtension(private val project: Project) {
     private val configurations = mutableMapOf<String, DockerConfiguration>()
 
     operator fun String.invoke(action: DockerConfiguration.() -> Unit): DockerConfiguration {
-        return configurations.computeIfAbsent(this.toLowerCase()) { DockerConfiguration(this, project) }.apply(action)
+        return configurations.computeIfAbsent(this.lowercase()) { DockerConfiguration(this, project) }.apply(action)
     }
 }
 
@@ -57,7 +58,7 @@ class DockerConfiguration(val name: String, project: Project) {
 private fun Project.createTasks(configuration: DockerConfiguration) {
     val dockerBuildDir = File(buildDir, "docker")
 
-    val name = configuration.name.capitalize()
+    val name = configuration.name.replaceFirstChar { it.titlecase() }
 
     tasks.apply {
         val dockerCopy = register<Sync>("docker${name}Copy") {

@@ -39,7 +39,6 @@ import okhttp3.Dispatcher
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import java.io.File
-import java.io.InputStream
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -139,17 +138,16 @@ private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: Str
 
 private fun CoroutineScope.deleteIcon(client: HttpClient, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
     try {
-        client.delete{
+        client.delete {
             url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
         }
+    } catch (e: ClientRequestException) {
+        if (e.response.status.value == 404) {
+            // Icon was probably already deleted, eventually consistent™
+        } else {
+            throw e
+        }
     }
-     catch (e: ClientRequestException) {
-         if (e.response.status.value == 404) {
-             // Icon was probably already deleted, eventually consistent™
-         } else {
-             throw e
-         }
-     }
 }
 
 private sealed class DiscordChange {
@@ -240,7 +238,7 @@ private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCo
 }
 
 private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
-    val response = client.get{
+    val response = client.get {
         url(URL("https://discord.com/api/v9/oauth2/applications/$appId/assets"))
     }
 

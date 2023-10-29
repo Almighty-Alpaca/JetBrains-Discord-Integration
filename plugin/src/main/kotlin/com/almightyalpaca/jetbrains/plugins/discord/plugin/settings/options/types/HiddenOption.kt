@@ -50,7 +50,7 @@ class HiddenOption : Option<Hidden>(""), OptionHolder, Hidden.Provider {
     override fun writeXml(element: Element, key: String) {
         for ((childKey, option) in options) {
             // if (!option.isDefault) {
-                option.writeXml(element, childKey)
+            option.writeXml(element, childKey)
             // }
         }
     }

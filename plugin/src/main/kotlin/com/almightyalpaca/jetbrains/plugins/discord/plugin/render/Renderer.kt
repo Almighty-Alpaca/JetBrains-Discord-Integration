@@ -17,11 +17,9 @@
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.DiscordPlugin
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.CustomTemplate
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.asCustomTemplateContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.rpc.RichPresence
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.StringValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.TemplateValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values.*
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.Plugin

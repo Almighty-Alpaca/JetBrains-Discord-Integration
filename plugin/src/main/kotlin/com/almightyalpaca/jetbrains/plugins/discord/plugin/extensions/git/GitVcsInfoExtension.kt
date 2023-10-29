@@ -26,6 +26,6 @@ import git4idea.repo.GitRepositoryManager
 class GitVcsInfoExtension : VcsInfoExtension {
     override fun getCurrentVcsBranch(project: Project, file: VirtualFile?): String? = runReadAction action@{
         val manager = GitRepositoryManager.getInstance(project)
-        return@action DvcsUtil.guessRepositoryForFile(project, manager, file, null)?.currentBranchName
+        return@action manager.getRepositoryForRootQuick(DvcsUtil.findVcsRootFor(project, file))?.currentBranchName
     }
 }

@@ -18,9 +18,7 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.values
 
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.SimpleValue
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.settings.options.types.UiValueType
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.application.ApplicationNamesInfo
-import java.util.*
 
 typealias ApplicationTypeValue = SimpleValue<ApplicationType>
 

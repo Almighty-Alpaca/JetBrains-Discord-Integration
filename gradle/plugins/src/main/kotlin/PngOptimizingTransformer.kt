@@ -21,12 +21,12 @@ import com.googlecode.pngtastic.core.PngImage
 import com.googlecode.pngtastic.core.PngOptimizer
 import net.openhft.hashing.LongHashFunction
 import org.apache.commons.io.IOUtils
+import org.apache.tools.zip.ZipEntry
+import org.apache.tools.zip.ZipOutputStream
 import org.gradle.api.Project
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import shadow.org.apache.tools.zip.ZipEntry
-import shadow.org.apache.tools.zip.ZipOutputStream
 import java.awt.Image
 import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage

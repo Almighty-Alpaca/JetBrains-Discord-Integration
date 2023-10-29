@@ -18,7 +18,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.uploader.validator
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.matcher.Matcher
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Language
-import com.almightyalpaca.jetbrains.plugins.discord.icons.source.LanguageMap
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
 import kotlinx.coroutines.runBlocking
 import kotlin.system.exitProcess

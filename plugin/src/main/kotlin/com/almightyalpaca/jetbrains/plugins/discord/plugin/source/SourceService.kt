@@ -19,7 +19,6 @@ package com.almightyalpaca.jetbrains.plugins.discord.plugin.source
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Source
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.local.LocalSource
-import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.lowercase
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import java.nio.file.Paths

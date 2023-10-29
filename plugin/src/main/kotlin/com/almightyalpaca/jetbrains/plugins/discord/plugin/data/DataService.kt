@@ -71,6 +71,7 @@ class DataService {
                     val idleTimestamp = System.currentTimeMillis() - application.idleTime
                     return Data.Idle(idleTimestamp)
                 }
+
                 HIDE -> return Data.None
             }
         }

@@ -18,10 +18,10 @@ plugins {
     application
 
     alias(libs.plugins.kotlin)
-    com.github.johnrengelman.shadow
-
-    docker
+    id("docker")
 }
+
+apply(plugin = "com.github.johnrengelman.shadow")
 
 docker {
     "bot" {
@@ -35,17 +35,11 @@ application {
     mainClass("com.almightyalpaca.jetbrains.plugins.discord.bot.MainKt")
 }
 
-repositories {
-    mavenCentral()
-    maven(url = "https://m2.dv8tion.net/releases")
-}
-
 dependencies {
     // Kotlin standard library
     implementation(libs.kotlin.stdlib)
 
     // implementation script engine
-    implementation(libs.kotlin.script.util)
     implementation(libs.kotlin.compiler.embeddable)
     implementation(libs.kotlin.scripting.compiler.embeddable)
     implementation(libs.kotlin.script.runtime)

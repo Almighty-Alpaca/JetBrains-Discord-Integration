@@ -22,10 +22,18 @@ import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.gbc
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.utils.label
 import com.intellij.ui.JBIntSpinner
 import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
 import javax.swing.*
 
-fun OptionCreator<in Int>.spinner(text: String, description: String? = null, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled: Boolean = true) =
+fun OptionCreator<in Int>.spinner(
+    text: String,
+    description: String? = null,
+    initialValue: Int,
+    minValue: Int = Int.MIN_VALUE,
+    maxValue: Int = Int.MAX_VALUE,
+    step: Int = 1,
+    format: String = "#",
+    enabled: Boolean = true
+) =
     OptionProviderImpl(this, IntSpinnerOption(text, description, initialValue, step, minValue, maxValue, format, enabled))
 
 fun OptionCreator<in Int>.spinner(text: String, initialValue: Int, minValue: Int = Int.MIN_VALUE, maxValue: Int = Int.MAX_VALUE, step: Int = 1, format: String = "#", enabled: Boolean = true) =
