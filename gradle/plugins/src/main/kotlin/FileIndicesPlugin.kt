@@ -39,7 +39,7 @@ class FileIndicesPlugin : Plugin<Project> {
         val task = target.tasks.register("generateFileIndices", GenerateFileIndices::class)
 
         target.sourceSets.named("main") {
-            output.dir(task.map { it.outputDir }, "builtBy" to task)
+            output.dir(mapOf("builtBy" to task), task.map { it.outputDir })
         }
 
     }

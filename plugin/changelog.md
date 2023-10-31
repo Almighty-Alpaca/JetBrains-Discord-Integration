@@ -1,3 +1,7 @@
+## v1.12.0
+- Fix error when Discord is closed or being closed (#386)
+- Fix error when state or details field was empty (#289)
+
 ## v1.11.0
 - Fix compatibility with IntelliJ version 2022.3
 
