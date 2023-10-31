@@ -32,10 +32,13 @@ import dev.cbyrne.kdiscordipc.data.activity.activity
 import dev.cbyrne.kdiscordipc.data.activity.largeImage
 import dev.cbyrne.kdiscordipc.data.activity.smallImage
 import dev.cbyrne.kdiscordipc.data.activity.timestamps
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import dev.cbyrne.kdiscordipc.data.user.User as NativeUser
 
 class DiscordIpcConnection(override val appId: Long, private val userCallback: UserCallback) :
@@ -58,29 +61,41 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
         if (!ipcClient.connected) {
             DiscordPlugin.LOG.debug("Starting new ipc connection")
 
-            launch {
-                try {
-                    ipcClient.connect()
-                } catch (e: ConnectionError) {
-                    when (e) {
-                        ConnectionError.NoIPCFile -> disconnect()
+            val exceptionHandler = CoroutineExceptionHandler { _, error ->
+                if (error is ConnectionError) {
+                    when (error) {
+                        ConnectionError.NoIPCFile -> launch { disconnect() }
                         ConnectionError.AlreadyConnected -> DiscordPlugin.LOG.errorLazy { "IPC already connected" }
                         ConnectionError.NotConnected -> DiscordPlugin.LOG.errorLazy { "IPC not connected" }
                         ConnectionError.Failed -> DiscordPlugin.LOG.errorLazy { "IPC failed" }
                         ConnectionError.Disconnected -> DiscordPlugin.LOG.errorLazy { "IPC disconnected" }
                     }
+                } else {
+                    DiscordPlugin.LOG.error("Error connecting to ipc", error)
                 }
             }
 
-            DiscordPlugin.LOG.debug("Started new ipc connection")
+            MainScope().launch(exceptionHandler) {
+                withTimeoutOrNull(5000) {
+                    ipcClient.connect()
+                    DiscordPlugin.LOG.debug("Started new ipc connection")
+                }
+            }
         }
     }
 
     override suspend fun send(presence: RichPresence?) {
         DiscordPlugin.LOG.debug("Sending new presence")
 
-        if (running)
-            ipcClient.activityManager.setActivity(presence?.toNative())
+        if (running) {
+            try {
+                withTimeoutOrNull(1000) {
+                    ipcClient.activityManager.setActivity(presence?.toNative())
+                }
+            } catch (e: Exception) {
+                DiscordPlugin.LOG.warn("Error sending presence, is the client running?", e)
+            }
+        }
     }
 
     override suspend fun disconnect() = disconnectInternal()
@@ -88,8 +103,30 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
     private fun disconnectInternal() {
         DiscordPlugin.LOG.debug("Closing IPC connection")
 
-        if (ipcClient.connected)
-            ipcClient.disconnect()
+        if (!ipcClient.connected) return
+
+        val exceptionHandler = CoroutineExceptionHandler { _, error ->
+            when (error) {
+                is ConnectionError -> {
+                    DiscordPlugin.LOG.warn("Error closing ipc connection", error)
+                }
+
+                is UninitializedPropertyAccessException -> {
+                    DiscordPlugin.LOG.warn("Error closing ipc connection", error)
+                }
+
+                else -> {
+                    DiscordPlugin.LOG.error("Error closing ipc connection", error)
+                }
+            }
+        }
+
+        MainScope().launch(exceptionHandler) {
+            withTimeoutOrNull(5000) {
+                ipcClient.disconnect()
+                DiscordPlugin.LOG.debug("IPC connection closed")
+            }
+        }
     }
 
     override fun dispose() {
