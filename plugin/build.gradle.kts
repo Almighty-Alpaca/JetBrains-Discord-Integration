@@ -31,7 +31,11 @@ val github = "https://github.com/Almighty-Alpaca/JetBrains-Discord-Integration"
 dependencies {
     implementation(project(path = ":icons", configuration = "minimizedJar"))
 
-    implementation(libs.discord.ipc)
+    implementation(libs.discord.ipc) {
+        exclude("com.kohlschutter.junixsocket", "junixsocket-core")
+    }
+
+    implementation(libs.junixsocket.core)
 
     implementation(libs.commons.io)
 
