@@ -77,15 +77,55 @@ class RpcService : DisposableCoroutineScope {
     fun update(presence: RichPresence?, forceUpdate: Boolean = false, forceReconnect: Boolean = false) = launch {
         mutex.withLock {
             try {
-                DiscordPlugin.LOG.debugLazy { "Updating presence, forceUpdate=$forceUpdate, forceReconnect=$forceReconnect" }
+                DiscordPlugin.LOG.debug("Updating presence, forceUpdate=$forceUpdate, forceReconnect=$forceReconnect")
 
-                // TODO: check if this is the source of stuck updates
-                // if (!forceUpdate && !forceReconnect && lastPresence == presence) {
-                //     DiscordPlugin.LOG.debug("Skipping presence update, nothing to do")
-                //     return
-                // }
+                if (!(forceUpdate || forceReconnect)) {
+                    if (lastPresence != null) {
+                        var different = false
 
-                lastPresence = presence
+                        if (lastPresence!!.appId != presence?.appId) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.details != presence?.details) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.state != presence?.state) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.startTimestamp != presence?.startTimestamp) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.endTimestamp != presence?.endTimestamp) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.largeImage?.key != presence?.largeImage?.key) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.largeImage?.text != presence?.largeImage?.text) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.smallImage?.key != presence?.smallImage?.key) {
+                            different = true
+                        }
+
+                        if (lastPresence!!.smallImage?.text != presence?.smallImage?.text) {
+                            different = true
+                        }
+
+                        if (!different) {
+                            return@withLock
+                        }
+
+                        lastPresence = presence
+                    }
+                }
 
                 if (presence?.appId == null) { // Stop connection
                     when (presence) {
@@ -123,11 +163,18 @@ class RpcService : DisposableCoroutineScope {
 
                     }
 
-                    connection?.send(presence)
+                    try {
+                        withTimeoutOrNull(4500) {
+                            connection?.send(presence)
+                        }
+                    } catch (e: Exception) {
+                        DiscordPlugin.LOG.warn("Error sending presence, is the client running?", e)
+                    }
                 }
             } catch (e: ProcessCanceledException) {
+                DiscordPlugin.LOG.error("PCE while updating presence", e)
                 throw e
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 DiscordPlugin.LOG.error("Error while updating presence", e)
             }
         }
