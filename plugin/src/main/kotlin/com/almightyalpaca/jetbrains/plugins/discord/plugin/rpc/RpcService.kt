@@ -51,7 +51,7 @@ class RpcService : DisposableCoroutineScope {
     private val mutex = Mutex()
 
     private fun checkConnected(): Job = launch {
-        delay(20_000)
+        delay(120_000)
 
         mutex.withLock {
             DiscordPlugin.LOG.debug("Checking for running rpc connection")
