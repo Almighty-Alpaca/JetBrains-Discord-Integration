@@ -18,32 +18,26 @@ package com.almightyalpaca.jetbrains.plugins.discord.uploader.uploader
 
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.Theme
 import com.almightyalpaca.jetbrains.plugins.discord.icons.source.classpath.ClasspathSource
-import com.almightyalpaca.jetbrains.plugins.discord.icons.utils.mapWith
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import com.fasterxml.jackson.databind.node.ObjectNode
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.okhttp.*
+import com.fasterxml.jackson.databind.node.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.content.*
-import io.ktor.http.*
-import io.ktor.utils.io.jvm.javaio.*
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.*
-import okhttp3.Cache
-import okhttp3.ConnectionPool
-import okhttp3.Dispatcher
+import okhttp3.*
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.net.URL
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.Collections
+import java.util.concurrent.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 suspend fun main() {
     val token = System.getenv("DISCORD_TOKEN")!!
@@ -62,7 +56,7 @@ suspend fun main() {
     HttpClient(OkHttp) {
         engine {
             config {
-                cache(Cache(File("build/cache/uploader/discord"), 1024L * 1024L * 1024L)) // 1GiB
+                cache(Cache(File("build/cache/uploader/discord"), 1024L * 1024L * 1024L)) // 1 GiB
                 connectionPool(connectionPool)
                 dispatcher(Dispatcher(threadPool).apply {
                     maxRequests = parallelism
@@ -88,31 +82,42 @@ suspend fun main() {
                 for (theme in themes.values) {
                     println("Starting with ${theme.name}")
 
-                    val changes = calculateChangesAsync(client, source, theme)
+                    val changes = calculateChanges(client, source, theme)
 
-                    supervisorScope {
-                        for (change in changes.await()) {
-                            if (change is DiscordChange.Delete) {
-                                deleteIcon(client, change.appId, change.iconId)
-                            }
-                        }
+
+                    val handler = CoroutineExceptionHandler { _, throwable ->
+                        throwable.printStackTrace()
                     }
 
                     supervisorScope {
-                        for (change in changes.await()) {
-                            if (change is DiscordChange.Override) {
-                                coroutineScope {
-                                    deleteIcon(client, change.appId, change.iconId)
-                                    createIcon(client, change.appId, change.name, source, change.path)
+                        withContext(handler) {
+                            for (change in changes) {
+                                if (change is DiscordChange.Delete) {
+                                    launch { deleteIcon(client, change.appId, change.iconId) }
+                                }
+                            }
+                        }
+
+                        supervisorScope {
+                            withContext(handler) {
+                                for (change in changes) {
+                                    if (change is DiscordChange.Override) {
+                                        launch {
+                                            deleteIcon(client, change.appId, change.iconId)
+                                            createIcon(client, change.appId, change.name, source, change.path)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
 
                     supervisorScope {
-                        for (change in changes.await()) {
-                            if (change is DiscordChange.Create) {
-                                createIcon(client, change.appId, change.name, source, change.source)
+                        withContext(handler) {
+                            for (change in changes) {
+                                if (change is DiscordChange.Create) {
+                                    launch { createIcon(client, change.appId, change.name, source, change.source) }
+                                }
                             }
                         }
                     }
@@ -122,12 +127,13 @@ suspend fun main() {
     }
 }
 
-private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: String, source: ClasspathSource, path: String) = launch {
+@OptIn(ExperimentalEncodingApi::class)
+private suspend fun createIcon(client: HttpClient, appId: Long, name: String, source: ClasspathSource, path: String) = withContext(Dispatchers.IO) {
     client.post {
-        url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets"))
+        url(URL("https://discordapp.com/api/v9/oauth2/applications/$appId/assets"))
 
         val data = JsonNodeFactory(false).objectNode().apply {
-            put("image", "data:image/png;base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(source.loadResource(path)!!)))
+            put("image", "data:image/png;base64," + Base64.encode(source.loadResource(path)!!.readAllBytes()))
             put("name", name)
             put("type", 1)
         }
@@ -136,14 +142,14 @@ private fun CoroutineScope.createIcon(client: HttpClient, appId: Long, name: Str
     }
 }
 
-private fun CoroutineScope.deleteIcon(client: HttpClient, appId: Long, iconId: Long) = launch(Dispatchers.IO) {
+private suspend fun deleteIcon(client: HttpClient, appId: Long, iconId: Long) = withContext(Dispatchers.IO) {
     try {
         client.delete {
-            url(URL("https://discordapp.com/api/oauth2/applications/$appId/assets/$iconId"))
+            url(URL("https://discordapp.com/api/v9/oauth2/applications/$appId/assets/$iconId"))
         }
     } catch (e: ClientRequestException) {
         if (e.response.status.value == 404) {
-            // Icon was probably already deleted, eventually consistent™
+            println("Icon was probably already deleted")
         } else {
             throw e
         }
@@ -156,19 +162,19 @@ private sealed class DiscordChange {
     class Override(val appId: Long, val iconId: Long, val source: ClasspathSource, val path: String, val name: String) : DiscordChange()
 }
 
-private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: ClasspathSource, theme: Theme) = async(Dispatchers.IO) {
+private suspend fun calculateChanges(client: HttpClient, source: ClasspathSource, theme: Theme) = withContext(Dispatchers.IO) method@{
     supervisorScope {
         val changes = Collections.newSetFromMap<DiscordChange>(ConcurrentHashMap())
 
         for ((applicationName, applicationId) in theme.applications) {
-            if (applicationName.toUpperCase() == applicationName) { // skip old application code based entries
+            if (applicationName.uppercase() == applicationName) { // skip old application code based entries
                 continue
             }
 
             println("Starting with ${theme.name} ($applicationName)")
 
-            val local = getClasspathIconsAsync(source, applicationName, theme.id)
-            val discord = getDiscordIconsAsync(client, applicationId)
+            val local = async { getClasspathIcons(source, applicationName, theme.id) }
+            val discord = async { getDiscordIcons(client, applicationId) }
 
             val all = local.await().keys + discord.await().keys
 
@@ -187,7 +193,7 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: Cla
 
                     else -> {
                         launch {
-                            if (!contentEqualsAsync(client, source, local.await()[icon], getAssetUrl(applicationId, discord.await()[icon])).await()) {
+                            if (!contentEquals(client, source, local.await()[icon], getAssetUrl(applicationId, discord.await()[icon]))) {
                                 println("Override ${theme.id}/$icon ($applicationName)")
                                 changes += DiscordChange.Override(applicationId, discord.await().getValue(icon), source, local.await().getValue(icon), icon)
                             } else {
@@ -203,9 +209,9 @@ private fun CoroutineScope.calculateChangesAsync(client: HttpClient, source: Cla
     }
 }
 
-private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: ClasspathSource, local: String?, remote: URL) = async(Dispatchers.IO) {
+private suspend fun contentEquals(client: HttpClient, source: ClasspathSource, local: String?, remote: URL) = withContext(Dispatchers.IO) method@{
     if (local == null)
-        return@async false
+        return@method false
 
     val response: HttpResponse = client.get {
         url(remote)
@@ -217,35 +223,37 @@ private fun CoroutineScope.contentEqualsAsync(client: HttpClient, source: Classp
         println("Error comparing $local with $remote")
         e.printStackTrace()
 
-        return@async true
+        return@method true
     }
 }
 
 private fun getAssetUrl(appId: Long, iconId: Long?) = URL("https://cdn.discordapp.com/app-assets/$appId/$iconId.png?size=1024")
 
-private fun CoroutineScope.getClasspathIconsAsync(source: ClasspathSource, appCode: String, theme: String) = async(Dispatchers.IO) {
-    var application = "${source.pathApplications}/$theme/$appCode.png"
-    if (!source.checkResourceExists(application)) {
-        application = "${source.pathApplications}/$appCode.png"
+private suspend fun getClasspathIcons(source: ClasspathSource, appCode: String, theme: String) = withContext(Dispatchers.IO) method@{
+    return@method buildMap {
+        var application = "${source.pathApplications}/$theme/$appCode.png"
+        if (!source.checkResourceExists(application)) {
+            application = "${source.pathApplications}/$appCode.png"
+        }
+        put("application", application)
+
+        source.listResources("${source.pathThemes}/$theme", ".png").forEach { path ->
+            put(FilenameUtils.getBaseName(path), path)
+        }
     }
-
-    val applicationStream = sequenceOf("application" to application)
-
-    val iconStream = source.listResources("${source.pathThemes}/$theme", ".png")
-        .map { p -> FilenameUtils.getBaseName(p) to p }
-
-    (applicationStream + iconStream).toMap()
 }
 
-private fun CoroutineScope.getDiscordIconsAsync(client: HttpClient, appId: Long) = async(Dispatchers.IO) {
+private suspend fun getDiscordIcons(client: HttpClient, appId: Long) = withContext(Dispatchers.IO) method@{
     val response = client.get {
         url(URL("https://discord.com/api/v9/oauth2/applications/$appId/assets"))
     }
 
     val array = ObjectMapper().readTree(response.readBytes()) as ArrayNode
 
-    return@async mapWith(array.size()) { i ->
-        val node = (array[i] as ObjectNode)
-        node["name"].asText() to node["id"].asLong()
+    return@method buildMap {
+        for (i in 0..<array.size()) {
+            val node = (array[i] as ObjectNode)
+            put(node["name"].asText(), node["id"].asLong())
+        }
     }
 }

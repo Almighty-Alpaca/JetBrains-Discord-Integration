@@ -59,6 +59,10 @@ tasks {
         transform(PngOptimizingTransformer(128, *iconPaths))
     }
 
+    build {
+        dependsOn(minimizedJar)
+    }
+
     artifacts {
         add("minimizedJar", minimizedJar.flatMap { it.archiveFile }) {
             builtBy(minimizedJar)
