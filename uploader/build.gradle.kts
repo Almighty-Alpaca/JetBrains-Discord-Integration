@@ -76,6 +76,10 @@ tasks {
                         workingDir = file("build/graphs")
                         commandLine = listOf("dot", "-Tpng", "$file.dot", "-o", "$file.png")
                     }
+                    exec {
+                        workingDir = file("build/graphs")
+                        commandLine = listOf("dot", "-Tsvg", "$file.dot", "-o", "$file.svg")
+                    }
                 }
         }
     }
