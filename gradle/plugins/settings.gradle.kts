@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+rootProject.name = "Gradle-Plugins"
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
