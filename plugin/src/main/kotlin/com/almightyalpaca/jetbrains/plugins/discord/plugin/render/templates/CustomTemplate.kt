@@ -16,6 +16,7 @@
 
 package com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates
 
+import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.CustomVariableData
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.data.Data
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.RenderContext
 import com.almightyalpaca.jetbrains.plugins.discord.plugin.render.templates.antlr.TemplateLexer
@@ -47,7 +48,10 @@ object Utils {
             "IsTextEditor" -> context.fileData?.editorIsTextEditor.toString()
             "FileIsWritable" -> context.fileData?.fileIsWriteable.toString()
             "DebuggerActive" -> context.projectData?.debuggerActive.toString()
-            else -> null
+            else -> {
+                // application data has all the custom variables
+                context.applicationData?.customVariableData?.get(varName)
+            }
         }
 
     private fun sizeAsString(size: Int?): String? {
@@ -202,6 +206,7 @@ private fun Data.asTemplateData(): TemplateData =
         is Data.File ->
             TemplateData.File(
                 this.applicationVersion,
+                this.customVariableData,
                 this.projectName,
                 this.projectDescription,
                 this.vcsBranch,
@@ -220,12 +225,12 @@ private fun Data.asTemplateData(): TemplateData =
 
         is Data.Project ->
             TemplateData.Project(
-                this.applicationVersion, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
+                this.applicationVersion, this.customVariableData, this.projectName, this.projectDescription, this.vcsBranch, this.debuggerActive
             )
 
         is Data.Application ->
             TemplateData.Application(
-                this.applicationVersion
+                this.applicationVersion, this.customVariableData
             )
 
         else -> throw IllegalArgumentException()
@@ -235,19 +240,22 @@ fun RenderContext.asCustomTemplateContext() = CustomTemplateContext.from(this)
 
 sealed class TemplateData {
     open class Application(
-        val applicationVersion: String
+        val applicationVersion: String,
+        val customVariableData: CustomVariableData,
     ) : TemplateData()
 
     open class Project(
         applicationVersion: String,
+        customVariableData: CustomVariableData,
         val projectName: String,
         val projectDescription: String,
         val vcsBranch: String?,
         val debuggerActive: Boolean
-    ) : Application(applicationVersion)
+    ) : Application(applicationVersion, customVariableData)
 
     open class File(
         applicationVersion: String,
+        customVariableData: CustomVariableData,
         projectName: String,
         projectDescription: String,
         vcsBranch: String?,
@@ -265,6 +273,7 @@ sealed class TemplateData {
         val fileSize: Int
     ) : Project(
         applicationVersion,
+        customVariableData,
         projectName,
         projectDescription,
         vcsBranch,
