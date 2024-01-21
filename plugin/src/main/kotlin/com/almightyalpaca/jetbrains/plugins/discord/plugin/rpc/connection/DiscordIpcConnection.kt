@@ -66,7 +66,7 @@ class DiscordIpcConnection(override val appId: Long, private val userCallback: U
                         ConnectionError.NoIPCFile -> disconnect()
                         ConnectionError.AlreadyConnected -> DiscordPlugin.LOG.errorLazy { "IPC already connected" }
                         ConnectionError.NotConnected -> DiscordPlugin.LOG.errorLazy { "IPC not connected" }
-                        ConnectionError.Failed -> DiscordPlugin.LOG.errorLazy { "IPC failed" }
+                        ConnectionError.Failed -> DiscordPlugin.LOG.warn("IPC Failed")
                         ConnectionError.Disconnected -> DiscordPlugin.LOG.errorLazy { "IPC disconnected" }
                     }
                 }
